@@ -12,10 +12,8 @@ import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemWithTestCasesResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.problem.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.toWithTestCasesResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO

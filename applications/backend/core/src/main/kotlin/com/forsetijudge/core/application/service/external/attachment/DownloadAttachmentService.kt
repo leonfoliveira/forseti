@@ -13,8 +13,8 @@ import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

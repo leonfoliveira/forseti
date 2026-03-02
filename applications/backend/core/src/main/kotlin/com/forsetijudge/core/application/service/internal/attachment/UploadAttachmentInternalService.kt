@@ -7,8 +7,6 @@ import com.forsetijudge.core.domain.event.AttachmentsEvent
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 

@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks

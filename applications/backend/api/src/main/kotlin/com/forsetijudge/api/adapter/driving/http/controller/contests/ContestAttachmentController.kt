@@ -6,8 +6,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import org.springframework.http.ContentDisposition
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType

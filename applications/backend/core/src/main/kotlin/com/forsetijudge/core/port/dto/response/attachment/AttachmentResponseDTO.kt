@@ -1,4 +1,4 @@
-package com.forsetijudge.core.port.dto.response
+package com.forsetijudge.core.port.dto.response.attachment
 
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Attachment.Context

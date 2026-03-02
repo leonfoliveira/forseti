@@ -1,12 +1,12 @@
 package com.forsetijudge.core.port.dto.response.submission
 
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID

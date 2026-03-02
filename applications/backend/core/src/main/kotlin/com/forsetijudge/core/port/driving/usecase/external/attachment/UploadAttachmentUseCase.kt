@@ -2,7 +2,7 @@ package com.forsetijudge.core.port.driving.usecase.external.attachment
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Pattern

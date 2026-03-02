@@ -5,7 +5,7 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
-import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension

@@ -10,9 +10,7 @@ import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsR
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.member.MemberWithLoginResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.member.toWithLoginResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemWithTestCasesResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.toWithTestCasesResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO

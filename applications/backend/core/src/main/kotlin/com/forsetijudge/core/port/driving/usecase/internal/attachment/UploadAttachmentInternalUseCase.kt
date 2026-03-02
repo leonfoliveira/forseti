@@ -3,7 +3,6 @@ package com.forsetijudge.core.port.driving.usecase.internal.attachment
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
 
 interface UploadAttachmentInternalUseCase {
     /**

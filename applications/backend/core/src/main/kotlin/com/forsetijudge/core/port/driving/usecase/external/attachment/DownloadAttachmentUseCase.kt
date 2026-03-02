@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.attachment
 
-import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import java.util.UUID
 
 interface DownloadAttachmentUseCase {
