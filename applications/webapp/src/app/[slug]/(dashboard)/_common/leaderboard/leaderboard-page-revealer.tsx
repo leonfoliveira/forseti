@@ -196,7 +196,7 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
       />
 
       <div
-        className="bg-card fixed top-0 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2"
+        className="bg-card sticky top-0 grid w-screen [grid-template-columns:40px_1fr_40px] items-center gap-4 border-b px-6 py-2"
         style={{ zIndex: 2147483646 }}
       >
         <div className="flex gap-2">
@@ -229,134 +229,138 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         </div>
       </div>
 
-      {leaderboardState.isLoading && (
-        <div className="flex h-screen w-screen items-center justify-center">
-          <LoaderIcon className="animate-spin" size={48} />
-        </div>
-      )}
+      <div className="py-5">
+        {leaderboardState.isLoading && (
+          <div className="flex h-screen w-screen items-center justify-center">
+            <LoaderIcon className="animate-spin" size={48} />
+          </div>
+        )}
 
-      {!leaderboardState.isLoading && !leaderboardState.error && (
-        <>
-          <div className="bg-card mx-auto mt-25 max-w-[1920px] p-5">
-            <Table className="border-b-1">
-              <TableHeader className="bg-muted">
-                <TableRow>
-                  <TableHead>
-                    <ArrowDown01Icon size={16} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerContestant} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerScore} />
-                  </TableHead>
-                  <TableHead>
-                    <FormattedMessage {...messages.headerPenalty} />
-                  </TableHead>
-                  {problems.map((p) => (
-                    <TableHead key={p.id} className="text-center">
-                      <ProblemLetterBadge problem={p} />
+        {!leaderboardState.isLoading && !leaderboardState.error && (
+          <>
+            <div className="bg-card mx-auto max-w-[1920px] p-4">
+              <Table className="border-b-1">
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead>
+                      <ArrowDown01Icon size={16} />
                     </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {contestantRows.map((row, index) => {
-                  const isRevealed =
-                    index >= contestantRows.length - revealedCount;
+                    <TableHead>
+                      <FormattedMessage {...messages.headerContestant} />
+                    </TableHead>
+                    <TableHead>
+                      <FormattedMessage {...messages.headerScore} />
+                    </TableHead>
+                    <TableHead>
+                      <FormattedMessage {...messages.headerPenalty} />
+                    </TableHead>
+                    {problems.map((p) => (
+                      <TableHead key={p.id} className="text-center">
+                        <ProblemLetterBadge problem={p} />
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {contestantRows.map((row, index) => {
+                    const isRevealed =
+                      index >= contestantRows.length - revealedCount;
 
-                  return (
-                    <TableRow
-                      key={row.memberId}
-                      className={cn(
-                        "flip-row hover:bg-inherit",
-                        isRevealed && "is-revealed",
-                      )}
-                      data-testid="row"
-                    >
-                      <TableCell data-testid="cell-rank">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{getMedal(index + 1)}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-name">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.memberName}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-score">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.score}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell data-testid="cell-penalty">
-                        <div className="flip-cell-inner">
-                          <div className="cell-front bg-muted" />
-                          <div className="cell-back">{row.penalty}</div>
-                        </div>
-                      </TableCell>
-                      {row.cells.map((cell) => (
-                        <TableCell
-                          key={cell.problemId}
-                          className="text-center"
-                          data-testid={`cell-problem-${cell.problemId}`}
-                        >
+                    return (
+                      <TableRow
+                        key={row.memberId}
+                        className={cn(
+                          "flip-row hover:bg-inherit",
+                          isRevealed && "is-revealed",
+                        )}
+                        data-testid="row"
+                      >
+                        <TableCell data-testid="cell-rank">
                           <div className="flip-cell-inner">
                             <div className="cell-front bg-muted" />
                             <div className="cell-back">
-                              <ProblemStatusBadge
-                                isAccepted={cell.isAccepted}
-                                acceptedAt={cell.acceptedAt}
-                                wrongSubmissions={cell.wrongSubmissions}
-                              />
+                              {getMedal(index + 1)}
                             </div>
                           </div>
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
+                        <TableCell data-testid="cell-name">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.memberName}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell data-testid="cell-score">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.score}</div>
+                          </div>
+                        </TableCell>
+                        <TableCell data-testid="cell-penalty">
+                          <div className="flip-cell-inner">
+                            <div className="cell-front bg-muted" />
+                            <div className="cell-back">{row.penalty}</div>
+                          </div>
+                        </TableCell>
+                        {row.cells.map((cell) => (
+                          <TableCell
+                            key={cell.problemId}
+                            className="text-center"
+                            data-testid={`cell-problem-${cell.problemId}`}
+                          >
+                            <div className="flip-cell-inner">
+                              <div className="cell-front bg-muted" />
+                              <div className="cell-back">
+                                <ProblemStatusBadge
+                                  isAccepted={cell.isAccepted}
+                                  acceptedAt={cell.acceptedAt}
+                                  wrongSubmissions={cell.wrongSubmissions}
+                                />
+                              </div>
+                            </div>
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
 
-            <ButtonGroup
-              className="absolute right-5 bottom-5"
-              orientation="vertical"
-            >
-              <Button
-                size="icon-lg"
-                onClick={reveal}
-                disabled={revealedCount >= contestantRows.length}
-                data-testid="reveal-button"
+              <ButtonGroup
+                className="absolute right-5 bottom-5"
+                orientation="vertical"
               >
-                <ChevronUpIcon size={16} />
-              </Button>
-              <Button
-                size="icon-lg"
-                onClick={hide}
-                disabled={revealedCount <= 0}
-                data-testid="hide-button"
-              >
-                <ChevronDownIcon size={16} />
-              </Button>
-              <Button
-                size="icon-lg"
-                onClick={toggleAutoReveal}
-                disabled={revealedCount >= contestantRows.length}
-              >
-                {isAutoRevealing ? (
-                  <PauseIcon size={16} />
-                ) : (
-                  <PlayIcon size={16} />
-                )}
-              </Button>
-            </ButtonGroup>
-          </div>
-        </>
-      )}
+                <Button
+                  size="icon-lg"
+                  onClick={reveal}
+                  disabled={revealedCount >= contestantRows.length}
+                  data-testid="reveal-button"
+                >
+                  <ChevronUpIcon size={16} />
+                </Button>
+                <Button
+                  size="icon-lg"
+                  onClick={hide}
+                  disabled={revealedCount <= 0}
+                  data-testid="hide-button"
+                >
+                  <ChevronDownIcon size={16} />
+                </Button>
+                <Button
+                  size="icon-lg"
+                  onClick={toggleAutoReveal}
+                  disabled={revealedCount >= contestantRows.length}
+                >
+                  {isAutoRevealing ? (
+                    <PauseIcon size={16} />
+                  ) : (
+                    <PlayIcon size={16} />
+                  )}
+                </Button>
+              </ButtonGroup>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
