@@ -34,7 +34,6 @@ import {
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
-import { useToast } from "@/app/_lib/hook/toast-hook";
 import { Theme, useTheme } from "@/app/_lib/provider/theme-provider";
 import { cn } from "@/app/_lib/util/cn";
 import { useAppSelector } from "@/app/_store/store";
@@ -83,7 +82,6 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
     isLoading: true,
   });
   const { theme } = useTheme();
-  const toast = useToast();
 
   const [revealedCount, setRevealedCount] = useState(0);
   const [isAutoRevealing, setIsAutoRevealing] = useState(false);
