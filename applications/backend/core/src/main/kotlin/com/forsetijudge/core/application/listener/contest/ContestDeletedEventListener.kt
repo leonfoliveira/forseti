@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -16,9 +17,8 @@ class ContestDeletedEventListener(
         super.onApplicationEvent(event)
     }
 
+    @Transactional(readOnly = true)
     override fun handleEvent(event: ContestEvent.Deleted) {
-        val contest = event.contest
-
-        autoFreezeJobScheduler.cancel(contest.id)
+        autoFreezeJobScheduler.cancel(event.contestId)
     }
 }

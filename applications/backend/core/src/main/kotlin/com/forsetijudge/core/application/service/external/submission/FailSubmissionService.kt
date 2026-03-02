@@ -47,7 +47,7 @@ class FailSubmissionService(
         submission.status = Submission.Status.FAILED
 
         submissionRepository.save(submission)
-        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(submission.id))
 
         logger.info("Submission failed successfully")
     }

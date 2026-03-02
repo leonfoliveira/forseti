@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
+import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.extensions.spring.SpringExtension
@@ -44,7 +45,7 @@ class ContestAttachmentControllerTest(
             val fileName = "test.txt"
             val contentType = "application/octet-stream"
             val testBytes = "test content".toByteArray()
-            val attachment = AttachmentMockBuilder.build()
+            val attachment = AttachmentMockBuilder.build().toResponseBodyDTO()
             val command =
                 UploadAttachmentUseCase.Command(
                     filename = fileName,
@@ -76,10 +77,11 @@ class ContestAttachmentControllerTest(
 
         test("download") {
             val attachment =
-                AttachmentMockBuilder.build(
-                    filename = "test.txt",
-                    contentType = "application/octet-stream",
-                )
+                AttachmentMockBuilder
+                    .build(
+                        filename = "test.txt",
+                        contentType = "application/octet-stream",
+                    ).toResponseBodyDTO()
             val bytes = "test data".toByteArray()
             val command =
                 DownloadAttachmentUseCase.Command(

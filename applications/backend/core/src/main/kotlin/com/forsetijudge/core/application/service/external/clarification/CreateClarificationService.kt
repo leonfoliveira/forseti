@@ -13,6 +13,8 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
+import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -33,7 +35,7 @@ class CreateClarificationService(
     @Transactional
     override fun execute(
         @Valid command: CreateClarificationUseCase.Command,
-    ): Clarification {
+    ): ClarificationResponseDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -86,9 +88,9 @@ class CreateClarificationService(
                 parent = parent,
             )
         clarificationRepository.save(clarification)
-        applicationEventPublisher.publishEvent(ClarificationEvent.Created(clarification))
+        applicationEventPublisher.publishEvent(ClarificationEvent.Created(clarification.id))
 
         logger.info("Clarification created successfully with id = ${clarification.id}")
-        return clarification
+        return clarification.toResponseBodyDTO()
     }
 }

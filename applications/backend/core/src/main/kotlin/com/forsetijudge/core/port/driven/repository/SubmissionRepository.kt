@@ -16,11 +16,11 @@ interface SubmissionRepository : BaseRepository<Submission> {
     fun findAllByContestId(contestId: UUID): List<Submission>
 
     @Query(
-        """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.status = ?2 AND deletedAt IS NULL""",
+        """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.member.id = ?2 AND deletedAt IS NULL""",
     )
-    fun findByContestIdAndStatus(
+    fun findAllByContestIdAndMemberId(
         contestId: UUID,
-        status: Submission.Status,
+        memberId: UUID,
     ): List<Submission>
 
     @Query(

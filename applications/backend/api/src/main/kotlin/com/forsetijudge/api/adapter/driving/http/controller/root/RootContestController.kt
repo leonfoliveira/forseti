@@ -45,7 +45,7 @@ class RootContestController(
                     endAt = body.endAt,
                 ),
             )
-        return ResponseEntity.ok(contest.toResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @GetMapping("/root/contests")
@@ -53,7 +53,7 @@ class RootContestController(
     fun findAll(): ResponseEntity<List<ContestResponseBodyDTO>> {
         logger.info("[GET] /v1/root/contests")
         val contests = findAllContestUseCase.execute()
-        return ResponseEntity.ok(contests.map { it.toResponseBodyDTO() })
+        return ResponseEntity.ok(contests)
     }
 
     @DeleteMapping("/root/contests/{contestId}")

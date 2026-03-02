@@ -7,6 +7,8 @@ import com.forsetijudge.core.domain.event.AttachmentsEvent
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
+import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
+import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
@@ -38,8 +40,8 @@ class UploadAttachmentInternalService(
         logger.info("Uploading ${command.bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment))
+        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
 
-        return Pair(attachment, command.bytes)
+        return attachment to command.bytes
     }
 }

@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.attachment
 
-import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.port.dto.response.AttachmentResponseDTO
 import java.util.UUID
 
 interface DownloadAttachmentUseCase {
@@ -10,7 +10,7 @@ interface DownloadAttachmentUseCase {
      * @param command The command containing the ID of the attachment to be downloaded.
      * @return A pair containing the attachment metadata and the byte array of the attachment content.
      */
-    fun execute(command: Command): Pair<Attachment, ByteArray>
+    fun execute(command: Command): Pair<AttachmentResponseDTO, ByteArray>
 
     /**
      * Command class for downloading an attachment.

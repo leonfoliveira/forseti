@@ -119,6 +119,6 @@ class AutoJudgeSubmissionServiceTest :
             submission.status shouldBe Submission.Status.JUDGED
             submission.answer shouldBe execution.answer
             verify { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submission == submission }) }
+            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
         }
     })

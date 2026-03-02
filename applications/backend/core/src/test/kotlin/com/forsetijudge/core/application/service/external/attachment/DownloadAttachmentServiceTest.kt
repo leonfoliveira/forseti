@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase
+import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -68,7 +69,7 @@ class DownloadAttachmentServiceTest :
                     ),
                 )
 
-            result.first shouldBe actualAttachment
+            result.first shouldBe actualAttachment.toResponseBodyDTO()
             result.second shouldBe ByteArray(0)
         }
 

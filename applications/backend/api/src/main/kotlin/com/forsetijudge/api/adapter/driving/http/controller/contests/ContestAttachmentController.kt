@@ -54,7 +54,7 @@ class ContestAttachmentController(
                     bytes = file.bytes,
                 ),
             )
-        return ResponseEntity.ok(attachment.toResponseBodyDTO())
+        return ResponseEntity.ok(attachment)
     }
 
     @GetMapping("/contests/{contestId}/attachments/{attachmentId}")

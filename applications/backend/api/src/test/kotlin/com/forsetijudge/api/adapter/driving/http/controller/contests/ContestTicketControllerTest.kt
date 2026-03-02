@@ -60,7 +60,7 @@ class ContestTicketControllerTest(
                     type = body.type,
                     properties = body.properties,
                 )
-            every { createTicketUseCase.execute(command) } returns ticket
+            every { createTicketUseCase.execute(command) } returns ticket.toResponseBodyDTO()
 
             webMvc
                 .post(basePath, contestId) {
@@ -87,7 +87,7 @@ class ContestTicketControllerTest(
                     ticketId = ticketId,
                     status = body.status,
                 )
-            every { updateTicketStatusUseCase.execute(command) } returns ticket
+            every { updateTicketStatusUseCase.execute(command) } returns ticket.toResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{ticketId}:update-status", contestId, ticketId) {

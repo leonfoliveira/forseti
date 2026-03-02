@@ -4,8 +4,10 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBySlugUseCase
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -36,6 +38,6 @@ class FindContestBySlugServiceTest :
 
             val result = sut.execute(command)
 
-            assert(result == contest)
+            result shouldBe contest.toResponseBodyDTO()
         }
     })

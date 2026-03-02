@@ -57,7 +57,7 @@ class CreateExecutionInternalService(
                 output = output,
             )
         executionRepository.save(execution)
-        applicationEventPublisher.publishEvent(ExecutionEvent.Created(execution))
+        applicationEventPublisher.publishEvent(ExecutionEvent.Created(execution.id))
 
         logger.info("Created execution with id: ${execution.id}")
         return execution

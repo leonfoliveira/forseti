@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.clarification
 
-import com.forsetijudge.core.domain.entity.Clarification
+import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -15,7 +15,7 @@ interface CreateClarificationUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): Clarification
+    ): ClarificationResponseDTO
 
     /**
      * Command object for creating a clarification.

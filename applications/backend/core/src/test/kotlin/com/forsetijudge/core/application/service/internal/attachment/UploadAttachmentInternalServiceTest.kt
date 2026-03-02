@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
+import com.forsetijudge.core.port.dto.response.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -62,7 +63,7 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe command.contentType
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachment == attachment }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
 
         test("upload attachment without optional fields") {
@@ -92,6 +93,6 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe "application/octet-stream"
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachment == attachment }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
     })

@@ -8,20 +8,29 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
+import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
 
 @Service
 class BuildContestantDashboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
-    private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
+    private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
+    private val ticketRepository: TicketRepository,
+    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
 ) : BuildContestantDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(): ContestantDashboard {
+    override fun execute(): ContestantDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -38,27 +47,29 @@ class BuildContestantDashboardService(
             .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
+        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
         val submissions =
-            contest.problems
-                .map { problem -> if (contest.isFrozen) problem.frozenSubmissions.map { it.unfreeze() } else problem.submissions }
-                .flatten()
-        val memberSubmissions =
-            contest.problems
-                .map { it.submissions }
-                .flatten()
-                .filter { it.member.id == contextMemberId }
+            if (contest.isFrozen) {
+                frozenSubmissionRepository.findAllByContestId(contest.id).map { it.unfreeze() }
+            } else {
+                submissionRepository.findAllByContestId(contest.id)
+            }
+        val memberSubmissions = submissionRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
+        val memberTickets = ticketRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
 
-        return ContestantDashboard(
-            contest = contest,
-            leaderboard = leaderboard,
-            members = contest.members,
-            problems = contest.problems,
-            submissions = submissions,
-            memberSubmissions = memberSubmissions,
-            clarifications = contest.clarifications,
-            announcements = contest.announcements,
-            memberTickets = contest.tickets.filter { it.member.id == contextMemberId },
-        )
+        val dashboard =
+            ContestantDashboard(
+                contest = contest,
+                leaderboard = leaderboard,
+                members = contest.members,
+                problems = contest.problems,
+                submissions = submissions,
+                memberSubmissions = memberSubmissions,
+                clarifications = contest.clarifications,
+                announcements = contest.announcements,
+                memberTickets = memberTickets,
+            )
+
+        return dashboard.toResponseBodyDTO()
     }
 }

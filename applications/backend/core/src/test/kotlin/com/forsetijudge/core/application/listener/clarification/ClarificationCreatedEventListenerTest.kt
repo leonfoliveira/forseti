@@ -9,10 +9,12 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
+import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -20,6 +22,8 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @SpringBootTest(classes = [ClarificationCreatedEventListener::class])
 class ClarificationCreatedEventListenerTest(
+    @MockkBean(relaxed = true)
+    private val clarificationRepository: ClarificationRepository,
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
@@ -32,7 +36,8 @@ class ClarificationCreatedEventListenerTest(
 
         test("should handle event successfully without parent") {
             val clarification = ClarificationMockBuilder.build(parent = null)
-            val event = ClarificationEvent.Created(clarification = clarification)
+            val event = ClarificationEvent.Created(clarification.id)
+            every { clarificationRepository.findById(clarification.id) } returns clarification
 
             sut.onApplicationEvent(event)
 
@@ -66,7 +71,8 @@ class ClarificationCreatedEventListenerTest(
         test("should handle event successfully with parent") {
             val parent = ClarificationMockBuilder.build()
             val clarification = ClarificationMockBuilder.build(parent = parent)
-            val event = ClarificationEvent.Created(clarification = clarification)
+            val event = ClarificationEvent.Created(clarification.id)
+            every { clarificationRepository.findById(clarification.id) } returns clarification
 
             sut.onApplicationEvent(event)
 

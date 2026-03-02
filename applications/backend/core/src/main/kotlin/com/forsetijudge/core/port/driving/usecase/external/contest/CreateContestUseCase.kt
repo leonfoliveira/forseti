@@ -3,6 +3,7 @@ package com.forsetijudge.core.port.driving.usecase.external.contest
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.Future
@@ -21,7 +22,7 @@ interface CreateContestUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): Contest
+    ): ContestResponseBodyDTO
 
     /**
      * Command for creating a new contest.

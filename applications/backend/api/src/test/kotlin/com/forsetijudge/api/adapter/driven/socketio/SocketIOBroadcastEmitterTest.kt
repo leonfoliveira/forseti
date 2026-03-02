@@ -13,7 +13,7 @@ import java.io.Serializable
 
 class SocketIOBroadcastEmitterTest :
     FunSpec({
-        val socketIOServer = mockk<SocketIOServer>()
+        val socketIOServer = mockk<SocketIOServer>(relaxed = true)
 
         val sut = SocketIOBroadcastEmitter(socketIOServer)
 

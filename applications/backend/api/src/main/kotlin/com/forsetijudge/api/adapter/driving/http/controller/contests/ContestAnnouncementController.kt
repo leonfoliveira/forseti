@@ -36,6 +36,6 @@ class ContestAnnouncementController(
                     text = body.text,
                 ),
             )
-        return ResponseEntity.ok(announcement.toResponseBodyDTO())
+        return ResponseEntity.ok(announcement)
     }
 }

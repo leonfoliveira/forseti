@@ -42,7 +42,7 @@ class DeleteClarificationService(
         clarification.deletedAt = ExecutionContext.get().startedAt
 
         clarificationRepository.save(clarification)
-        applicationEventPublisher.publishEvent(ClarificationEvent.Deleted(clarification))
+        applicationEventPublisher.publishEvent(ClarificationEvent.Deleted(contextContestId, clarification.id))
 
         logger.info("Clarification deleted successfully")
     }

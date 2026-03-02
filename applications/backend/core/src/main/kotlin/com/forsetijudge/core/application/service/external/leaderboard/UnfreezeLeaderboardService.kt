@@ -11,6 +11,10 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.UnfreezeLeaderboardUseCase
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -24,7 +28,7 @@ class UnfreezeLeaderboardService(
     private val logger = SafeLogger(this::class)
 
     @Transactional
-    override fun execute(): Contest {
+    override fun execute(): ContestWithMembersAndProblemsResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -49,9 +53,9 @@ class UnfreezeLeaderboardService(
         contest.frozenAt = null
 
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(LeaderboardEvent.Unfrozen(contest, frozenAt))
+        applicationEventPublisher.publishEvent(LeaderboardEvent.Unfrozen(contest.id, frozenAt))
 
         logger.info("Leaderboard unfrozen successfully")
-        return contest
+        return contest.toWithMembersAndProblemsResponseBodyDTO()
     }
 }

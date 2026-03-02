@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.dashboard
 
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
+import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseBodyDTO
 
 interface BuildContestantDashboardUseCase {
     /**
@@ -8,5 +9,5 @@ interface BuildContestantDashboardUseCase {
      *
      * @return An ContestantDashboardResultDTO containing the aggregated data for the contestant dashboard.
      */
-    fun execute(): ContestantDashboard
+    fun execute(): ContestantDashboardResponseBodyDTO
 }

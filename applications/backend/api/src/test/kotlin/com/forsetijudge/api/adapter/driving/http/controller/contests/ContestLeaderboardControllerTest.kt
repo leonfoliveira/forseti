@@ -52,7 +52,7 @@ class ContestLeaderboardControllerTest(
             val leaderboard = LeaderboardMockBuilder.build()
             every {
                 buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command(bypassFreeze = true))
-            } returns leaderboard
+            } returns leaderboard.toResponseBodyDTO()
 
             webMvc
                 .get(basePath, contestId) {
@@ -68,7 +68,7 @@ class ContestLeaderboardControllerTest(
             val contest = ContestMockBuilder.build()
             every {
                 freezeLeaderboardUseCase.execute()
-            } returns contest
+            } returns contest.toWithMembersAndProblemsResponseBodyDTO()
 
             webMvc
                 .put("$basePath:freeze", contestId) {
@@ -88,7 +88,7 @@ class ContestLeaderboardControllerTest(
             val contest = ContestMockBuilder.build()
             every {
                 unfreezeLeaderboardUseCase.execute()
-            } returns contest
+            } returns contest.toWithMembersAndProblemsResponseBodyDTO()
 
             webMvc
                 .put("$basePath:unfreeze", contestId) {

@@ -11,6 +11,8 @@ import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -30,7 +32,7 @@ class CreateAnnouncementService(
     @Transactional
     override fun execute(
         @Valid command: CreateAnnouncementUseCase.Command,
-    ): Announcement {
+    ): AnnouncementResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -54,9 +56,9 @@ class CreateAnnouncementService(
                 text = command.text,
             )
         announcementRepository.save(announcement)
-        applicationEventPublisher.publishEvent(AnnouncementEvent.Created(announcement))
+        applicationEventPublisher.publishEvent(AnnouncementEvent.Created(announcement.id))
 
         logger.info("Announcement created successfully with id = ${announcement.id}")
-        return announcement
+        return announcement.toResponseBodyDTO()
     }
 }

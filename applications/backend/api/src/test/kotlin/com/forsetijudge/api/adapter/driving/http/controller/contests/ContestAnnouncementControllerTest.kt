@@ -45,7 +45,7 @@ class ContestAnnouncementControllerTest(
                 CreateAnnouncementRequestBodyDTO(
                     text = "This is a test announcement",
                 )
-            val announcement = AnnouncementMockBuilder.build()
+            val announcement = AnnouncementMockBuilder.build().toResponseBodyDTO()
             val command =
                 CreateAnnouncementUseCase.Command(
                     text = body.text,
@@ -62,7 +62,7 @@ class ContestAnnouncementControllerTest(
                     content = objectMapper.writeValueAsString(body)
                 }.andExpect {
                     status { isOk() }
-                    content { announcement.toResponseBodyDTO() }
+                    content { announcement }
                 }
 
             verify {

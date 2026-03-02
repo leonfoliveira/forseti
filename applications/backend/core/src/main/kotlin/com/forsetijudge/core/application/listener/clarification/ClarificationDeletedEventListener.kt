@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -21,14 +22,12 @@ class ClarificationDeletedEventListener(
         super.onApplicationEvent(event)
     }
 
+    @Transactional(readOnly = true)
     override fun handleEvent(event: ClarificationEvent.Deleted) {
-        val clarification = event.clarification
-        val contest = clarification.contest
-
-        broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(ContestantDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(GuestDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(JudgeDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
-        broadcastProducer.produce(StaffDashboardBroadcastRoom(contest.id).buildClarificationDeletedEvent(clarification))
+        broadcastProducer.produce(AdminDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
+        broadcastProducer.produce(ContestantDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
+        broadcastProducer.produce(GuestDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
+        broadcastProducer.produce(JudgeDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
+        broadcastProducer.produce(StaffDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
     }
 }

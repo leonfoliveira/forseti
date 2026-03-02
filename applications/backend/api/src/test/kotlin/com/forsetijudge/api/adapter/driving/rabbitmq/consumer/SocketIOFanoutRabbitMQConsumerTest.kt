@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
+import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.BroadcastEventFanoutQueueMessageBody
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -31,15 +31,16 @@ class SocketIOFanoutRabbitMQConsumerTest(
         }
 
         test("should handle payload") {
-            val event =
-                BroadcastEvent(
+            val messageBody =
+                BroadcastEventFanoutQueueMessageBody(
                     room = "/topic/any",
                     name = "ANY",
                     data = mapOf("foo" to "bar") as Serializable,
                 )
             val message = mockk<Message>(relaxed = true)
-            every { message.messageProperties.headers } returns mapOf("id" to IdGenerator.getUUID().toString())
-            every { message.body } returns objectMapper.writeValueAsBytes(event)
+            every { message.messageProperties.headers } returns
+                mapOf("id" to IdGenerator.getUUID().toString())
+            every { message.body } returns objectMapper.writeValueAsBytes(messageBody)
 
             sut.receiveMessage(message)
 

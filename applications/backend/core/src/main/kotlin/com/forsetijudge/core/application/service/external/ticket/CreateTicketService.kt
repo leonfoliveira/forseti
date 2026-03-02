@@ -18,6 +18,8 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
+import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,7 +39,7 @@ class CreateTicketService(
     private val logger = SafeLogger(this::class)
 
     @Transactional
-    override fun execute(command: CreateTicketUseCase.Command): Ticket<*> {
+    override fun execute(command: CreateTicketUseCase.Command): TicketResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -58,10 +60,10 @@ class CreateTicketService(
             }
 
         ticketRepository.save(ticket)
-        applicationEventPublisher.publishEvent(TicketEvent.Created(ticket))
+        applicationEventPublisher.publishEvent(TicketEvent.Created(ticket.id))
 
         logger.info("Ticket created successfully with id: ${ticket.id}")
-        return ticket
+        return ticket.toResponseBodyDTO()
     }
 
     private fun createSubmissionPrintTicket(

@@ -1,6 +1,8 @@
 package com.forsetijudge.core.port.driving.usecase.external.leaderboard
 
 import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 
 interface FreezeLeaderboardUseCase {
     /**
@@ -8,7 +10,7 @@ interface FreezeLeaderboardUseCase {
      *
      * @return the contest with the frozen leaderboard
      */
-    fun execute(): Contest
+    fun execute(): ContestWithMembersAndProblemsResponseBodyDTO
 
     /**
      * Command object for freezing the leaderboard.

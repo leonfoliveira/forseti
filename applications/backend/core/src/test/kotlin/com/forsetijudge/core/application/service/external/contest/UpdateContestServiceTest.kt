@@ -480,7 +480,7 @@ class UpdateContestServiceTest :
                 verify {
                     applicationEventPublisher.publishEvent(
                         match<ContestEvent.Updated> {
-                            it.contest == contest
+                            it.contestId == contest.id
                         },
                     )
                 }

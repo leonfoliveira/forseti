@@ -31,7 +31,7 @@ class QuartzJobSchedulerTest :
         }
 
         test("schedule at") {
-            val jobClass = mockk<Job>()
+            val jobClass = mockk<Job>(relaxed = true)
             val message =
                 QuartzMessage(
                     id = "test-id",
@@ -67,7 +67,7 @@ class QuartzJobSchedulerTest :
         }
 
         test("schedule interval") {
-            val jobClass = mockk<Job>()
+            val jobClass = mockk<Job>(relaxed = true)
             val message =
                 QuartzMessage(
                     id = "test-id",

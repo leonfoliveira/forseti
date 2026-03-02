@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Clarification
+import java.util.UUID
 
 abstract class ClarificationEvent : BusinessEvent() {
     /**
@@ -9,7 +10,7 @@ abstract class ClarificationEvent : BusinessEvent() {
      * @param clarification the created clarification
      */
     class Created(
-        val clarification: Clarification,
+        val clarificationId: UUID,
     ) : ClarificationEvent()
 
     /**
@@ -18,6 +19,7 @@ abstract class ClarificationEvent : BusinessEvent() {
      * @param clarification the deleted clarification
      */
     class Deleted(
-        val clarification: Clarification,
+        val contestId: UUID,
+        val clarificationId: UUID,
     ) : ClarificationEvent()
 }

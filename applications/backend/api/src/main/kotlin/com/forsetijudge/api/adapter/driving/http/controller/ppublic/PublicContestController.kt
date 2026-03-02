@@ -27,6 +27,6 @@ class PublicContestController(
             findContestBySlugUseCase.execute(
                 FindContestBySlugUseCase.Command(slug = slug),
             )
-        return ResponseEntity.ok(contest.toResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 }

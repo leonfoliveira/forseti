@@ -9,6 +9,8 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.FindAllContestUseCase
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,7 +22,7 @@ class FindAllContestService(
     private val logger = SafeLogger(this::class)
 
     @Transactional(readOnly = true)
-    override fun execute(): List<Contest> {
+    override fun execute(): List<ContestResponseBodyDTO> {
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info("Finding all contests")
@@ -36,6 +38,6 @@ class FindAllContestService(
         val contests = contestRepository.findAllOrdersByCreatedAt()
 
         logger.info("Found ${contests.size} contests")
-        return contests
+        return contests.map { it.toResponseBodyDTO() }
     }
 }

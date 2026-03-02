@@ -68,7 +68,7 @@ class ContestSubmissionControllerTest(
                 )
             every {
                 createSubmissionUseCase.execute(command)
-            } returns submission
+            } returns submission.toWithCodeResponseBodyDTO()
 
             webMvc
                 .post(basePath, contestId) {
@@ -89,7 +89,7 @@ class ContestSubmissionControllerTest(
                 ResetSubmissionUseCase.Command(
                     submissionId = id,
                 )
-            every { resetSubmissionUseCase.execute(command) } returns submission
+            every { resetSubmissionUseCase.execute(command) } returns submission.toWithCodeAndExecutionResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{id}:rerun", contestId, id)
@@ -111,7 +111,7 @@ class ContestSubmissionControllerTest(
                     submissionId = id,
                     answer = answer,
                 )
-            every { updateAnswerSubmissionUseCase.execute(command) } returns submission
+            every { updateAnswerSubmissionUseCase.execute(command) } returns submission.toWithCodeAndExecutionResponseBodyDTO()
 
             webMvc
                 .put("$basePath/{id}:update-answer", contestId, id) {

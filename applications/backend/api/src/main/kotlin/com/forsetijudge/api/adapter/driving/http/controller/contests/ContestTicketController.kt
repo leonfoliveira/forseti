@@ -48,7 +48,7 @@ class ContestTicketController(
                     properties = body.properties,
                 ),
             )
-        return ResponseEntity.ok(ticket.toResponseBodyDTO())
+        return ResponseEntity.ok(ticket)
     }
 
     @PutMapping("/contests/{contestId}/tickets/{ticketId}:update-status")
@@ -66,6 +66,6 @@ class ContestTicketController(
                     status = body.status,
                 ),
             )
-        return ResponseEntity.ok(ticket.toResponseBodyDTO())
+        return ResponseEntity.ok(ticket)
     }
 }

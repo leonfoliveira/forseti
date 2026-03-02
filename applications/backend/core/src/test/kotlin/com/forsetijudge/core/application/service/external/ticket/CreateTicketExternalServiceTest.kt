@@ -186,16 +186,14 @@ class CreateTicketExternalServiceTest :
 
                 val result = sut.execute(command)
 
-                result.contest shouldBe contest
-                result.member shouldBe member
                 result.type shouldBe Ticket.Type.SUBMISSION_PRINT
                 result.properties shouldBe
                     mapOf(
                         "submissionId" to submissionId.toString(),
                         "attachmentId" to attachmentId.toString(),
                     )
-                verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
+                verify { ticketRepository.save(any()) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
             }
         }
 
@@ -270,16 +268,14 @@ class CreateTicketExternalServiceTest :
 
                 val result = sut.execute(command)
 
-                result.contest shouldBe contest
-                result.member shouldBe member
                 result.type shouldBe Ticket.Type.TECHNICAL_SUPPORT
                 result.properties shouldBe
                     Ticket.Companion.getRawProperties(
                         objectMapper,
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
-                verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
+                verify { ticketRepository.save(any()) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
             }
         }
 
@@ -354,16 +350,14 @@ class CreateTicketExternalServiceTest :
 
                 val result = sut.execute(command)
 
-                result.contest shouldBe contest
-                result.member shouldBe member
                 result.type shouldBe Ticket.Type.NON_TECHNICAL_SUPPORT
                 result.properties shouldBe
                     Ticket.Companion.getRawProperties(
                         objectMapper,
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
-                verify { ticketRepository.save(result) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticket == result }) }
+                verify { ticketRepository.save(any()) }
+                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
             }
         }
     })

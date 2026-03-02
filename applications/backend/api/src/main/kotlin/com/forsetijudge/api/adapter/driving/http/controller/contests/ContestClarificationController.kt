@@ -41,7 +41,7 @@ class ContestClarificationController(
                     text = body.text,
                 ),
             )
-        return ResponseEntity.ok(clarification.toResponseBodyDTO())
+        return ResponseEntity.ok(clarification)
     }
 
     @DeleteMapping("/contests/{contestId}/clarifications/{clarificationId}")

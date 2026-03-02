@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.dashboard
 
 import com.forsetijudge.core.domain.model.dashboard.StaffDashboard
+import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseBodyDTO
 
 interface BuildStaffDashboardUseCase {
     /**
@@ -8,5 +9,5 @@ interface BuildStaffDashboardUseCase {
      *
      * @return An StaffDashboardResultDTO containing the aggregated data for the staff dashboard.
      */
-    fun execute(): StaffDashboard
+    fun execute(): StaffDashboardResponseBodyDTO
 }

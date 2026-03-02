@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Ticket
+import java.util.UUID
 
 abstract class TicketEvent : BusinessEvent() {
     /**
@@ -9,7 +10,7 @@ abstract class TicketEvent : BusinessEvent() {
      * @property ticket the created ticket
      */
     class Created(
-        val ticket: Ticket<*>,
+        val ticketId: UUID,
     ) : TicketEvent()
 
     /**
@@ -18,6 +19,6 @@ abstract class TicketEvent : BusinessEvent() {
      * @property ticket the updated ticket
      */
     class Updated(
-        val ticket: Ticket<*>,
+        val ticketId: UUID,
     ) : TicketEvent()
 }

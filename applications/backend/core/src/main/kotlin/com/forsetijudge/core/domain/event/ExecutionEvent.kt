@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.event
 
 import com.forsetijudge.core.domain.entity.Execution
+import java.util.UUID
 
 abstract class ExecutionEvent : BusinessEvent() {
     /**
@@ -9,6 +10,6 @@ abstract class ExecutionEvent : BusinessEvent() {
      * @param execution the created execution
      */
     class Created(
-        val execution: Execution,
+        val executionId: UUID,
     ) : ExecutionEvent()
 }

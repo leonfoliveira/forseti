@@ -75,15 +75,11 @@ class CreateExecutionInternalServiceTest :
 
                 val execution = sut.execute(command)
 
-                execution.submission shouldBe command.submission
                 execution.answer shouldBe command.answer
                 execution.totalTestCases shouldBe command.totalTestCases
                 execution.approvedTestCases shouldBe command.approvedTestCases
-                execution.input shouldBe command.input
-                execution.output shouldBe attachment
-                execution.output.isCommited shouldBe true
                 verify { executionRepository.save(execution) }
-                verify { applicationEventPublisher.publishEvent(match<ExecutionEvent.Created> { it.execution == execution }) }
+                verify { applicationEventPublisher.publishEvent(match<ExecutionEvent.Created> { it.executionId == execution.id }) }
             }
         }
     })

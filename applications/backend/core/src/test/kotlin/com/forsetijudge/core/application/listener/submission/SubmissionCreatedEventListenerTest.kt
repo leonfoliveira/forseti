@@ -11,10 +11,12 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -24,6 +26,8 @@ import org.springframework.test.context.ActiveProfiles
 class SubmissionCreatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
+    @MockkBean(relaxed = true)
+    private val submissionRepository: SubmissionRepository,
     @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     @MockkBean(relaxed = true)
@@ -36,7 +40,9 @@ class SubmissionCreatedEventListenerTest(
 
         test("should handle event successfully") {
             val submission = SubmissionMockBuilder.build()
-            val event = SubmissionEvent.Created(submission)
+            val event = SubmissionEvent.Created(submission.id)
+            every { submissionRepository.findById(submission.id) } returns submission
+
             sut.onApplicationEvent(event)
 
             verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
@@ -59,7 +65,8 @@ class SubmissionCreatedEventListenerTest(
             contest.settings.isAutoJudgeEnabled = false
             val problem = ProblemMockBuilder.build(contest = contest)
             val submission = SubmissionMockBuilder.build(problem = problem)
-            val event = SubmissionEvent.Created(submission)
+            val event = SubmissionEvent.Created(submission.id)
+            every { submissionRepository.findById(submission.id) } returns submission
 
             sut.onApplicationEvent(event)
 

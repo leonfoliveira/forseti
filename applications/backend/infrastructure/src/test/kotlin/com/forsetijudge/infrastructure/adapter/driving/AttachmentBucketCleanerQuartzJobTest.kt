@@ -44,7 +44,7 @@ class AttachmentBucketCleanerQuartzJobTest(
             dataMap.put("traceId", message.traceId)
             dataMap.put("payload", objectMapper.writeValueAsString(message.payload))
             dataMap.put("retries", 0)
-            val context = mockk<JobExecutionContext>()
+            val context = mockk<JobExecutionContext>(relaxed = true)
             every { context.mergedJobDataMap } returns dataMap
 
             sut.executeInternal(context)

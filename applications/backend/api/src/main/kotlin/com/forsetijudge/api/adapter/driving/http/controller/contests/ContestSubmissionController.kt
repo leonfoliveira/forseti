@@ -47,7 +47,7 @@ class ContestSubmissionController(
                     code = AttachmentCommandDTO(id = body.code.id),
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:rerun")
@@ -63,7 +63,7 @@ class ContestSubmissionController(
                     submissionId = submissionId,
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
@@ -81,6 +81,6 @@ class ContestSubmissionController(
                     answer = body.answer,
                 ),
             )
-        return ResponseEntity.ok(submission.toWithCodeAndExecutionResponseBodyDTO())
+        return ResponseEntity.ok(submission)
     }
 }

@@ -11,6 +11,8 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
@@ -29,7 +31,7 @@ class CreateContestService(
     @Transactional
     override fun execute(
         @Valid command: CreateContestUseCase.Command,
-    ): Contest {
+    ): ContestResponseBodyDTO {
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info("Creating contest with slug: ${command.slug}")
@@ -55,9 +57,9 @@ class CreateContestService(
                 endAt = command.endAt,
             )
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Created(contest))
+        applicationEventPublisher.publishEvent(ContestEvent.Created(contest.id))
 
         logger.info("Contest created with id: ${contest.id}")
-        return contest
+        return contest.toResponseBodyDTO()
     }
 }

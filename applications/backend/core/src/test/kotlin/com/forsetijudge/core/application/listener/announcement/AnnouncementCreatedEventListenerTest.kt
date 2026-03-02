@@ -8,10 +8,12 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDash
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
+import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.verify
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
@@ -22,6 +24,8 @@ class AnnouncementCreatedEventListenerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
+    private val announcementRepository: AnnouncementRepository,
+    @MockkBean(relaxed = true)
     private val broadcastProducer: BroadcastProducer,
     private val sut: AnnouncementCreatedEventListener,
 ) : FunSpec({
@@ -31,7 +35,8 @@ class AnnouncementCreatedEventListenerTest(
 
         test("should handle event successfully") {
             val announcement = AnnouncementMockBuilder.build()
-            val event = AnnouncementEvent.Created(announcement)
+            val event = AnnouncementEvent.Created(announcement.id)
+            every { announcementRepository.findById(announcement.id) } returns announcement
 
             sut.onApplicationEvent(event)
 

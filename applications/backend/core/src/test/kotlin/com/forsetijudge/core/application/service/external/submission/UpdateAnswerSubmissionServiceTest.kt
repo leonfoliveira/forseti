@@ -12,6 +12,8 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
+import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -91,10 +93,10 @@ class UpdateAnswerSubmissionServiceTest :
 
             val result = sut.execute(command)
 
-            result shouldBe submission
+            result shouldBe submission.toWithCodeAndExecutionResponseBodyDTO()
             result.status shouldBe Submission.Status.JUDGED
             result.answer shouldBe command.answer
             verify { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submission == submission }) }
+            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
         }
     })

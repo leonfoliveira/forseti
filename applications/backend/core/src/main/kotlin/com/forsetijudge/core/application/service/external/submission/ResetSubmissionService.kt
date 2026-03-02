@@ -10,6 +10,8 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,7 +25,7 @@ class ResetSubmissionService(
     private val logger = SafeLogger(this::class)
 
     @Transactional
-    override fun execute(command: ResetSubmissionUseCase.Command): Submission {
+    override fun execute(command: ResetSubmissionUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -44,10 +46,10 @@ class ResetSubmissionService(
         submission.answer = null
 
         submissionRepository.save(submission)
-        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(submission))
-        applicationEventPublisher.publishEvent(SubmissionEvent.Reset(submission))
+        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(submission.id))
+        applicationEventPublisher.publishEvent(SubmissionEvent.Reset(submission.id))
 
         logger.info("Submission reset successfully")
-        return submission
+        return submission.toWithCodeAndExecutionResponseBodyDTO()
     }
 }

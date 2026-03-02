@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.ticket
 
 import com.forsetijudge.core.domain.entity.Ticket
+import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import java.util.UUID
 
 interface UpdateTicketStatusUseCase {
@@ -10,7 +11,7 @@ interface UpdateTicketStatusUseCase {
      * @param command The command containing the ticket ID and the new status.
      * @return The result of the update operation, including the updated ticket details.
      */
-    fun execute(command: Command): Ticket<*>
+    fun execute(command: Command): TicketResponseBodyDTO
 
     /**
      * Command for updating the status of a ticket.

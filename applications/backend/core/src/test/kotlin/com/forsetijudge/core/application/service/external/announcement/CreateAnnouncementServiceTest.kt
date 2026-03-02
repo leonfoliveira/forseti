@@ -89,10 +89,7 @@ class CreateAnnouncementServiceTest :
 
             val announcement = sut.execute(command)
 
-            announcement.contest shouldBe contest
-            announcement.member shouldBe member
-            announcement.text shouldBe command.text
-            verify { announcementRepository.save(announcement) }
-            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.announcement == announcement }) }
+            verify { announcementRepository.save(match { it.id == announcement.id }) }
+            verify { applicationEventPublisher.publishEvent(match<AnnouncementEvent.Created> { it.announcementId == announcement.id }) }
         }
     })

@@ -1,4 +1,4 @@
-package com.forsetijudge.core.application.service.external.leaderboard
+package com.forsetijudge.core.application.service.internal.leaderboard
 
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
@@ -8,8 +8,6 @@ import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.entity.freeze
-import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.Leaderboard
@@ -18,9 +16,8 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import io.kotest.assertions.throwables.shouldThrow
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -29,7 +26,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
 
-class BuildLeaderboardExternalServiceTest :
+class BuildLeaderboardInternalServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
@@ -39,8 +36,7 @@ class BuildLeaderboardExternalServiceTest :
         val leaderboardCacheStore = mockk<LeaderboardCacheStore>(relaxed = true)
 
         val sut =
-            BuildLeaderboardService(
-                contestRepository = contestRepository,
+            BuildLeaderboardInternalService(
                 memberRepository = memberRepository,
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
@@ -54,32 +50,6 @@ class BuildLeaderboardExternalServiceTest :
         beforeEach {
             clearAllMocks()
             ExecutionContextMockBuilder.build(contextContestId, contextMemberId)
-        }
-
-        test("should throw NotFoundException when contest does not exist") {
-            every { contestRepository.findById(contextContestId) } returns null
-
-            shouldThrow<NotFoundException> { sut.execute(BuildLeaderboardUseCase.Command()) }
-        }
-
-        test("should throw NotFoundException when member does not exist") {
-            val contest = ContestMockBuilder.build()
-            every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns null
-
-            shouldThrow<NotFoundException> { sut.execute(BuildLeaderboardUseCase.Command()) }
-        }
-
-        test("should throw ForbiddenException when member cannot access not started contest") {
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = OffsetDateTime.now().plusHours(1),
-                )
-            val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-            every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-
-            shouldThrow<ForbiddenException> { sut.execute(BuildLeaderboardUseCase.Command()) }
         }
 
         test("should build leaderboard cells successfully") {
@@ -227,7 +197,7 @@ class BuildLeaderboardExternalServiceTest :
                     ),
                 )
 
-            val result = sut.execute(BuildLeaderboardUseCase.Command())
+            val result = sut.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
 
             result shouldBe
                 Leaderboard(
@@ -444,7 +414,7 @@ class BuildLeaderboardExternalServiceTest :
                     penalty = 0,
                 )
 
-            sut.execute(BuildLeaderboardUseCase.Command())
+            sut.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
 
             verify {
                 buildLeaderboardCellInternalUseCase.execute(

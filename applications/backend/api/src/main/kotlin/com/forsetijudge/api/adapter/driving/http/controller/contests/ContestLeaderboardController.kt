@@ -36,7 +36,7 @@ class ContestLeaderboardController(
             buildLeaderboardUseCase.execute(
                 BuildLeaderboardUseCase.Command(bypassFreeze = true),
             )
-        return ResponseEntity.ok(leaderboard.toResponseBodyDTO())
+        return ResponseEntity.ok(leaderboard)
     }
 
     @PutMapping("/contests/{contestId}/leaderboard:freeze")
@@ -46,7 +46,7 @@ class ContestLeaderboardController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/leaderboard:freeze")
         val contest = freezeLeaderboardUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 
     @PutMapping("/contests/{contestId}/leaderboard:unfreeze")
@@ -56,6 +56,6 @@ class ContestLeaderboardController(
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/leaderboard:unfreeze")
         val contest = unfreezeLeaderboardUseCase.execute()
-        return ResponseEntity.ok(contest.toWithMembersAndProblemsResponseBodyDTO())
+        return ResponseEntity.ok(contest)
     }
 }

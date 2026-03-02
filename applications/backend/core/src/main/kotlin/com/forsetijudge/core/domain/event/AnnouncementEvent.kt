@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
+import java.util.UUID
 
 abstract class AnnouncementEvent : BusinessEvent() {
     /**
@@ -9,6 +10,6 @@ abstract class AnnouncementEvent : BusinessEvent() {
      * @param announcement the created announcement
      */
     class Created(
-        val announcement: Announcement,
+        val announcementId: UUID,
     ) : AnnouncementEvent()
 }

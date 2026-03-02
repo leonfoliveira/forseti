@@ -14,9 +14,12 @@ interface FrozenSubmissionRepository : Repository<FrozenSubmission, UUID> {
 
     fun saveAll(entities: Iterable<FrozenSubmission>): List<FrozenSubmission>
 
+    @Query("SELECT f FROM FrozenSubmission f WHERE f.problem.contest.id = :contestId AND f.deletedAt IS NULL")
+    fun findAllByContestId(contestId: UUID): List<FrozenSubmission>
+
     @Query(
         """SELECT f FROM FrozenSubmission f WHERE f.problem.contest.id = :contestId AND f.status = :status 
-           AND CONCAT(f.member.id, ':', f.problem.id) NOT IN :excludedPairs""",
+           AND CONCAT(f.member.id, ':', f.problem.id) NOT IN :excludedPairs AND f.deletedAt IS NULL""",
     )
     fun findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
         contestId: UUID,

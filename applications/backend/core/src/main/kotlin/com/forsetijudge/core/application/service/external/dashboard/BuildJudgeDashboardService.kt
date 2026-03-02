@@ -8,19 +8,26 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driven.repository.SubmissionRepository
+import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildJudgeDashboardUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
+import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
 
 @Service
 class BuildJudgeDashboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
-    private val buildLeaderboardUseCase: BuildLeaderboardUseCase,
+    private val submissionRepository: SubmissionRepository,
+    private val ticketRepository: TicketRepository,
+    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
 ) : BuildJudgeDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(): JudgeDashboard {
+    override fun execute(): JudgeDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -37,18 +44,22 @@ class BuildJudgeDashboardService(
             .requireMemberType(Member.Type.JUDGE)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardUseCase.execute(BuildLeaderboardUseCase.Command())
-        val submissions = contest.problems.map { it.submissions }.flatten()
+        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
+        val submissions = submissionRepository.findAllByContestId(contest.id)
+        val memberTickets = ticketRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
 
-        return JudgeDashboard(
-            contest = contest,
-            leaderboard = leaderboard,
-            members = contest.members,
-            problems = contest.problems,
-            submissions = submissions,
-            clarifications = contest.clarifications,
-            announcements = contest.announcements,
-            memberTickets = contest.tickets.filter { it.member.id == contextMemberId },
-        )
+        val dashboard =
+            JudgeDashboard(
+                contest = contest,
+                leaderboard = leaderboard,
+                members = contest.members,
+                problems = contest.problems,
+                submissions = submissions,
+                clarifications = contest.clarifications,
+                announcements = contest.announcements,
+                memberTickets = memberTickets,
+            )
+
+        return dashboard.toResponseBodyDTO()
     }
 }
