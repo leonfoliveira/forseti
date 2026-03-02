@@ -11,8 +11,6 @@ import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnsw
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping

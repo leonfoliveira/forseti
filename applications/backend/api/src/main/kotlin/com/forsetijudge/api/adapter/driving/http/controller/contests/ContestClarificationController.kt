@@ -7,7 +7,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
-import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable

@@ -3,7 +3,6 @@ package com.forsetijudge.core.application.service.external.ticket
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext

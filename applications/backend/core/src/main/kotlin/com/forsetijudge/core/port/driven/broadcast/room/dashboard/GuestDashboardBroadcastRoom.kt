@@ -7,7 +7,6 @@ import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationIdResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.clarification.toIdResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO

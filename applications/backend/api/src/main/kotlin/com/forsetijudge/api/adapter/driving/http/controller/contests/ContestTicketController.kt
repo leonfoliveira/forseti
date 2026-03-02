@@ -8,7 +8,6 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping

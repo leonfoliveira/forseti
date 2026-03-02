@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.external.leaderboard
 
-import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
 import java.util.UUID
 

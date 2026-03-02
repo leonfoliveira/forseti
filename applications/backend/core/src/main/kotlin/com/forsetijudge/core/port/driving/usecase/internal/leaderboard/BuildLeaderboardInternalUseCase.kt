@@ -2,7 +2,6 @@ package com.forsetijudge.core.port.driving.usecase.internal.leaderboard
 
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.model.Leaderboard
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
 
 interface BuildLeaderboardInternalUseCase {
     /**

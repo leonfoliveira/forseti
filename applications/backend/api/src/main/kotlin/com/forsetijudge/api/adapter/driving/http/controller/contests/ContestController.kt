@@ -9,7 +9,6 @@ import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartCon
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PutMapping

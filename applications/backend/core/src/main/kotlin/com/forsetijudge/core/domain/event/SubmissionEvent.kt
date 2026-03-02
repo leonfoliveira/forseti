@@ -1,6 +1,5 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.domain.entity.Submission
 import java.util.UUID
 
 abstract class SubmissionEvent : BusinessEvent() {

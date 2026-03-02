@@ -13,7 +13,6 @@ import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResp
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

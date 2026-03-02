@@ -1,7 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.contest
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO

@@ -1,6 +1,5 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.domain.entity.Contest
 import java.time.OffsetDateTime
 import java.util.UUID
 

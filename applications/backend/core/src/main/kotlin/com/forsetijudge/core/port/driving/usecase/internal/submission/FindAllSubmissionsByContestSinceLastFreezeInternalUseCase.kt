@@ -2,7 +2,6 @@ package com.forsetijudge.core.port.driving.usecase.internal.submission
 
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseBodyDTO
 import java.time.OffsetDateTime
 
 interface FindAllSubmissionsByContestSinceLastFreezeInternalUseCase {

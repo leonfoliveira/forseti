@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.external.submission
 
-import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import java.util.UUID
 

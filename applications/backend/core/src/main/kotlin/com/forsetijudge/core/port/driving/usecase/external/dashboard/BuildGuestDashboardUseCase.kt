@@ -1,6 +1,5 @@
 package com.forsetijudge.core.port.driving.usecase.external.dashboard
 
-import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
 
 interface BuildGuestDashboardUseCase {

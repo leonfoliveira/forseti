@@ -1,6 +1,5 @@
 package com.forsetijudge.core.domain.event
 
-import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import java.util.UUID
 
 abstract class AnnouncementEvent : BusinessEvent() {
