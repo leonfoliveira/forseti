@@ -1,4 +1,10 @@
-import { ArrowDown01Icon, AwardIcon, LoaderIcon, XIcon } from "lucide-react";
+import {
+  ArrowDown01Icon,
+  AwardIcon,
+  LoaderIcon,
+  StarIcon,
+  XIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState, useMemo } from "react"; // Added useState, useMemo
 
@@ -150,7 +156,7 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         }}
       />
 
-      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:1fr_1fr_1fr] gap-4 border-b px-6 py-2">
+      <div className="bg-card fixed top-0 z-10 grid w-screen [grid-template-columns:1fr_1fr_1fr] items-center gap-4 border-b px-6 py-2">
         <div className="flex gap-2">
           <div className="mr-2 flex items-center justify-center">
             <Image
@@ -164,7 +170,9 @@ export function LeaderboardPageRevealer({ problems, onClose }: Props) {
         <div className="flex flex-col items-center justify-center truncate text-2xl font-bold">
           <p>{contest.title}</p>
           <p className="text-muted-foreground text-sm font-normal">
+            <StarIcon className="fill-muted-foreground mr-2 inline" size={12} />
             <FormattedMessage {...messages.finalStanding} />
+            <StarIcon className="fill-muted-foreground ml-2 inline" size={12} />
           </p>
         </div>
         <div className="text-end">
