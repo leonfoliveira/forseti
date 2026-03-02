@@ -38,6 +38,7 @@ class AutoJudgeSubmissionService(
             memberRepository.findById(contextMemberId)
                 ?: throw NotFoundException("Could not find member with id = $contextMemberId")
 
+        ExecutionContext.get().contestId = preJudgeSubmission.contest.id
         ContestAuthorizer(preJudgeSubmission.contest, member)
             .requireMemberType(Member.Type.AUTOJUDGE)
             .throwIfErrors()

@@ -163,14 +163,14 @@ class BuildLeaderboardService(
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
-                        excludedMemberProblemPairs = cachedCells.keys,
+                        excludedPairs = cachedCells.keys.map { "${it.first}:${it.second}" },
                     ).map { it.unfreeze() }
             } else {
                 submissionRepository
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
                         status = Submission.Status.JUDGED,
-                        excludedMemberProblemPairs = cachedCells.keys,
+                        excludedPairs = cachedCells.keys.map { "${it.first}:${it.second}" },
                     )
             }.groupBy { it.member.id to it.problem.id }
 

@@ -15,6 +15,7 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -66,7 +67,7 @@ class Member(
     /**
      * The frozen submissions for this member, which are used for the frozen leaderboard and are not visible to the member until the contest is unfrozen.
      */
-    @Audited(withModifiedFlag = false)
+    @NotAudited
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var frozenSubmissions: List<FrozenSubmission> = mutableListOf(),

@@ -50,13 +50,21 @@ export function WaitPage() {
     const startAt = new Date(contestStartAt);
     const timeout = startAt.getTime() - now.getTime();
 
-    if (timeout > 0) {
-      const timer = setTimeout(() => {
-        window.location.reload();
-      }, timeout);
+    // Maximum setTimeout value (24.86 days)
+    const MAX_TIMEOUT = 2147483647;
 
-      return () => clearTimeout(timer);
+    if (timeout > 0) {
+      // Only set timeout if within safe limits
+      if (timeout <= MAX_TIMEOUT) {
+        const timer = setTimeout(() => {
+          console.debug("Contest started. Reloading page...");
+          window.location.reload();
+        }, timeout);
+
+        return () => clearTimeout(timer);
+      }
     } else {
+      console.debug("Contest already started. Reloading page...");
       window.location.reload();
     }
   }, [contestStartAt]);

@@ -21,19 +21,28 @@ export function useContestStatusWatcher() {
     const start = new Date(contest.startAt).getTime();
     const end = new Date(contest.endAt).getTime();
 
+    // Maximum setTimeout value (24.86 days)
+    const MAX_TIMEOUT = 2147483647;
+
     let startTimeout: NodeJS.Timeout | null = null;
     let endTimeout: NodeJS.Timeout | null = null;
 
     if (start > now) {
-      startTimeout = setTimeout(() => {
-        setStatus(ContestUtil.getStatus(contest));
-      }, start - now);
+      const startTimeoutValue = start - now;
+      if (startTimeoutValue <= MAX_TIMEOUT) {
+        startTimeout = setTimeout(() => {
+          setStatus(ContestUtil.getStatus(contest));
+        }, startTimeoutValue);
+      }
     }
 
     if (end > now) {
-      endTimeout = setTimeout(() => {
-        setStatus(ContestUtil.getStatus(contest));
-      }, end - now);
+      const endTimeoutValue = end - now;
+      if (endTimeoutValue <= MAX_TIMEOUT) {
+        endTimeout = setTimeout(() => {
+          setStatus(ContestUtil.getStatus(contest));
+        }, endTimeoutValue);
+      }
     }
 
     return () => {

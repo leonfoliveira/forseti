@@ -12,13 +12,11 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
 
 @Entity
 @Table(name = "frozen_submission")
-@Audited
 @SQLRestriction("deleted_at IS NULL")
 class FrozenSubmission(
     @Id

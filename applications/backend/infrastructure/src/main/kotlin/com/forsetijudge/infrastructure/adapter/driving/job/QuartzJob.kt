@@ -42,8 +42,6 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
      * @param context The JobExecutionContext provided by the Quartz scheduler, containing information about the job execution environment.
      */
     public override fun executeInternal(context: JobExecutionContext) {
-        ExecutionContext.start()
-
         val dataMap = context.mergedJobDataMap
         val id = dataMap.getString("id")
         val contestId =
@@ -54,6 +52,8 @@ abstract class QuartzJob<TPayload : Serializable> : QuartzJobBean() {
             }
         val payloadJson = dataMap.getString("payload")
         var retries = dataMap.getInt("retries")
+
+        ExecutionContext.start(contestId = contestId)
 
         val payload = objectMapper.readValue(payloadJson, getPayloadType())
 

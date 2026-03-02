@@ -34,6 +34,7 @@ class QuartzJobScheduler(
                 .newJob(jobClass.java)
                 .withIdentity(message.id)
                 .usingJobData("id", message.id)
+                .usingJobData("contestId", message.contestId.toString())
                 .usingJobData("traceId", message.traceId)
                 .usingJobData("payload", objectMapper.writeValueAsString(message.payload))
                 .usingJobData("retries", message.retries)

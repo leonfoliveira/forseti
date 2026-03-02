@@ -27,10 +27,11 @@ abstract class RabbitMQConsumer<TBody : Serializable> {
     protected val logger = SafeLogger(this::class)
 
     open fun receiveMessage(message: Message) {
-        ExecutionContext.start()
-
         val id = UUID.fromString(message.messageProperties.headers["id"] as String)
+        val contestId = (message.messageProperties.headers["contest-id"] as? String).let { UUID.fromString(it) }
         val body = objectMapper.readValue(message.body, getBodyType())
+
+        ExecutionContext.start(contestId = contestId)
 
         logger.info("Received message with id: $id and body: $body")
 

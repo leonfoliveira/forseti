@@ -14,6 +14,7 @@ import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import org.hibernate.envers.NotAudited
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -83,7 +84,7 @@ class Problem(
     /**
      * Frozen submissions for this problem, which are snapshots of submissions at the time the leaderboard is frozen.
      */
-    @Audited(withModifiedFlag = false)
+    @NotAudited
     @OneToMany(mappedBy = "problem", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var frozenSubmissions: List<FrozenSubmission> = mutableListOf(),

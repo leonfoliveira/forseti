@@ -2,6 +2,7 @@ package com.forsetijudge.infrastructure.adapter.driven.rabbitmq
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Component
@@ -27,6 +28,9 @@ class RabbitMQProducer(
 
         rabbitTemplate.convertAndSend(message.exchange, message.routingKey, jsonPayload) {
             it.messageProperties.headers["id"] = message.id
+            message.contestId?.let { contestId ->
+                it.messageProperties.headers["contest-id"] = contestId
+            }
             it.messageProperties.headers["x-trace-id"] = message.traceId
             it.messageProperties.priority = message.priority
             it
