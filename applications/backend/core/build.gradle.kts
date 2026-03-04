@@ -19,7 +19,6 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.opencsv)
     implementation(libs.postgresql)
-    implementation(libs.tika.core)
 
     testFixturesImplementation(rootProject.libs.bundles.testcontainers)
 }
