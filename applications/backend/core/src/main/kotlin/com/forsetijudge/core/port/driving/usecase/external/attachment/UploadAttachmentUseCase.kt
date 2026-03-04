@@ -1,9 +1,7 @@
 package com.forsetijudge.core.port.driving.usecase.external.attachment
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
-import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.Max
 import jakarta.validation.constraints.Pattern
 
@@ -20,7 +18,6 @@ interface UploadAttachmentUseCase {
      * Command class for uploading an attachment.
      *
      * @param filename The original filename of the attachment (nullable).
-     * @param contentType The MIME type of the attachment (nullable).
      * @param context The context of the attachment, indicating its purpose or usage.
      * @param bytes The byte array representing the content of the attachment.
      */
