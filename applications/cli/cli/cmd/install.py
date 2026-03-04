@@ -19,10 +19,12 @@ from cli.util.theme import Messages
 
 
 def install_cmd(
-    sandboxes: Annotated[list[str], typer.Option(help="List of sandboxes to build")] = [
-        "cpp17",
-        "java21",
-        "python312",
+    sandboxes: Annotated[
+        list[str],
+        typer.Option(
+            help="List of sandboxes to build",
+            default_factory=lambda: ["cpp17", "java21", "python312"],
+        ),
     ],
     stack_template_file: Annotated[
         Path, typer.Option(help="Path to the stack template file.", exists=True)
