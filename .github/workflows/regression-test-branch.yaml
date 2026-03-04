@@ -35,7 +35,7 @@ jobs:
       - name: Install CLI dependencies
         run: |
           cd applications/cli
-          pip install -r requirements.dev.txt
+          make setup
 
       - name: Build CLI
         run: |

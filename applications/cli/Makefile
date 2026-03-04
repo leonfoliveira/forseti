@@ -21,7 +21,7 @@ setup: $(VENV)/bin/activate
 	$(PIP) install -r requirements.dev.txt
 	chmod +x $(VENV)/bin/activate
 
-build: setup
+build:
 	@$(PYTHON) scripts/generate_config.py \
 		--output cli/_config.py \
 		$(if $(VERSION),--version $(VERSION),--version latest)
