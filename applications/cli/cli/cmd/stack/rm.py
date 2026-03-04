@@ -20,7 +20,9 @@ def rm_cmd(
     yes: Annotated[
         bool,
         typer.Option(
-            "-y", "--yes", help="Skip confirmation prompt before removing.",
+            "-y",
+            "--yes",
+            help="Skip confirmation prompt before removing.",
         ),
     ] = False,
 ):

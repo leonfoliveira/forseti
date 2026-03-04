@@ -18,8 +18,9 @@ def backup_cmd():
     )
 
     with Progress(console=console) as progress:
-        task = progress.add_task(Messages.progress(
-            "Creating backups..."), total=len(volumes))
+        task = progress.add_task(
+            Messages.progress("Creating backups..."), total=len(volumes)
+        )
         for i in range(len(volumes)):
             volume = volumes[i]
             tar_cmd = f"tar -czvf /backups/{volume}.tar.gz -C /data ."
@@ -36,5 +37,6 @@ def backup_cmd():
             progress.advance(task)
 
     console.print()
-    console.print(Messages.success(
-        f"Backups created successfully in {__backups_dir__}!"))
+    console.print(
+        Messages.success(f"Backups created successfully in {__backups_dir__}!")
+    )

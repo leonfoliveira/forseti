@@ -55,8 +55,9 @@ def deploy_cmd(
     )
 
     if stack.is_deployed and not force:
-        console.print(Messages.warning(
-            f"Stack '{__stack_name__}' is already deployed."))
+        console.print(
+            Messages.warning(f"Stack '{__stack_name__}' is already deployed.")
+        )
         raise typer.Exit(code=0)
 
     if not yes:
@@ -74,9 +75,8 @@ def deploy_cmd(
     deploy_thread = Thread(target=deploy)
     deploy_thread.start()
 
-    status_text = (
-        Messages.info(
-            "Waiting for all services to converge... Press Ctrl+C to stop")
+    status_text = Messages.info(
+        "Waiting for all services to converge... Press Ctrl+C to stop"
     )
     spinner = Spinner("dots", text=status_text)
 
@@ -84,8 +84,9 @@ def deploy_cmd(
         with Live(console=console, refresh_per_second=10) as live:
             while True:
                 if deployment_error is not None:
-                    console.print(Messages.error(
-                        f"Deployment failed: {deployment_error}"))
+                    console.print(
+                        Messages.error(f"Deployment failed: {deployment_error}")
+                    )
                     raise typer.Exit(code=1)
 
                 table = build_table(stack)
@@ -100,8 +101,7 @@ def deploy_cmd(
 
                 sleep(1)
     except KeyboardInterrupt:
-        console.print(Messages.warning(
-            "Deployment will continue in the background..."))
+        console.print(Messages.warning("Deployment will continue in the background..."))
         raise typer.Abort()
 
     deploy_thread.join()

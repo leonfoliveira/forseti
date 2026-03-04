@@ -39,7 +39,11 @@ app.command("install")(install_cmd)
 @app.callback()
 def main(
     version: Optional[bool] = typer.Option(
-        None, "--version", callback=version_callback, is_eager=True, help="Show the version and exit."
+        None,
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Show the version and exit.",
     ),
 ):
     pass

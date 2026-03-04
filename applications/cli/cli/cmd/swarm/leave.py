@@ -16,7 +16,10 @@ def leave_cmd():
         raise typer.Exit(code=1)
 
     leave = typer.confirm(
-        "Are you sure you want to leave the swarm? This will remove all services and secrets from this node.",
+        (
+            "Are you sure you want to leave the swarm? This will remove all "
+            "services and secrets from this node."
+        ),
         default=False,
     )
     if not leave:

@@ -5,34 +5,34 @@ class ColorTheme(Enum):
     """Standard CLI color theme following industry conventions."""
 
     # Status colors
-    SUCCESS = "bright_green"      # Successful operations, completed tasks
-    ERROR = "bright_red"          # Critical errors, failures
-    WARNING = "yellow"            # Warnings, caution needed
-    INFO = "bright_blue"          # General information, neutral status
+    SUCCESS = "bright_green"  # Successful operations, completed tasks
+    ERROR = "bright_red"  # Critical errors, failures
+    WARNING = "yellow"  # Warnings, caution needed
+    INFO = "bright_blue"  # General information, neutral status
 
     # Progress and interaction
-    PROGRESS = "cyan"             # Progress indicators, loading states
-    PROMPT = "bright_cyan"        # User prompts, interactive elements
+    PROGRESS = "cyan"  # Progress indicators, loading states
+    PROMPT = "bright_cyan"  # User prompts, interactive elements
 
     # Content highlighting
-    PRIMARY = "white"             # Primary content, emphasis
-    SECONDARY = "bright_black"    # Secondary content, metadata, timestamps
-    ACCENT = "magenta"            # Special highlighting, debug info
+    PRIMARY = "white"  # Primary content, emphasis
+    SECONDARY = "bright_black"  # Secondary content, metadata, timestamps
+    ACCENT = "magenta"  # Special highlighting, debug info
 
     # Service/Resource identification
     SERVICE_NAME = "bright_cyan"  # Service names, resource identifiers
-    CONTAINER_ID = "magenta"      # Container IDs, technical identifiers
-    NODE_NAME = "blue"            # Node names, host information
+    CONTAINER_ID = "magenta"  # Container IDs, technical identifiers
+    NODE_NAME = "blue"  # Node names, host information
 
     # State-specific colors for status display
-    STATE_RUNNING = "bright_green"    # Running/active state
-    STATE_HEALTHY = "green"           # Healthy status
-    STATE_STARTING = "yellow"         # Starting/transitioning state
-    STATE_PENDING = "yellow"          # Pending state
-    STATE_FAILED = "bright_red"       # Failed state
-    STATE_STOPPED = "bright_black"    # Stopped/inactive state
-    STATE_ASSIGNED = "blue"           # Assigned state
-    STATE_READY = "cyan"              # Ready state
+    STATE_RUNNING = "bright_green"  # Running/active state
+    STATE_HEALTHY = "green"  # Healthy status
+    STATE_STARTING = "yellow"  # Starting/transitioning state
+    STATE_PENDING = "yellow"  # Pending state
+    STATE_FAILED = "bright_red"  # Failed state
+    STATE_STOPPED = "bright_black"  # Stopped/inactive state
+    STATE_ASSIGNED = "blue"  # Assigned state
+    STATE_READY = "cyan"  # Ready state
 
 
 class StatusIcons:

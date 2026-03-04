@@ -1,6 +1,6 @@
 import json
-from pathlib import Path
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional
 
 import keyring
@@ -105,7 +105,8 @@ class ApiAdapter:
         except keyring.errors.NoKeyringError:
             console.print(
                 Messages.warning(
-                    "Warning: No keyring backend available, session will not be cached.")
+                    "Warning: No keyring backend available, session will not be cached."
+                )
             )
 
     def _get_cached_session(self) -> dict:
@@ -123,6 +124,8 @@ class ApiAdapter:
         except keyring.errors.NoKeyringError:
             console.print(
                 Messages.warning(
-                    "Warning: No keyring backend available, session cannot be retrieved from cache.")
+                    "Warning: No keyring backend available, session cannot be "
+                    "retrieved from cache."
+                )
             )
             return None

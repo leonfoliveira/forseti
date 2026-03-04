@@ -10,7 +10,7 @@ from cli.config import __config_file__, __root_ca_file__, __stack_file__
 from cli.util.api_adapter import ApiAdapter
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
-from cli.util.theme import Messages, ContestStatusFormatter, ColorTheme
+from cli.util.theme import ColorTheme, ContestStatusFormatter, Messages
 
 
 def ls_cmd(
@@ -21,8 +21,7 @@ def ls_cmd(
         Path, typer.Option(help="Path to the configuration file.", exists=True)
     ] = Path(__config_file__),
     root_ca_file: Annotated[
-        Path, typer.Option(
-            help="Path to the Root CA certificate file.", exists=True)
+        Path, typer.Option(help="Path to the Root CA certificate file.", exists=True)
     ] = Path(__root_ca_file__),
     root_password: Annotated[
         Optional[str], typer.Option(help="Root password for the stack.")
@@ -55,8 +54,7 @@ def ls_cmd(
         contests = api_adapter.find_all_contests()
 
         table = Table(title="Contests")
-        table.add_column(
-            "ID", style=ColorTheme.SERVICE_NAME.value, no_wrap=True)
+        table.add_column("ID", style=ColorTheme.SERVICE_NAME.value, no_wrap=True)
         table.add_column("Slug", style=ColorTheme.SUCCESS.value)
         table.add_column("Start At", style=ColorTheme.INFO.value)
         table.add_column("End At", style=ColorTheme.INFO.value)

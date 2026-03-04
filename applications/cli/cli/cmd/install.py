@@ -7,8 +7,12 @@ import typer
 from rich.progress import Progress
 
 from cli.composition import command_adapter, console, docker_client
-from cli.config import (__config_file__, __sandboxes_dir__, __stack_file__,
-                        __stack_name__, __version__)
+from cli.config import (
+    __config_file__,
+    __sandboxes_dir__,
+    __stack_file__,
+    __version__,
+)
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
@@ -27,8 +31,9 @@ def install_cmd(
         Path, typer.Option(help="Path to the configuration file.", exists=True)
     ] = Path(__config_file__),
     sandboxes_dir: Annotated[
-        Path, typer.Option(
-            help="Directory containing sandbox Dockerfiles.", exists=True)
+        Path,
+        typer.Option(
+            help="Directory containing sandbox Dockerfiles.", exists=True),
     ] = Path(__sandboxes_dir__),
 ):
     """
@@ -50,22 +55,31 @@ def _install_certificates(stack: DockerStack):
     folder = "./certs"
 
     with Progress(console=console) as progress:
-        task = progress.add_task(Messages.progress(
-            "Generating TLS certificates..."), total=3)
+        task = progress.add_task(
+            Messages.progress("Generating TLS certificates..."), total=3
+        )
 
         if not os.path.exists(folder):
             os.makedirs(folder)
         progress.advance(task)
 
-        mkcert_cmd = f"mkcert -cert-file {folder}/cert.pem -key-file {folder}/key.pem *.{stack.config['global']['domain']} localhost 127.0.0.1 ::1"
+        mkcert_cmd = (
+            f"mkcert -cert-file {folder}/cert.pem -key-file {folder}/key.pem "
+            f"*.{stack.config['global']['domain']} localhost 127.0.0.1 ::1"
+        )
         result = command_adapter.run(
             mkcert_cmd,
-            missing_command_help="Make sure mkcert is installed: https://github.com/FiloSottile/mkcert",
+            missing_command_help=(
+                "Make sure mkcert is installed: "
+                "https://github.com/FiloSottile/mkcert"
+            ),
         )
         if not result.success:
             console.print(
                 Messages.error(
-                    "Failed to generate TLS certificates. Please ensure mkcert is installed and working correctly.")
+                    "Failed to generate TLS certificates. Please ensure "
+                    "mkcert is installed and working correctly."
+                )
             )
             raise typer.Exit(code=1)
         progress.advance(task)
@@ -75,7 +89,9 @@ def _install_certificates(stack: DockerStack):
         if not result.success:
             console.print(
                 Messages.error(
-                    "Failed to copy CA certificate. Please ensure mkcert is installed and working correctly.")
+                    "Failed to copy CA certificate. Please ensure "
+                    "mkcert is installed and working correctly."
+                )
             )
             raise typer.Exit(code=1)
         progress.advance(task)
@@ -83,8 +99,9 @@ def _install_certificates(stack: DockerStack):
 
 def _build_sandboxes(sandbox_dir: Path, sandboxes: list[str]):
     with Progress(console=console) as progress:
-        task = progress.add_task(Messages.progress(
-            "Building sandboxes..."), total=len(sandboxes))
+        task = progress.add_task(
+            Messages.progress("Building sandboxes..."), total=len(sandboxes)
+        )
         for i in range(len(sandboxes)):
             sandbox = sandboxes[i]
             dockerfile = f"{sandbox}.Dockerfile"
@@ -120,8 +137,9 @@ def _pull_stack_images(stack: DockerStack):
         pull_image, image): image for image in images}
 
     with Progress(console=console) as progress:
-        task = progress.add_task(Messages.progress(
-            "Pulling stack images..."), total=len(images))
+        task = progress.add_task(
+            Messages.progress("Pulling stack images..."), total=len(images)
+        )
         with ThreadPoolExecutor(max_workers=4) as executor:
             future_to_image = {executor.submit(
                 pull_image, img): img for img in images}

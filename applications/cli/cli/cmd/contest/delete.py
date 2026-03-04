@@ -20,8 +20,7 @@ def delete_cmd(
         Path, typer.Option(help="Path to the configuration file.", exists=True)
     ] = Path(__config_file__),
     root_ca_file: Annotated[
-        Path, typer.Option(
-            help="Path to the Root CA certificate file.", exists=True)
+        Path, typer.Option(help="Path to the Root CA certificate file.", exists=True)
     ] = Path(__root_ca_file__),
     root_password: Annotated[
         Optional[str], typer.Option(help="Root password for the stack.")
@@ -52,8 +51,7 @@ def delete_cmd(
 
     try:
         api_adapter.delete_contest(contest_id=contest_id)
-        console.print(Messages.success(
-            f"Contest '{contest_id}' deleted successfully!"))
+        console.print(Messages.success(f"Contest '{contest_id}' deleted successfully!"))
     except Exception as e:
         console.print(Messages.error(f"Failed to delete contest: {e}"))
         raise typer.Exit(code=1)

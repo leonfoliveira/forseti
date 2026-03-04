@@ -44,8 +44,7 @@ class DockerStack:
 
         service_configs = self.stack_config.get("services", {})
         return [
-            DockerService(self.swarm, self, name, config,
-                          docker_services_map.get(name))
+            DockerService(self.swarm, self, name, config, docker_services_map.get(name))
             for name, config in service_configs.items()
             if not any(
                 label == "type=job"

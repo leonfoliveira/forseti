@@ -9,7 +9,7 @@ from rich.live import Live
 from rich.spinner import Spinner
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_file__, __stack_name__
+from cli.config import __config_file__, __stack_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
@@ -29,7 +29,9 @@ def scale_cmd(
     yes: Annotated[
         bool,
         typer.Option(
-            "-y", "--yes", help="Skip confirmation prompt before scaling.",
+            "-y",
+            "--yes",
+            help="Skip confirmation prompt before scaling.",
         ),
     ] = False,
 ):
@@ -59,7 +61,10 @@ def scale_cmd(
 
     if not yes:
         typer.confirm(
-            f"Are you sure you want to scale service '{service.name}' to {replicas} replicas?",
+            (
+                f"Are you sure you want to scale service '{service.name}' "
+                f"to {replicas} replicas?"
+            ),
             abort=True,
         )
 
@@ -76,15 +81,18 @@ def scale_cmd(
     scale_thread.start()
 
     status_text = Messages.info(
-        f"Scaling '{service.name}' to {replicas} replicas... Press Ctrl+C to stop")
+        f"Scaling '{service.name}' to {replicas} replicas... Press Ctrl+C to stop"
+    )
     spinner = Spinner("dots", text=status_text)
 
     try:
         with Live(console=console, refresh_per_second=10) as live:
             while True:
                 if scaling_error is not None:
-                    console.print(Messages.error(
-                        f"Failed to scale service: {scaling_error}"))
+                    console.print(
+                        Messages.error(
+                            f"Failed to scale service: {scaling_error}")
+                    )
                     raise typer.Exit(code=1)
 
                 table = build_table(stack, service.name)

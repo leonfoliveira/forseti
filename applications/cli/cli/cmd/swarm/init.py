@@ -2,7 +2,7 @@ from typing import Annotated
 
 import typer
 
-from cli.composition import console, docker_client
+from cli.composition import console
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 

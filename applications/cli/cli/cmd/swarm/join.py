@@ -2,7 +2,7 @@ from typing import Annotated
 
 import typer
 
-from cli.composition import console, docker_client
+from cli.composition import console
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 
@@ -19,7 +19,8 @@ def join_cmd(
     ],
 ):
     """
-    Join the current node to an existing Docker Swarm cluster using the provided join token and manager address.
+    Join the current node to an existing Docker Swarm cluster using
+    the provided join token and manager address.
     """
     docker_swarm = DockerSwarm()
 

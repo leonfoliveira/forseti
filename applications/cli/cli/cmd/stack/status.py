@@ -9,10 +9,10 @@ from rich.spinner import Spinner
 from rich.table import Table
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_file__, __stack_name__
+from cli.config import __config_file__, __stack_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
-from cli.util.theme import Messages, StatusFormatter, ColorTheme
+from cli.util.theme import ColorTheme, Messages, StatusFormatter
 
 
 def status_cmd(
@@ -56,7 +56,7 @@ def status_cmd(
 
 
 def build_table(stack: DockerStack, service_filter: Optional[str] = None) -> Table:
-    table = Table(title=f"Status")
+    table = Table(title="Status")
     table.add_column("Service/Container")
     table.add_column("Node", style=ColorTheme.NODE_NAME.value)
     table.add_column("Replicas/Status")
@@ -65,11 +65,21 @@ def build_table(stack: DockerStack, service_filter: Optional[str] = None) -> Tab
         if service_filter and service.name != service_filter:
             continue
 
-        status_color = ColorTheme.SUCCESS if service.running_replicas >= service.desired_replicas else ColorTheme.ERROR
+        status_color = (
+            ColorTheme.SUCCESS
+            if service.running_replicas >= service.desired_replicas
+            else ColorTheme.ERROR
+        )
         if service.mode == "global":
-            status_text = f"[{status_color.value}]{service.running_replicas}/{service.desired_replicas} (global)[/{status_color.value}]"
+            status_text = (
+                f"[{status_color.value}]{service.running_replicas}/"
+                f"{service.desired_replicas} (global)[/{status_color.value}]"
+            )
         else:
-            status_text = f"[{status_color.value}]{service.running_replicas}/{service.desired_replicas}[/{status_color.value}]"
+            status_text = (
+                f"[{status_color.value}]{service.running_replicas}/"
+                f"{service.desired_replicas}[/{status_color.value}]"
+            )
         table.add_row(Messages.service_name(service.name), "", status_text)
 
         for task in service.tasks:
@@ -92,7 +102,12 @@ def _format_status(task):
                 return StatusFormatter.unhealthy()
             case "starting":
                 spinner = Spinner(
-                    "dots", text=f"[{ColorTheme.STATE_STARTING.value}]starting[/{ColorTheme.STATE_STARTING.value}]", style=ColorTheme.STATE_STARTING.value
+                    "dots",
+                    text=(
+                        f"[{ColorTheme.STATE_STARTING.value}]starting"
+                        f"[/{ColorTheme.STATE_STARTING.value}]"
+                    ),
+                    style=ColorTheme.STATE_STARTING.value,
                 )
                 return spinner
 
@@ -101,11 +116,23 @@ def _format_status(task):
             return StatusFormatter.running()
         case "starting":
             spinner = Spinner(
-                "dots", text=f"[{ColorTheme.STATE_STARTING.value}]starting[/{ColorTheme.STATE_STARTING.value}]", style=ColorTheme.STATE_STARTING.value)
+                "dots",
+                text=(
+                    f"[{ColorTheme.STATE_STARTING.value}]starting"
+                    f"[/{ColorTheme.STATE_STARTING.value}]"
+                ),
+                style=ColorTheme.STATE_STARTING.value,
+            )
             return spinner
         case "preparing":
             spinner = Spinner(
-                "dots", text=f"[{ColorTheme.STATE_STARTING.value}]preparing[/{ColorTheme.STATE_STARTING.value}]", style=ColorTheme.STATE_STARTING.value)
+                "dots",
+                text=(
+                    f"[{ColorTheme.STATE_STARTING.value}]preparing"
+                    f"[/{ColorTheme.STATE_STARTING.value}]"
+                ),
+                style=ColorTheme.STATE_STARTING.value,
+            )
             return spinner
         case "pending":
             return StatusFormatter.pending()
