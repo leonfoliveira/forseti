@@ -1,6 +1,6 @@
 from rich.progress import Progress
 
-from cli.composition import console, docker_client
+from cli.composition import console, get_docker_client
 from cli.config import __backups_dir__
 from cli.util.theme import Messages
 
@@ -9,6 +9,7 @@ def backup_cmd():
     """
     Create backups of the Forseti volumes and save them to the ./backups directory.
     """
+    docker_client = get_docker_client()
     volumes = (
         "forseti_grafana_data",
         "forseti_minio_data",

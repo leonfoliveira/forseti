@@ -77,7 +77,8 @@ def deploy_cmd(
             while True:
                 if deployment_error is not None:
                     console.print(
-                        Messages.error(f"Deployment failed: {deployment_error}")
+                        Messages.error(
+                            f"Deployment failed: {deployment_error}")
                     )
                     raise typer.Exit(code=1)
 
@@ -93,10 +94,11 @@ def deploy_cmd(
 
                 sleep(1)
     except KeyboardInterrupt:
-        console.print(Messages.warning("Deployment will continue in the background..."))
+        console.print(Messages.warning(
+            "Deployment will continue in the background..."))
         raise typer.Abort()
 
-    deploy_thread.join()
+    deploy_thread.join(timeout=0)
     if deployment_error is not None:
         console.print(Messages.error(f"Deployment failed: {deployment_error}"))
         raise typer.Exit(code=1)

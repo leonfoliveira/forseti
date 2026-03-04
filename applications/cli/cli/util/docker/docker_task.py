@@ -1,10 +1,11 @@
 from docker.errors import APIError, NotFound
 
-from cli.composition import docker_client
+from cli.composition import get_docker_client
 
 
 class DockerTask:
     def __init__(self, swarm, stack, service, docker_task):
+        self.docker_client = get_docker_client()
         self.swarm = swarm
         self.stack = stack
         self.service = service
@@ -18,16 +19,8 @@ class DockerTask:
         self.container = self._get_container(container_id)
 
         node_id = self.docker_task.get("NodeID", "")
-        self.node = next((n for n in self.swarm.nodes if n.id == node_id), None)
-
-    @staticmethod
-    def _get_container(container_id):
-        if not container_id:
-            return None
-        try:
-            return docker_client.containers.get(container_id)
-        except (NotFound, APIError):
-            return None
+        self.node = next(
+            (n for n in self.swarm.nodes if n.id == node_id), None)
 
     @property
     def state(self):
@@ -65,3 +58,11 @@ class DockerTask:
         if self.container and self.container.id:
             return self.container.id[:12]
         return ""
+
+    def _get_container(self, container_id):
+        if not container_id:
+            return None
+        try:
+            return self.docker_client.containers.get(container_id)
+        except (NotFound, APIError):
+            return None

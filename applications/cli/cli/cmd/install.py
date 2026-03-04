@@ -6,7 +6,8 @@ from typing import Annotated
 import typer
 from rich.progress import Progress
 
-from cli.composition import command_adapter, console, docker_client
+
+from cli.composition import command_adapter, console, get_docker_client
 from cli.config import (
     __config_file__,
     __sandboxes_dir__,
@@ -26,28 +27,22 @@ def install_cmd(
             default_factory=lambda: ["cpp17", "java21", "python312"],
         ),
     ],
-    stack_template_file: Annotated[
-        Path, typer.Option(help="Path to the stack template file.", exists=True)
-    ] = Path(__stack_template_file__),
-    config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file.", exists=True)
-    ] = Path(__config_file__),
     sandboxes_dir: Annotated[
         Path,
-        typer.Option(help="Directory containing sandbox Dockerfiles.", exists=True),
+        typer.Option(
+            help="Directory containing sandbox Dockerfiles.", exists=True),
     ] = Path(__sandboxes_dir__),
 ):
     """
     Install Forseti dependencies and sandboxes.
     """
+    docker_client = get_docker_client()
     swarm = DockerSwarm()
-    stack = DockerStack(
-        swarm=swarm, stack_template_file=stack_template_file, config_file=config_file
-    )
+    stack = DockerStack(swarm=swarm)
 
     _install_certificates(stack)
-    _build_sandboxes(sandboxes_dir, sandboxes)
-    _pull_stack_images(stack)
+    _build_sandboxes(docker_client, sandboxes_dir, sandboxes)
+    _pull_stack_images(docker_client, stack)
 
     console.print()
     console.print(Messages.success("Installation complete!"))
@@ -99,7 +94,7 @@ def _install_certificates(stack: DockerStack):
         progress.advance(task)
 
 
-def _build_sandboxes(sandbox_dir: Path, sandboxes: list[str]):
+def _build_sandboxes(docker_client, sandbox_dir: Path, sandboxes: list[str]):
     with Progress(console=console) as progress:
         task = progress.add_task(
             Messages.progress("Building sandboxes..."), total=len(sandboxes)
@@ -115,14 +110,15 @@ def _build_sandboxes(sandbox_dir: Path, sandboxes: list[str]):
             progress.advance(task)
 
 
-def _pull_stack_images(stack: DockerStack):
+def _pull_stack_images(docker_client, stack: DockerStack):
     services = stack.stack_config.get("services", {})
     service_configs = list(services.values())
 
     images = set(
         filter(
             None,
-            [service.get("image") for service in service_configs if "image" in service],
+            [service.get("image")
+             for service in service_configs if "image" in service],
         )
     )
 
@@ -133,15 +129,13 @@ def _pull_stack_images(stack: DockerStack):
         except Exception as e:
             return False, image_name, str(e)
 
-    executor = ThreadPoolExecutor(max_workers=4)
-    future_to_image = {executor.submit(pull_image, image): image for image in images}
-
     with Progress(console=console) as progress:
         task = progress.add_task(
             Messages.progress("Pulling stack images..."), total=len(images)
         )
         with ThreadPoolExecutor(max_workers=4) as executor:
-            future_to_image = {executor.submit(pull_image, img): img for img in images}
+            future_to_image = {executor.submit(
+                pull_image, img): img for img in images}
             for future in as_completed(future_to_image):
                 success, image_name, error = future.result()
                 if not success:
