@@ -1,7 +1,7 @@
 import pytest
 
 from cli.util.theme import (
-    ColorTheme, StatusIcons, Messages, StatusFormatter, ContestStatusFormatter,
+    ColorTheme, Messages, StatusFormatter, ContestStatusFormatter,
     colorize, status_with_icon
 )
 
@@ -28,26 +28,6 @@ class TestColorTheme:
         assert ColorTheme.ERROR.value == "bright_red"
         assert ColorTheme.WARNING.value == "yellow"
         assert ColorTheme.INFO.value == "bright_blue"
-
-
-class TestStatusIcons:
-    def test_all_icons_defined(self):
-        """Test that all expected status icons are defined"""
-        expected_icons = [
-            "SUCCESS", "ERROR", "WARNING", "INFO",
-            "RUNNING", "STOPPED", "PENDING", "HEALTHY", "UNHEALTHY", "LOADING"
-        ]
-
-        for icon in expected_icons:
-            assert hasattr(StatusIcons, icon)
-            assert isinstance(getattr(StatusIcons, icon), str)
-
-    def test_specific_icon_values(self):
-        """Test specific icon values"""
-        assert StatusIcons.SUCCESS == "✅"
-        assert StatusIcons.ERROR == "❌"
-        assert StatusIcons.WARNING == "⚠️"
-        assert StatusIcons.INFO == "ℹ️"
 
 
 class TestColorizeFunction:
@@ -224,7 +204,7 @@ class TestStatusFormatter:
         result = StatusFormatter.complete()
         assert "[bright_green]" in result
         assert "complete" in result
-        assert "✅" in result
+        assert "✔" in result
 
     def test_unknown_status(self):
         """Test unknown status formatting"""
@@ -239,21 +219,18 @@ class TestContestStatusFormatter:
         result = ContestStatusFormatter.not_started()
         assert "[yellow]" in result
         assert "Not Started" in result
-        assert "⏳" in result
 
     def test_active_status(self):
         """Test active contest status formatting"""
         result = ContestStatusFormatter.active()
         assert "[bright_green]" in result
         assert "Active" in result
-        assert "▶️" in result
 
     def test_finished_status(self):
         """Test finished contest status formatting"""
         result = ContestStatusFormatter.finished()
-        assert "[bright_blue]" in result
+        assert "[bright_red]" in result
         assert "Finished" in result
-        assert "🏁" in result
 
 
 class TestThemeIntegration:

@@ -35,22 +35,6 @@ class ColorTheme(Enum):
     STATE_READY = "cyan"  # Ready state
 
 
-class StatusIcons:
-    """Unicode icons for different status states."""
-
-    SUCCESS = "✅"
-    ERROR = "❌"
-    WARNING = "⚠️"
-    INFO = "ℹ️"
-
-    RUNNING = "▶️"
-    STOPPED = "⏹️"
-    PENDING = "⏳"
-    HEALTHY = "💚"
-    UNHEALTHY = "💔"
-    LOADING = "⏳"
-
-
 def colorize(text: str, color: ColorTheme) -> str:
     """
     Apply color markup to text using the standard theme.
@@ -173,7 +157,7 @@ class StatusFormatter:
 
     @staticmethod
     def complete() -> str:
-        return status_with_icon("complete", ColorTheme.SUCCESS, "✅")
+        return status_with_icon("complete", ColorTheme.SUCCESS, "✔")
 
     @staticmethod
     def unknown(state: str) -> str:
@@ -186,12 +170,12 @@ class ContestStatusFormatter:
 
     @staticmethod
     def not_started() -> str:
-        return status_with_icon("Not Started", ColorTheme.WARNING, "⏳")
+        return colorize("Not Started", ColorTheme.WARNING)
 
     @staticmethod
     def active() -> str:
-        return status_with_icon("Active", ColorTheme.SUCCESS, "▶️")
+        return colorize("Active", ColorTheme.SUCCESS)
 
     @staticmethod
     def finished() -> str:
-        return status_with_icon("Finished", ColorTheme.INFO, "🏁")
+        return colorize("Finished", ColorTheme.ERROR)
