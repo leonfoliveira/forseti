@@ -10,7 +10,7 @@ from cli.composition import command_adapter, console, docker_client
 from cli.config import (
     __config_file__,
     __sandboxes_dir__,
-    __stack_file__,
+    __stack_template_file__,
     __version__,
 )
 from cli.util.docker.docker_stack import DockerStack
@@ -24,24 +24,24 @@ def install_cmd(
         "java21",
         "python312",
     ],
-    stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file.", exists=True)
-    ] = Path(__stack_file__),
+    stack_template_file: Annotated[
+        Path, typer.Option(help="Path to the stack template file.", exists=True)
+    ] = Path(__stack_template_file__),
     config_file: Annotated[
         Path, typer.Option(help="Path to the configuration file.", exists=True)
     ] = Path(__config_file__),
     sandboxes_dir: Annotated[
         Path,
-        typer.Option(
-            help="Directory containing sandbox Dockerfiles.", exists=True),
+        typer.Option(help="Directory containing sandbox Dockerfiles.", exists=True),
     ] = Path(__sandboxes_dir__),
 ):
     """
     Install Forseti dependencies and sandboxes.
     """
     swarm = DockerSwarm()
-    stack = DockerStack(swarm=swarm, stack_file=stack_file,
-                        config_file=config_file)
+    stack = DockerStack(
+        swarm=swarm, stack_template_file=stack_template_file, config_file=config_file
+    )
 
     _install_certificates(stack)
     _build_sandboxes(sandboxes_dir, sandboxes)
@@ -120,8 +120,7 @@ def _pull_stack_images(stack: DockerStack):
     images = set(
         filter(
             None,
-            [service.get("image")
-             for service in service_configs if "image" in service],
+            [service.get("image") for service in service_configs if "image" in service],
         )
     )
 
@@ -133,16 +132,14 @@ def _pull_stack_images(stack: DockerStack):
             return False, image_name, str(e)
 
     executor = ThreadPoolExecutor(max_workers=4)
-    future_to_image = {executor.submit(
-        pull_image, image): image for image in images}
+    future_to_image = {executor.submit(pull_image, image): image for image in images}
 
     with Progress(console=console) as progress:
         task = progress.add_task(
             Messages.progress("Pulling stack images..."), total=len(images)
         )
         with ThreadPoolExecutor(max_workers=4) as executor:
-            future_to_image = {executor.submit(
-                pull_image, img): img for img in images}
+            future_to_image = {executor.submit(pull_image, img): img for img in images}
             for future in as_completed(future_to_image):
                 success, image_name, error = future.result()
                 if not success:

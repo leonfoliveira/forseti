@@ -23,7 +23,6 @@ class TestApiAdapter:
     def api_adapter(self, mock_docker_stack):
         return ApiAdapter(
             docker_stack=mock_docker_stack,
-            root_ca_file=None,
             root_password="test_password"
         )
 

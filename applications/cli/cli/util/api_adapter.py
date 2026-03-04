@@ -1,4 +1,5 @@
 import json
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
@@ -9,6 +10,7 @@ import requests
 import typer
 
 from cli.composition import console
+from cli.config import __certs_dir__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.theme import Messages
 
@@ -23,7 +25,6 @@ class ApiAdapter:
     def __init__(
         self,
         docker_stack: DockerStack,
-        root_ca_file: Optional[Path] = None,
         root_password: Optional[str] = None,
     ):
         domain = docker_stack.config["global"]["domain"]
@@ -31,7 +32,7 @@ class ApiAdapter:
 
         self.api_url = f"{'https' if https else 'http'}://api.{domain}"
         self.root_password = root_password
-        self.root_ca_file = root_ca_file
+        self.root_ca_file = os.path.join(__certs_dir__, "rootCA.pem") if https else None
 
     def create_contest(self, slug: str) -> dict:
         session = self._get_session()
@@ -84,8 +85,7 @@ class ApiAdapter:
 
     def _authenticate_root(self) -> dict:
         if not self.root_password:
-            self.root_password = typer.prompt(
-                "Enter root password", hide_input=True)
+            self.root_password = typer.prompt("Enter root password", hide_input=True)
 
         url = f"{self.api_url}/v1/root:sign-in"
         response = requests.post(
@@ -99,8 +99,7 @@ class ApiAdapter:
     def _cache_session(self, session: dict) -> None:
         try:
             keyring.set_password(
-                self.KEYRING_SERVICE_NAME, self.KEYRING_SESSION_KEY, json.dumps(
-                    session)
+                self.KEYRING_SERVICE_NAME, self.KEYRING_SESSION_KEY, json.dumps(session)
             )
         except keyring.errors.NoKeyringError:
             console.print(
@@ -109,7 +108,7 @@ class ApiAdapter:
                 )
             )
 
-    def _get_cached_session(self) -> dict:
+    def _get_cached_session(self) -> Optional[dict]:
         try:
             session_json = keyring.get_password(
                 self.KEYRING_SERVICE_NAME, self.KEYRING_SESSION_KEY

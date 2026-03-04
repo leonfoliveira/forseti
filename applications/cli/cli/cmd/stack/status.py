@@ -9,19 +9,13 @@ from rich.spinner import Spinner
 from rich.table import Table
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_file__
+from cli.config import __config_file__, __stack_template_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import ColorTheme, Messages, StatusFormatter
 
 
 def status_cmd(
-    stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file.", exists=True)
-    ] = Path(__stack_file__),
-    config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file.", exists=True)
-    ] = Path(__config_file__),
     service: Annotated[
         Optional[str], typer.Option(help="Filter by specific service name.")
     ] = None,
@@ -38,34 +32,33 @@ def status_cmd(
         console.print(Messages.warning("This node is not part of a swarm."))
         raise typer.Exit(code=1)
 
-    stack = DockerStack(
-        swarm=docker_swarm, stack_file=stack_file, config_file=config_file
-    )
+    docker_stack = DockerStack(swarm=docker_swarm)
 
-    if not stack.is_deployed:
+    if not docker_stack.is_deployed:
         console.print(Messages.warning("Stack is not deployed."))
         raise typer.Exit(code=1)
 
     if follow:
         with Live(console=console, refresh_per_second=1) as live:
             while True:
-                table = build_table(stack, service)
-                status_text = Messages.info(
-                    "Monitoring status... Press Ctrl+C to stop")
+                table = build_table(docker_stack, service)
+                status_text = Messages.info("Monitoring status... Press Ctrl+C to stop")
                 live.update(Group(table, status_text))
                 sleep(1)
     else:
-        table = build_table(stack, service)
+        table = build_table(docker_stack, service)
         console.print(table)
 
 
-def build_table(stack: DockerStack, service_filter: Optional[str] = None) -> Table:
+def build_table(
+    docker_stack: DockerStack, service_filter: Optional[str] = None
+) -> Table:
     table = Table(title="Status")
     table.add_column("Service/Container")
     table.add_column("Node", style=ColorTheme.NODE_NAME.value)
     table.add_column("Replicas/Status")
 
-    for service in stack.services:
+    for service in docker_stack.services:
         if service_filter and service.name != service_filter:
             continue
 

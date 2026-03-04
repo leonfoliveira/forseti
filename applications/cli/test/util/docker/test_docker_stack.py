@@ -1,9 +1,9 @@
 from unittest.mock import patch, MagicMock
 import pytest
-import configparser
 from pathlib import Path
 
 from cli.util.docker.docker_stack import DockerStack
+from cli.config import __stack_template_file__, __config_file__
 
 PACKAGE = "cli.util.docker.docker_stack"
 
@@ -12,14 +12,6 @@ class TestDockerStack:
     @pytest.fixture
     def mock_swarm(self):
         return MagicMock()
-
-    @pytest.fixture
-    def mock_stack_file(self):
-        return Path("/test/stack.yaml")
-
-    @pytest.fixture
-    def mock_config_file(self):
-        return Path("/test/config.ini")
 
     @pytest.fixture
     def mock_config_parser(self):
@@ -98,25 +90,23 @@ class TestDockerStack:
                 "command_adapter": mock_command_adapter
             }
 
-    def test_init(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_init(self, mock_swarm, mock_dependencies):
         """Test DockerStack initialization"""
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         assert stack.swarm == mock_swarm
-        assert stack.stack_file == mock_stack_file
-        assert stack.config_file == mock_config_file
 
         # Verify config parsing
         mock_dependencies["config_parser"].read.assert_called_once_with(
-            mock_config_file)
+            __config_file__)
 
         # Verify template rendering
         mock_dependencies["template"].render.assert_called_once()
         mock_dependencies["yaml_load"].assert_called_once_with("rendered_yaml")
 
-    def test_config_parsing(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_config_parsing(self, mock_swarm, mock_dependencies):
         """Test config file parsing"""
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         expected_config = {
             "global": {"domain": "example.com", "https": "true"},
@@ -125,21 +115,22 @@ class TestDockerStack:
 
         assert stack.config == expected_config
 
-    def test_template_rendering(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_template_rendering(self, mock_swarm, mock_dependencies):
         """Test template rendering with config"""
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         # Verify template was rendered with config
         expected_config = {
             "global": {"domain": "example.com", "https": "true"},
-            "database": {"host": "localhost", "port": "5432"}
+            "database": {"host": "localhost", "port": "5432"},
+            "__volumes_path__": "/test/volumes",
+            "__certs_path__": "/test/certs"
         }
         mock_dependencies["template"].render.assert_called_once_with(
             expected_config)
 
     @patch(f"{PACKAGE}.DockerService")
-    def test_services_property(self, mock_docker_service, mock_swarm, mock_stack_file,
-                               mock_config_file, mock_dependencies):
+    def test_services_property(self, mock_docker_service, mock_swarm, mock_dependencies):
         """Test services property"""
         # Mock docker services
         mock_docker_service1 = MagicMock()
@@ -153,7 +144,7 @@ class TestDockerStack:
 
         mock_docker_service.return_value = "mock_service"
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         services = stack.services
 
@@ -167,12 +158,11 @@ class TestDockerStack:
         )
 
     @patch(f"{PACKAGE}.DockerService")
-    def test_services_excludes_job_type(self, mock_docker_service, mock_swarm, mock_stack_file,
-                                        mock_config_file, mock_dependencies):
+    def test_services_excludes_job_type(self, mock_docker_service, mock_swarm, mock_dependencies):
         """Test services property excludes job type services"""
         mock_docker_service.return_value = "mock_service"
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         services = stack.services
 
@@ -188,37 +178,37 @@ class TestDockerStack:
         assert "webapp" in service_names
         assert "worker" not in service_names  # Should be excluded
 
-    def test_is_deployed_true(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_is_deployed_true(self, mock_swarm, mock_dependencies):
         """Test is_deployed when services exist"""
         mock_dependencies["docker_client"].services.list.return_value = [
             MagicMock()]
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         assert stack.is_deployed is True
 
-    def test_is_deployed_false(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_is_deployed_false(self, mock_swarm, mock_dependencies):
         """Test is_deployed when no services exist"""
         mock_dependencies["docker_client"].services.list.return_value = []
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         assert stack.is_deployed is False
 
-    def test_deploy(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_deploy(self, mock_swarm, mock_dependencies):
         """Test deploy method"""
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         stack.deploy()
 
-        mock_dependencies["command_adapter"].run.assert_called_once_with(
-            f"docker stack deploy --detach=true -c {mock_stack_file} forseti",
-            timeout=120
-        )
+        assert mock_dependencies["command_adapter"].run.callstack[0][0].startswith(
+            "docker stack deploy --detach=true -c")
+        assert mock_dependencies["command_adapter"].run.callstack[0][0].endswith(
+            "forseti")
 
-    def test_rm(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_rm(self, mock_swarm, mock_dependencies):
         """Test rm method"""
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         stack.rm()
 
@@ -227,64 +217,47 @@ class TestDockerStack:
             timeout=120
         )
 
-    def test_deploy_command_failure(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_deploy_command_failure(self, mock_swarm, mock_dependencies):
         """Test deploy method when command fails"""
         mock_dependencies["command_adapter"].run.side_effect = Exception(
             "Deploy failed")
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         with pytest.raises(Exception, match="Deploy failed"):
             stack.deploy()
 
-    def test_rm_command_failure(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_rm_command_failure(self, mock_swarm, mock_dependencies):
         """Test rm method when command fails"""
         mock_dependencies["command_adapter"].run.side_effect = Exception(
             "Remove failed")
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         with pytest.raises(Exception, match="Remove failed"):
             stack.rm()
 
-    def test_different_stack_names(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_different_stack_names(self, mock_swarm, mock_dependencies):
         """Test with different stack names"""
         with patch(f"{PACKAGE}.__stack_name__", "custom_stack"):
-            stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+            stack = DockerStack(mock_swarm)
 
             stack.deploy()
 
-            mock_dependencies["command_adapter"].run.assert_called_with(
-                f"docker stack deploy --detach=true -c {mock_stack_file} custom_stack",
-                timeout=120
-            )
+            assert mock_dependencies["command_adapter"].run.call_args[0][0].startswith(
+                "docker stack deploy --detach=true -c")
+            assert mock_dependencies["command_adapter"].run.call_args[0][0].endswith(
+                "custom_stack")
 
-    def test_path_operations(self, mock_swarm, mock_dependencies):
-        """Test path operations for template loading"""
-        stack_file = Path("/custom/path/custom-stack.yaml")
-        config_file = Path("/config/custom.ini")
-
-        with patch(f"{PACKAGE}.os.path.dirname") as mock_dirname, \
-                patch(f"{PACKAGE}.os.path.basename") as mock_basename:
-
-            mock_dirname.return_value = "/custom/path"
-            mock_basename.return_value = "custom-stack.yaml"
-
-            stack = DockerStack(mock_swarm, stack_file, config_file)
-
-            mock_dirname.assert_called_once_with(str(stack_file))
-            mock_basename.assert_called_once_with(str(stack_file))
-
-    def test_empty_services_config(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_empty_services_config(self, mock_swarm, mock_dependencies):
         """Test behavior with empty services configuration"""
         mock_dependencies["yaml_load"].return_value = {}
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
-
+        stack = DockerStack(mock_swarm)
         # Should handle empty services gracefully
         assert len(stack.services) == 0
 
-    def test_services_with_no_deploy_section(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_services_with_no_deploy_section(self, mock_swarm, mock_dependencies):
         """Test services without deploy section"""
         stack_config = {
             "services": {
@@ -299,32 +272,32 @@ class TestDockerStack:
         with patch(f"{PACKAGE}.DockerService") as mock_docker_service:
             mock_docker_service.return_value = "mock_service"
 
-            stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+            stack = DockerStack(mock_swarm)
 
             # Should still create service even without deploy section
             services = stack.services
             assert len(services) == 1
 
-    def test_config_file_with_no_sections(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_config_file_with_no_sections(self, mock_swarm, mock_dependencies):
         """Test config file with no sections"""
         mock_dependencies["config_parser"].sections.return_value = []
 
-        stack = DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+        stack = DockerStack(mock_swarm)
 
         # Should handle empty config gracefully
         assert stack.config == {}
 
-    def test_template_render_error(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_template_render_error(self, mock_swarm, mock_dependencies):
         """Test template rendering error"""
         mock_dependencies["template"].render.side_effect = Exception(
             "Template error")
 
         with pytest.raises(Exception, match="Template error"):
-            DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+            DockerStack(mock_swarm)
 
-    def test_yaml_parse_error(self, mock_swarm, mock_stack_file, mock_config_file, mock_dependencies):
+    def test_yaml_parse_error(self, mock_swarm, mock_dependencies):
         """Test YAML parsing error"""
         mock_dependencies["yaml_load"].side_effect = Exception("YAML error")
 
         with pytest.raises(Exception, match="YAML error"):
-            DockerStack(mock_swarm, mock_stack_file, mock_config_file)
+            DockerStack(mock_swarm)

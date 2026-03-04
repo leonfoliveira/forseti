@@ -9,7 +9,7 @@ from rich.live import Live
 from rich.spinner import Spinner
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_file__, __stack_name__
+from cli.config import __config_file__, __stack_name__, __stack_template_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
@@ -18,12 +18,6 @@ from .status import build_table
 
 
 def deploy_cmd(
-    stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file.", exists=True)
-    ] = Path(__stack_file__),
-    config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file.", exists=True)
-    ] = Path(__config_file__),
     yes: Annotated[
         bool,
         typer.Option(
@@ -50,11 +44,9 @@ def deploy_cmd(
         console.print(Messages.warning("This node is not part of a swarm."))
         raise typer.Exit(code=1)
 
-    stack = DockerStack(
-        swarm=docker_swarm, stack_file=stack_file, config_file=config_file
-    )
+    docker_stack = DockerStack(swarm=docker_swarm)
 
-    if stack.is_deployed and not force:
+    if docker_stack.is_deployed and not force:
         console.print(
             Messages.warning(f"Stack '{__stack_name__}' is already deployed.")
         )
@@ -68,7 +60,7 @@ def deploy_cmd(
     def deploy():
         nonlocal deployment_error
         try:
-            stack.deploy()
+            docker_stack.deploy()
         except Exception as e:
             deployment_error = e
 
@@ -89,12 +81,12 @@ def deploy_cmd(
                     )
                     raise typer.Exit(code=1)
 
-                table = build_table(stack)
+                table = build_table(docker_stack)
                 live.update(Group(table, spinner))
 
                 all_converged = all(
                     service.is_running and service.is_converged
-                    for service in stack.services
+                    for service in docker_stack.services
                 )
                 if all_converged:
                     break

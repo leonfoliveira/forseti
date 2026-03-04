@@ -18,8 +18,7 @@ def init_cmd(
     docker_swarm = DockerSwarm()
 
     if docker_swarm.is_active:
-        console.print(Messages.warning(
-            "This node is already part of a swarm."))
+        console.print(Messages.warning("This node is already part of a swarm."))
         raise typer.Exit(code=1)
 
     def prompt_password(prompt_text: str) -> str:
@@ -28,8 +27,7 @@ def init_cmd(
             if 8 <= len(password) <= 30:
                 return password
             console.print(
-                Messages.error(
-                    "Password must be between 8 and 30 characters long.")
+                Messages.error("Password must be between 8 and 30 characters long.")
             )
 
     root_password = prompt_password("Root password")
@@ -44,8 +42,7 @@ def init_cmd(
     docker_swarm.create_secret(name="db_password", data=db_password)
     docker_swarm.create_secret(name="redis_password", data=redis_password)
     docker_swarm.create_secret(name="minio_password", data=minio_password)
-    docker_swarm.create_secret(
-        name="rabbitmq_password", data=rabbitmq_password)
+    docker_swarm.create_secret(name="rabbitmq_password", data=rabbitmq_password)
 
     console.print()
 

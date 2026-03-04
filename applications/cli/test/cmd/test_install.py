@@ -195,19 +195,6 @@ class TestInstall:
         assert "tag" in first_call_kwargs
         assert "forseti-sb-cpp17:" in first_call_kwargs["tag"]
 
-    def test_install_with_custom_paths(self, runner, mock_docker_client):
-        """Test installation with custom stack and config file paths"""
-        # Use existing files from the actual project structure
-        result = runner.invoke(app, [
-            "install",
-            "--stack-file", "../../deployment/production/stack.yaml",
-            "--config-file", "cli/config.py",
-            "--sandboxes-dir", "../../deployment/production/sandboxes"
-        ])
-
-        # Should succeed with valid paths (even though they're mocked)
-        assert result.exit_code == 0
-
     def test_install_progress_tracking(self, runner, mock_progress):
         """Test that progress is properly tracked for all phases"""
         result = runner.invoke(app, ["install"])

@@ -24,5 +24,6 @@ backups/
 certs/
 sandboxes/
 stack.conf
+stack.yaml
 stack.yaml.j2
 volumes/
