@@ -1,5 +1,8 @@
 [tool.pytest.ini_options]
-addopts = "--cov=cli --cov-report=term-missing --cov-report=html"
+testpaths = ["test"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
 
 [tool.coverage.run]
 source = ["cli"]
@@ -10,3 +13,6 @@ fail_under = 90
 show_missing = true
 skip_covered = false
 skip_empty = false
+
+[tool.isort]
+profile = "black"

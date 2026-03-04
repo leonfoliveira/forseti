@@ -7,10 +7,10 @@ import { config } from "@/test/config";
 export class CLIAdapter {
   static async run(args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {
-      console.log(`Running CLI command: ${config.CLI_PATH} ${args.join(" ")}`);
+      const finalArgs = [...args];
+      finalArgs.push("--root-password", config.ROOT_PASSWORD);
 
-      // Use pty to create a pseudo-terminal
-      const ptyProcess = pty.spawn(config.CLI_PATH, args, {
+      const ptyProcess = pty.spawn(config.CLI_PATH, finalArgs, {
         name: "xterm-color",
         cols: 80,
         rows: 24,
@@ -22,9 +22,7 @@ export class CLIAdapter {
       });
 
       let output = "";
-      let passwordSent = false;
 
-      // Set up a timeout
       const timeoutId = setTimeout(() => {
         ptyProcess.kill();
         reject(new Error("Process timed out after 60 seconds"));
@@ -32,12 +30,6 @@ export class CLIAdapter {
 
       ptyProcess.onData((data: string) => {
         output += data;
-
-        // Check if we need to provide the root password
-        if (data.includes("Root password:") && !passwordSent) {
-          passwordSent = true;
-          ptyProcess.write(config.ROOT_PASSWORD + "\r");
-        }
       });
 
       ptyProcess.onExit(({ exitCode, signal }) => {
@@ -52,8 +44,6 @@ export class CLIAdapter {
             .replace(/\x1b\[[0-9]*[nA-Z]/g, "") // Remove cursor positioning sequences
             // eslint-disable-next-line no-control-regex
             .replace(/\x00/g, "") // Remove null characters
-            .replace(/Root password:.*?[\r\n]/g, "") // Remove password prompt line
-            .replace(/\*+/g, "") // Remove all asterisks (password masking)
             .replace(/\r\n/g, "\n") // Normalize line endings
             .replace(/\r/g, "\n") // Convert remaining \r to \n
             .replace(/\n+/g, "\n") // Remove multiple consecutive newlines

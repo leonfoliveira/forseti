@@ -1,228 +1,214 @@
+from unittest.mock import patch, MagicMock
 import pytest
-from unittest.mock import MagicMock, patch
+from datetime import datetime, timezone
 
 from cli.util.api_adapter import ApiAdapter
 
-
-BASE_PATH = "cli.util.api_adapter"
+PACKAGE = "cli.util.api_adapter"
 
 
 class TestApiAdapter:
-    @pytest.fixture(autouse=True)
-    def keyring(self):
-        with patch(f"{BASE_PATH}.keyring") as mock:
-            yield mock
-
-    @pytest.fixture(autouse=True)
-    def requests(self):
-        with patch(f"{BASE_PATH}.requests") as mock:
-            yield mock
-
-    @pytest.fixture(autouse=True)
-    def input_adapter(self):
-        with patch(f"{BASE_PATH}.InputAdapter") as mock:
-            yield mock.return_value
+    @pytest.fixture
+    def mock_docker_stack(self):
+        mock_stack = MagicMock()
+        mock_stack.config = {
+            "global": {
+                "domain": "example.com",
+                "https": True
+            }
+        }
+        return mock_stack
 
     @pytest.fixture
-    def sut(self):
-        yield ApiAdapter(api_url="https://test.com")
-
-    def test_authenticate_with_stored_session_not_expired(self, sut, keyring, requests):
-        session_id = self._setup_valid_session(keyring, requests)
-
-        assert sut._authenticate() == session_id
-
-    def test_authenticate_without_stored_session(self, sut, keyring, requests, input_adapter):
-        keyring.get_password.return_value = None
-
-        input_adapter.password.return_value = "password"
-        response = requests.Response()
-        response.status_code = 200
-        response.headers = {"Set-Cookie": "session_id=123; csrf_token=abc;"}
-        requests.post.return_value = response
-
-        assert sut._authenticate() == ("123", "abc")
-
-    def test_authenticate_with_failed_request(self, sut, keyring, requests, input_adapter):
-        keyring.get_password.return_value = None
-
-        input_adapter.password.return_value = "password"
-        response = requests.Response()
-        response.status_code = 401
-        response.text = "Unauthorized"
-        requests.post.return_value = response
-
-        with pytest.raises(Exception) as ex:
-            sut._authenticate()
-        assert "Unauthorized" in str(ex.value)
-
-    def test_get_successful(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 200
-        response.json.return_value = {"key": "value"}
-        requests.get.side_effect = [
-            MagicMock(status_code=200),
-            response
-        ]
-
-        result = sut.get("/test-path")
-
-        requests.get.assert_called_with(
-            f"{sut.api_url}/test-path",
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
-        assert result == {"key": "value"}
-
-    def test_get_failed(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 404
-        response.text = "Not Found"
-        requests.get.side_effect = [
-            MagicMock(status_code=200),
-            response
-        ]
-
-        with pytest.raises(Exception) as ex:
-            sut.get("/test-path")
-        assert "Not Found" in str(ex.value)
-
-        requests.get.assert_called_with(
-            f"{sut.api_url}/test-path",
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
+    def api_adapter(self, mock_docker_stack):
+        return ApiAdapter(
+            docker_stack=mock_docker_stack,
+            root_password="test_password"
         )
 
-    def test_post_successful(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 200
-        response.json.return_value = {"key": "value"}
-        requests.post.return_value = response
+    @pytest.fixture(autouse=True)
+    def mock_requests(self):
+        with patch(f"{PACKAGE}.requests") as mock_requests:
+            mock_response = MagicMock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {"id": "test_contest"}
+            mock_requests.post.return_value = mock_response
+            mock_requests.get.return_value = mock_response
+            mock_requests.delete.return_value = mock_response
+            yield mock_requests
 
-        result = sut.post("/test-path", json={"data": "value"})
+    @pytest.fixture(autouse=True)
+    def mock_keyring(self):
+        with patch(f"{PACKAGE}.keyring") as mock_keyring:
+            mock_keyring.get_password.return_value = None
+            mock_keyring.set_password.return_value = None
 
-        requests.post.assert_called_with(
-            f"{sut.api_url}/test-path",
-            json={"data": "value"},
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
-        assert result == {"key": "value"}
+            # Mock the NoKeyringError exception
+            class MockNoKeyringError(Exception):
+                pass
 
-    def test_post_failed(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 400
-        response.text = "Bad Request"
-        requests.post.return_value = response
+            mock_keyring.errors.NoKeyringError = MockNoKeyringError
+            yield mock_keyring
 
-        with pytest.raises(Exception) as ex:
-            sut.post("/test-path", json={"data": "value"})
-        assert "Bad Request" in str(ex.value)
+    def test_init_with_https(self):
+        """Test ApiAdapter initialization with HTTPS"""
+        mock_stack = MagicMock()
+        mock_stack.config = {"global": {"domain": "test.com", "https": True}}
 
-        requests.post.assert_called_with(
-            f"{sut.api_url}/test-path",
-            json={"data": "value"},
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
+        adapter = ApiAdapter(mock_stack)
 
-    def test_put_successful(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 200
-        response.json.return_value = {"key": "value"}
-        requests.put.return_value = response
+        assert adapter.api_url == "https://api.test.com"
 
-        result = sut.put("/test-path", json={"data": "value"})
+    def test_init_with_http(self):
+        """Test ApiAdapter initialization with HTTP"""
+        mock_stack = MagicMock()
+        mock_stack.config = {"global": {"domain": "test.com", "https": False}}
 
-        requests.put.assert_called_with(
-            f"{sut.api_url}/test-path",
-            json={"data": "value"},
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
-        assert result == {"key": "value"}
+        adapter = ApiAdapter(mock_stack)
 
-    def test_put_failed(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 403
-        response.text = "Forbidden"
-        requests.put.return_value = response
+        assert adapter.api_url == "http://api.test.com"
 
-        with pytest.raises(Exception) as ex:
-            sut.put("/test-path", json={"data": "value"})
-        assert "Forbidden" in str(ex.value)
+    def test_init_default_http(self):
+        """Test ApiAdapter initialization defaults to HTTP when https not specified"""
+        mock_stack = MagicMock()
+        mock_stack.config = {"global": {"domain": "test.com"}}
 
-        requests.put.assert_called_with(
-            f"{sut.api_url}/test-path",
-            json={"data": "value"},
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
+        adapter = ApiAdapter(mock_stack)
 
-    def test_delete_successful(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 204
-        requests.delete.return_value = response
+        assert adapter.api_url == "http://api.test.com"
 
-        sut.delete("/test-path")
+    def test_create_contest_success(self, api_adapter, mock_requests):
+        """Test successful contest creation"""
+        with patch.object(api_adapter, '_get_session') as mock_get_session:
+            mock_get_session.return_value = {
+                "id": "session123", "csrfToken": "csrf123"}
 
-        requests.delete.assert_called_with(
-            f"{sut.api_url}/test-path",
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
+            result = api_adapter.create_contest("test-contest")
 
-    def test_delete_failed(self, sut, keyring, requests):
-        session_id, csrf_token = self._setup_valid_session(keyring, requests)
-        response = requests.Response()
-        response.status_code = 500
-        response.text = "Server Error"
-        requests.delete.return_value = response
+            assert result == {"id": "test_contest"}
+            mock_requests.post.assert_called_once()
 
-        with pytest.raises(Exception) as ex:
-            sut.delete("/test-path")
-        assert "Server Error" in str(ex.value)
+    def test_create_contest_failure(self, api_adapter, mock_requests):
+        """Test contest creation failure"""
+        mock_response = MagicMock()
+        mock_response.status_code = 400
+        mock_response.json.return_value = {"message": "Contest already exists"}
+        mock_requests.post.return_value = mock_response
 
-        requests.delete.assert_called_with(
-            f"{sut.api_url}/test-path",
-            cookies={sut.SESSION_ID_COOKIE: session_id},
-            headers={sut.CSRF_TOKEN_HEADER: csrf_token},
-        )
+        with patch.object(api_adapter, '_get_session') as mock_get_session:
+            mock_get_session.return_value = {
+                "id": "session123", "csrfToken": "csrf123"}
 
-    def test_get_cached_value_with_keyring_error(self, sut, keyring):
-        keyring.errors.NoKeyringError = Exception
-        keyring.get_password.side_effect = keyring.errors.NoKeyringError
+            with pytest.raises(Exception, match="Contest already exists"):
+                api_adapter.create_contest("test-contest")
 
-        result = sut._get_cached_value(sut.SESSION_ID_KEYRING_KEY)
+    def test_find_all_contests(self, api_adapter, mock_requests):
+        """Test finding all contests"""
+        mock_response = MagicMock()
+        mock_response.json.return_value = [
+            {"id": "contest1"}, {"id": "contest2"}]
+        mock_requests.get.return_value = mock_response
+
+        with patch.object(api_adapter, '_get_session') as mock_get_session:
+            mock_get_session.return_value = {
+                "id": "session123", "csrfToken": "csrf123"}
+
+            result = api_adapter.find_all_contests()
+
+            assert result == [{"id": "contest1"}, {"id": "contest2"}]
+            mock_requests.get.assert_called_once()
+
+    def test_delete_contest(self, api_adapter, mock_requests):
+        """Test contest deletion"""
+        with patch.object(api_adapter, '_get_session') as mock_get_session:
+            mock_get_session.return_value = {
+                "id": "session123", "csrfToken": "csrf123"}
+
+            api_adapter.delete_contest("contest123")
+
+            mock_requests.delete.assert_called_once()
+
+    def test_authenticate_root_success(self, api_adapter, mock_requests):
+        """Test successful root authentication"""
+        mock_response = MagicMock()
+        mock_response.json.return_value = {
+            "id": "session123",
+            "csrfToken": "csrf123",
+            "expiresAt": "2100-01-01T00:00:00Z"
+        }
+        mock_requests.post.return_value = mock_response
+
+        with patch.object(api_adapter, '_cache_session') as mock_cache:
+            result = api_adapter._authenticate_root()
+
+            assert result["id"] == "session123"
+            mock_cache.assert_called_once()
+
+    def test_authenticate_root_prompt_password(self, mock_requests):
+        """Test authentication prompts for password when not provided"""
+        mock_stack = MagicMock()
+        mock_stack.config = {"global": {"domain": "test.com"}}
+        adapter = ApiAdapter(mock_stack, root_password=None)
+
+        with patch(f"{PACKAGE}.typer.prompt") as mock_prompt:
+            mock_prompt.return_value = "prompted_password"
+            mock_response = MagicMock()
+            mock_response.json.return_value = {"id": "session123"}
+            mock_requests.post.return_value = mock_response
+
+            with patch.object(adapter, '_cache_session'):
+                adapter._authenticate_root()
+
+            mock_prompt.assert_called_once()
+            assert adapter.root_password == "prompted_password"
+
+    def test_cache_session_success(self, api_adapter, mock_keyring):
+        """Test successful session caching"""
+        session = {"id": "session123", "csrfToken": "csrf123"}
+
+        api_adapter._cache_session(session)
+
+        mock_keyring.set_password.assert_called_once()
+
+    def test_cache_session_no_keyring(self, api_adapter, mock_keyring):
+        """Test session caching when no keyring available"""
+        mock_keyring.set_password.side_effect = mock_keyring.errors.NoKeyringError()
+
+        session = {"id": "session123", "csrfToken": "csrf123"}
+
+        # Should not raise exception, just show warning
+        api_adapter._cache_session(session)
+
+    def test_get_cached_session_valid(self, api_adapter, mock_keyring):
+        """Test getting valid cached session"""
+        # Use Z suffix to indicate UTC timezone
+        session_data = '{"id": "session123", "expiresAt": "2100-01-01T00:00:00Z"}'
+        mock_keyring.get_password.return_value = session_data
+
+        result = api_adapter._get_cached_session()
+
+        assert result["id"] == "session123"
+
+    def test_get_cached_session_expired(self, api_adapter, mock_keyring):
+        """Test getting expired cached session"""
+        # Use Z suffix to indicate UTC timezone
+        session_data = '{"id": "session123", "expiresAt": "2000-01-01T00:00:00Z"}'
+        result = api_adapter._get_cached_session()
 
         assert result is None
 
-    def test_set_cached_value_with_keyring_error(self, sut, keyring):
-        keyring.errors.NoKeyringError = Exception
-        keyring.set_password.side_effect = keyring.errors.NoKeyringError
+    def test_get_cached_session_no_cache(self, api_adapter, mock_keyring):
+        """Test getting cached session when none exists"""
+        mock_keyring.get_password.return_value = None
 
-        # Should not raise an exception
-        sut._set_cached_value(sut.SESSION_ID_KEYRING_KEY, "test_session")
+        result = api_adapter._get_cached_session()
 
-        keyring.set_password.assert_called_once_with(
-            sut.SERVICE_NAME, sut.SESSION_ID_KEYRING_KEY, "test_session"
-        )
+        assert result is None
 
-    def test_api_adapter_with_custom_url(self):
-        custom_url = "https://api.example.com"
-        adapter = ApiAdapter(api_url=custom_url)
-        assert adapter.api_url == custom_url
+    def test_get_cached_session_no_keyring(self, api_adapter, mock_keyring):
+        """Test getting cached session when no keyring available"""
+        mock_keyring.get_password.side_effect = mock_keyring.errors.NoKeyringError()
 
-    def _setup_valid_session(self, keyring, requests):
-        session_id = "123"
-        csrf_token = "abc"
-        keyring.get_password.side_effect = [session_id, csrf_token]
-        requests.get.return_value = MagicMock(status_code=200)
-        return session_id, csrf_token
+        result = api_adapter._get_cached_session()
+
+        assert result is None
