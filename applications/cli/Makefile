@@ -21,7 +21,6 @@ setup: $(VENV)/bin/activate
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.dev.txt
 	chmod +x $(VENV)/bin/activate
-	source $(VENV)/bin/activate
 
 build:
 	@$(PYTHON) scripts/generate_config.py \
