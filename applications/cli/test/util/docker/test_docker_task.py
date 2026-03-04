@@ -53,7 +53,9 @@ class TestDockerTask:
 
     @pytest.fixture(autouse=True)
     def mock_docker_client(self):
-        with patch(f"{PACKAGE}.docker_client") as mock_client:
+        with patch(f"{PACKAGE}.get_docker_client") as mock_get_docker_client:
+            mock_docker_client = MagicMock()
+            mock_get_docker_client.return_value = mock_docker_client
             mock_container = MagicMock()
             mock_container.id = "container123456789"
             mock_container.attrs = {
@@ -63,8 +65,8 @@ class TestDockerTask:
                     }
                 }
             }
-            mock_client.containers.get.return_value = mock_container
-            yield mock_client
+            mock_docker_client.containers.get.return_value = mock_container
+            yield mock_docker_client
 
     def test_init(self, mock_swarm, mock_stack, mock_service, mock_docker_task):
         """Test DockerTask initialization"""
@@ -98,37 +100,47 @@ class TestDockerTask:
 
         assert task.node is None
 
-    def test_get_container_success(self, mock_docker_client):
+    def test_get_container_success(self, mock_swarm, mock_stack, mock_service, mock_docker_task, mock_docker_client):
         """Test _get_container with valid container ID"""
-        container = DockerTask._get_container("container123")
+        task = DockerTask(mock_swarm, mock_stack,
+                          mock_service, mock_docker_task)
+        container = task._get_container("container123")
 
         assert container is not None
-        mock_docker_client.containers.get.assert_called_once_with(
+        mock_docker_client.containers.get.assert_called_with(
             "container123")
 
-    def test_get_container_empty_id(self):
+    def test_get_container_empty_id(self, mock_swarm, mock_stack, mock_service, mock_docker_task):
         """Test _get_container with empty container ID"""
-        container = DockerTask._get_container("")
+        task = DockerTask(mock_swarm, mock_stack,
+                          mock_service, mock_docker_task)
+        container = task._get_container("")
         assert container is None
 
-    def test_get_container_none_id(self):
+    def test_get_container_none_id(self, mock_swarm, mock_stack, mock_service, mock_docker_task):
         """Test _get_container with None container ID"""
-        container = DockerTask._get_container(None)
+        task = DockerTask(mock_swarm, mock_stack,
+                          mock_service, mock_docker_task)
+        container = task._get_container(None)
         assert container is None
 
-    def test_get_container_not_found(self, mock_docker_client):
+    def test_get_container_not_found(self, mock_swarm, mock_stack, mock_service, mock_docker_task, mock_docker_client):
         """Test _get_container when container not found"""
         mock_docker_client.containers.get.side_effect = NotFound(
             "Container not found")
 
-        container = DockerTask._get_container("nonexistent")
+        task = DockerTask(mock_swarm, mock_stack,
+                          mock_service, mock_docker_task)
+        container = task._get_container("nonexistent")
         assert container is None
 
-    def test_get_container_api_error(self, mock_docker_client):
+    def test_get_container_api_error(self, mock_swarm, mock_stack, mock_service, mock_docker_task, mock_docker_client):
         """Test _get_container with API error"""
         mock_docker_client.containers.get.side_effect = APIError("API error")
 
-        container = DockerTask._get_container("container123")
+        task = DockerTask(mock_swarm, mock_stack,
+                          mock_service, mock_docker_task)
+        container = task._get_container("container123")
         assert container is None
 
     def test_state_property(self, mock_swarm, mock_stack, mock_service, mock_docker_task):

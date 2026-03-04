@@ -1,4 +1,3 @@
-from pathlib import Path
 from threading import Thread
 from time import sleep
 from typing import Annotated
@@ -9,7 +8,6 @@ from rich.live import Live
 from rich.spinner import Spinner
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_template_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
@@ -45,11 +43,9 @@ def scale_cmd(
         console.print(Messages.warning("Stack is not deployed."))
         raise typer.Exit(code=1)
 
-    service = next(
-        (s for s in docker_stack.services if s.name == service_name), None)
+    service = next((s for s in docker_stack.services if s.name == service_name), None)
     if not service:
-        console.print(Messages.warning(
-            f"Service '{service_name}' not found in stack."))
+        console.print(Messages.warning(f"Service '{service_name}' not found in stack."))
         raise typer.Exit(code=1)
 
     if not yes:
@@ -83,8 +79,7 @@ def scale_cmd(
             while True:
                 if scaling_error is not None:
                     console.print(
-                        Messages.error(
-                            f"Failed to scale service: {scaling_error}")
+                        Messages.error(f"Failed to scale service: {scaling_error}")
                     )
                     raise typer.Exit(code=1)
 
@@ -96,16 +91,13 @@ def scale_cmd(
 
                 sleep(1)
     except KeyboardInterrupt:
-        console.print(Messages.warning(
-            "Scaling will continue in the background..."))
+        console.print(Messages.warning("Scaling will continue in the background..."))
         raise typer.Abort()
 
     scale_thread.join(timeout=0)
     if scaling_error is not None:
-        console.print(Messages.error(
-            f"Failed to scale service: {scaling_error}"))
+        console.print(Messages.error(f"Failed to scale service: {scaling_error}"))
         raise typer.Exit(code=1)
 
     console.print()
-    console.print(Messages.success(
-        f"Service '{service.name}' scaled successfully!"))
+    console.print(Messages.success(f"Service '{service.name}' scaled successfully!"))

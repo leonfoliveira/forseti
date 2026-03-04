@@ -6,12 +6,9 @@ from typing import Annotated
 import typer
 from rich.progress import Progress
 
-
 from cli.composition import command_adapter, console, get_docker_client
 from cli.config import (
-    __config_file__,
     __sandboxes_dir__,
-    __stack_template_file__,
     __version__,
 )
 from cli.util.docker.docker_stack import DockerStack
@@ -29,8 +26,7 @@ def install_cmd(
     ],
     sandboxes_dir: Annotated[
         Path,
-        typer.Option(
-            help="Directory containing sandbox Dockerfiles.", exists=True),
+        typer.Option(help="Directory containing sandbox Dockerfiles.", exists=True),
     ] = Path(__sandboxes_dir__),
 ):
     """
@@ -117,8 +113,7 @@ def _pull_stack_images(docker_client, stack: DockerStack):
     images = set(
         filter(
             None,
-            [service.get("image")
-             for service in service_configs if "image" in service],
+            [service.get("image") for service in service_configs if "image" in service],
         )
     )
 
@@ -134,8 +129,7 @@ def _pull_stack_images(docker_client, stack: DockerStack):
             Messages.progress("Pulling stack images..."), total=len(images)
         )
         with ThreadPoolExecutor(max_workers=4) as executor:
-            future_to_image = {executor.submit(
-                pull_image, img): img for img in images}
+            future_to_image = {executor.submit(pull_image, img): img for img in images}
             for future in as_completed(future_to_image):
                 success, image_name, error = future.result()
                 if not success:

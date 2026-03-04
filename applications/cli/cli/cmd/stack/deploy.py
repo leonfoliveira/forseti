@@ -1,4 +1,3 @@
-from pathlib import Path
 from threading import Thread
 from time import sleep
 from typing import Annotated
@@ -9,7 +8,7 @@ from rich.live import Live
 from rich.spinner import Spinner
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_name__, __stack_template_file__
+from cli.config import __stack_name__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
@@ -77,8 +76,7 @@ def deploy_cmd(
             while True:
                 if deployment_error is not None:
                     console.print(
-                        Messages.error(
-                            f"Deployment failed: {deployment_error}")
+                        Messages.error(f"Deployment failed: {deployment_error}")
                     )
                     raise typer.Exit(code=1)
 
@@ -94,8 +92,7 @@ def deploy_cmd(
 
                 sleep(1)
     except KeyboardInterrupt:
-        console.print(Messages.warning(
-            "Deployment will continue in the background..."))
+        console.print(Messages.warning("Deployment will continue in the background..."))
         raise typer.Abort()
 
     deploy_thread.join(timeout=0)

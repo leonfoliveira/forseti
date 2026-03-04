@@ -19,8 +19,7 @@ class DockerTask:
         self.container = self._get_container(container_id)
 
         node_id = self.docker_task.get("NodeID", "")
-        self.node = next(
-            (n for n in self.swarm.nodes if n.id == node_id), None)
+        self.node = next((n for n in self.swarm.nodes if n.id == node_id), None)
 
     @property
     def state(self):

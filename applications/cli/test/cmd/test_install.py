@@ -34,7 +34,9 @@ class TestInstall:
 
     @pytest.fixture(autouse=True)
     def mock_docker_client(self):
-        with patch(f"{PACKAGE}.docker_client") as mock_docker_client:
+        with patch(f"{PACKAGE}.get_docker_client") as mock_get_docker_client:
+            mock_docker_client = MagicMock()
+            mock_get_docker_client.return_value = mock_docker_client
             mock_images = MagicMock()
             mock_images.build = MagicMock()
             mock_images.pull = MagicMock()

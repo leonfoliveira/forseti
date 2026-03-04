@@ -13,9 +13,12 @@ class TestDockerSwarm:
 
     @pytest.fixture(autouse=True)
     def mock_docker_client(self):
-        with patch(f"{PACKAGE}.docker_client") as mock_client:
+        with patch(f"{PACKAGE}.get_docker_client") as mock_get_docker_client:
+            mock_docker_client = MagicMock()
+            mock_get_docker_client.return_value = mock_docker_client
+
             # Default mock setup for active swarm
-            mock_client.info.return_value = {
+            mock_docker_client.info.return_value = {
                 "Swarm": {
                     "LocalNodeState": "active",
                     "NodeID": "node123"
@@ -30,7 +33,7 @@ class TestDockerSwarm:
                     "Worker": "SWMTKN-1-worker-token"
                 }
             }
-            mock_client.swarm = mock_swarm
+            mock_docker_client.swarm = mock_swarm
 
             # Mock node
             mock_node = MagicMock()
@@ -39,16 +42,16 @@ class TestDockerSwarm:
                     "Addr": "192.168.1.100:2377"
                 }
             }
-            mock_client.nodes.get.return_value = mock_node
-            mock_client.nodes.list.return_value = [mock_node]
+            mock_docker_client.nodes.get.return_value = mock_node
+            mock_docker_client.nodes.list.return_value = [mock_node]
 
             # Mock secrets and other operations
-            mock_client.secrets.create = MagicMock()
-            mock_client.swarm.init = MagicMock()
-            mock_client.swarm.join = MagicMock()
-            mock_client.swarm.leave = MagicMock()
+            mock_docker_client.secrets.create = MagicMock()
+            mock_docker_client.swarm.init = MagicMock()
+            mock_docker_client.swarm.join = MagicMock()
+            mock_docker_client.swarm.leave = MagicMock()
 
-            yield mock_client
+            yield mock_docker_client
 
     def test_is_active_true(self, docker_swarm, mock_docker_client):
         """Test is_active property when swarm is active"""

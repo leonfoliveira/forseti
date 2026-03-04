@@ -1,14 +1,19 @@
 import configparser
 import os
 import tempfile
-from pathlib import Path
 from typing import Any
 
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
 from cli.composition import command_adapter, get_docker_client
-from cli.config import __config_file__, __stack_name__, __stack_template_file__, __volumes_dir__, __certs_dir__
+from cli.config import (
+    __certs_dir__,
+    __config_file__,
+    __stack_name__,
+    __stack_template_file__,
+    __volumes_dir__,
+)
 
 from .docker_service import DockerService
 from .docker_swarm import DockerSwarm
@@ -47,8 +52,7 @@ class DockerStack:
 
         service_configs = self.stack_config.get("services", {})
         return [
-            DockerService(self.swarm, self, name, config,
-                          docker_services_map.get(name))
+            DockerService(self.swarm, self, name, config, docker_services_map.get(name))
             for name, config in service_configs.items()
             if not any(
                 label == "type=job"
@@ -67,11 +71,11 @@ class DockerStack:
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".yaml", delete=False
         ) as tmp_file:
-            yaml.safe_dump(self.stack_config, tmp_file,
-                           default_flow_style=False)
+            yaml.safe_dump(self.stack_config, tmp_file, default_flow_style=False)
             try:
                 command_adapter.run(
-                    f"docker stack deploy --detach=true -c {tmp_file.name} {__stack_name__}",
+                    f"docker stack deploy --detach=true -c "
+                    f"{tmp_file.name} {__stack_name__}",
                     timeout=120,
                 )
             finally:

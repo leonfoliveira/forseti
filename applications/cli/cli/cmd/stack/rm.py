@@ -3,7 +3,6 @@ from typing import Annotated
 import typer
 
 from cli.composition import console
-from cli.config import __config_file__, __stack_template_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages

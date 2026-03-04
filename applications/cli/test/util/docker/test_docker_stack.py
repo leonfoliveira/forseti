@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 
 from cli.util.docker.docker_stack import DockerStack
-from cli.config import __stack_template_file__, __config_file__
+from cli.config import __stack_template_file__, __config_file__, __volumes_dir__, __certs_dir__
 
 PACKAGE = "cli.util.docker.docker_stack"
 
@@ -55,7 +55,7 @@ class TestDockerStack:
                 patch(f"{PACKAGE}.yaml.safe_load") as mock_yaml_load, \
                 patch(f"{PACKAGE}.os.path.dirname") as mock_dirname, \
                 patch(f"{PACKAGE}.os.path.basename") as mock_basename, \
-                patch(f"{PACKAGE}.docker_client") as mock_docker_client, \
+                patch(f"{PACKAGE}.get_docker_client") as mock_get_docker_client, \
                 patch(f"{PACKAGE}.command_adapter") as mock_command_adapter:
 
             # Setup config parser
@@ -76,6 +76,8 @@ class TestDockerStack:
             mock_basename.return_value = "stack.yaml"
 
             # Setup docker client
+            mock_docker_client = MagicMock()
+            mock_get_docker_client.return_value = mock_docker_client
             mock_docker_client.services.list.return_value = []
 
             # Setup command adapter
@@ -110,7 +112,9 @@ class TestDockerStack:
 
         expected_config = {
             "global": {"domain": "example.com", "https": "true"},
-            "database": {"host": "localhost", "port": "5432"}
+            "database": {"host": "localhost", "port": "5432"},
+            "__volumes_path__": __volumes_dir__,
+            "__certs_path__": __certs_dir__
         }
 
         assert stack.config == expected_config
@@ -123,8 +127,8 @@ class TestDockerStack:
         expected_config = {
             "global": {"domain": "example.com", "https": "true"},
             "database": {"host": "localhost", "port": "5432"},
-            "__volumes_path__": "/test/volumes",
-            "__certs_path__": "/test/certs"
+            "__volumes_path__": __volumes_dir__,
+            "__certs_path__": __certs_dir__
         }
         mock_dependencies["template"].render.assert_called_once_with(
             expected_config)
@@ -285,7 +289,10 @@ class TestDockerStack:
         stack = DockerStack(mock_swarm)
 
         # Should handle empty config gracefully
-        assert stack.config == {}
+        assert stack.config == {
+            "__volumes_path__": __volumes_dir__,
+            "__certs_path__": __certs_dir__
+        }
 
     def test_template_render_error(self, mock_swarm, mock_dependencies):
         """Test template rendering error"""
