@@ -42,6 +42,10 @@ def status_cmd(
         swarm=docker_swarm, stack_file=stack_file, config_file=config_file
     )
 
+    if not stack.is_deployed:
+        console.print(Messages.warning("Stack is not deployed."))
+        raise typer.Exit(code=1)
+
     if follow:
         with Live(console=console, refresh_per_second=1) as live:
             while True:

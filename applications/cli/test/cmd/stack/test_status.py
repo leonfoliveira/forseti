@@ -59,6 +59,14 @@ class TestStackStatus:
         with patch(f"{PACKAGE}.sleep") as mock_sleep:
             yield mock_sleep
 
+    def test_status_not_deployed(self, runner, mock_docker_stack):
+        """Test status when stack is not deployed"""
+        mock_docker_stack.is_deployed = False
+        result = runner.invoke(app, ["stack", "status"])
+
+        assert result.exit_code == 1
+        assert "Stack is not deployed" in result.output
+
     def test_status_success(self, runner, mock_build_table):
         """Test successful status display"""
         result = runner.invoke(app, ["stack", "status"])
