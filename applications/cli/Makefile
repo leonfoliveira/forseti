@@ -18,7 +18,6 @@ $(VENV)/bin/activate:
 	python3 -m venv $(VENV)
 
 setup: $(VENV)/bin/activate
-	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.dev.txt
 	chmod +x $(VENV)/bin/activate
 
