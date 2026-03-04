@@ -10,8 +10,12 @@ export class CLIAdapter {
       const finalArgs = [...args];
       finalArgs.push("--root-password", config.ROOT_PASSWORD);
 
+      const sanitizedArgs = finalArgs.map((arg, index) =>
+        arg === "--root-password" && index + 1 < finalArgs.length ? [arg, "******"] : arg,
+      ).flat();
+
       console.log(
-        `Running CLI command: ${config.CLI_PATH} ${finalArgs.join(" ")}`,
+        `Running CLI command: ${config.CLI_PATH} ${sanitizedArgs.join(" ")}`,
       );
 
       const ptyProcess = pty.spawn(config.CLI_PATH, finalArgs, {
