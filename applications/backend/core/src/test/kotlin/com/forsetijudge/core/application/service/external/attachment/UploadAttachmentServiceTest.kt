@@ -55,7 +55,6 @@ class UploadAttachmentServiceTest :
         val command =
             UploadAttachmentUseCase.Command(
                 filename = "test.txt",
-                contentType = "text/plain",
                 bytes = "Hello, World!".toByteArray(),
                 context = Attachment.Context.SUBMISSION_CODE,
             )
@@ -93,18 +92,6 @@ class UploadAttachmentServiceTest :
             }
         }
 
-        test("should throw ForbiddenException when content type does not match the actual file content") {
-            val contest = ContestMockBuilder.build()
-            val member = MemberMockBuilder.build(contest = contest)
-            every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-            every { fileAnalyser.getMimeType(any()) } returns "application/pdf"
-
-            shouldThrow<ForbiddenException> {
-                sut.execute(command)
-            }
-        }
-
         listOf(
             Pair(Attachment.Context.PROBLEM_DESCRIPTION, "not-application/pdf"),
             Pair(Attachment.Context.PROBLEM_TEST_CASES, "not-application/csv"),
@@ -120,7 +107,6 @@ class UploadAttachmentServiceTest :
                     sut.execute(
                         UploadAttachmentUseCase.Command(
                             filename = "test.txt",
-                            contentType = "text/plain",
                             bytes = "Hello, World!".toByteArray(),
                             context = context,
                         ),
@@ -149,7 +135,6 @@ class UploadAttachmentServiceTest :
                 sut.execute(
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
-                        contentType = contentType,
                         bytes = "Hello, World!".toByteArray(),
                         context = context,
                     ),
@@ -177,7 +162,6 @@ class UploadAttachmentServiceTest :
                 sut.execute(
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
-                        contentType = contentType,
                         bytes = "Hello, World!".toByteArray(),
                         context = context,
                     ),

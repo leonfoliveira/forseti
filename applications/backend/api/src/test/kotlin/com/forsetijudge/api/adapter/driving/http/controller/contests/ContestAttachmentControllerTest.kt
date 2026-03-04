@@ -43,13 +43,11 @@ class ContestAttachmentControllerTest(
 
         test("upload") {
             val fileName = "test.txt"
-            val contentType = "application/octet-stream"
             val testBytes = "test content".toByteArray()
             val attachment = AttachmentMockBuilder.build().toResponseBodyDTO()
             val command =
                 UploadAttachmentUseCase.Command(
                     filename = fileName,
-                    contentType = contentType,
                     context = attachment.context,
                     bytes = ByteArray(0),
                 )
@@ -62,7 +60,7 @@ class ContestAttachmentControllerTest(
                 MockMultipartFile(
                     "file",
                     command.filename,
-                    command.contentType,
+                    "application/octet-stream",
                     testBytes,
                 )
 

@@ -48,7 +48,6 @@ class ContestAttachmentController(
             uploadAttachmentUseCase.execute(
                 UploadAttachmentUseCase.Command(
                     filename = file.originalFilename,
-                    contentType = file.contentType,
                     context = context,
                     bytes = file.bytes,
                 ),

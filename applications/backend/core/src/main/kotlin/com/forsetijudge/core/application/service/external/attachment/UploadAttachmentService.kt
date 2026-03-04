@@ -65,21 +65,16 @@ class UploadAttachmentService(
             ?.authorizeUpload(contest, member)
             ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
 
-        val realMimeType = fileAnalyser.getMimeType(command.bytes)
-        if (realMimeType != command.contentType) {
-            throw ForbiddenException(
-                "Content type does not match the actual file content. Detected: $realMimeType, provided: ${command.contentType}",
-            )
-        }
+        val contentType = fileAnalyser.getMimeType(command.bytes)
 
         when (command.context) {
             Attachment.Context.PROBLEM_DESCRIPTION -> {
-                if (realMimeType != "application/pdf") {
+                if (contentType != "application/pdf") {
                     throw ForbiddenException("Only PDF files are allowed for context ${command.context}")
                 }
             }
             Attachment.Context.PROBLEM_TEST_CASES -> {
-                if (realMimeType != "text/csv") {
+                if (contentType != "text/csv") {
                     throw ForbiddenException("Only csv files are allowed for context ${command.context}")
                 }
             }
@@ -93,7 +88,7 @@ class UploadAttachmentService(
                 contest = contest,
                 member = member,
                 filename = command.filename ?: id.toString(),
-                contentType = command.contentType ?: "application/octet-stream",
+                contentType = contentType,
                 context = command.context,
             )
         logger.info("Uploading ${command.bytes.size} bytes")
