@@ -7,8 +7,8 @@ class TikaFileAnalyserTest :
     FunSpec({
         val sut = TikaFileAnalyser()
 
-        context("getMimeType") {
-            test("should return correct mime type for a PNG file") {
+        context("validateContentType") {
+            test("should invalidate PNG file with PDF content type") {
                 val pngBytes =
                     byteArrayOf(
                         0x89.toByte(),
@@ -21,12 +21,12 @@ class TikaFileAnalyserTest :
                         0x0A.toByte(),
                     )
 
-                val mimeType = sut.getMimeType(pngBytes)
+                val result = sut.validateContentType(pngBytes, "application/pdf")
 
-                mimeType shouldBe "image/png"
+                result shouldBe false
             }
 
-            test("should return correct mime type for a PDF file") {
+            test("should validate PDF file with PDF content type") {
                 val pdfBytes =
                     byteArrayOf(
                         0x25.toByte(),
@@ -36,9 +36,9 @@ class TikaFileAnalyserTest :
                         0x2D.toByte(),
                     )
 
-                val mimeType = sut.getMimeType(pdfBytes)
+                val result = sut.validateContentType(pdfBytes, "application/pdf")
 
-                mimeType shouldBe "application/pdf"
+                result shouldBe true
             }
         }
     })

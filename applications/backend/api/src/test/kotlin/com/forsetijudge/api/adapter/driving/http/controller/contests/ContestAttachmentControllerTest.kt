@@ -49,6 +49,7 @@ class ContestAttachmentControllerTest(
                 UploadAttachmentUseCase.Command(
                     filename = fileName,
                     context = attachment.context,
+                    contentType = "application/octet-stream",
                     bytes = ByteArray(0),
                 )
             every {

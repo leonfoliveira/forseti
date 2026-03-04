@@ -56,6 +56,7 @@ class UploadAttachmentServiceTest :
             UploadAttachmentUseCase.Command(
                 filename = "test.txt",
                 bytes = "Hello, World!".toByteArray(),
+                contentType = "text/plain",
                 context = Attachment.Context.SUBMISSION_CODE,
             )
 
@@ -92,26 +93,15 @@ class UploadAttachmentServiceTest :
             }
         }
 
-        listOf(
-            Pair(Attachment.Context.PROBLEM_DESCRIPTION, "not-application/pdf"),
-            Pair(Attachment.Context.PROBLEM_TEST_CASES, "not-application/csv"),
-        ).forEach { (context, contestType) ->
-            test("should throw ForbiddenException when content type is not allowed for context $context") {
-                val contest = ContestMockBuilder.build()
-                val member = MemberMockBuilder.build(contest = contest)
-                every { contestRepository.findById(contextContestId) } returns contest
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-                every { fileAnalyser.getMimeType(any()) } returns contestType
+        test("should throw ForbiddenException when content type does not match file content") {
+            val contest = ContestMockBuilder.build()
+            val member = MemberMockBuilder.build(contest = contest)
+            every { contestRepository.findById(contextContestId) } returns contest
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { fileAnalyser.validateContentType(any(), any()) } returns false
 
-                shouldThrow<ForbiddenException> {
-                    sut.execute(
-                        UploadAttachmentUseCase.Command(
-                            filename = "test.txt",
-                            bytes = "Hello, World!".toByteArray(),
-                            context = context,
-                        ),
-                    )
-                }
+            shouldThrow<ForbiddenException> {
+                sut.execute(command)
             }
         }
 
@@ -127,7 +117,7 @@ class UploadAttachmentServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id) } returns actualMember
             every { attachmentRepository.save(any()) } returnsArgument 0
             every { attachmentBucket.upload(any(), any()) } returns Unit
-            every { fileAnalyser.getMimeType(any()) } returns contentType
+            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -136,6 +126,7 @@ class UploadAttachmentServiceTest :
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
                         bytes = "Hello, World!".toByteArray(),
+                        contentType = contentType,
                         context = context,
                     ),
                 )
@@ -154,7 +145,7 @@ class UploadAttachmentServiceTest :
 
             every { contestRepository.findById(contest.id) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns actualMember
-            every { fileAnalyser.getMimeType(any()) } returns contentType
+            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -163,6 +154,7 @@ class UploadAttachmentServiceTest :
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
                         bytes = "Hello, World!".toByteArray(),
+                        contentType = contentType,
                         context = context,
                     ),
                 )
