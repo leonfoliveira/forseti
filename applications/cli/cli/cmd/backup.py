@@ -5,7 +5,7 @@ from cli.config import __backups_dir__
 from cli.util.theme import Messages
 
 
-def backup():
+def backup_cmd():
     """
     Create backups of the Forseti volumes and save them to the ./backups directory.
     """

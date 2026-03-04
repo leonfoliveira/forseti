@@ -1,15 +1,15 @@
 import typer
 
-from .create import create
-from .delete import delete
-from .ls import ls
+from .create import create_cmd
+from .delete import delete_cmd
+from .ls import ls_cmd
 
-app = typer.Typer(
+contest_typer = typer.Typer(
     name="contest",
     help="Commands for managing contests.",
     no_args_is_help=True,
 )
 
-app.command()(create)
-app.command()(delete)
-app.command()(ls)
+contest_typer.command("create")(create_cmd)
+contest_typer.command("delete")(delete_cmd)
+contest_typer.command("ls")(ls_cmd)

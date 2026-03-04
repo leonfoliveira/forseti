@@ -17,20 +17,19 @@ from cli.util.theme import Messages
 from .status import build_table
 
 
-def deploy(
+def deploy_cmd(
     stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file", exists=True)
-    ] = __stack_file__,
+        Path, typer.Option(help="Path to the stack file.", exists=True)
+    ] = Path(__stack_file__),
     config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file", exists=True)
-    ] = __config_file__,
+        Path, typer.Option(help="Path to the configuration file.", exists=True)
+    ] = Path(__config_file__),
     yes: Annotated[
         bool,
         typer.Option(
             "-y",
             "--yes",
-            help="Skip confirmation prompt before deploying",
-            is_flag=True,
+            help="Skip confirmation prompt before deploying.",
         ),
     ] = False,
     force: Annotated[
@@ -38,8 +37,7 @@ def deploy(
         typer.Option(
             "-f",
             "--force",
-            help="Force redeployment even if stack is already deployed",
-            is_flag=True,
+            help="Force redeployment even if stack is already deployed.",
         ),
     ] = False,
 ):
@@ -64,14 +62,17 @@ def deploy(
     if not yes:
         typer.confirm("Are you sure you want to deploy the stack?", abort=True)
 
+    deployment_error = None
+
     def deploy():
+        nonlocal deployment_error
         try:
             stack.deploy()
         except Exception as e:
-            console.print(Messages.error(f"Deployment failed: {e}"))
-            raise typer.Exit(code=1)
+            deployment_error = e
 
-    Thread(target=deploy).start()
+    deploy_thread = Thread(target=deploy)
+    deploy_thread.start()
 
     status_text = (
         Messages.info(
@@ -82,6 +83,11 @@ def deploy(
     try:
         with Live(console=console, refresh_per_second=10) as live:
             while True:
+                if deployment_error is not None:
+                    console.print(Messages.error(
+                        f"Deployment failed: {deployment_error}"))
+                    raise typer.Exit(code=1)
+
                 table = build_table(stack)
                 live.update(Group(table, spinner))
 
@@ -97,6 +103,11 @@ def deploy(
         console.print(Messages.warning(
             "Deployment will continue in the background..."))
         raise typer.Abort()
+
+    deploy_thread.join()
+    if deployment_error is not None:
+        console.print(Messages.error(f"Deployment failed: {deployment_error}"))
+        raise typer.Exit(code=1)
 
     console.print()
     console.print(Messages.success("Stack deployed successfully!"))

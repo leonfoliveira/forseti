@@ -7,9 +7,9 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 
 
-def init(
+def init_cmd(
     advertise_addr: Annotated[
-        str, typer.Option(help="Address to advertise for swarm communication")
+        str, typer.Option(help="Address to advertise for swarm communication.")
     ] = "eth0",
 ):
     """

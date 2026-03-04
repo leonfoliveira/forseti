@@ -15,6 +15,8 @@ from .docker_swarm import DockerSwarm
 class DockerStack:
     def __init__(self, swarm: DockerSwarm, stack_file: Path, config_file: Path):
         self.swarm = swarm
+        self.stack_file = stack_file
+        self.config_file = config_file
 
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file)
@@ -42,7 +44,8 @@ class DockerStack:
 
         service_configs = self.stack_config.get("services", {})
         return [
-            DockerService(self.swarm, self, name, config, docker_services_map.get(name))
+            DockerService(self.swarm, self, name, config,
+                          docker_services_map.get(name))
             for name, config in service_configs.items()
             if not any(
                 label == "type=job"
@@ -59,7 +62,7 @@ class DockerStack:
 
     def deploy(self) -> None:
         command_adapter.run(
-            f"docker stack deploy --detach=true -c {self.file_path} {__stack_name__}",
+            f"docker stack deploy --detach=true -c {self.stack_file} {__stack_name__}",
             timeout=120,
         )
 

@@ -14,22 +14,22 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 
 
-def install(
+def install_cmd(
     sandboxes: Annotated[list[str], typer.Option(help="List of sandboxes to build")] = [
         "cpp17",
         "java21",
         "python312",
     ],
     stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file", exists=True)
-    ] = __stack_file__,
+        Path, typer.Option(help="Path to the stack file.", exists=True)
+    ] = Path(__stack_file__),
     config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file", exists=True)
-    ] = __config_file__,
+        Path, typer.Option(help="Path to the configuration file.", exists=True)
+    ] = Path(__config_file__),
     sandboxes_dir: Annotated[
         Path, typer.Option(
-            help="Directory containing sandbox Dockerfiles", exists=True)
-    ] = __sandboxes_dir__,
+            help="Directory containing sandbox Dockerfiles.", exists=True)
+    ] = Path(__sandboxes_dir__),
 ):
     """
     Install Forseti dependencies and sandboxes.

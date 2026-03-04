@@ -5,7 +5,7 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 
 
-def leave():
+def leave_cmd():
     """
     Leave the current Docker Swarm cluster.
     """

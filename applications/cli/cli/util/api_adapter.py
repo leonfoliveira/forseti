@@ -1,5 +1,5 @@
 import json
-import os
+from pathlib import Path
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -23,7 +23,7 @@ class ApiAdapter:
     def __init__(
         self,
         docker_stack: DockerStack,
-        root_ca_file: Optional[str] = None,
+        root_ca_file: Optional[Path] = None,
         root_password: Optional[str] = None,
     ):
         domain = docker_stack.config["global"]["domain"]

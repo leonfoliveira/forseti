@@ -10,8 +10,7 @@ help:
 	@echo "  make build    - Build the forseti executable"
 	@echo "  make lint     - Check code formatting and style"
 	@echo "  make format   - Format code with black and isort"
-	@echo "  make test     - Run tests with pytest"
-	@echo "  make clean    - Remove the virtual environment and generated files"
+	@echo "  make test     - Run tests with pytest"	echo "  make test-coverage - Run tests with coverage"	@echo "  make clean    - Remove the virtual environment and generated files"
 
 $(VENV)/bin/activate:
 	python3 -m venv $(VENV)
@@ -20,25 +19,28 @@ setup: $(VENV)/bin/activate
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.dev.txt
 	chmod +x $(VENV)/bin/activate
-	$(VENV)/bin/activate
+	source $(VENV)/bin/activate
 
-build: setup
+build:
 	@$(PYTHON) generate_config.py \
 		$(if $(VERSION),--version $(VERSION),--version latest)
 	$(PYTHON) -m PyInstaller --onefile -n forseti -p . cli/__main__.py
 	rm -f ./cli/_config.py
 
-lint: setup
+lint:
 	$(PYTHON) -m black cli --check
 	$(PYTHON) -m isort cli --check-only
 	$(PYTHON) -m flake8 cli
 
-format: setup
+format:
 	$(PYTHON) -m black cli
 	$(PYTHON) -m isort cli
 
-test: setup
+test:
 	$(PYTHON) -m pytest
+
+test-coverage:
+	$(PYTHON) -m pytest --cov=cli --cov-report=term-missing --cov-report=html
 
 clean:
 	rm -rf $(VENV)
@@ -49,4 +51,4 @@ clean:
 	find . -type d -name ".pytest_cache" -exec rm -rf {} +
 	find . -name "*.pyc" -delete
 
-.PHONY: help setup install build lint format test clean
+.PHONY: help setup install build lint format test test-coverage clean

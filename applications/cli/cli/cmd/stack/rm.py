@@ -7,19 +7,20 @@ from cli.composition import console
 from cli.config import __config_file__, __stack_file__
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
+from cli.util.theme import Messages
 
 
-def rm(
+def rm_cmd(
     stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file", exists=True)
-    ] = __stack_file__,
+        Path, typer.Option(help="Path to the stack file.", exists=True)
+    ] = Path(__stack_file__),
     config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file", exists=True)
-    ] = __config_file__,
+        Path, typer.Option(help="Path to the configuration file.", exists=True)
+    ] = Path(__config_file__),
     yes: Annotated[
         bool,
         typer.Option(
-            "-y", "--yes", help="Skip confirmation prompt before removing", is_flag=True
+            "-y", "--yes", help="Skip confirmation prompt before removing.",
         ),
     ] = False,
 ):

@@ -1,9 +1,13 @@
 import os
 
+__version__: str
+__git_commit__: str
+__build_date__: str
+
 try:
-    from cli._config import __build_date__, __git_commit__, __version__
+    from cli._config import __build_date__, __git_commit__, __version__  # type: ignore
 except ImportError:
-    __version__ = "0.0.0"
+    __version__ = "latest"
     __git_commit__ = "unknown"
     __build_date__ = "unknown"
 

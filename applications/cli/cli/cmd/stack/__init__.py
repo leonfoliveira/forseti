@@ -1,16 +1,16 @@
 import typer
 
-from .deploy import deploy
-from .rm import rm
-from .scale import scale
-from .status import status
+from .deploy import deploy_cmd
+from .rm import rm_cmd
+from .scale import scale_cmd
+from .status import status_cmd
 
-app = typer.Typer(
+stack_typer = typer.Typer(
     name="stack",
     help="Commands for managing the Forseti stack",
 )
 
-app.command()(deploy)
-app.command()(rm)
-app.command()(scale)
-app.command()(status)
+stack_typer.command("deploy")(deploy_cmd)
+stack_typer.command("rm")(rm_cmd)
+stack_typer.command("scale")(scale_cmd)
+stack_typer.command("status")(status_cmd)

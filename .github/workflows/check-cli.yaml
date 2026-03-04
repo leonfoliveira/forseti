@@ -36,14 +36,14 @@ jobs:
 
       - name: Install dependencies
         if: steps.changes.outputs.cli == 'true'
-        run: pip install -r requirements.dev.txt
+        run: make setup
 
       - name: Run checks and build in parallel
         if: steps.changes.outputs.cli == 'true'
         run: |
           # Run lint, test, and build in parallel
           make lint &
-          make test &
+          make test-coverage &
           make build &
 
           # Wait for all tasks to complete

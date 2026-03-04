@@ -17,19 +17,19 @@ from cli.util.theme import Messages
 from .status import build_table
 
 
-def scale(
-    service: Annotated[str, typer.Argument(help="Name of the service to scale")],
-    replicas: Annotated[str, typer.Argument(help="Number of replicas to scale to")],
+def scale_cmd(
+    service_name: Annotated[str, typer.Argument(help="Name of the service to scale.")],
+    replicas: Annotated[str, typer.Argument(help="Number of replicas to scale to.")],
     stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file", exists=True)
-    ] = __stack_file__,
+        Path, typer.Option(help="Path to the stack file.", exists=True)
+    ] = Path(__stack_file__),
     config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file", exists=True)
-    ] = __config_file__,
+        Path, typer.Option(help="Path to the configuration file.", exists=True)
+    ] = Path(__config_file__),
     yes: Annotated[
         bool,
         typer.Option(
-            "-y", "--yes", help="Skip confirmation prompt before scaling", is_flag=True
+            "-y", "--yes", help="Skip confirmation prompt before scaling.",
         ),
     ] = False,
 ):
@@ -51,11 +51,10 @@ def scale(
         console.print(Messages.warning("Stack is not deployed."))
         raise typer.Exit(code=1)
 
-    service = next((s for s in stack.services if s.name == service), None)
-
+    service = next((s for s in stack.services if s.name == service_name), None)
     if not service:
         console.print(Messages.warning(
-            f"Service '{service}' not found in stack."))
+            f"Service '{service_name}' not found in stack."))
         raise typer.Exit(code=1)
 
     if not yes:
@@ -64,14 +63,17 @@ def scale(
             abort=True,
         )
 
+    scaling_error = None
+
     def scale():
+        nonlocal scaling_error
         try:
             service.scale(int(replicas))
         except Exception as e:
-            console.print(Messages.error(f"Failed to scale service: {e}"))
-            raise typer.Exit(code=1)
+            scaling_error = e
 
-    Thread(target=scale).start()
+    scale_thread = Thread(target=scale)
+    scale_thread.start()
 
     status_text = Messages.info(
         f"Scaling '{service.name}' to {replicas} replicas... Press Ctrl+C to stop")
@@ -80,6 +82,11 @@ def scale(
     try:
         with Live(console=console, refresh_per_second=10) as live:
             while True:
+                if scaling_error is not None:
+                    console.print(Messages.error(
+                        f"Failed to scale service: {scaling_error}"))
+                    raise typer.Exit(code=1)
+
                 table = build_table(stack, service.name)
                 live.update(Group(table, spinner))
 
@@ -91,6 +98,12 @@ def scale(
         console.print(Messages.warning(
             "Scaling will continue in the background..."))
         raise typer.Abort()
+
+    scale_thread.join()
+    if scaling_error is not None:
+        console.print(Messages.error(
+            f"Failed to scale service: {scaling_error}"))
+        raise typer.Exit(code=1)
 
     console.print()
     console.print(Messages.success(

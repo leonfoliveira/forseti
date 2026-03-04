@@ -15,18 +15,18 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages, StatusFormatter, ColorTheme
 
 
-def status(
+def status_cmd(
     stack_file: Annotated[
-        Path, typer.Option(help="Path to the stack file", exists=True)
-    ] = __stack_file__,
+        Path, typer.Option(help="Path to the stack file.", exists=True)
+    ] = Path(__stack_file__),
     config_file: Annotated[
-        Path, typer.Option(help="Path to the configuration file", exists=True)
-    ] = __config_file__,
+        Path, typer.Option(help="Path to the configuration file.", exists=True)
+    ] = Path(__config_file__),
     service: Annotated[
-        Optional[str], typer.Option(help="Filter by specific service name")
+        Optional[str], typer.Option(help="Filter by specific service name.")
     ] = None,
     follow: Annotated[
-        bool, typer.Option(help="Follow status updates in real-time")
+        bool, typer.Option(help="Follow status updates in real-time.")
     ] = False,
 ):
     """
@@ -55,7 +55,7 @@ def status(
         console.print(table)
 
 
-def build_table(stack: DockerStack, service_filter: str = None) -> Table:
+def build_table(stack: DockerStack, service_filter: Optional[str] = None) -> Table:
     table = Table(title=f"Status")
     table.add_column("Service/Container")
     table.add_column("Node", style=ColorTheme.NODE_NAME.value)

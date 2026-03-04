@@ -7,15 +7,15 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
 
 
-def join(
+def join_cmd(
     token: Annotated[
         str,
         typer.Option(
-            help="Swarm join token (manager or worker) to use for joining the swarm"
+            help="Swarm join token (manager or worker) to use for joining the swarm."
         ),
     ],
     manager_address: Annotated[
-        str, typer.Option(help="Address of the swarm manager to join")
+        str, typer.Option(help="Address of the swarm manager to join.")
     ],
 ):
     """

@@ -5,7 +5,7 @@ from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import ColorTheme
 
 
-def info():
+def info_cmd():
     """
     Display Docker Swarm information, including join tokens and manager address.
     """
