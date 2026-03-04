@@ -23,4 +23,6 @@ cli/_config.py
 backups/
 certs/
 sandboxes/
-stack.yaml
+stack.conf
+stack.yaml.j2
+volumes/

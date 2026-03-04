@@ -4,7 +4,7 @@ create table contest (
     updated_at timestamp not null,
     deleted_at timestamp,
     title text not null,
-    slug text not null unique,
+    slug text not null,
     languages text[] not null,
     start_at timestamp not null,
     end_at timestamp not null,
@@ -22,7 +22,7 @@ create table contest (
     constraint chk_frozen_at_null_or_unfreeze_at_null check (frozen_at is null or unfrozen_at is null)
 );
 
-create index idx_contest_slug on contest (slug);
+create unique index idx_contest_slug_unique_active on contest (slug) where deleted_at is null;
 
 create table contest_aud (
     rev bigint not null,

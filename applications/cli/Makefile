@@ -24,8 +24,7 @@ setup: $(VENV)/bin/activate
 
 build: setup
 	@$(PYTHON) generate_config.py \
-		$(if $(VERSION),--version $(VERSION),--version latest) \
-		$(if $(API_URL),--api-url $(API_URL))
+		$(if $(VERSION),--version $(VERSION),--version latest)
 	$(PYTHON) -m PyInstaller --onefile -n forseti -p . cli/__main__.py
 	rm -f ./cli/_config.py
 

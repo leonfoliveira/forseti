@@ -92,7 +92,7 @@ jobs:
         run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
 
       - name: Set up stack version
-        run: sed -i "s/\${VERSION:-latest}/$VERSION/" stack.yaml
+        run: sed -i "s/\${VERSION:-latest}/$VERSION/" stack.conf
 
       - name: Build images
         run: |

@@ -757,6 +757,7 @@ services:
       - redis_password
 
   redis-exporter:
+    command: sh -c "export REDIS_PASSWORD=$$(cat /run/secrets/redis_password) && /redis_exporter"
     deploy:
       mode: replicated
       replicas: 1
@@ -772,7 +773,6 @@ services:
         delay: 5s
     environment:
       REDIS_ADDR: redis://redis:6379
-      REDIS_PASSWORD_FILE: /run/secrets/redis_password
     healthcheck:
       test:
         - CMD-SHELL
