@@ -13,21 +13,26 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
+import com.forsetijudge.core.port.driven.file.FileAnalyser
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAttachmentUseCase
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
+import jakarta.validation.Valid
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
+@Validated
 class UploadAttachmentService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val fileAnalyser: FileAnalyser,
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
@@ -42,7 +47,9 @@ class UploadAttachmentService(
         )
 
     @Transactional
-    override fun execute(command: UploadAttachmentUseCase.Command): Pair<AttachmentResponseDTO, ByteArray> {
+    override fun execute(
+        @Valid command: UploadAttachmentUseCase.Command,
+    ): Pair<AttachmentResponseDTO, ByteArray> {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()
 
@@ -63,6 +70,11 @@ class UploadAttachmentService(
             ?.authorizeUpload(contest, member)
             ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
 
+        fileAnalyser
+            .validateContentType(command.bytes, command.contentType)
+            .takeIf { it }
+            ?: throw ForbiddenException("Content type ${command.contentType} does not match the file content")
+
         val id = IdGenerator.getUUID()
         val attachment =
             Attachment(
@@ -70,7 +82,7 @@ class UploadAttachmentService(
                 contest = contest,
                 member = member,
                 filename = command.filename ?: id.toString(),
-                contentType = command.contentType ?: "application/octet-stream",
+                contentType = command.contentType,
                 context = command.context,
             )
         logger.info("Uploading ${command.bytes.size} bytes")

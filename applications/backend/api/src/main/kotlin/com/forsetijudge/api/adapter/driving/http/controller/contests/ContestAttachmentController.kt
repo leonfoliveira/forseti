@@ -48,8 +48,8 @@ class ContestAttachmentController(
             uploadAttachmentUseCase.execute(
                 UploadAttachmentUseCase.Command(
                     filename = file.originalFilename,
-                    contentType = file.contentType,
                     context = context,
+                    contentType = file.contentType ?: "application/octet-stream",
                     bytes = file.bytes,
                 ),
             )

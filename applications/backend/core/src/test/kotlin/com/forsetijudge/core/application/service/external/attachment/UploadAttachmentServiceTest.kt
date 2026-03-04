@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
+import com.forsetijudge.core.port.driven.file.FileAnalyser
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -30,6 +31,7 @@ class UploadAttachmentServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
+        val fileAnalyser = mockk<FileAnalyser>(relaxed = true)
         val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
@@ -38,6 +40,7 @@ class UploadAttachmentServiceTest :
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
                 attachmentBucket = attachmentBucket,
+                fileAnalyser = fileAnalyser,
                 applicationEventPublisher = applicationEventPublisher,
             )
 
@@ -52,8 +55,8 @@ class UploadAttachmentServiceTest :
         val command =
             UploadAttachmentUseCase.Command(
                 filename = "test.txt",
-                contentType = "text/plain",
                 bytes = "Hello, World!".toByteArray(),
+                contentType = "text/plain",
                 context = Attachment.Context.SUBMISSION_CODE,
             )
 
@@ -90,10 +93,23 @@ class UploadAttachmentServiceTest :
             }
         }
 
+        test("should throw ForbiddenException when content type does not match file content") {
+            val contest = ContestMockBuilder.build()
+            val member = MemberMockBuilder.build(contest = contest)
+            every { contestRepository.findById(contextContestId) } returns contest
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { fileAnalyser.validateContentType(any(), any()) } returns false
+
+            shouldThrow<ForbiddenException> {
+                sut.execute(command)
+            }
+        }
+
         fun assertUploadSuccessfully(
             contest: Contest = ContestMockBuilder.build(),
             member: Member = MemberMockBuilder.build(),
             context: Attachment.Context = Attachment.Context.PROBLEM_DESCRIPTION,
+            contentType: String = "text/plain",
         ) {
             val actualMember = MemberMockBuilder.build(contest = contest, type = member.type)
 
@@ -101,6 +117,7 @@ class UploadAttachmentServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id) } returns actualMember
             every { attachmentRepository.save(any()) } returnsArgument 0
             every { attachmentBucket.upload(any(), any()) } returns Unit
+            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -108,8 +125,8 @@ class UploadAttachmentServiceTest :
                 sut.execute(
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
-                        contentType = "text/plain",
                         bytes = "Hello, World!".toByteArray(),
+                        contentType = contentType,
                         context = context,
                     ),
                 )
@@ -122,11 +139,13 @@ class UploadAttachmentServiceTest :
             contest: Contest = ContestMockBuilder.build(),
             member: Member = MemberMockBuilder.build(),
             context: Attachment.Context,
+            contentType: String = "text/plain",
         ) {
             val actualMember = member
 
             every { contestRepository.findById(contest.id) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns actualMember
+            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -134,8 +153,8 @@ class UploadAttachmentServiceTest :
                 sut.execute(
                     UploadAttachmentUseCase.Command(
                         filename = "test.txt",
-                        contentType = "text/plain",
                         bytes = "Hello, World!".toByteArray(),
+                        contentType = contentType,
                         context = context,
                     ),
                 )
@@ -204,6 +223,7 @@ class UploadAttachmentServiceTest :
                     assertUploadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -213,6 +233,7 @@ class UploadAttachmentServiceTest :
                     assertUploadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -222,6 +243,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -231,6 +253,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -240,6 +263,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -249,6 +273,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                         context = Attachment.Context.PROBLEM_DESCRIPTION,
+                        contentType = "application/pdf",
                     )
                 }
             }
@@ -260,6 +285,7 @@ class UploadAttachmentServiceTest :
                     assertUploadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }
@@ -269,6 +295,7 @@ class UploadAttachmentServiceTest :
                     assertUploadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }
@@ -278,6 +305,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }
@@ -287,6 +315,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }
@@ -296,6 +325,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }
@@ -305,6 +335,7 @@ class UploadAttachmentServiceTest :
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                         context = Attachment.Context.PROBLEM_TEST_CASES,
+                        contentType = "text/csv",
                     )
                 }
             }

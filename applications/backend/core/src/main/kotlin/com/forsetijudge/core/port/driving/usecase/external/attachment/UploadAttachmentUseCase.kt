@@ -30,7 +30,7 @@ interface UploadAttachmentUseCase {
         val filename: String?,
         @field:Pattern(regexp = "\\w+/\\w+", message = "'contentType' must be a valid MIME type")
         @field:Max(30, message = "'contentType' must not exceed 30 characters")
-        val contentType: String?,
+        val contentType: String,
         val context: Attachment.Context,
         val bytes: ByteArray,
     ) {
