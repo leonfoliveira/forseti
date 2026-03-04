@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
+import com.forsetijudge.core.port.driven.file.FileAnalyser
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -28,6 +29,7 @@ class UploadAttachmentService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val fileAnalyser: FileAnalyser,
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
@@ -62,6 +64,27 @@ class UploadAttachmentService(
         authorizationConfigsByContext[command.context]
             ?.authorizeUpload(contest, member)
             ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
+
+        val realMimeType = fileAnalyser.getMimeType(command.bytes)
+        if (realMimeType != command.contentType) {
+            throw ForbiddenException(
+                "Content type does not match the actual file content. Detected: $realMimeType, provided: ${command.contentType}",
+            )
+        }
+
+        when (command.context) {
+            Attachment.Context.PROBLEM_DESCRIPTION -> {
+                if (realMimeType != "application/pdf") {
+                    throw ForbiddenException("Only PDF files are allowed for context ${command.context}")
+                }
+            }
+            Attachment.Context.PROBLEM_TEST_CASES -> {
+                if (realMimeType != "text/csv") {
+                    throw ForbiddenException("Only csv files are allowed for context ${command.context}")
+                }
+            }
+            else -> {}
+        }
 
         val id = IdGenerator.getUUID()
         val attachment =
