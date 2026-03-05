@@ -6,12 +6,12 @@ A comprehensive, production-ready platform for running secure and scalable compe
 
 **Manager node:**
 
-- Docker ^26.1.3
-- Mkcert ^1.4.4
+- [Docker](https://www.docker.com/) ^26.1.3
+- [Mkcert](https://github.com/FiloSottile/mkcert) ^1.4.4
 
 **Worker nodes:**
 
-- Docker ^26.1.3
+- [Docker](https://www.docker.com/) ^26.1.3
 
 **Client machines:**
 
