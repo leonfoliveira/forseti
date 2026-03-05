@@ -3,7 +3,7 @@ import pytest
 from pathlib import Path
 
 from cli.util.docker.docker_stack import DockerStack
-from cli.config import __stack_template_file__, __config_file__, __volumes_dir__, __certs_dir__
+from cli.config import __stack_template_file__, __config_file__, __volumes_dir__, __certs_dir__, __version__
 
 PACKAGE = "cli.util.docker.docker_stack"
 
@@ -11,7 +11,9 @@ PACKAGE = "cli.util.docker.docker_stack"
 class TestDockerStack:
     @pytest.fixture
     def mock_swarm(self):
-        return MagicMock()
+        swarm = MagicMock()
+        swarm.get_latest_secret.side_effect = lambda name: f"{name}__123"
+        return swarm
 
     @pytest.fixture
     def mock_config_parser(self):
@@ -114,7 +116,13 @@ class TestDockerStack:
             "global": {"domain": "example.com", "https": "true"},
             "database": {"host": "localhost", "port": "5432"},
             "__volumes_path__": __volumes_dir__,
-            "__certs_path__": __certs_dir__
+            "__certs_path__": __certs_dir__,
+            "__version__": __version__,
+            "__root_password__": "root_password__123",
+            "__db_password__": "db_password__123",
+            "__redis_password__": "redis_password__123",
+            "__minio_password__": "minio_password__123",
+            "__rabbitmq_password__": "rabbitmq_password__123"
         }
 
         assert stack.config == expected_config
@@ -128,7 +136,13 @@ class TestDockerStack:
             "global": {"domain": "example.com", "https": "true"},
             "database": {"host": "localhost", "port": "5432"},
             "__volumes_path__": __volumes_dir__,
-            "__certs_path__": __certs_dir__
+            "__certs_path__": __certs_dir__,
+            "__version__": __version__,
+            "__root_password__": "root_password__123",
+            "__db_password__": "db_password__123",
+            "__redis_password__": "redis_password__123",
+            "__minio_password__": "minio_password__123",
+            "__rabbitmq_password__": "rabbitmq_password__123"
         }
         mock_dependencies["template"].render.assert_called_once_with(
             expected_config)
@@ -291,7 +305,13 @@ class TestDockerStack:
         # Should handle empty config gracefully
         assert stack.config == {
             "__volumes_path__": __volumes_dir__,
-            "__certs_path__": __certs_dir__
+            "__certs_path__": __certs_dir__,
+            "__version__": __version__,
+            "__root_password__": "root_password__123",
+            "__db_password__": "db_password__123",
+            "__redis_password__": "redis_password__123",
+            "__minio_password__": "minio_password__123",
+            "__rabbitmq_password__": "rabbitmq_password__123"
         }
 
     def test_template_render_error(self, mock_swarm, mock_dependencies):

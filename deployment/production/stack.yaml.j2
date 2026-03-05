@@ -3,15 +3,15 @@ networks:
     driver: overlay
 
 secrets:
-  db_password:
+  {{ __db_password__ }}
     external: true
-  minio_password:
+  {{ __minio_password__ }}
     external: true
-  rabbitmq_password:
+  {{ __rabbitmq_password__ }}
     external: true
-  redis_password:
+  {{ __redis_password__ }}
     external: true
-  root_password:
+  {{ __root_password__ }}
     external: true
 
 services:
@@ -156,7 +156,7 @@ services:
       OTEL_METRICS_EXPORTER: none
       OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: production
-      VERSION: ${VERSION:-latest}
+      VERSION: {{ __version__ }}
       {% if global.https == "true" %}
       WEBAPP_PUBLIC_URL: https://{{ global.domain }}
       {% else %}
@@ -170,15 +170,20 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/forseti-api:${VERSION:-latest}
+    image: leonfoliveira/forseti-api:{{ __version__ }}
     networks:
       network:
     secrets:
-      - db_password
-      - minio_password
-      - rabbitmq_password
-      - redis_password
-      - root_password
+      - source: {{ __db_password__ }}
+        target: db_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
+      - source: {{ __rabbitmq_password__ }}
+        target: rabbitmq_password
+      - source: {{ __redis_password__ }}
+        target: redis_password
+      - source: {{ __root_password__ }}
+        target: root_password
 
   autojudge:
     deploy:
@@ -230,7 +235,7 @@ services:
       OTEL_METRICS_EXPORTER: none
       OTEL_SERVICE_NAME: autojudge
       SPRING_PROFILES_ACTIVE: production
-      VERSION: ${VERSION:-latest}
+      VERSION: {{ __version__ }}
     healthcheck:
       test:
         - CMD-SHELL
@@ -239,7 +244,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/forseti-autojudge:${VERSION:-latest}
+    image: leonfoliveira/forseti-autojudge:{{ __version__ }}
     networks:
       network:
     volumes:
@@ -250,11 +255,16 @@ services:
         source: /tmp
         target: /tmp
     secrets:
-      - db_password
-      - minio_password
-      - rabbitmq_password
-      - redis_password
-      - root_password
+      - source: {{ __db_password__ }}
+        target: db_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
+      - source: {{ __rabbitmq_password__ }}
+        target: rabbitmq_password
+      - source: {{ __redis_password__ }}
+        target: redis_password
+      - source: {{ __root_password__ }}
+        target: root_password
 
   autojudge-autoscaler:
     deploy:
@@ -291,7 +301,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/forseti-autoscaler:${VERSION:-latest}
+    image: leonfoliveira/forseti-autoscaler:{{ __version__ }}
     networks:
       network:
     volumes:
@@ -299,7 +309,8 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     secrets:
-      - rabbitmq_password
+      - source: {{ __rabbitmq_password__ }}
+        target: rabbitmq_password
 
   cadvisor:
     deploy:
@@ -394,8 +405,10 @@ services:
     networks:
       network:
     secrets:
-      - db_password
-      - root_password
+      - source: {{ __db_password__ }}
+        target: db_password
+      - source: {{ __root_password__ }}
+        target: root_password
     volumes:
       - type: volume
         source: grafana_data
@@ -452,7 +465,8 @@ services:
         target: /loki
         volume: {}
     secrets:
-      - minio_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
 
   migration:
     deploy:
@@ -478,7 +492,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ __db_password__ }}
+        target: db_password
     volumes:
       - type: bind
         source: {{ __volumes_path__ }}/migrations
@@ -517,7 +532,8 @@ services:
     networks:
       network:
     secrets:
-      - minio_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
     volumes:
       - type: volume
         source: minio_data
@@ -557,7 +573,8 @@ services:
     networks:
       network:
     secrets:
-      - minio_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
 
   node-exporter:
     command:
@@ -634,7 +651,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ __db_password__ }}
+        target: db_password
     volumes:
       - type: volume
         source: postgres_data
@@ -671,7 +689,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ __db_password__ }}
+        target: db_password
 
   prometheus:
     command:
@@ -746,7 +765,8 @@ services:
     networks:
       network:
     secrets:
-      - rabbitmq_password
+      - source: {{ __rabbitmq_password__ }}
+        target: rabbitmq_password
     volumes:
       - type: volume
         source: rabbitmq_data
@@ -793,7 +813,8 @@ services:
     networks:
       network:
     secrets:
-      - redis_password
+      - source: {{ __redis_password__ }}
+        target: redis_password
 
   redis-exporter:
     command: sh -c "export REDIS_PASSWORD=$$(cat /run/secrets/redis_password) && /redis_exporter"
@@ -825,7 +846,8 @@ services:
     networks:
       network:
     secrets:
-      - redis_password
+      - source: {{ __redis_password__ }}
+        target: redis_password
 
   tempo:
     entrypoint: sh /entrypoint.sh
@@ -874,7 +896,8 @@ services:
         target: /var/tempo
         volume: {}
     secrets:
-      - minio_password
+      - source: {{ __minio_password__ }}
+        target: minio_password
 
   traefik:
     deploy:
@@ -965,7 +988,7 @@ services:
       API.PUBLIC_URL: https://api.{{ global.domain }}
       APP_ENV: production
       LOCALE: {{ webapp.locale }}
-      VERSION: ${VERSION:-latest}
+      VERSION: {{ __version__ }}
       WS_PUBLIC_URL: wss://ws.{{ global.domain }}
     healthcheck:
       test:
@@ -975,7 +998,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 60s
-    image: leonfoliveira/forseti-webapp:${VERSION:-latest}
+    image: leonfoliveira/forseti-webapp:{{ __version__ }}
     networks:
       network:
 

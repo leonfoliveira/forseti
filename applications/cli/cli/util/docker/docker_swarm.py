@@ -36,11 +36,20 @@ class DockerSwarm:
     def init(self, advertise_addr: str) -> None:
         self.docker_client.swarm.init(advertise_addr=advertise_addr)
 
-    def create_secret(self, name: str, data: str) -> None:
-        self.docker_client.secrets.create(name=name, data=data)
+    def create_secret(self, name: str, version: int, data: str) -> None:
+        self.docker_client.secrets.create(name=f"{name}__{version}", data=data)
+
+    def get_latest_secret(self, name: str) -> str:
+        secrets = self.docker_client.secrets.list()
+        matching = [s for s in secrets if s.name.startswith(f"{name}__")]
+        if not matching:
+            raise ValueError(f"Secret '{name}' not found")
+        latest = max(matching, key=lambda s: s.name)
+        return latest.name
 
     def join(self, token: str, manager_address: str) -> None:
-        self.docker_client.swarm.join(remote_addrs=[manager_address], join_token=token)
+        self.docker_client.swarm.join(
+            remote_addrs=[manager_address], join_token=token)
 
     def leave(self) -> None:
         self.docker_client.swarm.leave(force=True)

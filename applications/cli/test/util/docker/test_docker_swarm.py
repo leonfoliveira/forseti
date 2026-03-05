@@ -129,10 +129,10 @@ class TestDockerSwarm:
 
     def test_create_secret(self, docker_swarm, mock_docker_client):
         """Test secret creation"""
-        docker_swarm.create_secret("test_secret", "secret_data")
+        docker_swarm.create_secret("test_secret", 123, "secret_data")
 
         mock_docker_client.secrets.create.assert_called_once_with(
-            name="test_secret",
+            name="test_secret__123",
             data="secret_data"
         )
 
@@ -145,9 +145,28 @@ class TestDockerSwarm:
         ]
 
         for name, data in secrets:
-            docker_swarm.create_secret(name, data)
+            docker_swarm.create_secret(name, 123, data)
 
         assert mock_docker_client.secrets.create.call_count == 3
+
+    def test_get_latest_secret(self, docker_swarm, mock_docker_client):
+        """Test retrieving the latest version of a secret"""
+        mock_secret_v1 = MagicMock()
+        mock_secret_v1.name = "db_password__123"
+        mock_secret_v2 = MagicMock()
+        mock_secret_v2.name = "db_password__124"
+        mock_docker_client.secrets.list.return_value = [
+            mock_secret_v1, mock_secret_v2]
+
+        latest_secret = docker_swarm.get_latest_secret("db_password")
+        assert latest_secret == "db_password__124"
+
+    def test_get_latest_secret_no_matching(self, docker_swarm, mock_docker_client):
+        """Test get_latest_secret when no matching secrets are found"""
+        mock_docker_client.secrets.list.return_value = []
+
+        with pytest.raises(ValueError):
+            docker_swarm.get_latest_secret("nonexistent_secret")
 
     def test_join_swarm(self, docker_swarm, mock_docker_client):
         """Test joining swarm"""
