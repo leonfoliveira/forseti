@@ -24,12 +24,12 @@ import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
+import { sessionSlice } from "@/app/_store/slices/session-slice";
 import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
-import { sessionSlice } from "@/app/_store/slices/session-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {

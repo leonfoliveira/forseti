@@ -17,7 +17,7 @@ import { AnnouncementResponseDTO } from "@/core/port/dto/response/announcement/A
 import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 import { globalMessages } from "@/i18n/global";
 import { defineMessages } from "@/i18n/message";
@@ -149,7 +149,9 @@ export function StaffDashboardProvider({
     toast.info(messages.unfrozen);
   }
 
-  function receiveSubmission(submission: SubmissionResponseDTO) {
+  function receiveSubmission(
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) {
     console.debug("Received submission:", submission);
     dispatch(staffDashboardSlice.actions.mergeSubmission(submission));
   }
