@@ -73,7 +73,7 @@ describe("AnnouncementForm", () => {
     });
 
     it("should fail validation when text exceeds maximum length", () => {
-      const tooLongText = "a".repeat(256);
+      const tooLongText = "a".repeat(501);
       const invalidData = {
         text: tooLongText,
       };
@@ -86,8 +86,8 @@ describe("AnnouncementForm", () => {
       );
     });
 
-    it("should fail validation when text is exactly 256 characters", () => {
-      const tooLongText = "a".repeat(256);
+    it("should fail validation when text is exactly 501 characters", () => {
+      const tooLongText = "a".repeat(501);
       const invalidData = {
         text: tooLongText,
       };

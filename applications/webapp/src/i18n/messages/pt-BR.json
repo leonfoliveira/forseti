@@ -443,6 +443,7 @@
               "problem-color-invalid": "Cor deve ser um código hexadecimal válido",
               "problem-title-required": "Título é obrigatório",
               "problem-title-too-long": "Título deve ter no máximo 255 caracteres",
+              "problem-description-format": "Arquivo de descrição deve estar no formato PDF",
               "problem-description-required": "Descrição é obrigatória",
               "problem-description-size": "Arquivo de descrição deve ter no máximo 10MB",
               "problem-time-limit-required": "Limite de tempo é obrigatório",

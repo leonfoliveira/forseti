@@ -40,7 +40,7 @@ class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig() {
         contest: Contest,
         member: Member,
         attachment: Attachment,
-    ) = throw ForbiddenException("Staff cannot download execution outputs")
+    ) {}
 
     override fun authorizeJudgeDownload(
         contest: Contest,

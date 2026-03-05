@@ -130,7 +130,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
           <TicketTypeBadge type={ticket.type} />
         </div>
 
-        <ItemDescription>
+        <ItemDescription className="line-clamp-none">
           {ticket.type === TicketType.SUBMISSION_PRINT && (
             <span
               className="block rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-800 dark:bg-blue-900/20 dark:text-blue-200"
@@ -145,7 +145,7 @@ export function TicketsPageItem({ ticket, canEdit, onEdit }: Props) {
             TicketType.NON_TECHNICAL_SUPPORT,
           ].includes(ticket.type) && (
             <span
-              className="block rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:bg-gray-800/50 dark:text-gray-300"
+              className="block rounded-lg bg-gray-50 px-3 py-2 text-sm break-words whitespace-pre-wrap text-gray-700 dark:bg-gray-800/50 dark:text-gray-300"
               data-testid="ticket-description"
             >
               {(ticket.properties as { description: string }).description}

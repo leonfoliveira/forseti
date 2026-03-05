@@ -12,5 +12,8 @@ export const sessionSlice = createSlice({
     set(state, action: { payload: SessionResponseDTO | null }) {
       return action.payload;
     },
+    clear() {
+      return null;
+    },
   },
 });

@@ -21,6 +21,7 @@ export default function DashboardTicketsPage() {
     case MemberType.JUDGE:
       return <JudgeTicketsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantTicketsPage />;
     default:
       forbidden();

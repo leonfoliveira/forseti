@@ -7,4 +7,17 @@ describe("sessionSlice", () => {
     const state = sessionSlice.reducer(null, sessionSlice.actions.set(session));
     expect(state).toEqual(session);
   });
+
+  it("should clear session", () => {
+    const session = MockSession();
+    const stateWithSession = sessionSlice.reducer(
+      null,
+      sessionSlice.actions.set(session),
+    );
+    const clearedState = sessionSlice.reducer(
+      stateWithSession,
+      sessionSlice.actions.clear(),
+    );
+    expect(clearedState).toBeNull();
+  });
 });

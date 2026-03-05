@@ -15,12 +15,12 @@ export class AnnouncementForm {
     },
     textLong: {
       id: "app.[slug].(dashboard)._common.announcements.announcement-form.text-long",
-      defaultMessage: "Cannot exceed 255 characters",
+      defaultMessage: "Cannot exceed 500 characters",
     },
   });
 
   static schema = Joi.object({
-    text: Joi.string().required().max(255).messages({
+    text: Joi.string().required().max(500).messages({
       "any.required": this.messages.textRequired.id,
       "string.empty": this.messages.textRequired.id,
       "string.max": this.messages.textLong.id,

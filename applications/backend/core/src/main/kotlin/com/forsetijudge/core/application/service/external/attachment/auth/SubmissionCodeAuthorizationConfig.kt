@@ -50,7 +50,7 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig() {
         contest: Contest,
         member: Member,
         attachment: Attachment,
-    ) = throw ForbiddenException("Staff cannot download submission code attachments")
+    ) {}
 
     override fun authorizeContestantDownload(
         contest: Contest,

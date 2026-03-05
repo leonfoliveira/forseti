@@ -137,8 +137,8 @@ class DownloadAttachmentServiceTest :
             }
 
             context("STAFF") {
-                test("should throw ForbiddenException") {
-                    assertForbidden(
+                test("should download successfully") {
+                    assertDownloadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         attachment =
                             AttachmentMockBuilder.build(
@@ -446,8 +446,8 @@ class DownloadAttachmentServiceTest :
             }
 
             context("STAFF") {
-                test("should throw ForbiddenException") {
-                    assertForbidden(
+                test("should download successfully") {
+                    assertDownloadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         attachment =
                             AttachmentMockBuilder.build(

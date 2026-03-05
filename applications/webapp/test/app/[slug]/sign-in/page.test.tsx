@@ -148,23 +148,20 @@ describe("SignInPage", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
-
-    expect(Composition.sessionWritter.deleteCurrent).toHaveBeenCalled();
   });
 
-  it("should handle error when entering as guest", async () => {
-    (Composition.sessionWritter.deleteCurrent as jest.Mock).mockRejectedValue(
-      new Error("An error occurred"),
-    );
+  it("should clear session when entering as guest", async () => {
+    const session = MockSession();
 
-    await renderWithProviders(<SignInPage />, {
+    const { store } = await renderWithProviders(<SignInPage />, {
       contest: mockContestMetadata,
+      session,
     });
 
     await act(async () => {
       fireEvent.click(screen.getByTestId("enter-guest"));
     });
 
-    expect(useToast().error).toHaveBeenCalled();
+    expect(store.getState().session).toBeNull();
   });
 });

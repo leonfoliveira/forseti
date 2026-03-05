@@ -20,6 +20,7 @@ export default function DashboardSubmissionsPage() {
     case MemberType.JUDGE:
       return <JudgeSubmissionsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantSubmissionsPage />;
     default:
       return <GuestSubmissionsPage />;

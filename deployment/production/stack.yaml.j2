@@ -39,11 +39,11 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ alloy.ratelimit_cpus }}
-          memory: {{ alloy.ratelimit_memory }}
+          cpus: {{ alloy.cpus_limit }}
+          memory: {{ alloy.memory_limit }}
         reservations:
-          cpus: {{ alloy.ratelimit_cpus_reservation }}
-          memory: {{ alloy.ratelimit_memory_reservation }}
+          cpus: {{ alloy.cpus_reservation }}
+          memory: {{ alloy.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -72,7 +72,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average={{ api.ratelimit_average }}
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst={{ api.ratelimit_burst }}
-        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`)
+        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
         {% if global.https == "true" %}
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
@@ -108,11 +108,11 @@ services:
       replicas: {{ api.replicas }}
       resources:
         limits:
-          cpus: {{ api.ratelimit_cpus }}
-          memory: {{ api.ratelimit_memory }}
+          cpus: {{ api.cpus_limit }}
+          memory: {{ api.memory_limit }}
         reservations:
-          cpus: {{ api.ratelimit_cpus_reservation }}
-          memory: {{ api.ratelimit_memory_reservation }}
+          cpus: {{ api.cpus_reservation }}
+          memory: {{ api.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -191,11 +191,11 @@ services:
       replicas: 0
       resources:
         limits:
-          cpus: {{ autojudge.ratelimit_cpus }}
-          memory: {{ autojudge.ratelimit_memory }}
+          cpus: {{ autojudge.cpus_limit }}
+          memory: {{ autojudge.memory_limit }}
         reservations:
-          cpus: {{ autojudge.ratelimit_cpus_reservation }}
-          memory: {{ autojudge.ratelimit_memory_reservation }}
+          cpus: {{ autojudge.cpus_reservation }}
+          memory: {{ autojudge.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -272,11 +272,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ autojudge_autoscaler.ratelimit_cpus }}
-          memory: {{ autojudge_autoscaler.ratelimit_memory }}
+          cpus: {{ autojudge_autoscaler.cpus_limit }}
+          memory: {{ autojudge_autoscaler.memory_limit }}
         reservations:
-          cpus: {{ autojudge_autoscaler.ratelimit_cpus_reservation }}
-          memory: {{ autojudge_autoscaler.ratelimit_memory_reservation }}
+          cpus: {{ autojudge_autoscaler.cpus_reservation }}
+          memory: {{ autojudge_autoscaler.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -317,11 +317,11 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ cadvisor.ratelimit_cpus }}
-          memory: {{ cadvisor.ratelimit_memory }}
+          cpus: {{ cadvisor.cpus_limit }}
+          memory: {{ cadvisor.memory_limit }}
         reservations:
-          cpus: {{ cadvisor.ratelimit_cpus_reservation }}
-          memory: {{ cadvisor.ratelimit_memory_reservation }}
+          cpus: {{ cadvisor.cpus_reservation }}
+          memory: {{ cadvisor.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -374,11 +374,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ grafana.ratelimit_cpus }}
-          memory: {{ grafana.ratelimit_memory }}
+          cpus: {{ grafana.cpus_limit }}
+          memory: {{ grafana.memory_limit }}
         reservations:
-          cpus: {{ grafana.ratelimit_cpus_reservation }}
-          memory: {{ grafana.ratelimit_memory_reservation }}
+          cpus: {{ grafana.cpus_reservation }}
+          memory: {{ grafana.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -427,11 +427,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ loki.ratelimit_cpus }}
-          memory: {{ loki.ratelimit_memory }}
+          cpus: {{ loki.cpus_limit }}
+          memory: {{ loki.memory_limit }}
         reservations:
-          cpus: {{ loki.ratelimit_cpus_reservation }}
-          memory: {{ loki.ratelimit_memory_reservation }}
+          cpus: {{ loki.cpus_reservation }}
+          memory: {{ loki.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -476,11 +476,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ migration.ratelimit_cpus }}
-          memory: {{ migration.ratelimit_memory }}
+          cpus: {{ migration.cpus_limit }}
+          memory: {{ migration.memory_limit }}
         reservations:
-          cpus: {{ migration.ratelimit_cpus_reservation }}
-          memory: {{ migration.ratelimit_memory_reservation }}
+          cpus: {{ migration.cpus_reservation }}
+          memory: {{ migration.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -506,11 +506,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio.ratelimit_cpus }}
-          memory: {{ minio.ratelimit_memory }}
+          cpus: {{ minio.cpus_limit }}
+          memory: {{ minio.memory_limit }}
         reservations:
-          cpus: {{ minio.ratelimit_cpus_reservation }}
-          memory: {{ minio.ratelimit_memory_reservation }}
+          cpus: {{ minio.cpus_reservation }}
+          memory: {{ minio.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -548,11 +548,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio_init.ratelimit_cpus }}
-          memory: {{ minio_init.ratelimit_memory }}
+          cpus: {{ minio_init.cpus_limit }}
+          memory: {{ minio_init.memory_limit }}
         reservations:
-          cpus: {{ minio_init.ratelimit_cpus_reservation }}
-          memory: {{ minio_init.ratelimit_memory_reservation }}
+          cpus: {{ minio_init.cpus_reservation }}
+          memory: {{ minio_init.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -586,11 +586,11 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ node_exporter.ratelimit_cpus }}
-          memory: {{ node_exporter.ratelimit_memory }}
+          cpus: {{ node_exporter.cpus_limit }}
+          memory: {{ node_exporter.memory_limit }}
         reservations:
-          cpus: {{ node_exporter.ratelimit_cpus_reservation }}
-          memory: {{ node_exporter.ratelimit_memory_reservation }}
+          cpus: {{ node_exporter.cpus_reservation }}
+          memory: {{ node_exporter.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -625,11 +625,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres.ratelimit_cpus }}
-          memory: {{ postgres.ratelimit_memory }}
+          cpus: {{ postgres.cpus_limit }}
+          memory: {{ postgres.memory_limit }}
         reservations:
-          cpus: {{ postgres.ratelimit_cpus_reservation }}
-          memory: {{ postgres.ratelimit_memory_reservation }}
+          cpus: {{ postgres.cpus_reservation }}
+          memory: {{ postgres.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -665,11 +665,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres_exporter.ratelimit_cpus }}
-          memory: {{ postgres_exporter.ratelimit_memory }}
+          cpus: {{ postgres_exporter.cpus_limit }}
+          memory: {{ postgres_exporter.memory_limit }}
         reservations:
-          cpus: {{ postgres_exporter.ratelimit_cpus_reservation }}
-          memory: {{ postgres_exporter.ratelimit_memory_reservation }}
+          cpus: {{ postgres_exporter.cpus_reservation }}
+          memory: {{ postgres_exporter.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -702,11 +702,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ prometheus.ratelimit_cpus }}
-          memory: {{ prometheus.ratelimit_memory }}
+          cpus: {{ prometheus.cpus_limit }}
+          memory: {{ prometheus.memory_limit }}
         reservations:
-          cpus: {{ prometheus.ratelimit_cpus_reservation }}
-          memory: {{ prometheus.ratelimit_memory_reservation }}
+          cpus: {{ prometheus.cpus_reservation }}
+          memory: {{ prometheus.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -737,11 +737,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ rabbitmq.ratelimit_cpus }}
-          memory: {{ rabbitmq.ratelimit_memory }}
+          cpus: {{ rabbitmq.cpus_limit }}
+          memory: {{ rabbitmq.memory_limit }}
         reservations:
-          cpus: {{ rabbitmq.ratelimit_cpus_reservation }}
-          memory: {{ rabbitmq.ratelimit_memory_reservation }}
+          cpus: {{ rabbitmq.cpus_reservation }}
+          memory: {{ rabbitmq.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -793,11 +793,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.ratelimit_cpus }}
-          memory: {{ redis.ratelimit_memory }}
+          cpus: {{ redis.cpus_limit }}
+          memory: {{ redis.memory_limit }}
         reservations:
-          cpus: {{ redis.ratelimit_cpus_reservation }}
-          memory: {{ redis.ratelimit_memory_reservation }}
+          cpus: {{ redis.cpus_reservation }}
+          memory: {{ redis.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -823,11 +823,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.ratelimit_cpus }}
-          memory: {{ redis.ratelimit_memory }}
+          cpus: {{ redis.cpus_limit }}
+          memory: {{ redis.memory_limit }}
         reservations:
-          cpus: {{ redis.ratelimit_cpus_reservation }}
-          memory: {{ redis.ratelimit_memory_reservation }}
+          cpus: {{ redis.cpus_reservation }}
+          memory: {{ redis.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -860,11 +860,11 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ tempo.ratelimit_cpus }}
-          memory: {{ tempo.ratelimit_memory }}
+          cpus: {{ tempo.cpus_limit }}
+          memory: {{ tempo.memory_limit }}
         reservations:
-          cpus: {{ tempo.ratelimit_cpus_reservation }}
-          memory: {{ tempo.ratelimit_memory_reservation }}
+          cpus: {{ tempo.cpus_reservation }}
+          memory: {{ tempo.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -908,11 +908,11 @@ services:
           - node.role == manager
       resources:
         limits:
-          cpus: {{ traefik.ratelimit_cpus }}
-          memory: {{ traefik.ratelimit_memory }}
+          cpus: {{ traefik.cpus_limit }}
+          memory: {{ traefik.memory_limit }}
         reservations:
-          cpus: {{ traefik.ratelimit_cpus_reservation }}
-          memory: {{ traefik.ratelimit_memory_reservation }}
+          cpus: {{ traefik.cpus_reservation }}
+          memory: {{ traefik.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -972,11 +972,11 @@ services:
       replicas: {{ webapp.replicas }}
       resources:
         limits:
-          cpus: {{ webapp.ratelimit_cpus }}
-          memory: {{ webapp.ratelimit_memory }}
+          cpus: {{ webapp.cpus_limit }}
+          memory: {{ webapp.memory_limit }}
         reservations:
-          cpus: {{ webapp.ratelimit_cpus_reservation }}
-          memory: {{ webapp.ratelimit_memory_reservation }}
+          cpus: {{ webapp.cpus_reservation }}
+          memory: {{ webapp.memory_reservation }}
       restart_policy:
         condition: on-failure
         delay: 5s

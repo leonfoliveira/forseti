@@ -56,7 +56,7 @@ export class SettingsForm {
     },
     slugTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.slug-too-long",
-      defaultMessage: "Slug must be at most 32 characters long",
+      defaultMessage: "Slug must be at most 30 characters long",
     },
     slugPattern: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.slug-pattern",
@@ -69,7 +69,7 @@ export class SettingsForm {
     },
     titleTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.title-too-long",
-      defaultMessage: "Title must be at most 255 characters long",
+      defaultMessage: "Title must be at most 200 characters long",
     },
     languagesRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.languages-required",
@@ -129,7 +129,7 @@ export class SettingsForm {
     },
     problemTitleTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-title-too-long",
-      defaultMessage: "Title must be at most 255 characters long",
+      defaultMessage: "Title must be at most 200 characters long",
     },
     problemDescriptionRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-description-required",
@@ -138,6 +138,10 @@ export class SettingsForm {
     problemDescriptionSize: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-description-size",
       defaultMessage: "Description file must be at most 10MB",
+    },
+    problemDescriptionFormat: {
+      id: "app.[slug].(dashboard)._common.settings.settings-form.problem-description-format",
+      defaultMessage: "Description file must be in PDF format",
     },
     problemTimeLimitRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.problem-time-limit-required",
@@ -177,7 +181,7 @@ export class SettingsForm {
     },
     memberNameTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.member-name-too-long",
-      defaultMessage: "Name must be at most 64 characters long",
+      defaultMessage: "Name must be at most 50 characters long",
     },
     memberLoginRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.member-login-required",
@@ -185,7 +189,7 @@ export class SettingsForm {
     },
     memberLoginTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.member-login-too-long",
-      defaultMessage: "Login must be at most 32 characters long",
+      defaultMessage: "Login must be at most 30 characters long",
     },
     memberPasswordRequired: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.member-password-required",
@@ -193,7 +197,7 @@ export class SettingsForm {
     },
     memberPasswordTooLong: {
       id: "app.[slug].(dashboard)._common.settings.settings-form.member-password-too-long",
-      defaultMessage: "Password must be at most 32 characters long",
+      defaultMessage: "Password must be at most 30 characters long",
     },
   });
 
@@ -202,7 +206,7 @@ export class SettingsForm {
       contest: Joi.object({
         slug: Joi.string()
           .min(1)
-          .max(32)
+          .max(30)
           .pattern(/^[a-zA-Z0-9-]+$/)
           .required()
           .messages({
@@ -212,7 +216,7 @@ export class SettingsForm {
             "string.max": this.messages.slugTooLong.id,
             "string.pattern.base": this.messages.slugPattern.id,
           }),
-        title: Joi.string().min(1).max(255).required().messages({
+        title: Joi.string().min(1).max(200).required().messages({
           "any.required": this.messages.titleRequired.id,
           "string.empty": this.messages.titleRequired.id,
           "string.min": this.messages.titleRequired.id,
@@ -363,7 +367,7 @@ export class SettingsForm {
                 "string.empty": this.messages.problemColorRequired.id,
                 "string.pattern.base": this.messages.problemColorInvalid.id,
               }),
-            title: Joi.string().min(1).max(255).required().messages({
+            title: Joi.string().min(1).max(200).required().messages({
               "any.required": this.messages.problemTitleRequired.id,
               "string.empty": this.messages.problemTitleRequired.id,
               "string.min": this.messages.problemTitleRequired.id,
@@ -379,12 +383,16 @@ export class SettingsForm {
                 if (value[0].size > 10 * 1024 * 1024) {
                   return helpers.error("file.too-large");
                 }
+                if (value[0].type !== "application/pdf") {
+                  return helpers.error("file.invalid-type");
+                }
                 return value;
               }).required(),
             }).messages({
               "any.required": this.messages.problemDescriptionRequired.id,
               "file.required": this.messages.problemDescriptionRequired.id,
               "file.too-large": this.messages.problemDescriptionSize.id,
+              "file.invalid-type": this.messages.problemDescriptionFormat.id,
             }),
             timeLimit: Joi.number().greater(0).required().messages({
               "any.required": this.messages.problemTimeLimitRequired.id,
@@ -426,13 +434,13 @@ export class SettingsForm {
               "any.required": this.messages.memberTypeRequired.id,
               "string.empty": this.messages.memberTypeRequired.id,
             }),
-            name: Joi.string().min(1).max(64).required().messages({
+            name: Joi.string().min(1).max(50).required().messages({
               "any.required": this.messages.memberNameRequired.id,
               "string.empty": this.messages.memberNameRequired.id,
               "string.min": this.messages.memberNameRequired.id,
               "string.max": this.messages.memberNameTooLong.id,
             }),
-            login: Joi.string().min(1).max(32).required().messages({
+            login: Joi.string().min(1).max(30).required().messages({
               "any.required": this.messages.memberLoginRequired.id,
               "string.empty": this.messages.memberLoginRequired.id,
               "string.min": this.messages.memberLoginRequired.id,
@@ -440,7 +448,7 @@ export class SettingsForm {
             }),
             password: Joi.string()
               .min(1)
-              .max(32)
+              .max(30)
               .when("_id", {
                 is: Joi.exist(),
                 then: Joi.allow("").optional(),

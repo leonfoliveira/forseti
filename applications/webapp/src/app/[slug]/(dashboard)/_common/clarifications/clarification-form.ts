@@ -20,7 +20,7 @@ export class ClarificationForm {
     },
     textLong: {
       id: "app.[slug].(dashboard)._common.clarifications.clarification-form.text-long",
-      defaultMessage: "Cannot exceed 255 characters",
+      defaultMessage: "Cannot exceed 500 characters",
     },
   });
 
@@ -29,7 +29,7 @@ export class ClarificationForm {
       "any.required": this.messages.problemRequired.id,
       "string.empty": this.messages.problemRequired.id,
     }),
-    text: Joi.string().required().max(255).messages({
+    text: Joi.string().required().max(500).messages({
       "any.required": this.messages.textRequired.id,
       "string.empty": this.messages.textRequired.id,
       "string.max": this.messages.textLong.id,

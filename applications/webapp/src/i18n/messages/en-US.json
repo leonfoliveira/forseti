@@ -246,7 +246,7 @@
               "type-required": "Type is required",
               "type-invalid": "Invalid ticket type",
               "description-required": "Description is required",
-              "description-too-long": "Description must have less than 512 characters"
+              "description-too-long": "Cannot exceed 500 characters"
             }
           },
           "submissions": {
@@ -422,10 +422,10 @@
             },
             "settings-form": {
               "slug-required": "Slug is required",
-              "slug-too-long": "Slug must be at most 32 characters long",
+              "slug-too-long": "Slug must be at most 30 characters long",
               "slug-pattern": "Slug must only contain alphanumeric characters and hyphens",
               "title-required": "Title is required",
-              "title-too-long": "Title must be at most 255 characters long",
+              "title-too-long": "Title must be at most 200 characters long",
               "languages-required": "At least one language is required",
               "start-invalid": "Start date is invalid",
               "start-required": "Start date is required",
@@ -440,9 +440,10 @@
               "problem-color-required": "Color is required",
               "problem-color-invalid": "Color must be a valid hex code",
               "problem-title-required": "Title is required",
-              "problem-title-too-long": "Title must be at most 255 characters long",
+              "problem-title-too-long": "Title must be at most 200 characters long",
               "problem-description-required": "Description is required",
               "problem-description-size": "Description file must be at most 10MB",
+              "problem-description-format": "Description file must be in PDF format",
               "problem-time-limit-required": "Time limit is required",
               "problem-time-limit-positive": "Time limit must be a positive number",
               "problem-memory-limit-required": "Memory limit is required",
@@ -452,11 +453,11 @@
               "problem-test-cases-format": "Test cases file must be in CSV format",
               "member-type-required": "Type is required",
               "member-name-required": "Name is required",
-              "member-name-too-long": "Name must be at most 64 characters long",
+              "member-name-too-long": "Name must be at most 50 characters long",
               "member-login-required": "Login is required",
-              "member-login-too-long": "Login must be at most 32 characters long",
+              "member-login-too-long": "Login must be at most 30 characters long",
               "member-password-required": "Password is required",
-              "member-password-too-long": "Password must be at most 32 characters long"
+              "member-password-too-long": "Password must be at most 30 characters long"
             }
           },
           "problems": {
@@ -539,7 +540,7 @@
             "clarification-form": {
               "problem-required": "Required",
               "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
+              "text-long": "Cannot exceed 500 characters"
             },
             "clarification-answer-form": {
               "text-required": "Required",
@@ -568,7 +569,7 @@
             },
             "announcement-form": {
               "text-required": "Required",
-              "text-long": "Cannot exceed 255 characters"
+              "text-long": "Cannot exceed 500 characters"
             }
           }
         }

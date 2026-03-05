@@ -34,7 +34,7 @@ export function ProblemStatusBadge({
         data-testid="badge-accepted"
         variant="ghost"
         {...props}
-        className="text-green-700 dark:text-green-300"
+        className="text-sm text-green-700 dark:text-green-300"
       >
         {Math.floor(diffMs / 1000 / 60)}
         {wrongSubmissions > 0 && ` (+${wrongSubmissions})`}
@@ -46,7 +46,7 @@ export function ProblemStatusBadge({
         data-testid="badge-rejected"
         variant="ghost"
         {...props}
-        className="text-red-600"
+        className="text-sm text-red-600"
       >
         {`+${wrongSubmissions}`}
       </Badge>

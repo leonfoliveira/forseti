@@ -98,7 +98,7 @@ describe("ClarificationForm", () => {
     });
 
     it("should fail validation when text exceeds maximum length", () => {
-      const tooLongText = "a".repeat(256);
+      const tooLongText = "a".repeat(501);
       const invalidData = {
         problemId: "problem-1",
         text: tooLongText,

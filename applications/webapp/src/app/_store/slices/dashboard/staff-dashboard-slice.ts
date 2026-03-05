@@ -9,7 +9,7 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { StaffDashboardResponseDTO } from "@/core/port/dto/response/dashboard/StaffDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type StaffDashboardState = StaffDashboardResponseDTO;
@@ -38,10 +38,16 @@ export const staffDashboardSlice = createSlice({
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
       state.leaderboard.isFrozen = action.payload;
     },
-    mergeSubmission(state, action: { payload: SubmissionResponseDTO }) {
+    mergeSubmission(
+      state,
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
+    ) {
       state.submissions = mergeEntity(state.submissions, action.payload);
     },
-    mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
+    mergeSubmissionBatch(
+      state,
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO[] },
+    ) {
       state.submissions = mergeEntityBatch(state.submissions, action.payload);
     },
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
