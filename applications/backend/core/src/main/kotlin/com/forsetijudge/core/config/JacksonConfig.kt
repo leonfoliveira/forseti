@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 @Configuration
 class JacksonConfig {
     class OffsetDateTimeSerializer : JsonSerializer<OffsetDateTime>() {
-        private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX")
+        private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
 
         /**
          * Serializes an OffsetDateTime object to a JSON string using the ISO-8601 specification.

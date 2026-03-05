@@ -214,7 +214,7 @@
             "description": "The contest has not started yet. Please wait for the contest to start.",
             "start-at": "Starts in",
             "languages": "Supported languages",
-            "reload": "The page will automatically reload when the contest starts. You can also reload manually."
+            "reload": "The page will automatically reload when the contest starts."
           },
           "tickets": {
             "tickets-page": {

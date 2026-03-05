@@ -58,6 +58,7 @@ export class ActorOnTicketsPage extends Actor {
 
     const submitButton = ticketForm.getByTestId("ticket-form-submit");
     await submitButton.click();
+    await this.closeToasts();
 
     await expect(ticketForm).not.toBeVisible();
   }
@@ -85,5 +86,6 @@ export class ActorOnTicketsPage extends Actor {
       `move-ticket-button-${toStatus.toLowerCase().replaceAll(" ", "_")}`,
     );
     await moveStatusButton.click();
+    await this.closeToasts();
   }
 }

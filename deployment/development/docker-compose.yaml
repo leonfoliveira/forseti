@@ -251,10 +251,10 @@ services:
     environment:
       API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: http://localhost:8080
-      WS_PUBLIC_URL: ws://localhost:8081
+      APP_ENV: development
       LOCALE: en-US
-      NEXT_PUBLIC_VERSION: latest
-      NODE_ENV: development
+      VERSION: latest
+      WS_PUBLIC_URL: ws://localhost:8081
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000"]
       timeout: 5s

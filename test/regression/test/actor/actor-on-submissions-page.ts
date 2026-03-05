@@ -74,6 +74,7 @@ export class ActorOnSubmissionsPage extends Actor {
     );
     await printActionButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
   }
 
   async checkExecutions(index: number, answer: SubmissionAnswer) {
@@ -122,6 +123,7 @@ export class ActorOnSubmissionsPage extends Actor {
     );
     await rerunActionButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
 
     const answerCell = submissionRow.getByTestId("submission-answer");
     await expect(answerCell).toHaveText(answer);
@@ -146,6 +148,7 @@ export class ActorOnSubmissionsPage extends Actor {
     const formAnswer = this.page.getByTestId("submission-judge-form-answer");
     await formAnswer.selectOption(answer);
     await this.confirmDialog();
+    await this.closeToasts();
 
     const answerCell = submissionRow.getByTestId("submission-answer");
     await expect(answerCell).toHaveText(answer);
@@ -202,5 +205,7 @@ export class ActorOnSubmissionsPage extends Actor {
     await expect(languageCell).toHaveText(submission.language);
     await expect(statusCell).toHaveText(submission.status);
     await expect(answerCell).toHaveText(submission.answer);
+
+    await this.closeToasts();
   }
 }

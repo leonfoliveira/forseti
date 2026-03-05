@@ -6,6 +6,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":infrastructure"))
 
+    implementation(libs.bundles.jackson)
     implementation(libs.netty.socketio)
 
     testImplementation(testFixtures(project(":core")))

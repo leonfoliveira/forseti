@@ -4,6 +4,7 @@ import { Actor } from "@/test/actor/actor";
 import { Contest } from "@/test/entity/contest";
 import { Member } from "@/test/entity/member";
 import { Problem } from "@/test/entity/problem";
+import { DateUtil } from "@/test/util/date-util";
 import { FileUtil } from "@/test/util/file-util";
 
 export class ActorOnSettingsPage extends Actor {
@@ -31,8 +32,8 @@ export class ActorOnSettingsPage extends Actor {
 
     await slugInput.fill(contest.slug);
     await titleInput.fill(contest.title);
-    await startAtInput.fill(contest.startAt);
-    await endAtInput.fill(contest.endAt);
+    await startAtInput.fill(DateUtil.toDatetimeLocal(contest.startAt));
+    await endAtInput.fill(DateUtil.toDatetimeLocal(contest.endAt));
     for (const checkbox of languageCheckboxes) {
       await checkbox.check();
     }
@@ -108,6 +109,13 @@ export class ActorOnSettingsPage extends Actor {
     await saveButton.scrollIntoViewIfNeeded();
     await saveButton.click();
     await this.confirmDialog();
+
+    const toasts = this.page.getByTestId("toast");
+    const toastsCount = await toasts.count();
+    for (let i = 0; i < toastsCount; i++) {
+      const toast = toasts.nth(i);
+      await toast.getByLabel("Close toast").click();
+    }
   }
 
   async freeze() {
@@ -122,6 +130,7 @@ export class ActorOnSettingsPage extends Actor {
     await expect(freezeButton).toHaveText("Freeze");
     await freezeButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
 
     const freezeBanner = this.page.getByTestId("freeze-banner");
     await freezeBanner.scrollIntoViewIfNeeded();
@@ -140,6 +149,7 @@ export class ActorOnSettingsPage extends Actor {
     await expect(unfreezeButton).toHaveText("Unfreeze");
     await unfreezeButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
 
     const freezeBanner = this.page.getByTestId("freeze-banner");
     await expect(freezeBanner).not.toBeVisible();
@@ -157,6 +167,7 @@ export class ActorOnSettingsPage extends Actor {
     await expect(forceStartButton).toHaveText("Force Start");
     await forceStartButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
   }
 
   async forceEnd() {
@@ -171,5 +182,6 @@ export class ActorOnSettingsPage extends Actor {
     await expect(forceEndButton).toHaveText("Force End");
     await forceEndButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
   }
 }

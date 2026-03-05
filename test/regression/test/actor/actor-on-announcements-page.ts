@@ -42,7 +42,7 @@ export class ActorOnAnnouncementsPage extends Actor {
       "open-create-form-button",
     );
     await openCreateFormButton.scrollIntoViewIfNeeded();
-    await openCreateFormButton.click();
+    await openCreateFormButton.click({ force: true });
 
     const announcementForm = this.page.getByTestId("announcement-form");
 
@@ -54,6 +54,7 @@ export class ActorOnAnnouncementsPage extends Actor {
       "announcement-form-submit",
     );
     await broadcastButton.click();
+    await this.closeToasts();
 
     await this.page.waitForFunction((expectedCount) => {
       const cards = document.querySelectorAll(

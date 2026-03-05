@@ -5,7 +5,6 @@ import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOAuthentica
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOJoinListener
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOPingListener
 import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOSyncListener
-import com.forsetijudge.api.adapter.driving.socketio.listener.SocketIOSyncListenerPayload
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -34,7 +33,7 @@ class SocketIOConfig(
         server.addEventListener("ping", String::class.java, socketIOPingListener)
         server.addEventListener("authenticate", String::class.java, socketIOAuthenticateListener)
         server.addEventListener("join", String::class.java, socketIOJoinListener)
-        server.addEventListener("sync", SocketIOSyncListenerPayload::class.java, socketIOSyncListener)
+        server.addEventListener("sync", String::class.java, socketIOSyncListener)
 
         return server
     }

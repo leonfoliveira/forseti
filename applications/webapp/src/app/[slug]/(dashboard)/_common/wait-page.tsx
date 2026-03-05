@@ -34,7 +34,7 @@ const messages = defineMessages({
   reload: {
     id: "app.[slug].(dashboard)._common.wait-page.reload",
     defaultMessage:
-      "The page will automatically reload when the contest starts. You can also reload manually.",
+      "The page will automatically reload when the contest starts.",
   },
 });
 

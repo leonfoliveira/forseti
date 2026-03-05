@@ -1,9 +1,8 @@
 import { expect, Page } from "@playwright/test";
 
-import { config } from "@/test/config";
 import { Contest, ContestStatus } from "@/test/entity/contest";
 import { Member } from "@/test/entity/member";
-import { CLIAdapter } from "@/test/util/cli-adapter";
+import { ApiAdapter } from "@/test/util/api-adapter";
 
 export class Actor {
   constructor(
@@ -11,14 +10,10 @@ export class Actor {
     public readonly member: Member,
   ) {}
 
+  private apiAdapter = new ApiAdapter();
+
   async createContest(contest: Contest): Promise<string> {
-    return await CLIAdapter.run([
-      "contest",
-      "create",
-      contest.slug,
-      "--api-url",
-      config.API_URL,
-    ]);
+    return this.apiAdapter.createContest(contest);
   }
 
   async signIn(contest: Contest) {
@@ -177,5 +172,13 @@ export class Actor {
     await expect(confirmButton).toBeVisible();
     await confirmButton.click();
     await expect(confirmButton).not.toBeVisible();
+  }
+
+  async closeToasts() {
+    const toasts = this.page.getByTestId("toast");
+    while ((await toasts.count()) > 0) {
+      const toast = toasts.nth(0);
+      await toast.getByLabel("Close toast").click();
+    }
   }
 }
