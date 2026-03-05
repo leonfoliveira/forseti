@@ -1,9 +1,4 @@
-import path from "path";
-
 export const config = {
-  CLI_PATH:
-    process.env.CLI_PATH ||
-    path.resolve(__dirname, "../../../applications/cli/dist/forseti"),
-  ROOT_PASSWORD: process.env.ROOT_PASSWORD || "forsetijudge",
   API_URL: process.env.API_URL || "http://localhost:8080",
+  ROOT_PASSWORD: process.env.ROOT_PASSWORD || "forsetijudge",
 };

@@ -3,6 +3,7 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 import com.corundumstudio.socketio.SocketIOClient
 import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
 import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.infrastructure.adapter.driven.redis.BroadcastEventRedisStore
 import io.kotest.core.spec.style.FunSpec
@@ -15,11 +16,13 @@ class SocketIOSyncListenerTest :
     FunSpec({
         val broadcastEventRedisStore = mockk<BroadcastEventRedisStore>(relaxed = true)
         val socketIOBroadcastEmitter = mockk<SocketIOBroadcastEmitter>(relaxed = true)
+        val objectMapper = JacksonConfig().objectMapper()
 
         val sut =
             SocketIOSyncListener(
                 broadcastEventRedisStore = broadcastEventRedisStore,
                 socketIOBroadcastEmitter = socketIOBroadcastEmitter,
+                objectMapper = objectMapper,
             )
 
         test("should send error event if client is not in the room") {
@@ -31,8 +34,9 @@ class SocketIOSyncListenerTest :
                     room = "test_room",
                     timestamp = OffsetDateTime.now(),
                 )
+            val data = objectMapper.writeValueAsString(payload)
 
-            sut.onData(client, payload, mockk())
+            sut.onData(client, data, mockk())
 
             verify {
                 client.sendEvent("error", "Not in the room")
@@ -56,9 +60,10 @@ class SocketIOSyncListenerTest :
                         data = "test_data",
                     ),
                 )
-            every { broadcastEventRedisStore.getAllSince("test_room", payload.timestamp) } returns events
+            every { broadcastEventRedisStore.getAllSince("test_room", any()) } returns events
+            val data = objectMapper.writeValueAsString(payload)
 
-            sut.onData(client, payload, mockk())
+            sut.onData(client, data, mockk())
 
             verify {
                 socketIOBroadcastEmitter.emitToClient(client, events[0])

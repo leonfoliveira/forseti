@@ -132,6 +132,8 @@ export class ActorOnClarificationsPage extends Actor {
       );
     }
     await expect(text).toHaveText(clarification.text);
+
+    await this.closeToasts();
   }
 
   async answerClarification(index: number) {
@@ -147,6 +149,7 @@ export class ActorOnClarificationsPage extends Actor {
       "clarification-answer-submit-button",
     );
     await answerButton.click();
+    await this.closeToasts();
 
     const answerCard = clarificationCard.getByTestId(
       "clarification-answer-card",
@@ -178,6 +181,7 @@ export class ActorOnClarificationsPage extends Actor {
     );
     await deleteButton.click();
     await this.confirmDialog();
+    await this.closeToasts();
 
     const clarificationCardsAfter =
       clarificationsList.getByTestId("clarification-card");

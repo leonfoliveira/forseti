@@ -14,7 +14,6 @@ import {
   SubmissionStatus,
 } from "@/test/entity/submission";
 import { Ticket, TicketStatus, TicketType } from "@/test/entity/ticket";
-import { DateUtil } from "@/test/util/date-util";
 
 /**
  * This test covers the default behaviour of a contest
@@ -27,8 +26,8 @@ test("Default contest behaviour", async ({ page }) => {
     slug,
     title: "New Contest",
     status: ContestStatus.NOT_STARTED,
-    startAt: DateUtil.toDatetimeLocal(new Date(Date.now() + 60 * 60 * 1000)), // 1 hour later
-    endAt: DateUtil.toDatetimeLocal(new Date(Date.now() + 2 * 60 * 60 * 1000)), // 2 hours later
+    startAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour later
+    endAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours later
     languages: [
       SubmissionLanguage.CPP_17,
       SubmissionLanguage.JAVA_21,

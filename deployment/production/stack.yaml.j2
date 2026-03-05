@@ -963,10 +963,10 @@ services:
       ALLOY.PUBLIC_URL: https://alloy.{{ global.domain }}
       API.INTERNAL_URL: http://api:8080
       API.PUBLIC_URL: https://api.{{ global.domain }}
-      WS_PUBLIC_URL: wss://ws.{{ global.domain }}
+      APP_ENV: production
       LOCALE: {{ webapp.locale }}
-      NEXT_PUBLIC_VERSION: ${VERSION:-latest}
-      NODE_ENV: production
+      VERSION: ${VERSION:-latest}
+      WS_PUBLIC_URL: wss://ws.{{ global.domain }}
     healthcheck:
       test:
         - CMD-SHELL

@@ -12,21 +12,29 @@ export function useToast() {
       toast.info(<FormattedMessage {...message} />, {
         position: "top-center",
         className: "!bg-blue-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       }),
     success: (message: Message) =>
       toast.success(<FormattedMessage {...message} />, {
         position: "top-center",
         className: "!bg-green-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       }),
     warning: (message: Message) =>
       toast.warning(<FormattedMessage {...message} />, {
         position: "top-center",
         className: "!bg-yellow-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       }),
     error: (message: Message) =>
       toast.error(<FormattedMessage {...message} />, {
         position: "top-center",
         className: "!bg-red-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       }),
   };
 }

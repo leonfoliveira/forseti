@@ -216,7 +216,7 @@
             "description": "O concurso ainda não começou. Por favor, aguarde o início do concurso.",
             "start-at": "Inicia em",
             "languages": "Linguagens suportadas",
-            "reload": "A página será recarregada automaticamente quando o concurso começar. Você também pode recarregar manualmente."
+            "reload": "A página será recarregada automaticamente quando o concurso começar."
           },
           "tickets": {
             "tickets-page": {

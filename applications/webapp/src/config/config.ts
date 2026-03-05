@@ -7,8 +7,8 @@ export function isClientSide(): boolean {
 }
 
 export const serverConfig = {
-  env: process.env.NODE_ENV || "development",
-  version: process.env.NEXT_PUBLIC_VERSION || "latest",
+  env: process.env.APP_ENV || process.env.NODE_ENV || "development",
+  version: process.env.VERSION || "latest",
   locale: process.env.LOCALE || "en-US",
   apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
