@@ -3,15 +3,15 @@ networks:
     driver: overlay
 
 secrets:
-  db_password:
+  {{ secret.db_password }}
     external: true
-  minio_password:
+  {{ secret.minio_password }}
     external: true
-  rabbitmq_password:
+  {{ secret.rabbitmq_password }}
     external: true
-  redis_password:
+  {{ secret.redis_password }}
     external: true
-  root_password:
+  {{ secret.root_password }}
     external: true
 
 services:
@@ -174,11 +174,16 @@ services:
     networks:
       network:
     secrets:
-      - db_password
-      - minio_password
-      - rabbitmq_password
-      - redis_password
-      - root_password
+      - source: {{ secret.db_password }}
+        target: db_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
+      - source: {{ secret.rabbitmq_password }}
+        target: rabbitmq_password
+      - source: {{ secret.redis_password }}
+        target: redis_password
+      - source: {{ secret.root_password }}
+        target: root_password
 
   autojudge:
     deploy:
@@ -250,11 +255,16 @@ services:
         source: /tmp
         target: /tmp
     secrets:
-      - db_password
-      - minio_password
-      - rabbitmq_password
-      - redis_password
-      - root_password
+      - source: {{ secret.db_password }}
+        target: db_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
+      - source: {{ secret.rabbitmq_password }}
+        target: rabbitmq_password
+      - source: {{ secret.redis_password }}
+        target: redis_password
+      - source: {{ secret.root_password }}
+        target: root_password
 
   autojudge-autoscaler:
     deploy:
@@ -299,7 +309,8 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     secrets:
-      - rabbitmq_password
+      - source: {{ secret.rabbitmq_password }}
+        target: rabbitmq_password
 
   cadvisor:
     deploy:
@@ -394,8 +405,10 @@ services:
     networks:
       network:
     secrets:
-      - db_password
-      - root_password
+      - source: {{ secret.db_password }}
+        target: db_password
+      - source: {{ secret.root_password }}
+        target: root_password
     volumes:
       - type: volume
         source: grafana_data
@@ -452,7 +465,8 @@ services:
         target: /loki
         volume: {}
     secrets:
-      - minio_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
 
   migration:
     deploy:
@@ -478,7 +492,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ secret.db_password }}
+        target: db_password
     volumes:
       - type: bind
         source: {{ __volumes_path__ }}/migrations
@@ -517,7 +532,8 @@ services:
     networks:
       network:
     secrets:
-      - minio_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
     volumes:
       - type: volume
         source: minio_data
@@ -557,7 +573,8 @@ services:
     networks:
       network:
     secrets:
-      - minio_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
 
   node-exporter:
     command:
@@ -634,7 +651,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ secret.db_password }}
+        target: db_password
     volumes:
       - type: volume
         source: postgres_data
@@ -671,7 +689,8 @@ services:
     networks:
       network:
     secrets:
-      - db_password
+      - source: {{ secret.db_password }}
+        target: db_password
 
   prometheus:
     command:
@@ -746,7 +765,8 @@ services:
     networks:
       network:
     secrets:
-      - rabbitmq_password
+      - source: {{ secret.rabbitmq_password }}
+        target: rabbitmq_password
     volumes:
       - type: volume
         source: rabbitmq_data
@@ -793,7 +813,8 @@ services:
     networks:
       network:
     secrets:
-      - redis_password
+      - source: {{ secret.redis_password }}
+        target: redis_password
 
   redis-exporter:
     command: sh -c "export REDIS_PASSWORD=$$(cat /run/secrets/redis_password) && /redis_exporter"
@@ -825,7 +846,8 @@ services:
     networks:
       network:
     secrets:
-      - redis_password
+      - source: {{ secret.redis_password }}
+        target: redis_password
 
   tempo:
     entrypoint: sh /entrypoint.sh
@@ -874,7 +896,8 @@ services:
         target: /var/tempo
         volume: {}
     secrets:
-      - minio_password
+      - source: {{ secret.minio_password }}
+        target: minio_password
 
   traefik:
     deploy:

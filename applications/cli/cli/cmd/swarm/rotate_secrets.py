@@ -1,27 +1,26 @@
-from typing import Annotated
 from time import time
 
 import typer
 
 from cli.composition import console
+from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
+from cli.cmd.stack.deploy import deploy_cmd
 
 
-def init_cmd(
-    advertise_addr: Annotated[
-        str, typer.Option(help="Address to advertise for swarm communication.")
-    ] = "eth0",
-):
+def rotate_secrets_cmd():
     """
-    Initialize a Docker Swarm cluster on the current node.
+    Rotate secrets in a swarm.
     """
     docker_swarm = DockerSwarm()
 
-    if docker_swarm.is_active:
+    if not docker_swarm.is_active:
         console.print(Messages.warning(
-            "This node is already part of a swarm."))
+            "This node is not part of a swarm."))
         raise typer.Exit(code=1)
+
+    docker_stack = DockerStack(swarm=docker_swarm)
 
     def prompt_password(prompt_text: str) -> str:
         while True:
@@ -39,8 +38,6 @@ def init_cmd(
     minio_password = prompt_password("MinIO password")
     rabbitmq_password = prompt_password("RabbitMQ password")
 
-    docker_swarm.init(advertise_addr=advertise_addr)
-
     now = int(time())
     docker_swarm.create_secret(
         name=f"root_password", version=now, data=root_password)
@@ -53,6 +50,10 @@ def init_cmd(
     docker_swarm.create_secret(
         name=f"rabbitmq_password", version=now, data=rabbitmq_password)
 
-    console.print()
-
-    console.print(Messages.success("Swarm initialized successfully!"))
+    if docker_stack.is_deployed:
+        console.print(Messages.info(
+            "Secrets rotated! Updating stack with new secrets..."))
+        deploy_cmd(yes=True, force=True)
+    else:
+        console.print(Messages.info(
+            "Secrets rotated! Stack is not currently deployed, so no stack update is needed."))
