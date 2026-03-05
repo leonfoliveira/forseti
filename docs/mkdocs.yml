@@ -3,9 +3,11 @@ repo_url: https://github.com/leonfoliveira/forseti
 edit_uri: /leonfoliveira/forseti/edit/main/docs/docs
 nav:
   - Home: index.md
-  - Setup: setup.md
-  - Usage: usage.md
-  - Development: development.md
+  - Stack: stack.md
+  - Domain: domain.md
+  - Api: api.md
+  - AutoJudge: autojudge.md
+  - CLI: cli.md
 theme: readthedocs
 extra:
   version: !ENV [VERSION, "latest"]

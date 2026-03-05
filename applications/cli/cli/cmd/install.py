@@ -1,6 +1,5 @@
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 from typing import Annotated
 
 import typer
@@ -24,10 +23,6 @@ def install_cmd(
             default_factory=lambda: ["cpp17", "java21", "python312"],
         ),
     ],
-    sandboxes_dir: Annotated[
-        Path,
-        typer.Option(help="Directory containing sandbox Dockerfiles.", exists=True),
-    ] = Path(__sandboxes_dir__),
 ):
     """
     Install Forseti dependencies and sandboxes.
@@ -37,7 +32,7 @@ def install_cmd(
     stack = DockerStack(swarm=swarm)
 
     _install_certificates(stack)
-    _build_sandboxes(docker_client, sandboxes_dir, sandboxes)
+    _build_sandboxes(docker_client, sandboxes)
     _pull_stack_images(docker_client, stack)
 
     console.print()
@@ -90,7 +85,7 @@ def _install_certificates(stack: DockerStack):
         progress.advance(task)
 
 
-def _build_sandboxes(docker_client, sandbox_dir: Path, sandboxes: list[str]):
+def _build_sandboxes(docker_client, sandboxes: list[str]):
     with Progress(console=console) as progress:
         task = progress.add_task(
             Messages.progress("Building sandboxes..."), total=len(sandboxes)
@@ -99,7 +94,7 @@ def _build_sandboxes(docker_client, sandbox_dir: Path, sandboxes: list[str]):
             sandbox = sandboxes[i]
             dockerfile = f"{sandbox}.Dockerfile"
             docker_client.images.build(
-                path=str(sandbox_dir),
+                path=__sandboxes_dir__,
                 dockerfile=dockerfile,
                 tag=f"forseti-sb-{sandbox}:{__version__}",
             )
@@ -113,7 +108,8 @@ def _pull_stack_images(docker_client, stack: DockerStack):
     images = set(
         filter(
             None,
-            [service.get("image") for service in service_configs if "image" in service],
+            [service.get("image")
+             for service in service_configs if "image" in service],
         )
     )
 
@@ -129,7 +125,8 @@ def _pull_stack_images(docker_client, stack: DockerStack):
             Messages.progress("Pulling stack images..."), total=len(images)
         )
         with ThreadPoolExecutor(max_workers=4) as executor:
-            future_to_image = {executor.submit(pull_image, img): img for img in images}
+            future_to_image = {executor.submit(
+                pull_image, img): img for img in images}
             for future in as_completed(future_to_image):
                 success, image_name, error = future.result()
                 if not success:
