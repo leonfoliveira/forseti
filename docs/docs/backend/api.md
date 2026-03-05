@@ -1191,6 +1191,8 @@ Handle events that need to be broadcasted to WebSocket clients. This ensures mem
 
 ## Jobs
 
+Jobs are scheduled Quartz tasks that run periodically or at specific times to perform maintenance or automated actions.
+
 #### Attachment Bucket Cleaner
 
 Periodically cleans up uncommitted attachments from the storage bucket to save space. It is schedule on application start.
