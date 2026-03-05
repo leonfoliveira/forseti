@@ -32,6 +32,8 @@ describe("useToast", () => {
       {
         position: "top-center",
         className: "!bg-blue-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       },
     );
   });
@@ -46,6 +48,8 @@ describe("useToast", () => {
       {
         position: "top-center",
         className: "!bg-green-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       },
     );
   });
@@ -60,6 +64,8 @@ describe("useToast", () => {
       {
         position: "top-center",
         className: "!bg-yellow-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       },
     );
   });
@@ -74,6 +80,8 @@ describe("useToast", () => {
       {
         position: "top-center",
         className: "!bg-red-600 !text-white",
+        testId: "toast",
+        closeButton: true,
       },
     );
   });
