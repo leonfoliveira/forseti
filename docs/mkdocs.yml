@@ -8,6 +8,13 @@ nav:
   - Api: api.md
   - AutoJudge: autojudge.md
   - CLI: cli.md
+  - WebApp:
+      - Overview: webapp/overview.md
+      - Admin: webapp/admin.md
+      - Contestant: webapp/contestant.md
+      - Guest: webapp/guest.md
+      - Judge: webapp/judge.md
+      - Staff: webapp/staff.md
 theme: readthedocs
 extra:
   version: !ENV [VERSION, "latest"]
