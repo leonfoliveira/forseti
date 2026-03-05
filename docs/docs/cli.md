@@ -60,10 +60,14 @@ Installs all necessary dependencies for Forseti, including:
 
 - `--sandboxes`: List of sandboxes to install (default: cpp17, java21, python312)
 
-**After the installation process, it is required to update the hosts file on every machine that will access the system, adding the following line:**
+**After the installation process, if it is required to update the hosts file on every machine that will access the system**
+
+Linux/Mac File: `/etc/hosts`
+
+Windows File: `C:\Windows\System32\drivers\etc\hosts`
 
 ```
-<MANAGER_ADDRESS> *.<DOMAIN> <DOMAIN>
+<MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN> grafana.<DOMAIN>
 ```
 
 Where `<MANAGER_ADDRESS>` is the IP address of the swarm manager node and `<DOMAIN>` is the domain specified in `stack.conf`.

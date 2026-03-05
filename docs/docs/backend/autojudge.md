@@ -26,7 +26,7 @@ Handles submission to be judged by the AutoJudge service. Submissions from `UNOF
 - **Body**:
 ```json
 {
-  "submissionId": "string (uuidv7)",
+  "submissionId": "string (uuidv7)"
 }
 ```
 
