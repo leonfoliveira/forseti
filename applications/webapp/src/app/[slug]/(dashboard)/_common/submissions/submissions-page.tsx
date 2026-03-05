@@ -154,7 +154,7 @@ export function SubmissionsPage({
     (s) => memberSubmissionsMap.get(s.id) ?? s,
   );
 
-  const hasCode = submissions.some((s) => "code" in s && !!s.code);
+  const hasCode = mergedSubmissions.some((s) => "code" in s && !!s.code);
   const hasAnyAction = canEdit || canPrint || hasCode;
   const shouldSeeCreationComponents =
     canCreate && contestStatus === ContestStatus.IN_PROGRESS;
