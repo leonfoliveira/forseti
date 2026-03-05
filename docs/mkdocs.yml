@@ -2,12 +2,13 @@ site_name: Forseti - Docs
 repo_url: https://github.com/leonfoliveira/forseti
 edit_uri: /leonfoliveira/forseti/edit/main/docs/docs
 nav:
-  - Home: index.md
+  - Home: home.md
   - Stack: stack.md
-  - Domain: domain.md
-  - Api: api.md
-  - AutoJudge: autojudge.md
   - CLI: cli.md
+  - Backend:
+      - Domain: backend/domain.md
+      - Api: backend/api.md
+      - AutoJudge: backend/autojudge.md
   - WebApp:
       - Overview: webapp/overview.md
       - Admin: webapp/admin.md

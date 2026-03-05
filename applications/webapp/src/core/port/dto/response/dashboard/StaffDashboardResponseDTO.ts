@@ -3,16 +3,16 @@ import { ClarificationResponseDTO } from "@/core/port/dto/response/clarification
 import { ContestResponseDTO } from "@/core/port/dto/response/contest/ContestResponseDTO";
 import { LeaderboardResponseDTO } from "@/core/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/core/port/dto/response/member/MemberResponseDTO";
-import { ProblemResponseDTO } from "@/core/port/dto/response/problem/ProblemResponseDTO";
-import { SubmissionResponseDTO } from "@/core/port/dto/response/submission/SubmissionResponseDTO";
+import { ProblemWithTestCasesResponseDTO } from "@/core/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/core/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { TicketResponseDTO } from "@/core/port/dto/response/ticket/TicketResponseDTO";
 
 export type StaffDashboardResponseDTO = {
   contest: ContestResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   members: MemberResponseDTO[];
-  problems: ProblemResponseDTO[];
-  submissions: SubmissionResponseDTO[];
+  problems: ProblemWithTestCasesResponseDTO[];
+  submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
   clarifications: ClarificationResponseDTO[];
   announcements: AnnouncementResponseDTO[];
   tickets: TicketResponseDTO[];
