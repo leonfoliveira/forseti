@@ -56,7 +56,6 @@ export function useErrorHandlerRoot(slug: string) {
 
     const _error = error instanceof Error ? error : new Error(String(error));
     const handler = handlers[_error.name] || handlers["default"];
-    console.log(handlers, customHandlers);
     if (handler !== undefined) {
       await handler(_error);
     }
