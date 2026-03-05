@@ -188,7 +188,7 @@ export function Header() {
                 {session.member.name}
               </p>
               <p
-                className="text-end text-xs font-bold"
+                className="text-muted-foreground text-end text-xs font-bold"
                 data-testid="member-type"
               >
                 <FormattedMessage

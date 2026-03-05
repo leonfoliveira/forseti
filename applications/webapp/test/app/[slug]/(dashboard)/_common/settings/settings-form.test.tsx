@@ -15,8 +15,8 @@ describe("SettingsForm", () => {
 
   // Mock File objects for testing
   const mockDescriptionFile = {
-    name: "problem.md",
-    type: "text/markdown",
+    name: "problem.pdf",
+    type: "application/pdf",
     size: 1024,
   };
   const mockTestCasesFile = { name: "test.csv", type: "text/csv", size: 2048 };

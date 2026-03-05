@@ -24,11 +24,12 @@ import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/loadable-state-hook";
 import { useToast } from "@/app/_lib/hook/toast-hook";
-import { useAppSelector } from "@/app/_store/store";
+import { useAppDispatch, useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/core/domain/exception/UnauthorizedException";
 import { defineMessages } from "@/i18n/message";
+import { sessionSlice } from "@/app/_store/slices/session-slice";
 
 const messages = defineMessages({
   wrongLoginPassword: {
@@ -97,6 +98,8 @@ export default function SignInPage() {
   const isGuestEnabled = useAppSelector(
     (state) => state.contest.settings.isGuestEnabled,
   );
+  const session = useAppSelector((state) => state.session);
+  const dispatch = useAppDispatch();
 
   const hasExpired = searchParams.get("expired");
 
@@ -136,13 +139,17 @@ export default function SignInPage() {
   async function enterAsGuest() {
     enterAsGuestState.start();
     try {
-      await Composition.sessionWritter.deleteCurrent();
-      window.location.href = routes.CONTEST(contest.slug);
+      if (!!session) {
+        dispatch(sessionSlice.actions.clear());
+        await Composition.sessionWritter.deleteCurrent();
+      }
     } catch (error) {
-      await enterAsGuestState.fail(error, {
-        default: () => toast.error(messages.enterGuestError),
-      });
+      console.error(
+        "Error deleting current session before entering as guest:",
+        error,
+      );
     }
+    window.location.href = routes.CONTEST(contest.slug);
   }
 
   return (

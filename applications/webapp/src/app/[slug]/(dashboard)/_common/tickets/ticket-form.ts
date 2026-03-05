@@ -25,7 +25,7 @@ export class TicketForm {
     },
     descriptionTooLong: {
       id: "app.[slug].(dashboard)._common.tickets.ticket-form.description-too-long",
-      defaultMessage: "Description must have less than 512 characters",
+      defaultMessage: "Cannot exceed 500 characters",
     },
   });
 
@@ -38,7 +38,7 @@ export class TicketForm {
         "string.empty": this.messages.typeRequired.id,
         "any.only": this.messages.typeInvalid.id,
       }),
-    description: Joi.string().max(511).required().messages({
+    description: Joi.string().max(500).required().messages({
       "any.required": this.messages.descriptionRequired.id,
       "string.empty": this.messages.descriptionRequired.id,
       "string.max": this.messages.descriptionTooLong.id,

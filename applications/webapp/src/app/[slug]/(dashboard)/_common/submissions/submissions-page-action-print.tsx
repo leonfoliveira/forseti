@@ -1,4 +1,4 @@
-import { DownloadIcon } from "lucide-react";
+import { PrinterIcon } from "lucide-react";
 
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/confirmation-dialog";
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -90,7 +90,7 @@ export function SubmissionsPageActionPrint({
         }}
         data-testid="submissions-page-action-print"
       >
-        <DownloadIcon />
+        <PrinterIcon />
         <FormattedMessage {...messages.printLabel} />
       </DropdownMenuItem>
 
