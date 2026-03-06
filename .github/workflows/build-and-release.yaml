@@ -151,7 +151,7 @@ jobs:
           make build
 
       - name: Install MkDocs and dependencies
-        run: pip install mkdocs mkdocs-material
+        run: pip install mkdocs mkdocs-material mkdocs-print-site-plugin
 
       - name: Build MkDocs site
         run: |
