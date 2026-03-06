@@ -362,6 +362,7 @@ services:
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst={{ grafana.ratelimit_burst }}
         - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/v1/sessions/grafana
         - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
+        - traefik.http.middlewares.grafana-auth.forwardauth.authRequestHeaders=Cookie
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
         {% if global.https == "true" %}
         - traefik.http.routers.grafana.entrypoints=websecure
@@ -390,6 +391,12 @@ services:
       DB_NAME: forseti
       DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_SERVER_DOMAIN: grafana.{{ global.domain }}
+      {% if global.https == "true" %}
+      GF_SERVER_ROOT_URL: https://grafana.{{ global.domain }}/
+      {% else %}
+      GF_SERVER_ROOT_URL: http://grafana.{{ global.domain }}/
+      {% endif %}
       GF_USERS_AUTO_ASSIGN_ORG: "true"
       GF_USERS_AUTO_ASSIGN_ORG_ID: "1"
       GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor

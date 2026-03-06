@@ -50,7 +50,7 @@ class SessionController(
         /**
          * Although contrary to REST principles, we need to return 200 OK so Traefik continues to forward the request to Grafana,
          * which will then return 401 Unauthorized and show the default login page as fallback.
-         * This allows users to sign in on Grafana without needing to sign in on a contest dashboard first.
+         * This allows the ROOT member to sign in on Grafana without needing to sign in on a contest dashboard first.
          */
         return ResponseEntity.ok().body(mapOf("ok" to false))
     }

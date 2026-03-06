@@ -23,7 +23,7 @@ Access to Grafana is restricted to authorized users only. The following roles ca
 
 Grafana supports dual authentication modes to accommodate different user scenarios:
 
-### Proxy Authentication (Primary)
+### Proxy Authentication
 
 For authenticated webapp users, Grafana uses seamless proxy authentication:
 
@@ -35,15 +35,14 @@ For authenticated webapp users, Grafana uses seamless proxy authentication:
 
 This seamless integration ensures users don't need separate Grafana credentials while maintaining proper access control based on their Forseti platform role.
 
-### Basic Authentication (Fallback)
+### Basic Authentication
 
 When proxy authentication fails (e.g., no active session, no contests created yet), Grafana falls back to its standard login page:
 
 1. If `/api/v1/sessions/grafana` returns 401/403, Traefik passes the request through without auth headers
 2. Grafana detects the absence of proxy auth headers and presents the login form
-3. Users can authenticate directly with Grafana credentials:
-    - **login**: `{login}@{contestId}` if contest-specific, or just `root` for ROOT users
-    - **password**: Same password as their webapp account
+3. The ROOT member can authenticate directly with Grafana credentials:
+    - **login**: `root`
+    - **password**: Root password set during swarm initialization
 4. This is particularly useful for ROOT users who need access before any contests are created
-
-> Important: Non-ROOT users must use the first method at least once to have their Grafana account provisioned before they can log in directly.
+5. Other users (ADMIN, STAFF) will not have Grafana credentials and must authenticate via proxy authentication through the webapp
