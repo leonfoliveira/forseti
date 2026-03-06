@@ -1,6 +1,5 @@
 package com.forsetijudge.api.adapter.driving.http.controller
 
-import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.application.util.SafeLogger
@@ -33,16 +32,27 @@ class SessionController(
     }
 
     @GetMapping("/sessions/grafana")
-    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
-    fun getGrafanaCredentials(): ResponseEntity<Unit> {
+    fun getGrafanaCredentials(): ResponseEntity<Map<String, Boolean>> {
         logger.info("[GET] /v1/sessions/grafana")
-        val member = ExecutionContext.getMember()
-        val user = if (member.contestId != null) "${member.id}@${member.contestId}" else member.id.toString()
-        return ResponseEntity
-            .ok()
-            .header("x-webauth-user", user)
-            .header("x-webauth-name", member.name)
-            .build()
+        val member = ExecutionContext.getMemberNullable()
+
+        if (member != null && member.type in setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)) {
+            val user = if (member.contestSlug != null) "${member.login}@${member.contestSlug}" else member.login
+            logger.info("Providing Grafana credentials for user '$user' with name '${member.name}'")
+            return ResponseEntity
+                .ok()
+                .header("x-webauth-user", user)
+                .header("x-webauth-name", member.name)
+                .body(mapOf("ok" to true))
+        }
+
+        logger.info("No Grafana credentials provided for unauthenticated user or user with insufficient permissions")
+        /**
+         * Although contrary to REST principles, we need to return 200 OK so Traefik continues to forward the request to Grafana,
+         * which will then return 401 Unauthorized and show the default login page as fallback.
+         * This allows users to sign in on Grafana without needing to sign in on a contest dashboard first.
+         */
+        return ResponseEntity.ok().body(mapOf("ok" to false))
     }
 
     @DeleteMapping("/sessions/me")

@@ -2,6 +2,7 @@ package com.forsetijudge.api.adapter.driving.http.controller
 
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -52,30 +53,54 @@ class SessionControllerTest(
                 }
         }
 
-        test("getGrafanaCredentials") {
-            val member = MemberMockBuilder.build()
-            val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
-            ExecutionContext.start()
-            ExecutionContext.setSession(session)
+        context("getGrafanaCredentials") {
+            test("root") {
+                val member = MemberMockBuilder.build(type = Member.Type.ROOT, contest = null)
+                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
+                ExecutionContext.start()
+                ExecutionContext.setSession(session)
 
-            webMvc
-                .get("/v1/sessions/grafana")
-                .andExpect {
-                    status { isOk() }
-                    header {
-                        string(
-                            "x-webauth-user",
-                            if (session.member.contestId !=
-                                null
-                            ) {
-                                "${session.member.id}@${session.member.contestId}"
-                            } else {
-                                session.member.id.toString()
-                            },
-                        )
+                webMvc
+                    .get("/v1/sessions/grafana")
+                    .andExpect {
+                        status { isOk() }
+                        header { string("x-webauth-user", member.login) }
+                        header { string("x-webauth-name", member.name) }
+                        content { """{"ok":true}""" }
                     }
-                    header { string("x-webauth-name", member.name) }
-                }
+            }
+
+            test("authorized member") {
+                val member = MemberMockBuilder.build(type = Member.Type.STAFF)
+                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
+                ExecutionContext.start()
+                ExecutionContext.setSession(session)
+
+                webMvc
+                    .get("/v1/sessions/grafana")
+                    .andExpect {
+                        status { isOk() }
+                        header { string("x-webauth-user", "${member.login}@${member.contest!!.slug}") }
+                        header { string("x-webauth-name", member.name) }
+                        content { """{"ok":true}""" }
+                    }
+            }
+
+            test("unauthorized member") {
+                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
+                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
+                ExecutionContext.start()
+                ExecutionContext.setSession(session)
+
+                webMvc
+                    .get("/v1/sessions/grafana")
+                    .andExpect {
+                        status { isOk() }
+                        header { doesNotExist("x-webauth-user") }
+                        header { doesNotExist("x-webauth-name") }
+                        content { """{"ok":false}""" }
+                    }
+            }
         }
 
         test("deleteCurrent") {

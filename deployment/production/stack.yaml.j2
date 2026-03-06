@@ -3,15 +3,15 @@ networks:
     driver: overlay
 
 secrets:
-  {{ __db_password__ }}
+  {{ __db_password__ }}:
     external: true
-  {{ __minio_password__ }}
+  {{ __minio_password__ }}:
     external: true
-  {{ __rabbitmq_password__ }}
+  {{ __rabbitmq_password__ }}:
     external: true
-  {{ __redis_password__ }}
+  {{ __redis_password__ }}:
     external: true
-  {{ __root_password__ }}
+  {{ __root_password__ }}:
     external: true
 
 services:
@@ -39,7 +39,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ alloy.cpus_limit }}
+          cpus: {{ alloy.cpus }}
           memory: {{ alloy.memory_limit }}
         reservations:
           cpus: {{ alloy.cpus_reservation }}
@@ -108,7 +108,7 @@ services:
       replicas: {{ api.replicas }}
       resources:
         limits:
-          cpus: {{ api.cpus_limit }}
+          cpus: {{ api.cpus }}
           memory: {{ api.memory_limit }}
         reservations:
           cpus: {{ api.cpus_reservation }}
@@ -191,7 +191,7 @@ services:
       replicas: 0
       resources:
         limits:
-          cpus: {{ autojudge.cpus_limit }}
+          cpus: {{ autojudge.cpus }}
           memory: {{ autojudge.memory_limit }}
         reservations:
           cpus: {{ autojudge.cpus_reservation }}
@@ -202,7 +202,7 @@ services:
       update_config:
         order: start-first
     environment:
-      API.URL: http://api:8080
+      API_URL: http://api:8080
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -272,7 +272,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ autojudge_autoscaler.cpus_limit }}
+          cpus: {{ autojudge_autoscaler.cpus }}
           memory: {{ autojudge_autoscaler.memory_limit }}
         reservations:
           cpus: {{ autojudge_autoscaler.cpus_reservation }}
@@ -317,7 +317,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ cadvisor.cpus_limit }}
+          cpus: {{ cadvisor.cpus }}
           memory: {{ cadvisor.memory_limit }}
         reservations:
           cpus: {{ cadvisor.cpus_reservation }}
@@ -360,9 +360,8 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average={{ grafana.ratelimit_average }}
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst={{ grafana.ratelimit_burst }}
-        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/api/v1/sessions/grafana
+        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/v1/sessions/grafana
         - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
-        - traefik.http.middlewares.grafana-auth.forwardauth.authRequestRedirect=false
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
         {% if global.https == "true" %}
         - traefik.http.routers.grafana.entrypoints=websecure
@@ -377,7 +376,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ grafana.cpus_limit }}
+          cpus: {{ grafana.cpus }}
           memory: {{ grafana.memory_limit }}
         reservations:
           cpus: {{ grafana.cpus_reservation }}
@@ -391,8 +390,8 @@ services:
       DB_NAME: forseti
       DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
-      GF_USERS_AUTO_ASSIGN_ORG: true
-      GF_USERS_AUTO_ASSIGN_ORG_ID: 1
+      GF_USERS_AUTO_ASSIGN_ORG: "true"
+      GF_USERS_AUTO_ASSIGN_ORG_ID: "1"
       GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor
       GF_SECURITY_ADMIN_USER: root
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
@@ -436,7 +435,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ loki.cpus_limit }}
+          cpus: {{ loki.cpus }}
           memory: {{ loki.memory_limit }}
         reservations:
           cpus: {{ loki.cpus_reservation }}
@@ -485,7 +484,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ migration.cpus_limit }}
+          cpus: {{ migration.cpus }}
           memory: {{ migration.memory_limit }}
         reservations:
           cpus: {{ migration.cpus_reservation }}
@@ -515,7 +514,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio.cpus_limit }}
+          cpus: {{ minio.cpus }}
           memory: {{ minio.memory_limit }}
         reservations:
           cpus: {{ minio.cpus_reservation }}
@@ -557,7 +556,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio_init.cpus_limit }}
+          cpus: {{ minio_init.cpus }}
           memory: {{ minio_init.memory_limit }}
         reservations:
           cpus: {{ minio_init.cpus_reservation }}
@@ -595,7 +594,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ node_exporter.cpus_limit }}
+          cpus: {{ node_exporter.cpus }}
           memory: {{ node_exporter.memory_limit }}
         reservations:
           cpus: {{ node_exporter.cpus_reservation }}
@@ -634,7 +633,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres.cpus_limit }}
+          cpus: {{ postgres.cpus }}
           memory: {{ postgres.memory_limit }}
         reservations:
           cpus: {{ postgres.cpus_reservation }}
@@ -674,7 +673,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres_exporter.cpus_limit }}
+          cpus: {{ postgres_exporter.cpus }}
           memory: {{ postgres_exporter.memory_limit }}
         reservations:
           cpus: {{ postgres_exporter.cpus_reservation }}
@@ -725,7 +724,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ prometheus.cpus_limit }}
+          cpus: {{ prometheus.cpus }}
           memory: {{ prometheus.memory_limit }}
         reservations:
           cpus: {{ prometheus.cpus_reservation }}
@@ -760,7 +759,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ rabbitmq.cpus_limit }}
+          cpus: {{ rabbitmq.cpus }}
           memory: {{ rabbitmq.memory_limit }}
         reservations:
           cpus: {{ rabbitmq.cpus_reservation }}
@@ -816,7 +815,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.cpus_limit }}
+          cpus: {{ redis.cpus }}
           memory: {{ redis.memory_limit }}
         reservations:
           cpus: {{ redis.cpus_reservation }}
@@ -846,10 +845,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.cpus_limit }}
-          memory: {{ redis.memory_limit }}
+          cpus: {{ redis_exporter.cpus }}
+          memory: {{ redis_exporter.memory_limit }}
         reservations:
-          cpus: {{ redis.cpus_reservation }}
+          cpus: {{ redis_exporter.cpus_reservation }}
           memory: {{ redis.memory_reservation }}
       restart_policy:
         condition: on-failure
@@ -883,7 +882,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ tempo.cpus_limit }}
+          cpus: {{ tempo.cpus }}
           memory: {{ tempo.memory_limit }}
         reservations:
           cpus: {{ tempo.cpus_reservation }}
@@ -931,7 +930,7 @@ services:
           - node.role == manager
       resources:
         limits:
-          cpus: {{ traefik.cpus_limit }}
+          cpus: {{ traefik.cpus }}
           memory: {{ traefik.memory_limit }}
         reservations:
           cpus: {{ traefik.cpus_reservation }}
@@ -995,7 +994,7 @@ services:
       replicas: {{ webapp.replicas }}
       resources:
         limits:
-          cpus: {{ webapp.cpus_limit }}
+          cpus: {{ webapp.cpus }}
           memory: {{ webapp.memory_limit }}
         reservations:
           cpus: {{ webapp.cpus_reservation }}
@@ -1006,9 +1005,9 @@ services:
       update_config:
         order: start-first
     environment:
-      ALLOY.PUBLIC_URL: https://alloy.{{ global.domain }}
-      API.INTERNAL_URL: http://api:8080
-      API.PUBLIC_URL: https://api.{{ global.domain }}
+      ALLOY_PUBLIC_URL: https://alloy.{{ global.domain }}
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: https://api.{{ global.domain }}
       APP_ENV: production
       LOCALE: {{ webapp.locale }}
       VERSION: {{ __version__ }}
