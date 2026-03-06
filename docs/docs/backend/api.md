@@ -921,9 +921,17 @@ Fetch `x-webauth-user` and `x-webauth-name` headers from the current session for
 
 - **GET** `/v1/sessions/grafana`
 - **Access:** ROOT, ADMIN or STAFF
+- **Response Body:**
+```json
+{
+  "ok": true
+}
+```
 - **Response Headers:**
   - `x-webauth-user`: `{user.id}@{contestId}` for contest members or `{user.id}` for the ROOT user
   - `x-webauth-name`: Full name of the authenticated user
+
+> Although contrary to REST principles, this endpoint always returns 200 OK, even on authentication failure, so Traefik continues to forward the request to Grafana, which will then return 401 Unauthorized and show the default login page as fallback. This allows users to sign in on Grafana without needing to sign in on a contest dashboard first.
   
 ###### Delete Current Session (Logout)
 
