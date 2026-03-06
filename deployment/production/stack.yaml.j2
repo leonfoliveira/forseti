@@ -388,6 +388,9 @@ services:
       DB_NAME: forseti
       DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_USERS_AUTO_ASSIGN_ORG: true
+      GF_USERS_AUTO_ASSIGN_ORG_ID: 1
+      GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor
       GF_SECURITY_ADMIN_USER: root
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
       LOKI_URL: http://loki:3100
