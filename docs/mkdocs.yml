@@ -23,4 +23,3 @@ extra_css:
   - css/custom.css
 plugins:
   - search
-  - print-site

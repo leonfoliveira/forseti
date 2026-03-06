@@ -175,7 +175,7 @@ jobs:
         run: make build
 
       - name: Install MkDocs and dependencies
-        run: pip install mkdocs mkdocs-material mkdocs-print-site-plugin
+        run: pip install mkdocs mkdocs-material
 
       - name: Build MkDocs site
         working-directory: docs
@@ -196,7 +196,7 @@ jobs:
           cp ../../README.md .
           cp ../../LICENSE .
           cp ../../applications/cli/dist/forseti .
-          cp ../../docs/site/print_page/index.html ./documentation.html
+          cp -r ../../docs/site ./documentation
 
       - name: Create ZIP file with tag name
         run: zip -r forseti-${{ steps.vars.outputs.tag }}.zip *
