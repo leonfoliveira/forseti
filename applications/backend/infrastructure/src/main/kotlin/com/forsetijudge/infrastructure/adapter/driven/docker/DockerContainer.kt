@@ -41,18 +41,31 @@ class DockerContainer(
                     "create",
                     // Automatically remove the container when it exits
                     "--rm",
-                    // Re-enable read-only with proper tmpfs mounts
+                    // Network isolation
                     "--network=none",
                     // Drop all capabilities
                     "--cap-drop=ALL",
-                    // Disable privilege escalation
+                    // Block additional privileges
                     "--security-opt=no-new-privileges",
-                    // Limit the number of processes
+                    // Use the autojudge user defined in the Docker image (uid 1001)
+                    "--user=autojudge",
+                    // Deny access to all devices
+                    "--device-cgroup-rule=c *:* m",
+                    // Limit processes
                     "--pids-limit=64",
-                    // Limit CPU and memory
+                    // Limit cpu cores
                     "--cpus=1",
+                    // Limit memory
                     "--memory=${memoryLimit}m",
                     "--memory-swap=${memoryLimit}m",
+                    // 10MB file size limit
+                    "--ulimit=fsize=10485760:10485760",
+                    // Limit open file descriptors
+                    "--ulimit=nofile=64:64",
+                    // Limit number of processes
+                    "--ulimit=nproc=64:64",
+                    // Disable core dumps
+                    "--ulimit=core=0:0",
                     // Container name
                     "--name=$name",
                     imageName,
