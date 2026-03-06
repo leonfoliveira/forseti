@@ -166,7 +166,7 @@ After deployment, the following services will be accessible at these URLs, as lo
 - **Webapp**: `http://<DOMAIN>` User interface for contest dashboards.
 - **API**: `http://api.<DOMAIN>` Main API endpoint used by the webapp and the CLI.
 - **Alloy**: `http://alloy.<DOMAIN>` Used by the webapp to export client logs, metrics and traces.
-- **Grafana**: `http://grafana.<DOMAIN>` Grafana dashboard for monitoring and metrics visualization. Requires to be signed in with a ROOT, ADMIN or STAFF account on the webapp to access.
+- **Grafana**: `http://grafana.<DOMAIN>` Grafana dashboard for monitoring and metrics visualization.
 - **Postgres**: `postgresql://postgres.<DOMAIN>` PostgreSQL database connection endpoint. Requires `db_password` secret, created on `swarm init` command, for authentication.
 
 ### `stack rm`
