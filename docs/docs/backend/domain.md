@@ -18,6 +18,7 @@ The Forseti Judge core domain implements a comprehensive programming contest man
 Abstract base class providing common properties for all domain entities.
 
 **Properties:**
+
 - `id` - `UUID` (Primary key, UUIDv7 format)
 - `createdAt` - `OffsetDateTime` (Audit timestamp)
 - `updatedAt` - `OffsetDateTime` (Audit timestamp)
@@ -29,6 +30,7 @@ Abstract base class providing common properties for all domain entities.
 Central entity representing a programming contest with all associated configuration.
 
 **Properties:**
+
 - `slug` - `String` (URL-friendly identifier, unique)
 - `title` - `String` (Display name)  
 - `languages` - `List<Submission.Language>` (Allowed programming languages)
@@ -39,6 +41,7 @@ Central entity representing a programming contest with all associated configurat
 - `settings` - `Settings` (Nested configuration object)
 
 **Settings:**
+
 - `isAutoJudgeEnabled` - `Boolean` (Enable automatic judging)
 - `isClarificationEnabled` - `Boolean` (Allow clarification requests)
 - `isSubmissionPrintTicketEnabled` - `Boolean` (Allow print request tickets)
@@ -51,6 +54,7 @@ Central entity representing a programming contest with all associated configurat
 Individual contest problem with resource constraints and test data.
 
 **Properties:**
+
 - `contest` - `Contest` (Associated contest)
 - `letter` - `Char` (Problem identifier)
 - `color` - `String` (UI color code, hex format #rrggbb)
@@ -65,6 +69,7 @@ Individual contest problem with resource constraints and test data.
 Contest participant or staff member with role-based permissions.
 
 **Properties:**
+
 - `contest` - `Contest` (Associated contest)
 - `type` - `Type` (Role enumeration)
 - `name` - `String` (Display name)
@@ -72,6 +77,7 @@ Contest participant or staff member with role-based permissions.
 - `password` - `String` (Hashed password)
 
 **Type Enumeration:**
+
 - `API` - API system user
 - `AUTOJUDGE` - Auto judge system user
 - `ROOT` - Root user
@@ -86,6 +92,7 @@ Contest participant or staff member with role-based permissions.
 Code submission from a contest participant for automated or manual judging.
 
 **Properties:**
+
 - `member` - `Member` (Author of the submission)
 - `problem` - `Problem` (Target problem)
 - `language` - `Language` (Programming language used)
@@ -94,16 +101,19 @@ Code submission from a contest participant for automated or manual judging.
 - `code` - `Attachment` (Source code file)
 
 **Language Enumeration:**
+
 - `CPP_17` - C++ 17
 - `JAVA_21` - Java 21
 - `PYTHON_312` - Python 3.12
 
 **Status Enumeration:**
+
 - `JUDGING` - Currently being evaluated
 - `FAILED` - Error during auto judging
 - `JUDGED` - Evaluation completed
 
 **Answer Enumeration:**
+
 - `ACCEPTED` - All test cases passed
 - `WRONG_ANSWER` - Incorrect output produced
 - `COMPILATION_ERROR` - Code failed to compile
@@ -116,6 +126,7 @@ Code submission from a contest participant for automated or manual judging.
 Detailed auto judge test execution results for a submission with individual test case outcomes.
 
 **Properties:**
+
 - `submission` - `Submission` (Associated submission)
 - `answer` - `Submission.Answer` (Overall execution result)
 - `totalTestCases` - `Int` (Total number of test cases)
@@ -128,6 +139,7 @@ Detailed auto judge test execution results for a submission with individual test
 Snapshot of submission state at leaderboard freeze time.
 
 **Properties:**
+
 - Same as `Submission`
 
 ### Announcement
@@ -135,6 +147,7 @@ Snapshot of submission state at leaderboard freeze time.
 Message visible to all contest participants and guests.
 
 **Properties:**
+
 - `contest` - `Contest` (Target contest)
 - `member` - `Member` (Announcement author)
 - `text` - `String` (Message content)
@@ -144,6 +157,7 @@ Message visible to all contest participants and guests.
 Question and answer thread supporting hierarchical discussions.
 
 **Properties:**
+
 - `contest` - `Contest` (Target contest)
 - `member` - `Member` (Author)
 - `problem` - `Problem` (Related problem, nullable for general questions)
@@ -155,6 +169,7 @@ Question and answer thread supporting hierarchical discussions.
 User authentication session with CSRF protection.
 
 **Properties:**
+
 - `member` - `Member` (Authenticated user)
 - `csrfToken` - `UUID` (Cross-site request forgery token)
 - `expiresAt` - `OffsetDateTime` (Session expiration time)
@@ -164,6 +179,7 @@ User authentication session with CSRF protection.
 Abstract support request base with single table inheritance for type-specific behavior.
 
 **Properties:**
+
 - `contest` - `Contest` (Target contest)
 - `member` - `Member` (Request author)
 - `staff` - `Member` (Assigned staff member, nullable)
@@ -172,11 +188,13 @@ Abstract support request base with single table inheritance for type-specific be
 - `properties` - `String` (JSON-encoded type-specific data)
 
 **Type Enumeration:**
+
 - `SUBMISSION_PRINT` - Code printing request
 - `TECHNICAL_SUPPORT` - Technical assistance
 - `NON_TECHNICAL_SUPPORT` - General help
 
 **Status Enumeration:**
+
 - `OPEN` - Newly created
 - `IN_PROGRESS` - Being handled by staff
 - `RESOLVED` - Successfully completed
@@ -187,6 +205,7 @@ Abstract support request base with single table inheritance for type-specific be
 Request to print submission source code.
 
 **Type-Specific Properties:**
+
 - `submissionId` - `UUID` (Target submission identifier)
 - `attachmentId` - `UUID` (Code attachment identifier)
 
@@ -195,6 +214,7 @@ Request to print submission source code.
 Technical assistance request for system issues.
 
 **Type-Specific Properties:**
+
 - `description` - `String` (Issue description)
 
 #### NonTechnicalSupportTicket
@@ -202,6 +222,7 @@ Technical assistance request for system issues.
 General assistance request for contest-related questions.
 
 **Type-Specific Properties:**
+
 - `description` - `String` (Request description)
 
 ### Attachment
@@ -209,6 +230,7 @@ General assistance request for contest-related questions.
 File storage abstraction for various content types with access control.
 
 **Properties:**
+
 - `contest` - `Contest` (Associated contest)
 - `member` - `Member` (File uploader)
 - `filename` - `String` (Original filename)
@@ -217,6 +239,7 @@ File storage abstraction for various content types with access control.
 - `isCommitted` - `Boolean` (File persistence status)
 
 **Context Enumeration:**
+
 - `PROBLEM_DESCRIPTION` - Problem statement files
 - `PROBLEM_TEST_CASES` - Test input/output data
 - `SUBMISSION_CODE` - Source code files
@@ -231,6 +254,7 @@ With exception of `FrozenSubmission`, all entities are audited with Hibernate En
 Hibernate Envers audit entity for session change tracking.
 
 **Properties:**
+
 - `rev` - `Long` (Revision number)
 - `timestamp` - `LocalDateTime` (Modification timestamp)
 - `sessionId` - `UUID` (Associated session identifier, nullable)
@@ -246,6 +270,7 @@ Non persistent data structures.
 Thread-local context for authorization and tracing.
 
 **Properties:**
+
 - `ip` - `String` (Client IP address)
 - `traceId` - `UUID` (Request correlation ID)
 - `contestId` - `UUID` (Current contest scope, nullable)
@@ -257,6 +282,7 @@ Thread-local context for authorization and tracing.
 Contest standings table with member rankings and problem-specific statistics.
 
 **Properties:**
+
 - `contestId` - `UUID` (Target contest)
 - `issuedAt` - `OffsetDateTime` (Snapshot timestamp)
 - `isFrozen` - `Boolean` (Freeze status)
@@ -267,6 +293,7 @@ Contest standings table with member rankings and problem-specific statistics.
 Individual member's contest performance summary.
 
 **Properties:**
+
 - `memberId` - `UUID` (Participant identifier)
 - `memberName` - `String` (Display name)
 - `memberType` - `Member.Type` (Participant role)
@@ -279,6 +306,7 @@ Individual member's contest performance summary.
 Member's performance on a specific problem.
 
 **Properties:**
+
 - `memberId` - `UUID` (Participant identifier)
 - `problemId` - `UUID` (Problem identifier)
 - `problemLetter` - `Char` (Problem display identifier)
@@ -293,6 +321,7 @@ Member's performance on a specific problem.
 Administrative view with complete contest visibility.
 
 **Components:**
+
 - `contest` - Contest details with members and problems
 - `leaderboard` - Current standings
 - `members` - All participants and staff
@@ -308,6 +337,7 @@ Administrative view with complete contest visibility.
 Participant view with appropriate content filtering.
 
 **Components:**
+
 - `contest` - Basic contest information
 - `leaderboard` - Public standings (respects freeze)
 - `members` - Visible participants
@@ -323,6 +353,7 @@ Participant view with appropriate content filtering.
 Judge view for submission evaluation and clarification management.
 
 **Components:**
+
 - `contest` - Contest details
 - `leaderboard` - Real-time standings (ignores freeze)
 - `members` - All participants
@@ -337,6 +368,7 @@ Judge view for submission evaluation and clarification management.
 Staff view for technical support and contest administration.
 
 **Components:**
+
 - `contest` - Contest details
 - `leaderboard` - Real-time standings
 - `members` - All participants and staff
@@ -352,6 +384,7 @@ Staff view for technical support and contest administration.
 Public view for non-authenticated users.
 
 **Components:**
+
 - `contest` - Basic contest information
 - `leaderboard` - Public standings (respects freeze)
 - `members` - Visible participants
@@ -369,6 +402,7 @@ Domain events for loose coupling and reactive system behavior.
 Broadcast message events for notification systems.
 
 **Event Types:**
+
 - `Created(announcementId: UUID)` - New announcement published
 
 ### AttachmentsEvent
@@ -376,6 +410,7 @@ Broadcast message events for notification systems.
 File management events (object singleton).
 
 **Event Types:**
+
 - `Uploaded(attachmentId: UUID)` - New file successfully uploaded
 
 ### ClarificationEvent
@@ -383,6 +418,7 @@ File management events (object singleton).
 Communication events for real-time updates.
 
 **Event Types:**
+
 - `Created(clarificationId: UUID)` - New question or answer posted
 - `Deleted(contestId: UUID, clarificationId: UUID)` - Message removed
 
@@ -391,6 +427,7 @@ Communication events for real-time updates.
 Contest lifecycle events for external system integration.
 
 **Event Types:**
+
 - `Created(contestId: UUID)` - New contest established
 - `Updated(contestId: UUID)` - Contest details modified
 - `Deleted(contestId: UUID)` - Contest permanently removed
@@ -400,6 +437,7 @@ Contest lifecycle events for external system integration.
 Test execution events for detailed result tracking.
 
 **Event Types:**
+
 - `Created(executionId: UUID)` - New execution result recorded
 
 ### LeaderboardEvent
@@ -407,6 +445,7 @@ Test execution events for detailed result tracking.
 Standings events for UI synchronization.
 
 **Event Types:**  
+
 - `Frozen(contestId: UUID)` - Leaderboard frozen manually
 - `Unfrozen(contestId: UUID, frozenAt: OffsetDateTime)` - Leaderboard unfrozen
 
@@ -415,6 +454,7 @@ Standings events for UI synchronization.
 Submission processing events for workflow coordination.
 
 **Event Types:**
+
 - `Created(submissionId: UUID)` - New submission received
 - `Reset(submissionId: UUID)` - Submission reset for rejudging
 - `Updated(submissionId: UUID)` - Judgment completed or modified
@@ -424,6 +464,7 @@ Submission processing events for workflow coordination.
 Support request events for staff notification.
 
 **Event Types:**
+
 - `Created(ticketId: UUID)` - New support request submitted
 - `Updated(ticketId: UUID)` - Ticket status or assignment changed
 

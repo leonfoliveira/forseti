@@ -62,16 +62,6 @@ Forseti consists of several key services working together:
 
 The platform also includes comprehensive infrastructure services for monitoring, logging, message queuing, and data storage. See the [Stack](stack.md) documentation for detailed service descriptions.
 
-## Member Roles
-
-Forseti supports different member types with tailored experiences:
-
-- **[Admin](webapp/admin.md)**: Full contest management
-- **[Staff](webapp/staff.md)**: Ticket management and contest support
-- **[Judge](webapp/judge.md)**: Manual grading and submission review
-- **[Contestant](webapp/contestant.md)**: Contest participation and submission tracking
-- **[Guest](webapp/guest.md)**: Public contest viewing and results
-
 ## Getting Started
 
 1. **Setup the CLI**: Use the [CLI](cli.md) to initialize your Forseti deployment
@@ -97,8 +87,9 @@ Forseti supports different member types with tailored experiences:
 
 ## Next Steps
 
-- **[CLI Documentation](cli.md)**: Learn how to deploy and manage Forseti
 - **[Stack Overview](stack.md)**: Understand the system architecture
+- **[Rules](rules.md)**: Learn about contest rules and member permissions
+- **[CLI Documentation](cli.md)**: Learn how to deploy and manage Forseti
 - **[WebApp Guide](webapp/overview.md)**: Explore the webapp interface
 - **[Domain](backend/domain.md)**: Learn about the domain of Forseti
 - **[API Documentation](backend/api.md)**: Learn about the main Forseti service
