@@ -529,7 +529,9 @@ Creates a new session for a `ROOT` member if the provided password is correct. A
 }
 ```
 - **Response Body:** [SessionResponseDTO](#sessionresponsedto)
-- **Cookies:** Sets `session_id` and `csrf_token` cookies
+- **Response Cookies:**
+    - `session_id`: Set to the new session ID
+    - `csrf_token`: Set to the new CSRF token for the session
 
 ###### Create Contest
 
@@ -583,7 +585,9 @@ Creates a new session for a contest member if the provided login and password ar
 }
 ```
 - **Response Body:** [SessionResponseDTO](#sessionresponsedto)
-- **Cookies:** Sets `session_id` and `csrf_token` cookies
+- **Response Cookies:**
+    - `session_id`: Set to the new session ID
+    - `csrf_token`: Set to the new CSRF token for the session
 
 ##### Contests
 
@@ -908,17 +912,27 @@ Fetch basic contest details by its slug. This endpoint is intended for public ac
 Fetch the current authenticated session details. This can be used by clients to retrieve information about the session with ID stored in cookies, such as member type and contest ID.
 
 - **GET** `/v1/sessions/me`
-- **Access:** Authenticated users
+- **Access:** Any authenticated user
 - **Response Body:** [SessionResponseDTO](#sessionresponsedto)
 
+###### Get Grafana Credentials
+
+Fetch `x-webauth-user` and `x-webauth-name` headers from the current session for Grafana authentication. This endpoint is used by traefik to authenticate users accessing Grafana dashboards, allowing for single sign-on (SSO) functionality.
+
+- **GET** `/v1/sessions/grafana`
+- **Access:** ROOT, ADMIN or STAFF
+- **Response Headers:**
+  - `x-webauth-user`: `{user.id}@{contestId}` for contest members or `{user.id}` for the ROOT user
+  - `x-webauth-name`: Full name of the authenticated user
+  
 ###### Delete Current Session (Logout)
 
 Revoke all sessions for the current member, effectively logging them out from all devices. This is a security measure to ensure that if a session is compromised, the user can invalidate all sessions immediately.
 
 - **DELETE** `/v1/sessions/me`
-- **Access:** Authenticated users
+- **Access:** Any authenticated user
 - **Response Body:** No content
-- **Cookies:** Clears session and CSRF cookies
+- **Response Cookies:** Clears session and CSRF cookies
 
 #### Others
 

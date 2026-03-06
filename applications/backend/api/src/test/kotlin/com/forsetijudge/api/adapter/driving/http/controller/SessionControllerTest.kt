@@ -2,9 +2,11 @@ package com.forsetijudge.api.adapter.driving.http.controller
 
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
+import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
+import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -47,6 +49,32 @@ class SessionControllerTest(
                 .andExpect {
                     status { isOk() }
                     content { session.toResponseBodyDTO() }
+                }
+        }
+
+        test("getGrafanaCredentials") {
+            val member = MemberMockBuilder.build()
+            val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
+            ExecutionContext.start()
+            ExecutionContext.setSession(session)
+
+            webMvc
+                .get("/v1/sessions/grafana")
+                .andExpect {
+                    status { isOk() }
+                    header {
+                        string(
+                            "x-webauth-user",
+                            if (session.member.contestId !=
+                                null
+                            ) {
+                                "${session.member.id}@${session.member.contestId}"
+                            } else {
+                                session.member.id.toString()
+                            },
+                        )
+                    }
+                    header { string("x-webauth-name", member.name) }
                 }
         }
 

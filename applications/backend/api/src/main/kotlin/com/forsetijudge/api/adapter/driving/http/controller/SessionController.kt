@@ -1,8 +1,10 @@
 package com.forsetijudge.api.adapter.driving.http.controller
 
+import com.forsetijudge.api.adapter.util.Private
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
@@ -28,6 +30,19 @@ class SessionController(
         logger.info("[GET] /v1/sessions/me")
         val session = ExecutionContext.getSession()
         return ResponseEntity.ok(session)
+    }
+
+    @GetMapping("/sessions/grafana")
+    @Private(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
+    fun getGrafanaCredentials(): ResponseEntity<Unit> {
+        logger.info("[GET] /v1/sessions/grafana")
+        val member = ExecutionContext.getMember()
+        val user = if (member.contestId != null) "${member.id}@${member.contestId}" else member.id.toString()
+        return ResponseEntity
+            .ok()
+            .header("x-webauth-user", user)
+            .header("x-webauth-name", member.name)
+            .build()
     }
 
     @DeleteMapping("/sessions/me")
