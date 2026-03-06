@@ -72,7 +72,17 @@ Add the following entries to your system's hosts file to map Forseti domains to 
 **Windows**: Edit `C:\Windows\System32\drivers\etc\hosts`
 
 ```
-<MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN> grafana.<DOMAIN>
+<MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN>
+```
+
+On machines used by ROOT, ADMIN and STAFF members, it may be necessary to add the grafana service domain as well:
+```
+<MANAGER_ADDRESS> grafana.<DOMAIN>
+```
+
+On machines used by the ROOT member, it may be necessary to add the postgres service domain as well:
+```
+<MANAGER_ADDRESS> postgres.<DOMAIN>
 ```
 
 **Parameters:**
@@ -81,7 +91,7 @@ Add the following entries to your system's hosts file to map Forseti domains to 
 
 **Example:**
 ```
-192.168.1.100 forseti.local alloy.forseti.local api.forseti.local grafana.forseti.local
+192.168.1.100 forsetijudge.com alloy.forsetijudge.com api.forsetijudge.com grafana.forsetijudge.com postgres.forsetijudge.com
 ```
 
 ##### Step 2: Install SSL Certificate
@@ -148,6 +158,16 @@ Deploys the complete Forseti stack to Docker Swarm.
 
 - `-y, --yes`: Skip confirmation prompt
 - `-f, --force`: Force redeployment even if already deployed
+
+**Public URLs**
+
+After deployment, the following services will be accessible at these URLs, as long as the host file is configured correctly:
+
+- **Webapp**: `http://<DOMAIN>` User interface for contest dashboards.
+- **API**: `http://api.<DOMAIN>` Main API endpoint used by the webapp and the CLI.
+- **Alloy**: `http://alloy.<DOMAIN>` Used by the webapp to export client logs, metrics and traces.
+- **Grafana**: `http://grafana.<DOMAIN>` Grafana dashboard for monitoring and metrics visualization. Requires to be signed in with a ROOT, ADMIN or STAFF account on the webapp to access.
+- **Postgres**: `postgresql://postgres.<DOMAIN>` PostgreSQL database connection endpoint. Requires `db_password` secret, created on `swarm init` command, for authentication.
 
 ### `stack rm`
 

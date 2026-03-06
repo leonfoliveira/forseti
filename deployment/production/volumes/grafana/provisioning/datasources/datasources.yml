@@ -1,12 +1,9 @@
 apiVersion: 1
 
 datasources:
-  # Low privilege datasources (Org ID 1)
-
   - name: Loki
     type: loki
-    uid: loki_org1
-    orgId: 1
+    uid: loki
     access: proxy
     url: ${LOKI_URL}
     editable: false
@@ -14,8 +11,7 @@ datasources:
 
   - name: Prometheus
     type: prometheus
-    uid: prometheus_org1
-    orgId: 1
+    uid: prometheus
     access: proxy
     url: ${PROMETHEUS_URL}
     editable: false
@@ -25,63 +21,12 @@ datasources:
 
   - name: Tempo
     type: tempo
-    uid: tempo_org1
-    orgId: 1
+    uid: tempo
     access: proxy
     url: ${TEMPO_URL}
     jsonData:
       httpMethod: GET
       serviceMap:
-        datasourceUid: "prometheus_org1"
-    editable: false
-    version: 1
-
-  # High privilege datasources (Org ID 2)
-
-  - name: Loki
-    type: loki
-    uid: loki_org2
-    orgId: 2
-    access: proxy
-    url: ${LOKI_URL}
-    editable: false
-    version: 1
-
-  - name: Prometheus
-    type: prometheus
-    uid: prometheus_org2
-    orgId: 2
-    access: proxy
-    url: ${PROMETHEUS_URL}
-    editable: false
-    jsonData:
-      httpMethod: GET
-    version: 1
-
-  - name: Tempo
-    type: tempo
-    uid: tempo_org2
-    orgId: 2
-    access: proxy
-    url: ${TEMPO_URL}
-    jsonData:
-      httpMethod: GET
-      serviceMap:
-        datasourceUid: "prometheus_org2"
-    editable: false
-    version: 1
-
-  - name: Postgres
-    type: postgres
-    uid: postgres_org2
-    orgId: 2
-    access: proxy
-    url: ${DB_URL}
-    database: ${DB_NAME}
-    user: ${DB_USER}
-    jsonData:
-      sslmode: disable
-    secureJsonData:
-      password: ${DB_PASSWORD}
+        datasourceUid: "prometheus"
     editable: false
     version: 1

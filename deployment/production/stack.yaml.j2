@@ -701,6 +701,20 @@ services:
       - --storage.tsdb.path=/prometheus
       - --web.enable-remote-write-receiver
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.middlewares.prometheus-ratelimit.ratelimit.average={{ prometheus.ratelimit_average }}
+        - traefik.http.middlewares.prometheus-ratelimit.ratelimit.burst={{ prometheus.ratelimit_burst }}
+        - traefik.http.routers.prometheus.rule=Host(`prometheus.{{ global.domain }}`)
+        {% if global.https == "true" %}
+        - traefik.http.routers.prometheus.entrypoints=websecure
+        - traefik.http.routers.prometheus.tls=true
+        {% else %}
+        - traefik.http.routers.prometheus.entrypoints=web
+        - traefik.http.routers.prometheus.tls=false
+        {% endif %}
+        - traefik.http.routers.prometheus.middlewares=prometheus-ratelimit
+        - traefik.http.services.prometheus.loadbalancer.server.port=9090
       mode: replicated
       replicas: 1
       resources:
