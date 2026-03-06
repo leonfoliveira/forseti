@@ -60,17 +60,57 @@ Installs all necessary dependencies for Forseti, including:
 
 - `--sandboxes`: List of sandboxes to install (default: cpp17, java21, python312)
 
-**After the installation process, if it is required to update the hosts file on every machine that will access the system**
+#### Post-Installation Setup
 
-Linux/Mac File: `/etc/hosts`
+After the installation process completes, **every machine that will access the Forseti system** must perform the following configuration steps to enable proper domain resolution and HTTPS certificate validation.
 
-Windows File: `C:\Windows\System32\drivers\etc\hosts`
+##### Step 1: Configure Domain Resolution
+
+Add the following entries to your system's hosts file to map Forseti domains to your swarm manager:
+
+**Linux/macOS**: Edit `/etc/hosts`  
+**Windows**: Edit `C:\Windows\System32\drivers\etc\hosts`
 
 ```
 <MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN> grafana.<DOMAIN>
 ```
 
-Where `<MANAGER_ADDRESS>` is the IP address of the swarm manager node and `<DOMAIN>` is the domain specified in `stack.conf`.
+**Parameters:**
+- `<MANAGER_ADDRESS>`: IP address of your Docker Swarm manager node
+- `<DOMAIN>`: The domain value configured in your `stack.conf` file
+
+**Example:**
+```
+192.168.1.100 forseti.local alloy.forseti.local api.forseti.local grafana.forseti.local
+```
+
+##### Step 2: Install SSL Certificate
+
+To avoid browser security warnings and enable trusted HTTPS connections, install the generated self-signed certificate as a trusted root certificate.
+
+The certificate file will be located at `certs/rootCA.pem` after running the install command. Copy this file to each machine that will access the Forseti system and follow the appropriate installation steps based on your operating system.
+
+###### Linux/macOS
+
+```bash
+sudo cp <path_to_certificate>/rootCA.pem /usr/local/share/ca-certificates/forseti-rootCA.pem
+sudo update-ca-certificates
+```
+
+###### Windows
+
+1. Rename `rootCA.pem` to `rootCA.crt`
+2. Double-click the `rootCA.crt` file to open the Certificate Import Wizard
+3. Choose "Local Machine" and click "Next"
+4. Select "Place all certificates in the following store" and click "Browse"
+5. Choose "Trusted Root Certification Authorities" and click "OK"
+6. Click "Next" and then "Finish" to complete the installation
+
+###### Post-Installation Notes
+
+- **Restart your browser** after certificate installation to ensure it recognizes the new trusted certificate
+- The certificate is valid for the configured domain and all its subdomains (alloy, api, grafana)
+- If you encounter certificate warnings, verify the certificate was installed correctly and the domain matches your `stack.conf` configuration. Antivirus software may also interfere with certificate installation, so check for any related alerts or logs.
 
 ### `backup`
 
