@@ -142,12 +142,12 @@ jobs:
 
       - name: Install CLI dependencies
         run: |
-          cd applications/cli
+          cd ../../applications/cli
           make setup
 
       - name: Build CLI
         run: |
-          cd applications/cli
+          cd ../../applications/cli
           make build
 
       - name: Copy migrations to production directory
