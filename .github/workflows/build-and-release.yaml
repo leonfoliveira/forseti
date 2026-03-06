@@ -9,6 +9,10 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: build-and-release
+  cancel-in-progress: false
+
 jobs:
   check-regression-tests:
     runs-on: ubuntu-latest
@@ -65,6 +69,9 @@ jobs:
   build-and-release:
     needs: check-regression-tests
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     defaults:
       run:
         working-directory: deployment/production
@@ -74,7 +81,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v4
 
       - name: Set up Docker layer caching
         uses: actions/cache@v4
@@ -93,20 +100,42 @@ jobs:
 
       - name: Build images
         run: |
-          # Build all images in parallel with enhanced caching
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-api:${{ steps.vars.outputs.tag }} -f ../../applications/backend/api.Dockerfile ../../applications/backend --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-autojudge:${{ steps.vars.outputs.tag }} -f ../../applications/backend/autojudge.Dockerfile ../../applications/backend --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-webapp:${{ steps.vars.outputs.tag }} ../../applications/webapp --load &
-          docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max -t applications-autoscaler:${{ steps.vars.outputs.tag }} ../../applications/autoscaler --load &
+          set -e  # Exit on any error
 
-          # Wait for all builds to complete
-          wait
+          # Build all images in parallel with separate cache destinations
+          (
+            docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new-api,mode=max -t applications-api:${{ steps.vars.outputs.tag }} -f ../../applications/backend/api.Dockerfile ../../applications/backend --load
+          ) &
+          API_PID=$!
 
-          # Update cache
-          if [ -d "/tmp/.buildx-cache-new" ]; then
-            rm -rf /tmp/.buildx-cache
-            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
-          fi
+          (
+            docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new-autojudge,mode=max -t applications-autojudge:${{ steps.vars.outputs.tag }} -f ../../applications/backend/autojudge.Dockerfile ../../applications/backend --load
+          ) &
+          AUTOJUDGE_PID=$!
+
+          (
+            docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new-webapp,mode=max -t applications-webapp:${{ steps.vars.outputs.tag }} ../../applications/webapp --load
+          ) &
+          WEBAPP_PID=$!
+
+          (
+            docker buildx build --cache-from type=local,src=/tmp/.buildx-cache --cache-to type=local,dest=/tmp/.buildx-cache-new-autoscaler,mode=max -t applications-autoscaler:${{ steps.vars.outputs.tag }} ../../applications/autoscaler --load
+          ) &
+          AUTOSCALER_PID=$!
+
+          # Wait for all builds to complete and capture exit codes
+          wait $API_PID || exit 1
+          wait $AUTOJUDGE_PID || exit 1
+          wait $WEBAPP_PID || exit 1
+          wait $AUTOSCALER_PID || exit 1
+
+          # Merge caches into a single directory
+          rm -rf /tmp/.buildx-cache
+          mkdir -p /tmp/.buildx-cache
+          for dir in /tmp/.buildx-cache-new-*; do
+            cp -rn "$dir/" /tmp/.buildx-cache/ 2>/dev/null || true
+            rm -rf "$dir"
+          done
 
       - name: Tag images
         run: |
@@ -138,25 +167,22 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-          cache-dependency-path: cli/requirements.dev.txt
+          cache-dependency-path: applications/cli/requirements.dev.txt
 
       - name: Install CLI dependencies
-        run: |
-          cd ../../applications/cli
-          make setup
+        working-directory: applications/cli
+        run: make setup
 
       - name: Build CLI
-        run: |
-          cd ../../applications/cli
-          make build
+        working-directory: applications/cli
+        run: make build
 
       - name: Install MkDocs and dependencies
         run: pip install mkdocs mkdocs-material mkdocs-print-site-plugin
 
       - name: Build MkDocs site
-        run: |
-          cd ../../docs
-          VERSION=${{ steps.vars.outputs.tag }} mkdocs build
+        working-directory: docs
+        run: VERSION=${{ steps.vars.outputs.tag }} mkdocs build
 
       - name: Copy migrations to production directory
         run: |
@@ -179,11 +205,9 @@ jobs:
         run: zip -r forseti-${{ steps.vars.outputs.tag }}.zip *
 
       - name: Upload ZIP to release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: deployment/production/forseti-${{ steps.vars.outputs.tag }}.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -191,7 +215,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ../../docs/site
+          path: docs/site
 
       - name: Deploy to GitHub Pages
         id: deployment
