@@ -360,6 +360,8 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average={{ grafana.ratelimit_average }}
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst={{ grafana.ratelimit_burst }}
+        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/api/v1/sessions/grafana
+        - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
         {% if global.https == "true" %}
         - traefik.http.routers.grafana.entrypoints=websecure
@@ -368,7 +370,7 @@ services:
         - traefik.http.routers.grafana.entrypoints=web
         - traefik.http.routers.grafana.tls=false
         {% endif %}
-        - traefik.http.routers.grafana.middlewares=grafana-ratelimit
+        - traefik.http.routers.grafana.middlewares=grafana-ratelimit,grafana-auth
         - traefik.http.services.grafana.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
@@ -417,6 +419,9 @@ services:
         source: grafana_data
         target: /var/lib/grafana
         volume: {}
+      - type: bind
+        source: {{ __volumes_path__ }}/grafana/grafana.ini
+        target: /etc/grafana/grafana.ini
       - type: bind
         source: {{ __volumes_path__ }}/grafana/provisioning/datasources
         target: /etc/grafana/provisioning/datasources
