@@ -150,6 +150,14 @@ jobs:
           cd ../../applications/cli
           make build
 
+      - name: Install MkDocs and dependencies
+        run: pip install mkdocs mkdocs-material
+
+      - name: Build MkDocs site
+        run: |
+          cd ../../docs
+          VERSION=${{ steps.vars.outputs.tag }} mkdocs build
+
       - name: Copy migrations to production directory
         run: |
           mkdir -p volumes/migrations
@@ -165,6 +173,7 @@ jobs:
           cp ../../README.md .
           cp ../../LICENSE .
           cp ../../applications/cli/dist/forseti .
+          cp ../../docs/site/print_page/index.html ./documentation.html
 
       - name: Create ZIP file with tag name
         run: zip -r forseti-${{ steps.vars.outputs.tag }}.zip *
@@ -176,39 +185,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-deploy-docs:
-    needs: build-and-release
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: docs
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Get tag name
-        id: vars
-        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-
-      - name: Install MkDocs and dependencies
-        run: pip install mkdocs mkdocs-material
-
-      - name: Build MkDocs site
-        run: VERSION=${{ steps.vars.outputs.tag }} mkdocs build
-
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/site
+          path: ../../docs/site
 
       - name: Deploy to GitHub Pages
         id: deployment

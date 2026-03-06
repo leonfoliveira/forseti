@@ -2,7 +2,7 @@ site_name: Forseti - Docs
 repo_url: https://github.com/leonfoliveira/forseti
 edit_uri: /leonfoliveira/forseti/edit/main/docs/docs
 nav:
-  - Home: home.md
+  - Home: index.md
   - Stack: stack.md
   - CLI: cli.md
   - Backend:
@@ -21,3 +21,6 @@ extra:
   version: !ENV [VERSION, "latest"]
 extra_css:
   - css/custom.css
+plugins:
+  - search
+  - print-site
