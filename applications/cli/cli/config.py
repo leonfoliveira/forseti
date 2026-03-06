@@ -12,12 +12,14 @@ except ImportError:
     __build_date__ = "unknown"
 
 __cli_dir__ = os.path.dirname(os.path.abspath(__file__))
-__backups_dir__ = os.path.join(__cli_dir__, "backups")
-__certs_dir__ = os.path.join(__cli_dir__, "certs")
-__sandboxes_dir__ = os.path.join(__cli_dir__, "sandboxes")
-__volumes_dir__ = os.path.join(os.path.dirname(__cli_dir__), "volumes")
+__working_dir__ = os.getcwd()
 
-__stack_template_file__ = os.path.join(__cli_dir__, "stack.yaml.j2")
-__config_file__ = os.path.join(__cli_dir__, "stack.conf")
+__backups_dir__ = os.path.join(__working_dir__, "backups")
+__certs_dir__ = os.path.join(__working_dir__, "certs")
+__sandboxes_dir__ = os.path.join(__working_dir__, "sandboxes")
+__volumes_dir__ = os.path.join(__working_dir__, "volumes")
+
+__stack_template_file__ = os.path.join(__working_dir__, "stack.yaml.j2")
+__config_file__ = os.path.join(__working_dir__, "stack.conf")
 
 __stack_name__ = "forseti"
