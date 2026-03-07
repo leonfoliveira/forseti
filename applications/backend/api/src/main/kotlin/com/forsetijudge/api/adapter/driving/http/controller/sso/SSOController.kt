@@ -22,7 +22,7 @@ class SSOController {
 
     @GetMapping("/sso/grafana")
     fun getGrafanaCredentials(): ResponseEntity<Map<String, Boolean>> {
-        logger.info("[GET] /v1/sessions/grafana")
+        logger.info("[GET] /v1/sso/grafana")
         val member = ExecutionContext.getMemberNullable()
 
         if (member != null && member.type in setOf(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)) {

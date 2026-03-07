@@ -10,7 +10,7 @@ View the current standings of all participants in the contest. The leaderboard d
 
 ### Leaderboard Revealer
 
-The leaderboard revealer feature allows administrators to dramatically unveil the final standings during award ceremonies. This animated revelation can be controlled line by line to build suspense and engagement. Unnoficial contestants are hidden from this view to maintain the integrity of the official rankings.
+The leaderboard revealer feature allows administrators to dramatically unveil the final standings during award ceremonies. This animated revelation can be controlled line by line to build suspense and engagement. Unoficial contestants are hidden from this view to maintain the integrity of the official rankings.
 
 ![Leaderboard page revealer](../img/admin_leaderboard_revealer.jpg)
 

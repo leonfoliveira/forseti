@@ -1,12 +1,8 @@
 package com.forsetijudge.core.port.dto.response.session
 
 import com.forsetijudge.core.domain.entity.Session
-import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberWithContestAndLoginResponseDTO
-import com.forsetijudge.core.port.dto.response.member.MemberWithLoginResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toWithContestAndLoginResponseDTO
-import com.forsetijudge.core.port.dto.response.member.toWithLoginResponseBodyDTO
 import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID

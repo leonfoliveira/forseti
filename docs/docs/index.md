@@ -12,10 +12,10 @@ Forseti is specifically designed to operate in **closed LAN environments without
 
 - **Offline Operation**: Once deployed, the system runs entirely within your local network without requiring internet connectivity
 - **LAN-Only Access**: All services communicate internally and are accessible only within your network infrastructure  
-- **Self-Signed Certificates**: The system automatically generates its own SSL certificates using Mkcert for secure HTTPS communication
+- **Self-Signed Certificates**: The system automatically generates its own TLS certificates using Mkcert for secure TLS communication
 - **Installation Requirement**: Internet access is only needed during installation to pull Docker images from registries
 
-This design ensures maximum security and control for contest environments while maintaining professional-grade SSL encryption through self-signed certificates.
+This design ensures maximum security and control for contest environments while maintaining professional-grade TLS encryption through self-signed certificates.
 
 > **Note**: While Forseti can technically be deployed on the internet, such deployments require additional security configurations, proper certificate management, and network hardening that are beyond the scope of this documentation. The platform is optimized and documented for secure LAN deployments.
 

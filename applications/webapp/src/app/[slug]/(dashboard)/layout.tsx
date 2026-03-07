@@ -147,6 +147,7 @@ export default function DashboardLayout({
                     value="grafana"
                     className="flex-0 justify-self-end whitespace-nowrap"
                     data-testid="tab-grafana"
+                    asChild
                   >
                     <Link
                       href={clientConfig.grafanaPublicUrl}

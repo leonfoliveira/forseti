@@ -7,7 +7,6 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
-import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
@@ -51,56 +50,6 @@ class SessionControllerTest(
                     status { isOk() }
                     content { session.toResponseBodyDTO() }
                 }
-        }
-
-        context("getGrafanaCredentials") {
-            test("root") {
-                val member = MemberMockBuilder.build(type = Member.Type.ROOT, contest = null)
-                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
-                ExecutionContext.start()
-                ExecutionContext.setSession(session)
-
-                webMvc
-                    .get("/v1/sessions/grafana")
-                    .andExpect {
-                        status { isOk() }
-                        header { string("x-webauth-user", member.login) }
-                        header { string("x-webauth-name", member.name) }
-                        content { """{"ok":true}""" }
-                    }
-            }
-
-            test("authorized member") {
-                val member = MemberMockBuilder.build(type = Member.Type.STAFF)
-                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
-                ExecutionContext.start()
-                ExecutionContext.setSession(session)
-
-                webMvc
-                    .get("/v1/sessions/grafana")
-                    .andExpect {
-                        status { isOk() }
-                        header { string("x-webauth-user", "${member.login}@${member.contest!!.slug}") }
-                        header { string("x-webauth-name", member.name) }
-                        content { """{"ok":true}""" }
-                    }
-            }
-
-            test("unauthorized member") {
-                val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT)
-                val session = SessionMockBuilder.build(member = member).toResponseBodyDTO()
-                ExecutionContext.start()
-                ExecutionContext.setSession(session)
-
-                webMvc
-                    .get("/v1/sessions/grafana")
-                    .andExpect {
-                        status { isOk() }
-                        header { doesNotExist("x-webauth-user") }
-                        header { doesNotExist("x-webauth-name") }
-                        content { """{"ok":false}""" }
-                    }
-            }
         }
 
         test("deleteCurrent") {

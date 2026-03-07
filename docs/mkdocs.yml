@@ -5,6 +5,7 @@ nav:
   - Home: index.md
   - Stack: stack.md
   - CLI: cli.md
+  - Grafana: grafana.md
   - Rules: rules.md
   - WebApp:
       - Overview: webapp/overview.md

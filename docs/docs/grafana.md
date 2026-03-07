@@ -29,7 +29,7 @@ For authenticated webapp users, Grafana uses seamless proxy authentication:
 
 1. Users authenticate through the webapp (web interface) 
 2. Upon successful authentication, the webapp sets a `session_id` cookie
-3. When accessing Grafana, Traefik forwards the authentication request to `/api/v1/sessions/grafana`
+3. When accessing Grafana, Traefik forwards the authentication request to `/api/v1/sso/grafana`
 4. The API validates the session and returns user identity headers (`X-WEBAUTH-USER`, `X-WEBAUTH-NAME`)
 5. Grafana automatically provisions the user account based on the authenticated identity
 
@@ -39,10 +39,9 @@ This seamless integration ensures users don't need separate Grafana credentials 
 
 When proxy authentication fails (e.g., no active session, no contests created yet), Grafana falls back to its standard login page:
 
-1. If `/api/v1/sessions/grafana` returns 401/403, Traefik passes the request through without auth headers
-2. Grafana detects the absence of proxy auth headers and presents the login form
-3. The ROOT member can authenticate directly with Grafana credentials:
+1. If `/api/v1/sso/grafana` does not include valid authentication headers, Grafana detects the absence of proxy auth headers and presents the login form
+2. The ROOT member can authenticate directly with Grafana credentials:
     - **login**: `root`
     - **password**: Root password set during swarm initialization
-4. This is particularly useful for ROOT users who need access before any contests are created
-5. Other users (ADMIN, STAFF) will not have Grafana credentials and must authenticate via proxy authentication through the webapp
+3. This is particularly useful for ROOT users who need access before any contests are created
+4. Other users (ADMIN, STAFF) will not have Grafana credentials and must authenticate via proxy authentication through the webapp

@@ -56,4 +56,4 @@ Once deployed, public services are acessible through:
 - `http[s]://api.<domain>`: API endpoints routing to the API service.
 - `http[s]://grafana.<domain>`: Grafana dashboards for monitoring and observability.
 - `http[s]://alloy.<domain>/collect`: Endpoint for Alloy to receive telemetry data from services.
-- `postgres.<domain>:5432`: PostgreSQL database connection. If HTTPs is disabled, use just `<domain>:5432` instead.
+- `postgres.<domain>:5432`: PostgreSQL database connection. If TLS is disabled, use just `<domain>:5432` instead.

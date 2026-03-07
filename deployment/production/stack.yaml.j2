@@ -27,7 +27,7 @@ services:
         - traefik.http.middlewares.alloy-ratelimit.ratelimit.average={{ alloy.ratelimit_average }}
         - traefik.http.middlewares.alloy-ratelimit.ratelimit.burst={{ alloy.ratelimit_burst }}
         - traefik.http.routers.alloy.rule=Host(`alloy.{{ global.domain }}`) && Path(`/collect`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.alloy.entrypoints=websecure
         - traefik.http.routers.alloy.tls=true
         {% else %}
@@ -73,7 +73,7 @@ services:
         - traefik.http.middlewares.api-ratelimit.ratelimit.average={{ api.ratelimit_average }}
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst={{ api.ratelimit_burst }}
         - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathRegexp(`^/v[0-9]+/sso`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
         {% else %}
@@ -83,7 +83,7 @@ services:
         - traefik.http.routers.api.middlewares=api-ratelimit
         - traefik.http.routers.api.service=api
         - traefik.http.routers.ws.rule=Host(`ws.{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.ws.entrypoints=websecure
         - traefik.http.routers.ws.tls=true
         {% else %}
@@ -96,7 +96,7 @@ services:
         - traefik.http.services.ws.loadbalancer.server.port=8081
         - traefik.http.services.ws.loadbalancer.sticky.cookie=true
         - traefik.http.services.ws.loadbalancer.sticky.cookie.name=ws-session
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.services.ws.loadbalancer.sticky.cookie.secure=true
         - traefik.http.services.ws.loadbalancer.sticky.cookie.samesite=none
         {% else %}
@@ -119,7 +119,7 @@ services:
       update_config:
         order: start-first
     environment:
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       COOKIE_DOMAIN: .{{ global.domain }}
       COOKIE_SECURE: "true"
       {% else %}
@@ -128,7 +128,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       GRAFANA_PUBLIC_URL: https://grafana.{{ global.domain }}
       {% else %}
       GRAFANA_PUBLIC_URL: http://grafana.{{ global.domain }}
@@ -162,7 +162,7 @@ services:
       OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: production
       VERSION: {{ __version__ }}
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       WEBAPP_PUBLIC_URL: https://{{ global.domain }}
       {% else %}
       WEBAPP_PUBLIC_URL: http://{{ global.domain }}
@@ -369,7 +369,7 @@ services:
         - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
         - traefik.http.middlewares.grafana-auth.forwardauth.authRequestHeaders=Cookie
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
         {% else %}
@@ -397,7 +397,7 @@ services:
       DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
       GF_SERVER_DOMAIN: grafana.{{ global.domain }}
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       GF_SERVER_ROOT_URL: https://grafana.{{ global.domain }}/
       {% else %}
       GF_SERVER_ROOT_URL: http://grafana.{{ global.domain }}/
@@ -640,16 +640,24 @@ services:
         read_only: true
 
   postgres:
+    command:
+      - "postgres"
+      {% if global.tls == "true" %}
+      - "-c"
+      - "ssl=on"
+      - "-c"
+      - "ssl_cert_file=/var/lib/postgresql/cert.pem"
+      - "-c"
+      - "ssl_key_file=/var/lib/postgresql/key.pem"
+      {% else %}
+      - "-c"
+      - "ssl=off"
+      {% endif %}
     deploy:
       labels:
         - traefik.enable=true
         - traefik.tcp.routers.postgres.entrypoints=postgres
-        {% if global.https == "true" %}
-        - traefik.tcp.routers.postgres.rule=HostSNI(`postgres.{{ global.domain }}`)
-        - traefik.tcp.routers.postgres.tls=true
-        {% else %}
         - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
-        {% endif %}
         - traefik.tcp.services.postgres.loadbalancer.server.port=5432
       mode: replicated
       replicas: 1
@@ -672,7 +680,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "pg_isready -U forseti -d forseti"
+        - "pg_isready -U forseti -d forseti {% if global.tls == 'true' %}--sslmode=require{% endif %}"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -688,6 +696,12 @@ services:
         source: postgres_data
         target: /var/lib/postgresql/data
         volume: {}
+      - type: bind
+        source: {{ __volumes_path__ }}/certs/cert.pem
+        target: /var/lib/postgresql/cert.pem
+      - type: bind
+        source: {{ __volumes_path__ }}/certs/key.pem
+        target: /var/lib/postgresql/key.pem
 
   postgres-exporter:
     deploy:
@@ -733,7 +747,7 @@ services:
         - traefik.http.middlewares.prometheus-ratelimit.ratelimit.average={{ prometheus.ratelimit_average }}
         - traefik.http.middlewares.prometheus-ratelimit.ratelimit.burst={{ prometheus.ratelimit_burst }}
         - traefik.http.routers.prometheus.rule=Host(`prometheus.{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.prometheus.entrypoints=websecure
         - traefik.http.routers.prometheus.tls=true
         {% else %}
@@ -1007,7 +1021,7 @@ services:
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.average={{ webapp.ratelimit_average }}
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst={{ webapp.ratelimit_burst }}
         - traefik.http.routers.webapp.rule=Host(`{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
         {% else %}
