@@ -27,7 +27,7 @@ The Forseti CLI expects a specific directory structure for deployment operations
 Use stack.conf to adjust systems parameters like:
 
 - `global.domain`: The URL domain for the Forseti system. Traefik will use this domain to route incoming requests to the appropriate services. Certificates will also be generated for this domain.
-- `global.https`: Enable or disable HTTPS. If enabled, self-signed certificates will be generated for the specified domain. Recommended to keep enabled for secure communication.
+- `global.tls`: Enable or disable TLS. If enabled, self-signed certificates will be generated for the specified domain. Recommended to keep enabled for secure communication.
 - `session.expiration`: Duration after which user sessions will expire. Adjust based on security requirements and user activity patterns.
 - `session.root_expiration`: Duration after which root sessions will expire. Root sessions have elevated privileges, so it's recommended to set a shorter expiration time for enhanced security.
 - `session.system_expiration`: Duration after which system sessions will expire. System sessions are used for internal operations, so setting a short expiration time can help mitigate potential security risks.
@@ -60,17 +60,73 @@ Installs all necessary dependencies for Forseti, including:
 
 - `--sandboxes`: List of sandboxes to install (default: cpp17, java21, python312)
 
-**After the installation process, if it is required to update the hosts file on every machine that will access the system**
+#### Post-Installation Setup
 
-Linux/Mac File: `/etc/hosts`
+After the installation process completes, **every machine that will access the Forseti system** must perform the following configuration steps to enable proper domain resolution and TLS certificate validation.
 
-Windows File: `C:\Windows\System32\drivers\etc\hosts`
+##### Step 1: Configure Domain Resolution
+
+Add the following entries to your system's hosts file to map Forseti domains to your swarm manager:
+
+**Debian/Ubuntu/MacOS**: Edit `/etc/hosts`
+**Windows**: Edit `C:\Windows\System32\drivers\etc\hosts`
 
 ```
-<MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN> grafana.<DOMAIN>
+<MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN>
 ```
 
-Where `<MANAGER_ADDRESS>` is the IP address of the swarm manager node and `<DOMAIN>` is the domain specified in `stack.conf`.
+On machines used by ROOT, ADMIN and STAFF members, it may be necessary to add the grafana service domain as well:
+```
+<MANAGER_ADDRESS> grafana.<DOMAIN>
+```
+
+On machines used by the ROOT member, it may be necessary to add the postgres service domain as well:
+```
+<MANAGER_ADDRESS> postgres.<DOMAIN>
+```
+
+**Parameters:**
+- `<MANAGER_ADDRESS>`: IP address of your Docker Swarm manager node
+- `<DOMAIN>`: The domain value configured in your `stack.conf` file
+
+**Example:**
+```
+192.168.1.100 forsetijudge.com alloy.forsetijudge.com api.forsetijudge.com grafana.forsetijudge.com postgres.forsetijudge.com
+```
+
+##### Step 2: Install TLS Certificate
+
+To avoid browser security warnings and enable trusted TLS connections, install the generated self-signed certificate as a trusted root certificate.
+
+The certificate file will be located at `certs/rootCA.pem` after running the install command. Copy this file to each machine that will access the Forseti system and follow the appropriate installation steps based on your operating system.
+
+###### Debian/Ubuntu
+
+```bash
+sudo cp <path_to_certificate>/rootCA.pem /usr/local/share/ca-certificates/forseti-rootCA.pem
+sudo update-ca-certificates
+```
+
+###### MacOS
+
+```bash
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain <path_to_certificate>/rootCA.pem
+```
+
+###### Windows
+
+1. Rename `rootCA.pem` to `rootCA.crt`
+2. Double-click the `rootCA.crt` file to open the Certificate Import Wizard
+3. Choose "Local Machine" and click "Next"
+4. Select "Place all certificates in the following store" and click "Browse"
+5. Choose "Trusted Root Certification Authorities" and click "OK"
+6. Click "Next" and then "Finish" to complete the installation
+
+###### Post-Installation Notes
+
+- **Restart your browser** after certificate installation to ensure it recognizes the new trusted certificate
+- The certificate is valid for the configured domain and all its subdomains (alloy, api, grafana)
+- If you encounter certificate warnings, verify the certificate was installed correctly and the domain matches your `stack.conf` configuration. Antivirus software may also interfere with certificate installation, so check for any related alerts or logs.
 
 ### `backup`
 
@@ -108,6 +164,16 @@ Deploys the complete Forseti stack to Docker Swarm.
 
 - `-y, --yes`: Skip confirmation prompt
 - `-f, --force`: Force redeployment even if already deployed
+
+**Public URLs**
+
+After deployment, the following services will be accessible at these URLs, as long as the host file is configured correctly:
+
+- **Webapp**: `http://<DOMAIN>` User interface for contest dashboards.
+- **API**: `http://api.<DOMAIN>` Main API endpoint used by the webapp and the CLI.
+- **Alloy**: `http://alloy.<DOMAIN>` Used by the webapp to export client logs, metrics and traces.
+- **Grafana**: `http://grafana.<DOMAIN>` Grafana dashboard for monitoring and metrics visualization.
+- **Postgres**: `postgresql://postgres.<DOMAIN>:5432` PostgreSQL database connection endpoint. Requires `db_password` secret, created on `swarm init` command, for authentication.
 
 ### `stack rm`
 

@@ -12,10 +12,10 @@ Forseti is specifically designed to operate in **closed LAN environments without
 
 - **Offline Operation**: Once deployed, the system runs entirely within your local network without requiring internet connectivity
 - **LAN-Only Access**: All services communicate internally and are accessible only within your network infrastructure  
-- **Self-Signed Certificates**: The system automatically generates its own SSL certificates using Mkcert for secure HTTPS communication
+- **Self-Signed Certificates**: The system automatically generates its own TLS certificates using Mkcert for secure TLS communication
 - **Installation Requirement**: Internet access is only needed during installation to pull Docker images from registries
 
-This design ensures maximum security and control for contest environments while maintaining professional-grade SSL encryption through self-signed certificates.
+This design ensures maximum security and control for contest environments while maintaining professional-grade TLS encryption through self-signed certificates.
 
 > **Note**: While Forseti can technically be deployed on the internet, such deployments require additional security configurations, proper certificate management, and network hardening that are beyond the scope of this documentation. The platform is optimized and documented for secure LAN deployments.
 
@@ -62,16 +62,6 @@ Forseti consists of several key services working together:
 
 The platform also includes comprehensive infrastructure services for monitoring, logging, message queuing, and data storage. See the [Stack](stack.md) documentation for detailed service descriptions.
 
-## Member Roles
-
-Forseti supports different member types with tailored experiences:
-
-- **[Admin](webapp/admin.md)**: Full contest management
-- **[Staff](webapp/staff.md)**: Ticket management and contest support
-- **[Judge](webapp/judge.md)**: Manual grading and submission review
-- **[Contestant](webapp/contestant.md)**: Contest participation and submission tracking
-- **[Guest](webapp/guest.md)**: Public contest viewing and results
-
 ## Getting Started
 
 1. **Setup the CLI**: Use the [CLI](cli.md) to initialize your Forseti deployment
@@ -97,8 +87,9 @@ Forseti supports different member types with tailored experiences:
 
 ## Next Steps
 
-- **[CLI Documentation](cli.md)**: Learn how to deploy and manage Forseti
 - **[Stack Overview](stack.md)**: Understand the system architecture
+- **[Rules](rules.md)**: Learn about contest rules and member permissions
+- **[CLI Documentation](cli.md)**: Learn how to deploy and manage Forseti
 - **[WebApp Guide](webapp/overview.md)**: Explore the webapp interface
 - **[Domain](backend/domain.md)**: Learn about the domain of Forseti
 - **[API Documentation](backend/api.md)**: Learn about the main Forseti service

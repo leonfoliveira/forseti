@@ -3,15 +3,15 @@ networks:
     driver: overlay
 
 secrets:
-  {{ __db_password__ }}
+  {{ __db_password__ }}:
     external: true
-  {{ __minio_password__ }}
+  {{ __minio_password__ }}:
     external: true
-  {{ __rabbitmq_password__ }}
+  {{ __rabbitmq_password__ }}:
     external: true
-  {{ __redis_password__ }}
+  {{ __redis_password__ }}:
     external: true
-  {{ __root_password__ }}
+  {{ __root_password__ }}:
     external: true
 
 services:
@@ -27,7 +27,7 @@ services:
         - traefik.http.middlewares.alloy-ratelimit.ratelimit.average={{ alloy.ratelimit_average }}
         - traefik.http.middlewares.alloy-ratelimit.ratelimit.burst={{ alloy.ratelimit_burst }}
         - traefik.http.routers.alloy.rule=Host(`alloy.{{ global.domain }}`) && Path(`/collect`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.alloy.entrypoints=websecure
         - traefik.http.routers.alloy.tls=true
         {% else %}
@@ -39,7 +39,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ alloy.cpus_limit }}
+          cpus: {{ alloy.cpus }}
           memory: {{ alloy.memory_limit }}
         reservations:
           cpus: {{ alloy.cpus_reservation }}
@@ -72,8 +72,8 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average={{ api.ratelimit_average }}
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst={{ api.ratelimit_burst }}
-        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
-        {% if global.https == "true" %}
+        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathRegexp(`^/v[0-9]+/sso`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
+        {% if global.tls == "true" %}
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
         {% else %}
@@ -83,7 +83,7 @@ services:
         - traefik.http.routers.api.middlewares=api-ratelimit
         - traefik.http.routers.api.service=api
         - traefik.http.routers.ws.rule=Host(`ws.{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.ws.entrypoints=websecure
         - traefik.http.routers.ws.tls=true
         {% else %}
@@ -96,7 +96,7 @@ services:
         - traefik.http.services.ws.loadbalancer.server.port=8081
         - traefik.http.services.ws.loadbalancer.sticky.cookie=true
         - traefik.http.services.ws.loadbalancer.sticky.cookie.name=ws-session
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.services.ws.loadbalancer.sticky.cookie.secure=true
         - traefik.http.services.ws.loadbalancer.sticky.cookie.samesite=none
         {% else %}
@@ -108,7 +108,7 @@ services:
       replicas: {{ api.replicas }}
       resources:
         limits:
-          cpus: {{ api.cpus_limit }}
+          cpus: {{ api.cpus }}
           memory: {{ api.memory_limit }}
         reservations:
           cpus: {{ api.cpus_reservation }}
@@ -119,7 +119,7 @@ services:
       update_config:
         order: start-first
     environment:
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       COOKIE_DOMAIN: .{{ global.domain }}
       COOKIE_SECURE: "true"
       {% else %}
@@ -128,6 +128,11 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
+      {% if global.tls == "true" %}
+      GRAFANA_PUBLIC_URL: https://grafana.{{ global.domain }}
+      {% else %}
+      GRAFANA_PUBLIC_URL: http://grafana.{{ global.domain }}
+      {% endif %}
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=80.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=30.0"
       SESSION_EXPIRATION: {{ session.expiration }}
       SESSION_ROOT_EXPIRATION: {{ session.root_expiration }}
@@ -157,7 +162,7 @@ services:
       OTEL_SERVICE_NAME: api
       SPRING_PROFILES_ACTIVE: production
       VERSION: {{ __version__ }}
-      {% if global.https == "true" %}
+      {% if global.tls == "true" %}
       WEBAPP_PUBLIC_URL: https://{{ global.domain }}
       {% else %}
       WEBAPP_PUBLIC_URL: http://{{ global.domain }}
@@ -191,7 +196,7 @@ services:
       replicas: 0
       resources:
         limits:
-          cpus: {{ autojudge.cpus_limit }}
+          cpus: {{ autojudge.cpus }}
           memory: {{ autojudge.memory_limit }}
         reservations:
           cpus: {{ autojudge.cpus_reservation }}
@@ -202,7 +207,7 @@ services:
       update_config:
         order: start-first
     environment:
-      API.URL: http://api:8080
+      API_URL: http://api:8080
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -272,7 +277,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ autojudge_autoscaler.cpus_limit }}
+          cpus: {{ autojudge_autoscaler.cpus }}
           memory: {{ autojudge_autoscaler.memory_limit }}
         reservations:
           cpus: {{ autojudge_autoscaler.cpus_reservation }}
@@ -317,7 +322,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ cadvisor.cpus_limit }}
+          cpus: {{ cadvisor.cpus }}
           memory: {{ cadvisor.memory_limit }}
         reservations:
           cpus: {{ cadvisor.cpus_reservation }}
@@ -360,21 +365,24 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average={{ grafana.ratelimit_average }}
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst={{ grafana.ratelimit_burst }}
+        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/v1/sso/grafana
+        - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
+        - traefik.http.middlewares.grafana-auth.forwardauth.authRequestHeaders=Cookie
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.grafana.entrypoints=websecure
         - traefik.http.routers.grafana.tls=true
         {% else %}
         - traefik.http.routers.grafana.entrypoints=web
         - traefik.http.routers.grafana.tls=false
         {% endif %}
-        - traefik.http.routers.grafana.middlewares=grafana-ratelimit
+        - traefik.http.routers.grafana.middlewares=grafana-ratelimit,grafana-auth
         - traefik.http.services.grafana.loadbalancer.server.port=3000
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: {{ grafana.cpus_limit }}
+          cpus: {{ grafana.cpus }}
           memory: {{ grafana.memory_limit }}
         reservations:
           cpus: {{ grafana.cpus_reservation }}
@@ -388,6 +396,15 @@ services:
       DB_NAME: forseti
       DB_USER: forseti
       DB_PASSWORD_FILE: /run/secrets/db_password
+      GF_SERVER_DOMAIN: grafana.{{ global.domain }}
+      {% if global.tls == "true" %}
+      GF_SERVER_ROOT_URL: https://grafana.{{ global.domain }}/
+      {% else %}
+      GF_SERVER_ROOT_URL: http://grafana.{{ global.domain }}/
+      {% endif %}
+      GF_USERS_AUTO_ASSIGN_ORG: "true"
+      GF_USERS_AUTO_ASSIGN_ORG_ID: "1"
+      GF_USERS_AUTO_ASSIGN_ORG_ROLE: Editor
       GF_SECURITY_ADMIN_USER: root
       GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/root_password
       LOKI_URL: http://loki:3100
@@ -415,6 +432,9 @@ services:
         target: /var/lib/grafana
         volume: {}
       - type: bind
+        source: {{ __volumes_path__ }}/grafana/grafana.ini
+        target: /etc/grafana/grafana.ini
+      - type: bind
         source: {{ __volumes_path__ }}/grafana/provisioning/datasources
         target: /etc/grafana/provisioning/datasources
       - type: bind
@@ -427,7 +447,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ loki.cpus_limit }}
+          cpus: {{ loki.cpus }}
           memory: {{ loki.memory_limit }}
         reservations:
           cpus: {{ loki.cpus_reservation }}
@@ -476,7 +496,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ migration.cpus_limit }}
+          cpus: {{ migration.cpus }}
           memory: {{ migration.memory_limit }}
         reservations:
           cpus: {{ migration.cpus_reservation }}
@@ -506,7 +526,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio.cpus_limit }}
+          cpus: {{ minio.cpus }}
           memory: {{ minio.memory_limit }}
         reservations:
           cpus: {{ minio.cpus_reservation }}
@@ -548,7 +568,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ minio_init.cpus_limit }}
+          cpus: {{ minio_init.cpus }}
           memory: {{ minio_init.memory_limit }}
         reservations:
           cpus: {{ minio_init.cpus_reservation }}
@@ -586,7 +606,7 @@ services:
       mode: global
       resources:
         limits:
-          cpus: {{ node_exporter.cpus_limit }}
+          cpus: {{ node_exporter.cpus }}
           memory: {{ node_exporter.memory_limit }}
         reservations:
           cpus: {{ node_exporter.cpus_reservation }}
@@ -620,12 +640,30 @@ services:
         read_only: true
 
   postgres:
+    command:
+      - "postgres"
+      {% if global.tls == "true" %}
+      - "-c"
+      - "ssl=on"
+      - "-c"
+      - "ssl_cert_file=/var/lib/postgresql/cert.pem"
+      - "-c"
+      - "ssl_key_file=/var/lib/postgresql/key.pem"
+      {% else %}
+      - "-c"
+      - "ssl=off"
+      {% endif %}
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.tcp.routers.postgres.entrypoints=postgres
+        - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres.cpus_limit }}
+          cpus: {{ postgres.cpus }}
           memory: {{ postgres.memory_limit }}
         reservations:
           cpus: {{ postgres.cpus_reservation }}
@@ -642,7 +680,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "pg_isready -U forseti -d forseti"
+        - "pg_isready -U forseti -d forseti {% if global.tls == 'true' %}--sslmode=require{% endif %}"
       timeout: 5s
       interval: 15s
       retries: 5
@@ -658,6 +696,12 @@ services:
         source: postgres_data
         target: /var/lib/postgresql/data
         volume: {}
+      - type: bind
+        source: {{ __volumes_path__ }}/certs/cert.pem
+        target: /var/lib/postgresql/cert.pem
+      - type: bind
+        source: {{ __volumes_path__ }}/certs/key.pem
+        target: /var/lib/postgresql/key.pem
 
   postgres-exporter:
     deploy:
@@ -665,7 +709,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ postgres_exporter.cpus_limit }}
+          cpus: {{ postgres_exporter.cpus }}
           memory: {{ postgres_exporter.memory_limit }}
         reservations:
           cpus: {{ postgres_exporter.cpus_reservation }}
@@ -698,11 +742,25 @@ services:
       - --storage.tsdb.path=/prometheus
       - --web.enable-remote-write-receiver
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.middlewares.prometheus-ratelimit.ratelimit.average={{ prometheus.ratelimit_average }}
+        - traefik.http.middlewares.prometheus-ratelimit.ratelimit.burst={{ prometheus.ratelimit_burst }}
+        - traefik.http.routers.prometheus.rule=Host(`prometheus.{{ global.domain }}`)
+        {% if global.tls == "true" %}
+        - traefik.http.routers.prometheus.entrypoints=websecure
+        - traefik.http.routers.prometheus.tls=true
+        {% else %}
+        - traefik.http.routers.prometheus.entrypoints=web
+        - traefik.http.routers.prometheus.tls=false
+        {% endif %}
+        - traefik.http.routers.prometheus.middlewares=prometheus-ratelimit
+        - traefik.http.services.prometheus.loadbalancer.server.port=9090
       mode: replicated
       replicas: 1
       resources:
         limits:
-          cpus: {{ prometheus.cpus_limit }}
+          cpus: {{ prometheus.cpus }}
           memory: {{ prometheus.memory_limit }}
         reservations:
           cpus: {{ prometheus.cpus_reservation }}
@@ -737,7 +795,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ rabbitmq.cpus_limit }}
+          cpus: {{ rabbitmq.cpus }}
           memory: {{ rabbitmq.memory_limit }}
         reservations:
           cpus: {{ rabbitmq.cpus_reservation }}
@@ -793,7 +851,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.cpus_limit }}
+          cpus: {{ redis.cpus }}
           memory: {{ redis.memory_limit }}
         reservations:
           cpus: {{ redis.cpus_reservation }}
@@ -823,10 +881,10 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ redis.cpus_limit }}
-          memory: {{ redis.memory_limit }}
+          cpus: {{ redis_exporter.cpus }}
+          memory: {{ redis_exporter.memory_limit }}
         reservations:
-          cpus: {{ redis.cpus_reservation }}
+          cpus: {{ redis_exporter.cpus_reservation }}
           memory: {{ redis.memory_reservation }}
       restart_policy:
         condition: on-failure
@@ -860,7 +918,7 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: {{ tempo.cpus_limit }}
+          cpus: {{ tempo.cpus }}
           memory: {{ tempo.memory_limit }}
         reservations:
           cpus: {{ tempo.cpus_reservation }}
@@ -908,7 +966,7 @@ services:
           - node.role == manager
       resources:
         limits:
-          cpus: {{ traefik.cpus_limit }}
+          cpus: {{ traefik.cpus }}
           memory: {{ traefik.memory_limit }}
         reservations:
           cpus: {{ traefik.cpus_reservation }}
@@ -938,6 +996,10 @@ services:
         published: 443
         protocol: tcp
         mode: host
+      - target: 5432
+        published: 5432
+        protocol: tcp
+        mode: host
     volumes:
       - type: bind
         source: /var/run/docker.sock
@@ -959,7 +1021,7 @@ services:
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.average={{ webapp.ratelimit_average }}
         - traefik.http.middlewares.webapp-ratelimit.ratelimit.burst={{ webapp.ratelimit_burst }}
         - traefik.http.routers.webapp.rule=Host(`{{ global.domain }}`)
-        {% if global.https == "true" %}
+        {% if global.tls == "true" %}
         - traefik.http.routers.webapp.entrypoints=websecure
         - traefik.http.routers.webapp.tls=true
         {% else %}
@@ -972,7 +1034,7 @@ services:
       replicas: {{ webapp.replicas }}
       resources:
         limits:
-          cpus: {{ webapp.cpus_limit }}
+          cpus: {{ webapp.cpus }}
           memory: {{ webapp.memory_limit }}
         reservations:
           cpus: {{ webapp.cpus_reservation }}
@@ -983,9 +1045,9 @@ services:
       update_config:
         order: start-first
     environment:
-      ALLOY.PUBLIC_URL: https://alloy.{{ global.domain }}
-      API.INTERNAL_URL: http://api:8080
-      API.PUBLIC_URL: https://api.{{ global.domain }}
+      ALLOY_PUBLIC_URL: https://alloy.{{ global.domain }}
+      API_INTERNAL_URL: http://api:8080
+      API_PUBLIC_URL: https://api.{{ global.domain }}
       APP_ENV: production
       LOCALE: {{ webapp.locale }}
       VERSION: {{ __version__ }}

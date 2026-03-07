@@ -52,7 +52,8 @@ The deployment is managed through the Forseti CLI, which provides commands to in
 
 Once deployed, public services are acessible through:
 
-- `http[s]://<domain>/{contestId}`: Web application for a Forseti contest
-- `http[s]://api.<domain>`: API endpoints routing to the API service
-- `http[s]://grafana.<domain>`: Grafana dashboards for monitoring and observability
-- `http[s]://alloy.<domain>/collect`: Endpoint for Alloy to receive telemetry data from services
+- `http[s]://<domain>/{contestId}`: Web application for a Forseti contest.
+- `http[s]://api.<domain>`: API endpoints routing to the API service.
+- `http[s]://grafana.<domain>`: Grafana dashboards for monitoring and observability.
+- `http[s]://alloy.<domain>/collect`: Endpoint for Alloy to receive telemetry data from services.
+- `postgresql://postgres.<domain>:5432`: PostgreSQL database connection.

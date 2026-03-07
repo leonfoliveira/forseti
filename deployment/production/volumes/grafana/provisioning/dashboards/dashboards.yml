@@ -2,7 +2,6 @@ apiVersion: 1
 
 providers:
   - name: "Forseti Dashboards"
-    orgId: 1
     folder: ""
     type: file
     disableDeletion: false

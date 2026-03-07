@@ -130,6 +130,7 @@ services:
       DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
+      GRAFANA_PUBLIC_URL: http://localhost:4000
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=25.0"
       SESSION_EXPIRATION: 6h
       SESSION_ROOT_EXPIRATION: 3h

@@ -2,7 +2,7 @@ package com.forsetijudge.core.domain.model
 
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.member.MemberWithContestAndLoginResponseDTO
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import io.opentelemetry.api.trace.Span
 import org.slf4j.MDC
@@ -97,6 +97,8 @@ data class ExecutionContext(
 
         fun getMemberIdNullable(): UUID? = get().session?.member?.id
 
-        fun getMember(): MemberResponseBodyDTO = get().session?.member ?: throw UnauthorizedException("Not authenticated")
+        fun getMember(): MemberWithContestAndLoginResponseDTO = get().session?.member ?: throw UnauthorizedException("Not authenticated")
+
+        fun getMemberNullable(): MemberWithContestAndLoginResponseDTO? = get().session?.member
     }
 }

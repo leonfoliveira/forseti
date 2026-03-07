@@ -5,10 +5,8 @@ nav:
   - Home: index.md
   - Stack: stack.md
   - CLI: cli.md
-  - Backend:
-      - Domain: backend/domain.md
-      - Api: backend/api.md
-      - AutoJudge: backend/autojudge.md
+  - Grafana: grafana.md
+  - Rules: rules.md
   - WebApp:
       - Overview: webapp/overview.md
       - Admin: webapp/admin.md
@@ -16,6 +14,10 @@ nav:
       - Guest: webapp/guest.md
       - Judge: webapp/judge.md
       - Staff: webapp/staff.md
+  - Backend:
+      - Domain: backend/domain.md
+      - Api: backend/api.md
+      - AutoJudge: backend/autojudge.md
 theme: readthedocs
 extra:
   version: !ENV [VERSION, "latest"]
