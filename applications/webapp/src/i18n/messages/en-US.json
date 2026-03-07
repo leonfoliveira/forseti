@@ -187,7 +187,8 @@
           "tab-announcements": "Announcements",
           "tab-tickets": "Tickets",
           "tab-settings": "Settings",
-          "tab-about": "About"
+          "tab-about": "About",
+          "tab-grafana": "Grafana"
         },
         "about": {
           "page": {

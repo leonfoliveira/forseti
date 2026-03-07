@@ -14,6 +14,7 @@ export const serverConfig = {
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "ws://localhost:8081",
   alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "http://localhost:12347",
+  grafanaPublicUrl: process.env.GRAFANA_PUBLIC_URL || "http://localhost:4000",
 };
 
 /**
@@ -28,6 +29,7 @@ export type ClientConfig = {
   apiPublicUrl: string;
   wsPublicUrl: string;
   alloyPublicUrl: string;
+  grafanaPublicUrl: string;
 };
 export const clientConfig =
   ((globalThis as any).__CLIENT_CONFIG__ as ClientConfig) || serverConfig;
@@ -39,5 +41,6 @@ export function buildClientConfig(): ClientConfig {
     apiPublicUrl: serverConfig.apiPublicUrl,
     wsPublicUrl: serverConfig.wsPublicUrl,
     alloyPublicUrl: serverConfig.alloyPublicUrl,
+    grafanaPublicUrl: serverConfig.grafanaPublicUrl,
   };
 }

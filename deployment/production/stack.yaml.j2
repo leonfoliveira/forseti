@@ -128,6 +128,11 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
+      {% if global.https == "true" %}
+      GRAFANA_PUBLIC_URL: https://grafana.{{ global.domain }}
+      {% else %}
+      GRAFANA_PUBLIC_URL: http://grafana.{{ global.domain }}
+      {% endif %}
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=80.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=30.0"
       SESSION_EXPIRATION: {{ session.expiration }}
       SESSION_ROOT_EXPIRATION: {{ session.root_expiration }}

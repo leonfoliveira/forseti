@@ -98,4 +98,27 @@ describe("DashboardLayout", () => {
     );
     expect(tasksTab).toBeInTheDocument();
   });
+
+  it.each([MemberType.ROOT, MemberType.ADMIN, MemberType.STAFF])(
+    "should render grafana tab for %s",
+    async (memberType) => {
+      await renderWithProviders(
+        <DashboardLayout>
+          <span data-testid="child" />
+        </DashboardLayout>,
+        {
+          session: MockSession({
+            member: {
+              ...MockMemberResponseDTO(),
+              type: memberType,
+            },
+          }),
+          contest: MockContestResponseDTO(),
+        },
+      );
+
+      const grafanaTab = screen.queryByTestId("tab-grafana");
+      expect(grafanaTab).toBeInTheDocument();
+    },
+  );
 });

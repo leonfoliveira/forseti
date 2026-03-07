@@ -1,5 +1,7 @@
 "use client";
 
+import { ExternalLinkIcon } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import { FormattedMessage } from "@/app/_lib/component/i18n/formatted-message";
@@ -7,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { BalloonProvider } from "@/app/_lib/provider/balloon-provider";
 import { DashboardProvider } from "@/app/_lib/provider/dashboard-provider";
 import { useAppSelector } from "@/app/_store/store";
+import { clientConfig } from "@/config/config";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/core/domain/enumerate/MemberType";
 import { defineMessages } from "@/i18n/message";
@@ -43,6 +46,10 @@ const messages = defineMessages({
   tabAbout: {
     id: "app.[slug].(dashboard).layout.tab-about",
     defaultMessage: "About",
+  },
+  tabGrafana: {
+    id: "app.[slug].(dashboard).layout.tab-grafana",
+    defaultMessage: "Grafana",
   },
 });
 
@@ -110,21 +117,49 @@ export default function DashboardLayout({
       <Tabs
         className="bg-card border-divider border-b"
         value={pathname}
-        onValueChange={(path) => router.push(path)}
         data-testid="dashboard-tabs"
       >
         <div className="scrollbar-hide overflow-x-auto overflow-y-hidden">
-          <TabsList variant="line" className="min-w-max">
-            {tabs.map((item) => (
-              <TabsTrigger
-                key={item.path}
-                value={item.path}
-                data-testid={`tab-${item.path}`}
-                className="whitespace-nowrap"
-              >
-                <FormattedMessage {...item.title} />
-              </TabsTrigger>
-            ))}
+          <TabsList
+            variant="line"
+            className="flex w-full min-w-max justify-between"
+          >
+            <div>
+              {tabs.map((item) => (
+                <TabsTrigger
+                  key={item.path}
+                  value={item.path}
+                  className="flex-0 whitespace-nowrap"
+                  onClick={() => router.push(item.path)}
+                  data-testid={`tab-${item.path}`}
+                >
+                  <FormattedMessage {...item.title} />
+                </TabsTrigger>
+              ))}
+            </div>
+
+            {session &&
+              [MemberType.ROOT, MemberType.ADMIN, MemberType.STAFF].includes(
+                session.member.type,
+              ) && (
+                <div>
+                  <TabsTrigger
+                    value="grafana"
+                    className="flex-0 justify-self-end whitespace-nowrap"
+                    data-testid="tab-grafana"
+                  >
+                    <Link
+                      href={clientConfig.grafanaPublicUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="cursor-default"
+                    >
+                      <FormattedMessage {...messages.tabGrafana} />
+                      <ExternalLinkIcon className="ml-1 inline" />
+                    </Link>
+                  </TabsTrigger>
+                </div>
+              )}
           </TabsList>
         </div>
       </Tabs>

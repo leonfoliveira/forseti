@@ -37,6 +37,7 @@ jest.mock("@/config/composition");
 
 (globalThis as any).__CLIENT_CONFIG__ = {
   apiPublicUrl: "http://localhost:8080",
+  grafanaPublicUrl: "http://localhost:4000",
 };
 
 const router = {
