@@ -641,6 +641,16 @@ services:
 
   postgres:
     deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.tcp.routers.postgres.entrypoints=postgres
+        {% if global.https == "true" %}
+        - traefik.tcp.routers.postgres.rule=HostSNI(`postgres.{{ global.domain }}`)
+        - traefik.tcp.routers.postgres.tls=true
+        {% else %}
+        - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
+        {% endif %}
+        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
       mode: replicated
       replicas: 1
       resources:
@@ -970,6 +980,10 @@ services:
         mode: host
       - target: 443
         published: 443
+        protocol: tcp
+        mode: host
+      - target: 5432
+        published: 5432
         protocol: tcp
         mode: host
     volumes:
