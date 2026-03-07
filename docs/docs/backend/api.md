@@ -914,13 +914,24 @@ Fetch the current authenticated session details. This can be used by clients to 
 - **GET** `/v1/sessions/me`
 - **Access:** Any authenticated user
 - **Response Body:** [SessionResponseDTO](#sessionresponsedto)
+  
+###### Delete Current Session (Logout)
+
+Revoke all sessions for the current member, effectively logging them out from all devices. This is a security measure to ensure that if a session is compromised, the user can invalidate all sessions immediately.
+
+- **DELETE** `/v1/sessions/me`
+- **Access:** Any authenticated user
+- **Response Body:** No content
+- **Response Cookies:** Clears session and CSRF cookies
+
+#### SSO (`/v1/sso`)
 
 ###### Get Grafana Credentials
 
 Fetch `x-webauth-user` and `x-webauth-name` headers from the current session for Grafana authentication. This endpoint is used by traefik to authenticate users accessing Grafana dashboards, allowing for single sign-on (SSO) functionality.
 
-- **GET** `/v1/sessions/grafana`
-- **Access:** ROOT, ADMIN or STAFF
+- **GET** `/v1/sso/grafana`
+- **Access:** Only inside the docker network forwarding a ROOT, ADMIN or STAFF session
 - **Response Body:**
 ```json
 {
@@ -932,15 +943,6 @@ Fetch `x-webauth-user` and `x-webauth-name` headers from the current session for
   - `x-webauth-name`: Full name of the authenticated user
 
 > Although contrary to REST principles, this endpoint always returns 200 OK, even on authentication failure, so Traefik continues to forward the request to Grafana, which will then return 401 Unauthorized and show the default login page as fallback. This allows users to sign in on Grafana without needing to sign in on a contest dashboard first.
-  
-###### Delete Current Session (Logout)
-
-Revoke all sessions for the current member, effectively logging them out from all devices. This is a security measure to ensure that if a session is compromised, the user can invalidate all sessions immediately.
-
-- **DELETE** `/v1/sessions/me`
-- **Access:** Any authenticated user
-- **Response Body:** No content
-- **Response Cookies:** Clears session and CSRF cookies
 
 #### Others
 

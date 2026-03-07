@@ -72,7 +72,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.api-ratelimit.ratelimit.average={{ api.ratelimit_average }}
         - traefik.http.middlewares.api-ratelimit.ratelimit.burst={{ api.ratelimit_burst }}
-        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
+        - traefik.http.routers.api.rule=Host(`api.{{ global.domain }}`) && !PathRegexp(`^/v[0-9]+/sso`) && !PathPrefix(`/actuator`) && !PathPrefix(`/metrics`)
         {% if global.https == "true" %}
         - traefik.http.routers.api.entrypoints=websecure
         - traefik.http.routers.api.tls=true
@@ -360,7 +360,7 @@ services:
         - traefik.enable=true
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.average={{ grafana.ratelimit_average }}
         - traefik.http.middlewares.grafana-ratelimit.ratelimit.burst={{ grafana.ratelimit_burst }}
-        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/v1/sessions/grafana
+        - traefik.http.middlewares.grafana-auth.forwardauth.address=http://api:8080/v1/sso/grafana
         - traefik.http.middlewares.grafana-auth.forwardauth.authResponseHeaders=X-WEBAUTH-USER,X-WEBAUTH-NAME
         - traefik.http.middlewares.grafana-auth.forwardauth.authRequestHeaders=Cookie
         - traefik.http.routers.grafana.rule=Host(`grafana.{{ global.domain }}`)
