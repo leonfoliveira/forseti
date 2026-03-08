@@ -62,15 +62,16 @@ Installs all necessary dependencies for Forseti, including:
 
 #### Post-Installation Setup
 
-After the installation process completes, **every machine that will access the Forseti system** must perform the following configuration steps to enable proper domain resolution and TLS certificate validation.
+After the installation process completes, **every machine that will access the Forseti system** should be configured so the Forseti domains resolve to your swarm manager and, if TLS is enabled, trust the generated root certificate.
 
 ##### Step 1: Configure Domain Resolution
 
-Add the following entries to your system's hosts file to map Forseti domains to your swarm manager:
+Prefer configuring domain resolution centrally in your network router or DNS server so all clients resolve Forseti domains consistently. As an alternative, you can add entries to each machine's hosts file.
 
 **Debian/Ubuntu/MacOS**: Edit `/etc/hosts`
 **Windows**: Edit `C:\Windows\System32\drivers\etc\hosts`
 
+Hosts file entry:
 ```
 <MANAGER_ADDRESS> <DOMAIN> alloy.<DOMAIN> api.<DOMAIN>
 ```
@@ -94,9 +95,9 @@ On machines used by the ROOT member, it may be necessary to add the postgres ser
 192.168.1.100 forsetijudge.com alloy.forsetijudge.com api.forsetijudge.com grafana.forsetijudge.com postgres.forsetijudge.com
 ```
 
-##### Step 2: Install TLS Certificate
+##### Step 2: Install TLS Certificate (only if TLS enabled)
 
-To avoid browser security warnings and enable trusted TLS connections, install the generated self-signed certificate as a trusted root certificate.
+If you have TLS enabled in your `stack.conf`, install the generated self-signed certificate as a trusted root certificate to avoid browser security warnings. If TLS is disabled, this step is not required.
 
 The certificate file will be located at `certs/rootCA.pem` after running the install command. Copy this file to each machine that will access the Forseti system and follow the appropriate installation steps based on your operating system.
 
@@ -125,8 +126,8 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 ###### Post-Installation Notes
 
 - **Restart your browser** after certificate installation to ensure it recognizes the new trusted certificate
-- The certificate is valid for the configured domain and all its subdomains (alloy, api, grafana)
-- If you encounter certificate warnings, verify the certificate was installed correctly and the domain matches your `stack.conf` configuration. Antivirus software may also interfere with certificate installation, so check for any related alerts or logs.
+- The certificate is valid for the configured domain and its subdomains (alloy, api, grafana) when TLS is enabled
+- If you encounter certificate warnings, verify the certificate was installed correctly and the domain matches your `stack.conf` configuration. Security softwares (like firewalls or antivirus) may also interfere with certificate resolution, so check for any related alerts or logs.
 
 ### `backup`
 
