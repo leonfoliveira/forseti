@@ -944,6 +944,29 @@ services:
         target: minio_password
 
   traefik:
+    command:
+      - "--entrypoints.web.address=:80"
+      {% if global.tls == "true" %}
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.web.http.redirections.entryPoint.permanent=true"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.websecure.http.tls=true"
+      - "--providers.file.filename=/dynamic/tls.yaml"
+      {% endif %}
+      - "--entrypoints.postgres.address=:5432"
+      - "--providers.swarm.endpoint=unix:///var/run/docker.sock"
+      - "--providers.swarm.watch=true"
+      - "--providers.swarm.exposedByDefault=false"
+      - "--providers.swarm.network=forseti_network"
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--log.level=INFO"
+      - "--accesslog=true"
+      - "--metrics.prometheus=true"
+      - "--tracing.serviceName=traefik"
+      - "--tracing.otlp.grpc.endpoint=alloy:4317"
+      - "--tracing.otlp.grpc.insecure=true"
     deploy:
       mode: replicated
       replicas: 1
@@ -991,14 +1014,16 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
         read_only: true
+      {% if global.tls == "true" %}
+      - type: bind
+        source: {{ __volumes_path__ }}/traefik/dynamic/tls.yaml
+        target: /dynamic/tls.yaml
+        read_only: true
       - type: bind
         source: {{ __certs_path__ }}
         target: /certs
         read_only: true
-      - type: bind
-        source: {{ __volumes_path__ }}/traefik
-        target: /etc/traefik
-        read_only: true
+      {% endif %}
 
   webapp:
     deploy:
