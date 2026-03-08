@@ -640,24 +640,16 @@ services:
         read_only: true
 
   postgres:
-    command:
-      - "postgres"
-      {% if global.tls == "true" %}
-      - "-c"
-      - "ssl=on"
-      - "-c"
-      - "ssl_cert_file=/var/lib/postgresql/cert.pem"
-      - "-c"
-      - "ssl_key_file=/var/lib/postgresql/key.pem"
-      {% else %}
-      - "-c"
-      - "ssl=off"
-      {% endif %}
     deploy:
       labels:
         - traefik.enable=true
         - traefik.tcp.routers.postgres.entrypoints=postgres
         - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
+        {% if global.tls == "true" %}
+        - traefik.tcp.routers.postgres.tls=true
+        {% else %}
+        - traefik.tcp.routers.postgres.tls=false
+        {% endif %}
         - traefik.tcp.services.postgres.loadbalancer.server.port=5432
       mode: replicated
       replicas: 1
@@ -696,12 +688,6 @@ services:
         source: postgres_data
         target: /var/lib/postgresql/data
         volume: {}
-      - type: bind
-        source: {{ __volumes_path__ }}/certs/cert.pem
-        target: /var/lib/postgresql/cert.pem
-      - type: bind
-        source: {{ __volumes_path__ }}/certs/key.pem
-        target: /var/lib/postgresql/key.pem
 
   postgres-exporter:
     deploy:
