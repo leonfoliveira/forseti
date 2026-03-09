@@ -1,5 +1,3 @@
-from docker.errors import APIError, NotFound
-
 from cli.composition import get_docker_client
 
 
