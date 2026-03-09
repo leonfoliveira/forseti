@@ -100,7 +100,8 @@ class TestInstall:
         mock_command_adapter.run.assert_called()
 
         # Verify sandboxes were built
-        assert mock_docker_client.images.build.call_count == 3  # cpp17, java21, python312
+        # cpp17, java21, python312, node22
+        assert mock_docker_client.images.build.call_count == 4
 
     def test_install_custom_sandboxes(self, runner, mock_docker_client):
         """Test installation with custom sandboxes list"""
