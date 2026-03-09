@@ -20,7 +20,7 @@ def install_cmd(
         list[str],
         typer.Option(
             help="List of sandboxes to build",
-            default_factory=lambda: ["cpp17", "java21", "python312"],
+            default_factory=lambda: ["cpp17", "java21", "python312", "node22"],
         ),
     ],
 ):

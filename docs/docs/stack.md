@@ -8,7 +8,7 @@ The system stack is deployed using Docker Swarm, which allows for easy managemen
 
 **- API:** Main backend service built with Spring Boot that provides the REST API for contest management, user authentication, submission handling, and all core business logic. Exposes both HTTP and WebSocket endpoints.
 
-**- AutoJudge:** Service responsible for securely executing and evaluating code submissions in isolated Docker containers. Supports multiple programming languages (C++, Java, Python) and enforces resource limits.
+**- AutoJudge:** Service responsible for securely executing and evaluating code submissions in isolated Docker containers. Supports multiple programming languages and enforces resource limits.
 
 **- AutoJudge Autoscaler:** Monitors the submission queue and automatically scales AutoJudge instances up or down based on workload. Ensures optimal resource utilization and response times.
 

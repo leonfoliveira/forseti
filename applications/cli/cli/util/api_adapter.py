@@ -43,7 +43,7 @@ class ApiAdapter:
             json={
                 "slug": slug,
                 "title": "New Contest",
-                "languages": ["CPP_17", "JAVA_21", "PYTHON_312"],
+                "languages": ["CPP_17", "JAVA_21", "PYTHON_312", "NODE_22"],
                 "startAt": "2100-01-01T00:00:00Z",
                 "endAt": "2100-01-01T23:59:59Z",
             },

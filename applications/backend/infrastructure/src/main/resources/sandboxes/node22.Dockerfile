@@ -5,14 +5,10 @@ FROM alpine:3.22.1
 RUN addgroup -g 1001 autojudge && \
     adduser -D -u 1001 -G autojudge -s /bin/sh -h /app autojudge
 
-# Install latest available GCC version and essential tools
+# Install Node 22.22.0 and essential tools
 RUN apk add --no-cache \
-    # Install latest GCC (will be 14.x in Alpine 3.22.1)
-    gcc \
-    g++ \
-    musl-dev \
-    libstdc++ \
-    libgcc \
+    # Install Node 22 (will be 22.22.0 in Alpine 3.22.1)
+    nodejs \
     # Essential system tools
     coreutils
 
@@ -49,9 +45,7 @@ ENV HOME=/app \
     USER=autojudge \
     TMPDIR=/tmp-limited \
     PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin \
-    RLIMIT_CORE=0 \
-    CXXFLAGS="-O2 -Wall -Wextra -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIE" \
-    LDFLAGS="-Wl,-z,relro,-z,now"
+    RLIMIT_CORE=0
 
 # Switch to non-root user
 USER autojudge
@@ -68,6 +62,7 @@ LABEL security.scan="required" \
       security.user="autojudge" \
       security.network="isolated" \
       security.capabilities="minimal" \
-      description="Secure C++ compilation environment with GCC from Alpine 3.22.1" \
+      description="Secure JavaScript execution environment with Node 22 from Alpine 3.22.1" \
       alpine.version="3.22.1" \
+      node.version="3.12" \
       version="4.1"

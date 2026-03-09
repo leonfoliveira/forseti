@@ -24,7 +24,7 @@ This design ensures maximum security and control for contest environments while 
 ### **Secure Code Execution**
 - Isolated Docker container execution for untrusted code submissions
 - Resource limits enforced at kernel level
-- Support for multiple programming languages (C++17, Java 21, Python 3.12)
+- Support for multiple programming languages
 - Defense-in-depth approach for maximum security
 
 ### **Auto-Scaling & Performance**

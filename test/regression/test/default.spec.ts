@@ -32,6 +32,7 @@ test("Default contest behaviour", async ({ page }) => {
       SubmissionLanguage.CPP_17,
       SubmissionLanguage.JAVA_21,
       SubmissionLanguage.PYTHON_312,
+      SubmissionLanguage.NODE_22,
     ],
   };
   const problem: Problem = {

@@ -105,6 +105,7 @@ Code submission from a contest participant for automated or manual judging.
 - `CPP_17` - C++ 17
 - `JAVA_21` - Java 21
 - `PYTHON_312` - Python 3.12
+- `NODE_22` - Node.js 22
 
 **Status Enumeration:**
 

@@ -88,6 +88,9 @@ class Submission(
 
         /** Python 3.12 */
         PYTHON_312,
+
+        /** Node.js 22 */
+        NODE_22,
     }
 
     enum class Status {

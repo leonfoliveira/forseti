@@ -14,6 +14,7 @@ export enum SubmissionLanguage {
   PYTHON_312 = "Python 3.12",
   CPP_17 = "C++ 17",
   JAVA_21 = "Java 21",
+  NODE_22 = "Node.js 22",
 }
 
 export enum SubmissionStatus {
