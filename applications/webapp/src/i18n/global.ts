@@ -35,6 +35,10 @@ const submissionLanguage = defineMessages({
     id: "i18n.global.formatted-language.python_312",
     defaultMessage: "Python 3.12",
   },
+  [SubmissionLanguage.NODE_22]: {
+    id: "i18n.global.formatted-language.node_22",
+    defaultMessage: "Node.js 22",
+  },
 });
 
 const memberType = defineMessages({
