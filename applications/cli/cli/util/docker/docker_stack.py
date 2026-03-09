@@ -12,8 +12,8 @@ from cli.config import (
     __config_file__,
     __stack_name__,
     __stack_template_file__,
-    __volumes_dir__,
     __version__,
+    __volumes_dir__,
 )
 
 from .docker_service import DockerService
@@ -36,16 +36,17 @@ class DockerStack:
         self.config["__version__"] = __version__
         self.config["__volumes_path__"] = __volumes_dir__
         self.config["__certs_path__"] = __certs_dir__
-        self.config["__root_password__"] = self.swarm.get_latest_secret(
-            "root_password")
-        self.config["__db_password__"] = self.swarm.get_latest_secret(
-            "db_password")
+        self.config["__root_password__"] = self.swarm.get_latest_secret("root_password")
+        self.config["__db_password__"] = self.swarm.get_latest_secret("db_password")
         self.config["__redis_password__"] = self.swarm.get_latest_secret(
-            "redis_password")
+            "redis_password"
+        )
         self.config["__minio_password__"] = self.swarm.get_latest_secret(
-            "minio_password")
+            "minio_password"
+        )
         self.config["__rabbitmq_password__"] = self.swarm.get_latest_secret(
-            "rabbitmq_password")
+            "rabbitmq_password"
+        )
 
         template_dir = os.path.dirname(__stack_template_file__)
 
@@ -65,8 +66,7 @@ class DockerStack:
 
         service_configs = self.stack_config.get("services", {})
         return [
-            DockerService(self.swarm, self, name, config,
-                          docker_services_map.get(name))
+            DockerService(self.swarm, self, name, config, docker_services_map.get(name))
             for name, config in service_configs.items()
             if not any(
                 label == "type=job"
@@ -85,8 +85,7 @@ class DockerStack:
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".yaml", delete=False
         ) as tmp_file:
-            yaml.safe_dump(self.stack_config, tmp_file,
-                           default_flow_style=False)
+            yaml.safe_dump(self.stack_config, tmp_file, default_flow_style=False)
             try:
                 command_adapter.run(
                     f"docker stack deploy --detach=true -c "

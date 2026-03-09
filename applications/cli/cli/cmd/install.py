@@ -108,8 +108,7 @@ def _pull_stack_images(docker_client, stack: DockerStack):
     images = set(
         filter(
             None,
-            [service.get("image")
-             for service in service_configs if "image" in service],
+            [service.get("image") for service in service_configs if "image" in service],
         )
     )
 
@@ -125,8 +124,7 @@ def _pull_stack_images(docker_client, stack: DockerStack):
             Messages.progress("Pulling stack images..."), total=len(images)
         )
         with ThreadPoolExecutor(max_workers=4) as executor:
-            future_to_image = {executor.submit(
-                pull_image, img): img for img in images}
+            future_to_image = {executor.submit(pull_image, img): img for img in images}
             for future in as_completed(future_to_image):
                 success, image_name, error = future.result()
                 if not success:

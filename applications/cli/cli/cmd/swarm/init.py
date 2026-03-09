@@ -1,5 +1,5 @@
-from typing import Annotated
 from time import time
+from typing import Annotated
 
 import typer
 
@@ -19,8 +19,7 @@ def init_cmd(
     docker_swarm = DockerSwarm()
 
     if docker_swarm.is_active:
-        console.print(Messages.warning(
-            "This node is already part of a swarm."))
+        console.print(Messages.warning("This node is already part of a swarm."))
         raise typer.Exit(code=1)
 
     def prompt_password(prompt_text: str) -> str:
@@ -29,8 +28,7 @@ def init_cmd(
             if 8 <= len(password) <= 30:
                 return password
             console.print(
-                Messages.error(
-                    "Password must be between 8 and 30 characters long.")
+                Messages.error("Password must be between 8 and 30 characters long.")
             )
 
     root_password = prompt_password("Root password")
@@ -42,16 +40,13 @@ def init_cmd(
     docker_swarm.init(advertise_addr=advertise_addr)
 
     now = int(time())
+    docker_swarm.create_secret(name="root_password", version=now, data=root_password)
+    docker_swarm.create_secret(name="db_password", version=now, data=db_password)
+    docker_swarm.create_secret(name="redis_password", version=now, data=redis_password)
+    docker_swarm.create_secret(name="minio_password", version=now, data=minio_password)
     docker_swarm.create_secret(
-        name=f"root_password", version=now, data=root_password)
-    docker_swarm.create_secret(
-        name=f"db_password", version=now, data=db_password)
-    docker_swarm.create_secret(
-        name=f"redis_password", version=now, data=redis_password)
-    docker_swarm.create_secret(
-        name=f"minio_password", version=now, data=minio_password)
-    docker_swarm.create_secret(
-        name=f"rabbitmq_password", version=now, data=rabbitmq_password)
+        name="rabbitmq_password", version=now, data=rabbitmq_password
+    )
 
     console.print()
 

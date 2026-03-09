@@ -278,26 +278,6 @@ class TestDockerService:
 
         assert service.is_converged is False
 
-    @patch(f"{PACKAGE}.DockerTask")
-    def test_is_converged_unhealthy_task(self, mock_docker_task, mock_swarm, mock_stack, mock_config, mock_docker_service_replicated):
-        """Test is_converged with unhealthy task"""
-        # Mock tasks with one unhealthy
-        mock_task_healthy = MagicMock()
-        mock_task_healthy.is_running = True
-        mock_task_healthy.is_healthy = True
-
-        mock_task_unhealthy = MagicMock()
-        mock_task_unhealthy.is_running = True
-        mock_task_unhealthy.is_healthy = False
-
-        mock_docker_task.side_effect = [
-            mock_task_healthy, mock_task_healthy, mock_task_unhealthy]
-
-        service = DockerService(
-            mock_swarm, mock_stack, "test", mock_config, mock_docker_service_replicated)
-
-        assert service.is_converged is False
-
     def test_scale_success(self, mock_swarm, mock_stack, mock_config, mock_docker_service_replicated):
         """Test successful scaling"""
         service = DockerService(

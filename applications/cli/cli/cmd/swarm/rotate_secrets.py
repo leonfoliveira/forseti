@@ -2,11 +2,11 @@ from time import time
 
 import typer
 
+from cli.cmd.stack.deploy import deploy_cmd
 from cli.composition import console
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
 from cli.util.theme import Messages
-from cli.cmd.stack.deploy import deploy_cmd
 
 
 def rotate_secrets_cmd():
@@ -16,8 +16,7 @@ def rotate_secrets_cmd():
     docker_swarm = DockerSwarm()
 
     if not docker_swarm.is_active:
-        console.print(Messages.warning(
-            "This node is not part of a swarm."))
+        console.print(Messages.warning("This node is not part of a swarm."))
         raise typer.Exit(code=1)
 
     docker_stack = DockerStack(swarm=docker_swarm)
@@ -40,20 +39,26 @@ def rotate_secrets_cmd():
 
     now = int(time())
     docker_swarm.create_secret(
-        name=f"root_password", version=now, data=root_password)
+        name="root_password", version=now, data=root_password)
     docker_swarm.create_secret(
-        name=f"db_password", version=now, data=db_password)
+        name="db_password", version=now, data=db_password)
     docker_swarm.create_secret(
-        name=f"redis_password", version=now, data=redis_password)
+        name="redis_password", version=now, data=redis_password)
     docker_swarm.create_secret(
-        name=f"minio_password", version=now, data=minio_password)
+        name="minio_password", version=now, data=minio_password)
     docker_swarm.create_secret(
-        name=f"rabbitmq_password", version=now, data=rabbitmq_password)
+        name="rabbitmq_password", version=now, data=rabbitmq_password
+    )
 
     if docker_stack.is_deployed:
-        console.print(Messages.info(
-            "Secrets rotated! Updating stack with new secrets..."))
+        console.print(
+            Messages.info(
+                "Secrets rotated! Updating stack with new secrets...")
+        )
         deploy_cmd(yes=True, force=True)
     else:
-        console.print(Messages.info(
-            "Secrets rotated! Stack is not currently deployed, so no stack update is needed."))
+        console.print(
+            Messages.info(
+                "Secrets rotated! Stack is not currently deployed, so no stack update is needed."
+            )
+        )

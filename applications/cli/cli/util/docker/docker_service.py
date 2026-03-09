@@ -18,9 +18,7 @@ class DockerService:
     @property
     def is_converged(self):
         running_tasks = [task for task in self.tasks if task.is_running]
-        if len(running_tasks) != self.desired_replicas:
-            return False
-        return all(task.is_healthy for task in running_tasks)
+        return len(running_tasks) == self.desired_replicas
 
     @property
     def mode(self):

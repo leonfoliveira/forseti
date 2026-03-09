@@ -10,6 +10,7 @@ from rich.table import Table
 from cli.composition import console
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
+from cli.util.docker.docker_task import DockerTask
 from cli.util.theme import ColorTheme, Messages, StatusFormatter
 
 
@@ -88,24 +89,7 @@ def build_table(
     return table
 
 
-def _format_status(task):
-    if task.container_id and task.has_health_check:
-        match task.health_status:
-            case "healthy":
-                return StatusFormatter.healthy()
-            case "unhealthy":
-                return StatusFormatter.unhealthy()
-            case "starting":
-                spinner = Spinner(
-                    "dots",
-                    text=(
-                        f"[{ColorTheme.STATE_STARTING.value}]starting"
-                        f"[/{ColorTheme.STATE_STARTING.value}]"
-                    ),
-                    style=ColorTheme.STATE_STARTING.value,
-                )
-                return spinner
-
+def _format_status(task: DockerTask):
     match task.state:
         case "running":
             return StatusFormatter.running()

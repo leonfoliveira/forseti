@@ -48,8 +48,7 @@ class DockerSwarm:
         return latest.name
 
     def join(self, token: str, manager_address: str) -> None:
-        self.docker_client.swarm.join(
-            remote_addrs=[manager_address], join_token=token)
+        self.docker_client.swarm.join(remote_addrs=[manager_address], join_token=token)
 
     def leave(self) -> None:
         self.docker_client.swarm.leave(force=True)

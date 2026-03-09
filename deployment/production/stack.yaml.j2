@@ -641,16 +641,6 @@ services:
 
   postgres:
     deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.tcp.routers.postgres.entrypoints=postgres
-        - traefik.tcp.routers.postgres.rule=HostSNI(`*`)
-        {% if global.tls == "true" %}
-        - traefik.tcp.routers.postgres.tls=true
-        {% else %}
-        - traefik.tcp.routers.postgres.tls=false
-        {% endif %}
-        - traefik.tcp.services.postgres.loadbalancer.server.port=5432
       mode: replicated
       replicas: 1
       resources:
@@ -672,7 +662,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "pg_isready -U forseti -d forseti {% if global.tls == 'true' %}--sslmode=require{% endif %}"
+        - "pg_isready -U forseti -d forseti"
       timeout: 5s
       interval: 15s
       retries: 5
