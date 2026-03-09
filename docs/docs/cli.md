@@ -58,7 +58,7 @@ Installs all necessary dependencies for Forseti, including:
 
 **Options:**
 
-- `--sandboxes`: List of sandboxes to install (default: cpp17, java21, python312)
+- `--sandboxes`: List of sandboxes to install (default: cpp17, java21, python312, node22)
 
 #### Post-Installation Setup
 

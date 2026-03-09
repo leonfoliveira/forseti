@@ -50,13 +50,11 @@ All sandbox containers are created with the following security and resource cons
 
 ### Language-Specific Containers
 
-Each programming language has a dedicated, hardened container image.
+Each programming language has a dedicated, hardened container image build on top of Alpine 3.22.1, optimized for secure code execution with minimal attack surface.
 
 #### C++
 
 ##### CPP_17 (forseti-sb-cpp17)
-
-**Base Image:** Alpine 3.22.1 for minimal attack surface
 
 **Commands:**
 
@@ -66,8 +64,6 @@ Each programming language has a dedicated, hardened container image.
 #### Java
 
 ##### Java_21 (forseti-sb-java21)
-
-**Base Image:** Alpine 3.22.1 with OpenJDK 21 LTS
 
 **Commands:**
 
@@ -82,6 +78,15 @@ Each programming language has a dedicated, hardened container image.
 
 - Compilation: None
 - Execution: `python {file}`
+
+#### Node.js
+
+##### Node.js 22 (forseti-sb-node22)
+
+**Commands:**
+
+- Compilation: None
+- Execution: `node {file}`
 
 ### Execution Pipeline
 
