@@ -1,4 +1,4 @@
-# Use Alpine 3.22.1 (latest stable version)
+# Use Alpine 3.22.1
 FROM alpine:3.22.1
 
 # Create a restricted user for code execution FIRST (before any cleanup)
