@@ -158,4 +158,21 @@ class DockerSubmissionRunnerTest(
                 }
             }
         }
+
+        context("Node 22") {
+            listOf(
+                Pair("accepted.js", Submission.Answer.ACCEPTED),
+                Pair("memory_limit_exceeded.js", Submission.Answer.MEMORY_LIMIT_EXCEEDED),
+                Pair("runtime_error.js", Submission.Answer.RUNTIME_ERROR),
+                Pair("time_limit_exceeded.js", Submission.Answer.TIME_LIMIT_EXCEEDED),
+                Pair("wrong_answer.js", Submission.Answer.WRONG_ANSWER),
+            ).forEach { (filename, expectedAnswer) ->
+                test("should run a submission with Node 22 and return $expectedAnswer") {
+                    val submission = createSubmission(contest, Submission.Language.NODE_22, filename, "text/plain")
+                    val code = importCode("/code/node22/$filename")
+                    attachmentBucket.upload(submission.code, code.toByteArray())
+                    sut.run(submission).answer shouldBe expectedAnswer
+                }
+            }
+        }
     })

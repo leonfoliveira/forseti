@@ -8,8 +8,7 @@ RUN addgroup -g 1001 autojudge && \
 # Install Node 22.22.0 and essential tools
 RUN apk add --no-cache \
     # Install Node 22 (will be 22.22.0 in Alpine 3.22.1)
-    python3 \
-    py3-pip \
+    nodejs \
     # Essential system tools
     coreutils
 
