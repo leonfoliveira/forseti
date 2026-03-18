@@ -10,10 +10,10 @@ create table execution (
     max_cpu_time bigint,
     max_clock_time bigint,
     max_peak_memory bigint,
-    result_id uuid,
+    details_id uuid,
     version bigint not null default 1,
     constraint fk_submission_id foreign key (submission_id) references submission (id),
-    constraint fk_result_id foreign key (result_id) references attachment (id),
+    constraint fk_details_id foreign key (details_id) references attachment (id),
     constraint chk_total_test_cases_positive check (total_test_cases > 0),
     constraint chk_approved_test_cases_non_negative check (approved_test_cases >= 0),
     constraint chk_approved_test_cases_less_equal_total check (approved_test_cases <= total_test_cases)
@@ -36,10 +36,10 @@ create table execution_aud (
     max_cpu_time bigint,
     max_clock_time bigint,
     max_peak_memory bigint,
-    result_id uuid,
+    details_id uuid,
     version bigint not null,
     primary key (rev, id),
     constraint fk_submission_id foreign key (submission_id) references submission (id),
-    constraint fk_result_id foreign key (result_id) references attachment (id),
+    constraint fk_details_id foreign key (details_id) references attachment (id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );
