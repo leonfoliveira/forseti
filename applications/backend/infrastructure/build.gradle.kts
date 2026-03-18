@@ -8,7 +8,6 @@ dependencies {
     implementation(libs.bcrypt)
     implementation(libs.minio)
     implementation(libs.opencsv)
-    implementation(libs.tika.core)
 
     testImplementation(testFixtures(project(":core")))
 }

@@ -23,6 +23,7 @@ import {
 import { useDialog } from "@/app/_lib/hook/dialog-hook";
 import { useAppSelector } from "@/app/_store/store";
 import { Composition } from "@/config/composition";
+import { AttachmentResponseDTO } from "@/core/port/dto/response/attachment/AttachmentResponseDTO";
 import { ExecutionResponseDTO } from "@/core/port/dto/response/execution/ExecutionResponseDTO";
 import { defineMessages } from "@/i18n/message";
 
@@ -51,13 +52,17 @@ const messages = defineMessages({
     id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.test-cases",
     defaultMessage: "Test Cases",
   },
-  inputHeader: {
-    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.input-header",
-    defaultMessage: "Input",
+  maxTime: {
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.max-time",
+    defaultMessage: "Max Time (CPU / Clock)",
   },
-  outputHeader: {
-    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.output-header",
-    defaultMessage: "Output",
+  maxPeakMemory: {
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.max-peak-memory",
+    defaultMessage: "Max Peak Memory",
+  },
+  detailsHeader: {
+    id: "app.[slug].(dashboard)._common.submissions.submissions-page-action-executions.details-header",
+    defaultMessage: "Details",
   },
 });
 
@@ -118,10 +123,13 @@ export function SubmissionsPageActionExecutions({
                   <FormattedMessage {...messages.testCases} />
                 </TableHead>
                 <TableHead className="text-right">
-                  <FormattedMessage {...messages.inputHeader} />
+                  <FormattedMessage {...messages.maxTime} />
                 </TableHead>
                 <TableHead className="text-right">
-                  <FormattedMessage {...messages.outputHeader} />
+                  <FormattedMessage {...messages.maxPeakMemory} />
+                </TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage {...messages.detailsHeader} />
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -138,42 +146,38 @@ export function SubmissionsPageActionExecutions({
                     <SubmissionAnswerBadge answer={execution.answer} />
                   </TableCell>
                   <TableCell data-testid="submission-execution-test-cases">
-                    {execution.lastTestCase != null
-                      ? execution.lastTestCase + 1
-                      : 0}
-                    /{execution.totalTestCases}
+                    {execution.approvedTestCases}/{execution.totalTestCases}
+                  </TableCell>
+                  <TableCell
+                    className="text-right"
+                    data-testid="submission-execution-max-time"
+                  >
+                    {execution.maxCpuTime &&
+                      `${execution.maxCpuTime} ms / ${execution.maxClockTime} ms`}
+                  </TableCell>
+                  <TableCell
+                    className="text-right"
+                    data-testid="submission-execution-max-peak-memory"
+                  >
+                    {execution.maxPeakMemory && `${execution.maxPeakMemory} KB`}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="default"
-                      onClick={() =>
-                        Composition.attachmentReader.download(
-                          contestId,
-                          execution.input,
-                        )
-                      }
-                      data-testid="submission-execution-input"
-                    >
-                      <DownloadIcon size={16} /> CSV
-                    </Button>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      type="button"
-                      size="xs"
-                      variant="default"
-                      onClick={() =>
-                        Composition.attachmentReader.download(
-                          contestId,
-                          execution.output,
-                        )
-                      }
-                      data-testid="submission-execution-output"
-                    >
-                      <DownloadIcon size={16} /> CSV
-                    </Button>
+                    {execution.details && (
+                      <Button
+                        type="button"
+                        size="xs"
+                        variant="default"
+                        onClick={() =>
+                          Composition.attachmentReader.download(
+                            contestId,
+                            execution.details as AttachmentResponseDTO,
+                          )
+                        }
+                        data-testid="submission-execution-details"
+                      >
+                        <DownloadIcon size={16} /> CSV
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}

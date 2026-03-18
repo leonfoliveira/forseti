@@ -1,27 +1,27 @@
-import { Actor } from "../../util/actor";
-import { Runner } from "../runner";
+import { SubmissionLanguage } from "../../util/types";
+import { Runner } from "./runner";
 
 export class Python312Runner extends Runner {
-  constructor(actor: Actor, problemId: string) {
-    super("PYTHON_312", actor, problemId);
+  constructor() {
+    super(SubmissionLanguage.PYTHON_312);
   }
 
-  buildTimeLimitCode(multiplier: number) {
+  protected buildTimeLimitCode(power: number): string {
     return `
-import time
-time.sleep(${0.1 * multiplier})
+for _ in range(${10 ** power}):
+    pass
 print(2*int(input()))
 `;
   }
 
-  buildMemoryLimitCode(multiplier: number) {
+  protected buildMemoryLimitCode(power: number): string {
     return `
-a = [0] * ${10 ** multiplier}
+a = [0] * ${10 ** power}
 print(2*int(input()))
 `;
   }
 
-  buildFile(code: string) {
+  protected buildCodeFile(code: string): File {
     const blob = new Blob([code], { type: "text/x-python" });
     const file = new File([blob], "code.py", { type: "text/x-python" });
     return file;

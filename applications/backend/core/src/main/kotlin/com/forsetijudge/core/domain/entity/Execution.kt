@@ -52,19 +52,30 @@ class Execution(
      */
     @Column("approved_test_cases")
     @Audited(withModifiedFlag = false)
-    val approvedTestCases: Int? = null,
+    val approvedTestCases: Int,
     /**
-     * The input attachment for the execution.
+     * The maximum cpu time a test case took during the execution in milliseconds.
+     */
+    @Column("max_cpu_time")
+    @Audited(withModifiedFlag = false)
+    val maxCpuTime: Long? = null,
+    /**
+     * The maximum clock time a test case took during the execution in milliseconds.
+     */
+    @Column("max_clock_time")
+    @Audited(withModifiedFlag = false)
+    val maxClockTime: Long? = null,
+    /**
+     * The maximum peak memory a test case took during the execution in kilobytes.
+     */
+    @Column("max_peak_memory")
+    @Audited(withModifiedFlag = false)
+    val maxPeakMemory: Long? = null,
+    /**
+     * The details of the execution, such as the output of each test case.
      */
     @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val input: Attachment,
-    /**
-     * The output attachment for the execution.
-     */
-    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-    @JoinColumn(nullable = false)
-    @Audited(withModifiedFlag = false)
-    val output: Attachment,
+    val details: Attachment? = null,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

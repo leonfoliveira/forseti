@@ -1,69 +1,134 @@
 import "dotenv/config";
-import { ApiClient } from "../util/api";
-import { Actor } from "../util/actor";
+import { ApiClient } from "../util/api-client";
+import { RootActor } from "../util/actor/root-actor";
+import { ContestantActor } from "../util/actor/contestant-actor";
 import { Cpp17Runner } from "./runner/cpp17-runner";
 import { Java21Runner } from "./runner/java21-runner";
 import { Python312Runner } from "./runner/python312-runner";
+import { Node22Runner } from "./runner/node22-runner";
+import { MemberType, SubmissionAnswer, SubmissionStatus } from "../util/types";
 
-const apiUrl = process.env.API_URL || "https://api.forsetijudge.com";
-const rootPassword = process.env.ROOT_PASSWORD as string;
-
-const apiClient = new ApiClient(apiUrl);
+const apiUrl = process.env.API_URL || "http://localhost:8080";
+const rootPassword = process.env.ROOT_PASSWORD || "forsetijudge";
 
 async function main() {
-  const actor = new Actor(apiClient);
-  await actor.signIn(rootPassword);
-  await actor.createContest();
-  const problem = await actor.createProblem();
-  await actor.forceStart();
-  const problemId = problem.id;
-
   const runners = [
-    new Cpp17Runner(actor, problemId),
-    new Java21Runner(actor, problemId),
-    new Python312Runner(actor, problemId),
+    new Cpp17Runner(),
+    new Java21Runner(),
+    new Python312Runner(),
+    new Node22Runner(),
   ];
-  const results = [];
 
-  for (const runner of runners) {
-    let tleMultiplier = 0;
-    let tleAnswer;
+  const rootActor = new RootActor(new ApiClient(apiUrl));
+  await rootActor.signIn(rootPassword);
+  let contest = await rootActor.createContest();
+  contest = await rootActor.createMember(
+    contest,
+    MemberType.CONTESTANT,
+    "contestant",
+    "contestant",
+  );
+  contest = await rootActor.createProblem(contest, 1000, 1024);
+  const problemId = contest.problems[0]!.id;
+  await rootActor.forceStart(contest);
+
+  const contestantActor = new ContestantActor(new ApiClient(apiUrl));
+  await contestantActor.signIn(contest.id, "contestant", "contestant");
+
+  async function pullSubmission(submissionId: string) {
     while (true) {
-      const code = runner.buildTimeLimitCode(tleMultiplier);
-      const file = runner.buildFile(code);
-      const submission = await runner.submitCode(file, runner.language);
-      tleAnswer = submission.answer;
-      console.log(
-        `[${runner.language}][TLE] Multiplier: ${tleMultiplier} => ${tleAnswer}`
+      const adminDashboard = await rootActor.getDashboard(contest.id);
+      const submission = adminDashboard.submissions.find(
+        (s) => s.id === submissionId,
       );
-      if (tleAnswer !== "ACCEPTED") break;
-      tleMultiplier += 1;
+      if (submission?.status === SubmissionStatus.JUDGED) {
+        return submission;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
-    console.log();
-
-    let mleMultiplier = 0;
-    let mleAnswer;
-    while (true) {
-      const code = runner.buildMemoryLimitCode(mleMultiplier);
-      const file = runner.buildFile(code);
-      const submission = await runner.submitCode(file, runner.language);
-      mleAnswer = submission.answer;
-      console.log(
-        `[${runner.language}][MLE] Multiplier: ${mleMultiplier} => ${mleAnswer}`
-      );
-      if (mleAnswer !== "ACCEPTED") break;
-      mleMultiplier += 1;
-    }
-    console.log();
-
-    results.push({
-      language: runner.language,
-      TLE: tleMultiplier,
-      MLE: mleMultiplier,
-    });
   }
 
-  console.table(results);
+  async function testTimeLimit() {
+    const limits = [];
+
+    for (const runner of runners) {
+      const results = [];
+      let power = 0;
+      while (true) {
+        const codeFile = runner.buildTimeLimitCodeFile(power);
+        const submissionId = await contestantActor.createSubmission(
+          contest.id,
+          problemId,
+          runner.language,
+          codeFile,
+        );
+        const submission = await pullSubmission(submissionId);
+        const result = {
+          language: runner.language,
+          power,
+          answer: submission.answer,
+          maxCpuTime: submission.executions[0]?.maxCpuTime,
+          maxClockTime: submission.executions[0]?.maxClockTime,
+        };
+
+        console.log(
+          `[${runner.language}][TLE] Power: ${power} => ${submission.answer}, Max CPU Time: ${result.maxCpuTime} ms, Max Clock Time: ${result.maxClockTime} ms`,
+        );
+
+        results.push(result);
+        if (submission.answer !== SubmissionAnswer.ACCEPTED) {
+          limits.push(result);
+          break;
+        }
+        power += 1;
+      }
+      console.log();
+      console.table(results);
+    }
+    console.table(limits);
+  }
+
+  async function testMemoryLimit() {
+    const limits = [];
+
+    for (const runner of runners) {
+      const results = [];
+      let power = 0;
+      while (true) {
+        const codeFile = runner.buildMemoryLimitCodeFile(power);
+        const submissionId = await contestantActor.createSubmission(
+          contest.id,
+          problemId,
+          runner.language,
+          codeFile,
+        );
+        const submission = await pullSubmission(submissionId);
+        const result = {
+          language: runner.language,
+          power,
+          answer: submission.answer,
+          maxPeakMemory: submission.executions[0]?.maxPeakMemory,
+        };
+
+        console.log(
+          `[${runner.language}][MLE] Power: ${power} => ${submission.answer}, Max Peak Memory: ${result.maxPeakMemory} KB`,
+        );
+
+        results.push(result);
+        if (submission.answer !== SubmissionAnswer.ACCEPTED) {
+          limits.push(result);
+          break;
+        }
+        power += 1;
+      }
+      console.log();
+      console.table(results);
+    }
+    console.table(limits);
+  }
+
+  await testTimeLimit();
+  await testMemoryLimit();
 }
 
 main();

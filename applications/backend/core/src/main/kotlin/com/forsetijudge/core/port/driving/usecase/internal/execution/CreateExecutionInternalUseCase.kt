@@ -1,10 +1,10 @@
 package com.forsetijudge.core.port.driving.usecase.internal.execution
 
-import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.model.TestCaseExecutionResult
 
 interface CreateExecutionInternalUseCase {
     /**
@@ -24,8 +24,7 @@ interface CreateExecutionInternalUseCase {
      * @param answer The answer associated with the submission.
      * @param totalTestCases The total number of test cases for the submission.
      * @param approvedTestCases The number of test cases approved so far.
-     * @param input The input attachment for the execution.
-     * @param output The list of output strings resulting from the execution.
+     * @param results The list of test case execution results to be saved with the execution.
      */
     data class Command(
         val contest: Contest,
@@ -34,7 +33,6 @@ interface CreateExecutionInternalUseCase {
         val answer: Submission.Answer,
         val totalTestCases: Int,
         val approvedTestCases: Int,
-        val input: Attachment,
-        val output: List<String>,
+        val results: List<TestCaseExecutionResult>,
     )
 }

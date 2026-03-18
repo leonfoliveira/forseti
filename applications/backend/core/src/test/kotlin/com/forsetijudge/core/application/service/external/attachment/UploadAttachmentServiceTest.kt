@@ -10,7 +10,6 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
-import com.forsetijudge.core.port.driven.file.FileAnalyser
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -31,7 +30,6 @@ class UploadAttachmentServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
-        val fileAnalyser = mockk<FileAnalyser>(relaxed = true)
         val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
@@ -40,7 +38,6 @@ class UploadAttachmentServiceTest :
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
                 attachmentBucket = attachmentBucket,
-                fileAnalyser = fileAnalyser,
                 applicationEventPublisher = applicationEventPublisher,
             )
 
@@ -93,18 +90,6 @@ class UploadAttachmentServiceTest :
             }
         }
 
-        test("should throw ForbiddenException when content type does not match file content") {
-            val contest = ContestMockBuilder.build()
-            val member = MemberMockBuilder.build(contest = contest)
-            every { contestRepository.findById(contextContestId) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-            every { fileAnalyser.validateContentType(any(), any()) } returns false
-
-            shouldThrow<ForbiddenException> {
-                sut.execute(command)
-            }
-        }
-
         fun assertUploadSuccessfully(
             contest: Contest = ContestMockBuilder.build(),
             member: Member = MemberMockBuilder.build(),
@@ -117,7 +102,6 @@ class UploadAttachmentServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id) } returns actualMember
             every { attachmentRepository.save(any()) } returnsArgument 0
             every { attachmentBucket.upload(any(), any()) } returns Unit
-            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -145,7 +129,6 @@ class UploadAttachmentServiceTest :
 
             every { contestRepository.findById(contest.id) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns actualMember
-            every { fileAnalyser.validateContentType(any(), any()) } returns true
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
 
@@ -161,12 +144,12 @@ class UploadAttachmentServiceTest :
             }
         }
 
-        context("EXECUTION_OUTPUT") {
+        context("EXECUTION_DETAILS") {
             context("ROOT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -175,7 +158,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -184,7 +167,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -193,7 +176,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -202,7 +185,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -211,7 +194,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                        context = Attachment.Context.EXECUTION_OUTPUT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }

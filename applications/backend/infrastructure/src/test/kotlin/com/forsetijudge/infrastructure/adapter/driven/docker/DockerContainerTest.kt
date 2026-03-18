@@ -1,10 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.docker
 
-import com.forsetijudge.infrastructure.adapter.util.command.CommandError
 import com.forsetijudge.infrastructure.adapter.util.command.CommandRunner
-import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockkObject
 import io.mockk.verify
@@ -19,11 +16,17 @@ class DockerContainerTest :
 
         context("create") {
             test("should create a docker container with the given parameters") {
-                val imageName = "test-image"
-                val memoryLimit = 512
+                val image = "test-image"
                 val name = "test-container"
+                val flags = arrayOf("--rm", "--network=none")
+                val cmd = arrayOf("sleep", "infinity")
 
-                DockerContainer.create(imageName, memoryLimit, name)
+                DockerContainer.create(
+                    image = image,
+                    name = name,
+                    flags = flags,
+                    cmd = cmd,
+                )
 
                 verify {
                     CommandRunner.run(
@@ -32,20 +35,8 @@ class DockerContainerTest :
                             "create",
                             "--rm",
                             "--network=none",
-                            "--cap-drop=ALL",
-                            "--security-opt=no-new-privileges",
-                            "--user=autojudge",
-                            "--device-cgroup-rule=c *:* m",
-                            "--pids-limit=64",
-                            "--cpus=1",
-                            "--memory=${memoryLimit}m",
-                            "--memory-swap=${memoryLimit}m",
-                            "--ulimit=fsize=10485760:10485760",
-                            "--ulimit=nofile=64:64",
-                            "--ulimit=nproc=64:64",
-                            "--ulimit=core=0:0",
-                            "--name=$name",
-                            imageName,
+                            "--name=test-container",
+                            "test-image",
                             "sleep",
                             "infinity",
                         ),
@@ -77,7 +68,7 @@ class DockerContainerTest :
                 val container = DockerContainer("test-container")
                 val command = arrayOf("echo", "Hello, World!")
 
-                container.exec(command, null, null)
+                container.exec(command, null)
 
                 verify {
                     CommandRunner.run(
@@ -93,58 +84,24 @@ class DockerContainerTest :
                 }
             }
 
-            test("should execute a command in the docker container with input and time limit") {
+            test("should execute a command in the docker container with stdin") {
                 val container = DockerContainer("test-container")
                 val command = arrayOf("echo", "Hello, World!")
-                val input = "Input data"
-                val timeLimit = 2500
+                val stdin = "Input data"
 
-                container.exec(command, input, timeLimit)
+                container.exec(command, stdin)
 
                 verify {
                     CommandRunner.run(
                         arrayOf(
-                            "timeout",
-                            "--kill-after=1s",
-                            "2.5s",
                             "docker",
                             "exec",
                             "-i",
                             "test-container",
                             *command,
                         ),
-                        input,
+                        stdin,
                     )
-                }
-            }
-
-            listOf(
-                Pair(124, DockerContainer.DockerTimeOutException::class),
-                Pair(137, DockerContainer.DockerOOMKilledException::class),
-                Pair(1, CommandError::class),
-            ).forEach { (exitCode, expectedExceptionClass) ->
-                test("should throw ${expectedExceptionClass.simpleName} for exit code $exitCode") {
-                    val container = DockerContainer("test-container")
-                    val command = arrayOf("echo", "Hello, World!")
-
-                    every { CommandRunner.run(any(), any()) } throws CommandError("Error message", exitCode)
-
-                    shouldThrow<Throwable> {
-                        container.exec(command, null, 5000)
-                    }.apply {
-                        this::class shouldBe expectedExceptionClass
-                    }
-                }
-            }
-
-            test("should throw DockerOOMKilledException on java.lang.OutOfMemoryError") {
-                val container = DockerContainer("test-container")
-                val command = arrayOf("echo", "Hello, World!")
-
-                every { CommandRunner.run(any(), any()) } throws CommandError("java.lang.OutOfMemoryError", 1)
-
-                shouldThrow<DockerContainer.DockerOOMKilledException> {
-                    container.exec(command, null, 5000)
                 }
             }
         }

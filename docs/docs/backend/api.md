@@ -219,9 +219,11 @@ Structures shared by HTTP endpoints responses, websocket events, and async event
   "updatedAt": "string (datetime)",
   "answer": "SubmissionAnswer",
   "totalTestCases": "number",
-  "lastTestCase": "number (optional)",
-  "input": "AttachmentResponseDTO",
-  "output": "AttachmentResponseDTO",
+  "approvedTestCases": "number",
+  "maxCpuTime": "number (optional)",
+  "maxClockTime": "number (optional)",
+  "maxPeakMemory": "number (optional)",
+  "result": "AttachmentResponseDTO (optional)",
   "version": "number"
 }
 ```

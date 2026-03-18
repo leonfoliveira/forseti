@@ -28,7 +28,7 @@ class DownloadAttachmentService(
 
     private val authorizationConfigsByContext =
         mapOf(
-            Attachment.Context.EXECUTION_OUTPUT to ExecutionOutputAuthorizationConfig(),
+            Attachment.Context.EXECUTION_DETAILS to ExecutionOutputAuthorizationConfig(),
             Attachment.Context.PROBLEM_DESCRIPTION to ProblemDescriptionAuthorizationConfig(),
             Attachment.Context.PROBLEM_TEST_CASES to ProblemTestCasesAuthorizationConfig(),
             Attachment.Context.SUBMISSION_CODE to SubmissionCodeAuthorizationConfig(),

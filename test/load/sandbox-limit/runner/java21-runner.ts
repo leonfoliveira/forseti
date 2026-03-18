@@ -1,24 +1,18 @@
-import { Actor } from "../../util/actor";
-import { Runner } from "../runner";
+import { SubmissionLanguage } from "../../util/types";
+import { Runner } from "./runner";
 
 export class Java21Runner extends Runner {
-  constructor(actor: Actor, problemId: string) {
-    super("JAVA_21", actor, problemId);
+  constructor() {
+    super(SubmissionLanguage.JAVA_21);
   }
 
-  buildTimeLimitCode(multiplier: number) {
+  protected buildTimeLimitCode(power: number): string {
     return `
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            TimeUnit.MILLISECONDS.sleep((long) (100 * ${multiplier}));
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        for (long i = 0; i < ${10 ** power}l; i++) {}
         Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
         System.out.println(2 * input);
@@ -28,27 +22,29 @@ public class Main {
 `;
   }
 
-  buildMemoryLimitCode(multiplier: number) {
+  protected buildMemoryLimitCode(power: number): string {
     return `
+import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main {
+class Main {
     public static void main(String[] args) {
-        int size = (int) Math.pow(10, ${multiplier});
-        int[] a = new int[size];
-
+        var list = new ArrayList<Integer>();
+        for (int i = 0; i < ${10 ** power}; i++) {
+            list.add(0);
+        }
         Scanner scanner = new Scanner(System.in);
         int input = scanner.nextInt();
         System.out.println(2 * input);
         scanner.close();
     }
-} 
+}
 `;
   }
 
-  buildFile(code: string) {
+  protected buildCodeFile(code: string): File {
     const blob = new Blob([code], { type: "text/x-java" });
-    const file = new File([blob], "Main.java", { type: "text/x-java" });
+    const file = new File([blob], "Main.java", { type: "text/x-java-source" });
     return file;
   }
 }

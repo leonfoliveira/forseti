@@ -34,35 +34,14 @@ describe("SubmissionsPageActionExecutions", () => {
     );
     expect(
       screen.getByTestId("submission-execution-test-cases"),
-    ).toHaveTextContent("1/10");
-    expect(screen.getByTestId("submission-execution-input")).toBeEnabled();
-    expect(screen.getByTestId("submission-execution-output")).toBeEnabled();
-  });
-
-  it("should show 0 test cases last test case is undefined", async () => {
-    const executions = [
-      MockExecutionResponseDTO({
-        lastTestCase: undefined,
-      }),
-    ];
-
-    await renderWithProviders(
-      <DropdownMenu open>
-        <SubmissionsPageActionExecutions
-          executions={executions}
-          onClose={() => {}}
-        />
-        ,
-      </DropdownMenu>,
-    );
-
-    act(() => {
-      fireEvent.click(screen.getByTestId("submissions-page-action-executions"));
-    });
-
+    ).toHaveTextContent("10/10");
     expect(
-      screen.getByTestId("submission-execution-test-cases"),
-    ).toHaveTextContent("0/10");
+      screen.getByTestId("submission-execution-max-time"),
+    ).toHaveTextContent("1000 ms / 2000 ms");
+    expect(
+      screen.getByTestId("submission-execution-max-peak-memory"),
+    ).toHaveTextContent("1024000 KB");
+    expect(screen.getByTestId("submission-execution-details")).toBeEnabled();
   });
 
   it("should handle file download", async () => {
@@ -86,16 +65,10 @@ describe("SubmissionsPageActionExecutions", () => {
       fireEvent.click(screen.getByTestId("submissions-page-action-executions"));
     });
 
-    fireEvent.click(screen.getByTestId("submission-execution-input"));
+    fireEvent.click(screen.getByTestId("submission-execution-details"));
     expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
       contest.id,
-      executions[0].input,
-    );
-
-    fireEvent.click(screen.getByTestId("submission-execution-output"));
-    expect(Composition.attachmentReader.download).toHaveBeenCalledWith(
-      contest.id,
-      executions[0].output,
+      executions[0].details,
     );
   });
 });

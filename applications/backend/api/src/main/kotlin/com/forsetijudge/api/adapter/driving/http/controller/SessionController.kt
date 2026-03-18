@@ -3,7 +3,6 @@ package com.forsetijudge.api.adapter.driving.http.controller
 import com.forsetijudge.api.adapter.util.cookie.CsrfCookieBuilder
 import com.forsetijudge.api.adapter.util.cookie.SessionCookieBuilder
 import com.forsetijudge.core.application.util.SafeLogger
-import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driving.usecase.external.session.DeleteAllSessionsByMemberUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
