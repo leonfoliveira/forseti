@@ -1,7 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
-
 function getRandomIp() {
   const blocks = [
     Math.floor(Math.random() * 256),
