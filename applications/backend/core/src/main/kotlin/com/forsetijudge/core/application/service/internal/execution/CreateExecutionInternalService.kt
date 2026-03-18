@@ -35,7 +35,7 @@ class CreateExecutionInternalService(
                 maxCpuTime = command.results.maxOfOrNull { it.cpuTime },
                 maxClockTime = command.results.maxOfOrNull { it.clockTime },
                 maxPeakMemory = command.results.maxOfOrNull { it.peakMemory },
-                result = uploadResult(command),
+                details = uploadDetails(command),
             )
         executionRepository.save(execution)
         applicationEventPublisher.publishEvent(ExecutionEvent.Created(execution.id))
@@ -44,7 +44,7 @@ class CreateExecutionInternalService(
         return execution
     }
 
-    private fun uploadResult(command: CreateExecutionInternalUseCase.Command): Attachment? {
+    private fun uploadDetails(command: CreateExecutionInternalUseCase.Command): Attachment? {
         if (command.results.isEmpty()) {
             logger.info("No test case execution results. Skipping attachment upload.")
             return null
@@ -76,7 +76,7 @@ class CreateExecutionInternalService(
                         member = command.member,
                         filename = RESULT_FILENAME,
                         contentType = RESULT_CONTENT_TYPE,
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                         bytes = bytes,
                     ),
                 ).first

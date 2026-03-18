@@ -38,15 +38,31 @@ The AutoJudge service executes untrusted code in heavily secured Docker containe
 
 All sandbox containers are created with the following security and resource constraints:
 
-- `--rm`: Automatically remove container after execution
-- `--network none`: Disable all network access
-- `--cap-drop=ALL`: Remove all Linux capabilities
-- `--security-opt=no-new-privileges`: Prevent privilege escalation
-- `--pids-limit=64`: Limit process count to prevent fork bombs
-- `--cpus=1`: Restrict CPU usage to a single core
-- `--memory={memoryLimit}m`: Enforce memory limit with cgroups
-- `--memory-swap={memoryLimit}m`: Enforce memory swap limit to prevent disk usage
-- `--name={name}`: Unique container name
+- `--rm`: Automatically remove container after execution.
+- `--network=none`: Disable all network access.
+- `--device-cgroup-rule=c *:* m`: Deny access to all devices.
+- `--security-opt=no-new-privileges`: Prevent privilege escalation.
+- `--pids-limit=64`: Limit process count to prevent fork bombs.
+- `--cpus=1`: Restrict CPU usage to a single core.
+- `--memory={memoryLimit}m`: Enforce memory limit with cgroups.
+- `--memory-swap={memoryLimit}m`: Enforce memory swap limit to prevent disk usage.
+- `--ulimit=fsize=10485760:10485760`: Limit maximum file size to 10MB to prevent large outputs.
+- `--ulimit=nofile=64:64`: Limit number of open files to prevent resource exhaustion.
+- `--ulimit=nproc=64:64`: Limit number of processes to prevent fork bombs.
+- `--ulimit=core=0:0`: Disable core dumps to prevent sensitive data leaks.
+- `--privileged`: Run container in privileged mode to allow Isolate to set up seccomp and cgroups for further isolation.
+- `--name={name}`: Unique container name in the format `{image}.{timestamp}`.
+
+### Code Execution
+
+All code execution is performed using the [Isolate](https://github.com/ioi/isolate) sandbox tool, which provides additional security and resource isolation on top of Docker. Isolate is configured to enforce strict time and memory limits, as well as to prevent unauthorized system calls. The following flags are used when executing code inside the container:
+
+- `--box-id=0`: Use box ID 0 for the sandbox environment.
+- `--silent`: Suppress all output from Isolate itself to avoid interference with program output.
+- `--processes=64`: Limit the number of processes that can be created to prevent fork bombs.
+- `--time={timeLimit}`: Enforce CPU time limit in seconds for the program execution. This value is set to the problem's time limit.
+- `--wall-time={timeLimit + 1}`: Enforce wall clock time in seconds limit to prevent infinite loops. This value is set to the problem's time limit plus a small buffer to account for any overhead.
+- `--mem={memoryLimit * 1024}`: Enforce memory limit in kilobytes for the program execution. This value is set to the problem's memory limit.
 
 ### Language-Specific Containers
 
@@ -59,7 +75,7 @@ Each programming language has a dedicated, hardened container image build on top
 **Commands:**
 
 - Compilation: `g++ -o a.out {file} -O2 -std=c++17 -DONLINE_JUDGE`
-- Execution: `./a.out`
+- Execution: `/box/a.out`
 
 #### Java
 
@@ -68,7 +84,7 @@ Each programming language has a dedicated, hardened container image build on top
 **Commands:**
 
 - Compilation: `javac -d . {file}`
-- Execution: `java -Xmx{memoryLimit}m -cp . {file}`
+- Execution: `/usr/lib/jvm/java-21-openjdk-amd64/bin/java -XX:-UseContainerSupport -XX:MaxRAMPercentage=80.0 -XX:+UseSerialGC -Xss256k -XX:TieredStopAtLevel=1 -XX:CompressedClassSpaceSize=16m -XX:MaxMetaspaceSize=64m -Xshare:off -cp /box {fileWithoutExtension}`
 
 #### Python
 
@@ -77,7 +93,7 @@ Each programming language has a dedicated, hardened container image build on top
 **Commands:**
 
 - Compilation: None
-- Execution: `python {file}`
+- Execution: `/usr/bin/python3 /box/{file}`
 
 #### Node.js
 
@@ -86,13 +102,14 @@ Each programming language has a dedicated, hardened container image build on top
 **Commands:**
 
 - Compilation: None
-- Execution: `node {file}`
+- Execution: `/usr/bin/node /box/{file}`
 
 ### Execution Pipeline
 
 1. **Creation:**
     - Create a temporary container with the appropriate image for the submission language, problem memory limit, and flags for security and resource constraints.
     - Entrypoint is `sleep infinity` to keep the container alive for the duration of the execution process.
+    - Initialize Isolate sandbox environment inside the container.
     - Copy the submission source code into the container's filesystem.
 2. **Compilation:**
     - For compiled languages (C++, Java), execute the compilation command inside the container.
@@ -106,6 +123,6 @@ Each programming language has a dedicated, hardened container image build on top
     - If all test cases pass, finishes judge process with `ACCEPTED` answer.
 4. **Finalization:**
     - Kill the container, which will be automatically removed due to the `--rm` flag.
-    - Create an `Execution` entity with the final answer, number of test cases, and number of approved test cases.
-    - Updates the `Submission` entity with the final answer and status.
-    
+    - Upload the detailed execution result file to the storage service, containing information about each test case execution (answer, exitCode, cpuTime, clockTime, peakMemory, stdin, stdout and stderr).
+    - Create an `Execution` entity with the final answer, number of test cases, number of approved test cases, maximum resource usage and a link to the detailed execution result file.
+    - Updates the `Submission` entity with the final answer and status. This will trigger a broadcast event to notify clients of the submission result.

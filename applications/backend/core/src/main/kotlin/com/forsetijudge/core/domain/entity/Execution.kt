@@ -72,10 +72,10 @@ class Execution(
     @Audited(withModifiedFlag = false)
     val maxPeakMemory: Long? = null,
     /**
-     * The result attachment for the execution.
+     * The details of the execution, such as the output of each test case.
      */
     @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
     @JoinColumn(nullable = false)
     @Audited(withModifiedFlag = false)
-    val result: Attachment? = null,
+    val details: Attachment? = null,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)

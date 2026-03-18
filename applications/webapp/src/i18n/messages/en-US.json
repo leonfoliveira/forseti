@@ -313,8 +313,9 @@
               "timestamp-header": "Timestamp",
               "status-header": "Status",
               "test-cases": "Test Cases",
-              "input-header": "Input",
-              "output-header": "Output"
+              "max-time": "Max Time (CPU / Clock)",
+              "max-peak-memory": "Max Peak Memory",
+              "details-header": "Details"
             },
             "submissions-page-action-download": {
               "download-label": "Download",

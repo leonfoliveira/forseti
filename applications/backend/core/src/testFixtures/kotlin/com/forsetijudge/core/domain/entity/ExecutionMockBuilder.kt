@@ -30,6 +30,6 @@ object ExecutionMockBuilder {
         maxCpuTime = maxCpuTime,
         maxClockTime = maxClockTime,
         maxPeakMemory = maxPeakMemory,
-        result = result,
+        details = result,
     )
 }

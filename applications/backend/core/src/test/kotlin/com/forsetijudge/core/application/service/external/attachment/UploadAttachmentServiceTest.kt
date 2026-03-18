@@ -144,12 +144,12 @@ class UploadAttachmentServiceTest :
             }
         }
 
-        context("EXECUTION_OUTPUT") {
+        context("EXECUTION_DETAILS") {
             context("ROOT") {
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -158,7 +158,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -167,7 +167,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -176,7 +176,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -185,7 +185,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }
@@ -194,7 +194,7 @@ class UploadAttachmentServiceTest :
                 test("should throw ForbiddenException") {
                     assertForbidden(
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
-                        context = Attachment.Context.EXECUTION_RESULT,
+                        context = Attachment.Context.EXECUTION_DETAILS,
                     )
                 }
             }

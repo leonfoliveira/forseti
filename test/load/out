@@ -1,0 +1,4 @@
+
+> load@1.0.0 sandbox-limit
+> ts-node sandbox-limit/index.ts
+

@@ -18,6 +18,9 @@ nav:
       - Domain: backend/domain.md
       - Api: backend/api.md
       - AutoJudge: backend/autojudge.md
+  - Test:
+      - Load: test/load.md
+      - Regression: test/regression.md
 theme: readthedocs
 extra:
   version: !ENV [VERSION, "latest"]

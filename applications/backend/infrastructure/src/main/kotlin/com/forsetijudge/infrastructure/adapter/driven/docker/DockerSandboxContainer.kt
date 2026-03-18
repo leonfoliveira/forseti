@@ -129,6 +129,15 @@ class DockerSandboxContainer(
                             codeFile.nameWithoutExtension,
                         )
                     },
+                ),            
+            Submission.Language.PYTHON_312 to
+                Config(
+                    language = Submission.Language.PYTHON_312,
+                    image = "forseti-sb-python312",
+                    createCompileCommand = null,
+                    createRunCommand = { codeFile ->
+                        arrayOf("/usr/bin/python3", "/box/${codeFile.name}")
+                    },
                 ),
             Submission.Language.NODE_22 to
                 Config(
@@ -137,15 +146,6 @@ class DockerSandboxContainer(
                     createCompileCommand = null,
                     createRunCommand = { codeFile ->
                         arrayOf("/usr/bin/node", "/box/${codeFile.name}")
-                    },
-                ),
-            Submission.Language.PYTHON_312 to
-                Config(
-                    language = Submission.Language.PYTHON_312,
-                    image = "forseti-sb-python312",
-                    createCompileCommand = null,
-                    createRunCommand = { codeFile ->
-                        arrayOf("/usr/bin/python3", "/box/${codeFile.name}")
                     },
                 ),
         )

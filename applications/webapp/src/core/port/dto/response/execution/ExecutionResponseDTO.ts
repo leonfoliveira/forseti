@@ -7,8 +7,10 @@ export type ExecutionResponseDTO = {
   updatedAt: string;
   answer: SubmissionAnswer;
   totalTestCases: number;
-  lastTestCase?: number;
-  input: AttachmentResponseDTO;
-  output: AttachmentResponseDTO;
+  approvedTestCases: number;
+  maxCpuTime?: number;
+  maxClockTime?: number;
+  maxPeakMemory?: number;
+  details?: AttachmentResponseDTO;
   version: number;
 };

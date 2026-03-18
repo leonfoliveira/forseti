@@ -111,14 +111,14 @@ class DownloadAttachmentServiceTest :
             }
         }
 
-        context("EXECUTION_OUTPUT") {
+        context("EXECUTION_DETAILS") {
             context("ROOT") {
                 test("should download successfully") {
                     assertDownloadSuccessfully(
                         member = MemberMockBuilder.build(type = Member.Type.ROOT),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -130,7 +130,7 @@ class DownloadAttachmentServiceTest :
                         member = MemberMockBuilder.build(type = Member.Type.ADMIN),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -142,7 +142,7 @@ class DownloadAttachmentServiceTest :
                         member = MemberMockBuilder.build(type = Member.Type.STAFF),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -154,7 +154,7 @@ class DownloadAttachmentServiceTest :
                         member = MemberMockBuilder.build(type = Member.Type.JUDGE),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -166,7 +166,7 @@ class DownloadAttachmentServiceTest :
                         member = MemberMockBuilder.build(type = Member.Type.UNOFFICIAL_CONTESTANT),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -178,7 +178,7 @@ class DownloadAttachmentServiceTest :
                         member = MemberMockBuilder.build(type = Member.Type.CONTESTANT),
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }
@@ -190,7 +190,7 @@ class DownloadAttachmentServiceTest :
                         member = null,
                         attachment =
                             AttachmentMockBuilder.build(
-                                context = Attachment.Context.EXECUTION_RESULT,
+                                context = Attachment.Context.EXECUTION_DETAILS,
                             ),
                     )
                 }

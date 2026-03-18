@@ -131,9 +131,11 @@ Detailed auto judge test execution results for a submission with individual test
 - `submission` - `Submission` (Associated submission)
 - `answer` - `Submission.Answer` (Overall execution result)
 - `totalTestCases` - `Int` (Total number of test cases)
-- `approvedTestCases` - `Int` (Number of passed test cases, nullable)
-- `input` - `Attachment` (Test input data)
-- `output` - `Attachment` (Program output data)
+- `approvedTestCases` - `Int` (Number of approved test cases)
+- `maxCpuTime` - `Int` (Maximum CPU time used in milliseconds, nullable)
+- `maxClockTime` - `Int` (Maximum wall clock time used in milliseconds, nullable)
+- `maxPeakMemory` - `Int` (Maximum memory usage in megabytes, nullable)
+- `result` - `Attachment` (Detailed execution result file, nullable)
 
 ### FrozenSubmission
 
@@ -244,7 +246,7 @@ File storage abstraction for various content types with access control.
 - `PROBLEM_DESCRIPTION` - Problem statement files
 - `PROBLEM_TEST_CASES` - Test input/output data
 - `SUBMISSION_CODE` - Source code files
-- `EXECUTION_OUTPUT` - Program execution results
+- `EXECUTION_DETAILS` - Program execution details
 
 ### Audit
 
