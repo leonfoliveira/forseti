@@ -14,8 +14,10 @@ object ExecutionMockBuilder {
         answer: Submission.Answer = Submission.Answer.ACCEPTED,
         totalTestCases: Int = 1,
         lastTestCase: Int = 0,
-        input: Attachment = AttachmentMockBuilder.build(),
-        output: Attachment = AttachmentMockBuilder.build(),
+        maxCpuTime: Long? = null,
+        maxClockTime: Long? = null,
+        maxPeakMemory: Long? = null,
+        result: Attachment = AttachmentMockBuilder.build(),
     ) = Execution(
         id = id,
         createdAt = createdAt,
@@ -25,7 +27,9 @@ object ExecutionMockBuilder {
         answer = answer,
         totalTestCases = totalTestCases,
         approvedTestCases = lastTestCase,
-        input = input,
-        output = output,
+        maxCpuTime = maxCpuTime,
+        maxClockTime = maxClockTime,
+        maxPeakMemory = maxPeakMemory,
+        result = result,
     )
 }

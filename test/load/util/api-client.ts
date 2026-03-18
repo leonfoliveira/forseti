@@ -1,3 +1,5 @@
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
 
 function getRandomIp() {
@@ -12,32 +14,29 @@ function getRandomIp() {
 
 export class ApiClient {
   public sessionId: string | null = null;
+  public csrfToken: string | null = null;
 
   constructor(private readonly baseUrl: string) {}
 
-  async request(
+  async request<T = any>(
     path: string,
-    options: Record<string, any> = {},
-    multiPart = false
-  ) {
+    config: AxiosRequestConfig,
+  ): Promise<AxiosResponse<T>> {
     const headers: Record<string, any> = {
       "X-Forwarded-For": getRandomIp(),
-      Cookie: this.sessionId ? `session_id=${this.sessionId}` : "",
+      ...(config.headers || {}),
     };
-    if (!multiPart) {
-      headers["Content-Type"] = "application/json";
+    if (this.sessionId != null) {
+      headers.Cookie = `session_id=${this.sessionId};`;
+    }
+    if (this.csrfToken != null) {
+      headers["x-csrf-token"] = this.csrfToken;
     }
 
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      ...options,
+    return axios<T>({
+      url: `${this.baseUrl}${path}`,
+      ...config,
       headers,
     });
-    if (!response.ok) {
-      const body = await response.text();
-      throw new Error(
-        `[${options.method}] ${path}: ${response.status} - ${body}`
-      );
-    }
-    return response;
   }
 }

@@ -56,8 +56,8 @@ class DockerSubmissionRunnerTest(
             val problem =
                 ProblemMockBuilder.build(
                     contest = contest,
-                    timeLimit = 500,
-                    memoryLimit = 128,
+                    timeLimit = 1000,
+                    memoryLimit = 1024,
                     description = descriptionAttachment,
                     testCases = testCasesAttachment,
                 )

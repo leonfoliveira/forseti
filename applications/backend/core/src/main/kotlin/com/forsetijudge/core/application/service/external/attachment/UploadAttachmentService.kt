@@ -13,7 +13,6 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
-import com.forsetijudge.core.port.driven.file.FileAnalyser
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -32,7 +31,6 @@ class UploadAttachmentService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
-    private val fileAnalyser: FileAnalyser,
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
@@ -40,7 +38,7 @@ class UploadAttachmentService(
 
     private val authorizationConfigsByContext =
         mapOf(
-            Attachment.Context.EXECUTION_OUTPUT to ExecutionOutputAuthorizationConfig(),
+            Attachment.Context.EXECUTION_RESULT to ExecutionOutputAuthorizationConfig(),
             Attachment.Context.PROBLEM_DESCRIPTION to ProblemDescriptionAuthorizationConfig(),
             Attachment.Context.PROBLEM_TEST_CASES to ProblemTestCasesAuthorizationConfig(),
             Attachment.Context.SUBMISSION_CODE to SubmissionCodeAuthorizationConfig(),
@@ -69,11 +67,6 @@ class UploadAttachmentService(
         authorizationConfigsByContext[command.context]
             ?.authorizeUpload(contest, member)
             ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
-
-        fileAnalyser
-            .validateContentType(command.bytes, command.contentType)
-            .takeIf { it }
-            ?: throw ForbiddenException("Content type ${command.contentType} does not match the file content")
 
         val id = IdGenerator.getUUID()
         val attachment =

@@ -1,12 +1,12 @@
-import { Actor } from "../../util/actor";
-import { Runner } from "../runner";
+import { SubmissionLanguage } from "../../util/types";
+import { Runner } from "./runner";
 
 export class Cpp17Runner extends Runner {
-  constructor(actor: Actor, problemId: string) {
-    super("CPP_17", actor, problemId);
+  constructor() {
+    super(SubmissionLanguage.CPP_17);
   }
 
-  buildTimeLimitCode(multiplier: number) {
+  protected buildTimeLimitCode(power: number): string {
     return `
 #include <iostream>
 #include <thread>
@@ -15,8 +15,7 @@ export class Cpp17Runner extends Runner {
 using namespace std;
 
 int main() {
-    this_thread::sleep_for(chrono::milliseconds(100 * ${multiplier}));
-
+    for (volatile long i = 0; i < ${10 ** power}l; i++) {}
     int x;
     cin >> x;
     cout << x * 2 << endl;
@@ -25,7 +24,7 @@ int main() {
 `;
   }
 
-  buildMemoryLimitCode(multiplier: number) {
+  protected buildMemoryLimitCode(power: number): string {
     return `
 #include <iostream>
 #include <vector>
@@ -35,9 +34,7 @@ int main() {
 using namespace std;
 
 int main() {
-    int size = static_cast<int>(pow(10, ${multiplier}));
-    vector<int> a(size);
-
+    vector<int> a(${10 ** power});
     int x;
     cin >> x;
     cout << x * 2 << endl;
@@ -46,7 +43,7 @@ int main() {
 `;
   }
 
-  buildFile(code: string) {
+  protected buildCodeFile(code: string): File {
     const blob = new Blob([code], { type: "text/x-c++src" });
     const file = new File([blob], "code.cpp", { type: "text/x-c++src" });
     return file;

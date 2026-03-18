@@ -66,6 +66,6 @@ class Attachment(
         PROBLEM_DESCRIPTION,
         PROBLEM_TEST_CASES,
         SUBMISSION_CODE,
-        EXECUTION_OUTPUT,
+        EXECUTION_RESULT,
     }
 }

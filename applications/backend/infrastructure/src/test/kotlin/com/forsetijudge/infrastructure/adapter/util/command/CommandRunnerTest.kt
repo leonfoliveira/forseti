@@ -14,9 +14,9 @@ class CommandRunnerTest :
 
         test("should run a command with input and return its output") {
             val command = arrayOf("cat")
-            val input = "Hello, World!"
-            val output = CommandRunner.run(command, input)
-            output.trim() shouldBe input
+            val stdin = "Hello, World!"
+            val output = CommandRunner.run(command, stdin)
+            output.trim() shouldBe stdin
         }
 
         test("should throw CommandError on non-zero exit code") {
@@ -25,7 +25,7 @@ class CommandRunnerTest :
                 shouldThrow<CommandError> {
                     CommandRunner.run(command)
                 }
-            exception.message shouldBe "Command failed with exit code: 1. Error: "
+            exception.message shouldBe ""
             exception.exitCode shouldBe 1
         }
     })

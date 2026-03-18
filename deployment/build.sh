@@ -16,6 +16,7 @@ mkdir -p ./production/sandboxes
 cp -r ../applications/backend/infrastructure/src/main/resources/sandboxes/* ./production/sandboxes/
 
 cd ../applications/backend/infrastructure/src/main/resources/sandboxes
+docker build -t forseti-sb-base:latest -f base.Dockerfile .
 docker build -t forseti-sb-cpp17:latest -f cpp17.Dockerfile .
 docker build -t forseti-sb-java21:latest -f java21.Dockerfile .
 docker build -t forseti-sb-node22:latest -f node22.Dockerfile .

@@ -23,7 +23,6 @@ spring-boot = "3.4.5"
 springmockk = "4.0.2"
 testcontainers = "1.21.0"
 testcontainers-redis = "2.2.2"
-tika = "3.2.3"
 uuid-creator = "6.1.1"
 
 [libraries]
@@ -67,7 +66,6 @@ testcontainers-postgres = { module = "org.testcontainers:postgresql", version.re
 testcontainers-minio = { module = "org.testcontainers:minio", version.ref = "testcontainers" }
 testcontainers-rabbitmq = { module = "org.testcontainers:rabbitmq", version.ref = "testcontainers" }
 testcontainers-redis = { module = "com.redis:testcontainers-redis", version.ref = "testcontainers-redis" }
-tika-core = { module = "org.apache.tika:tika-core", version.ref = "tika" }
 uuid-creator = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuid-creator" }
 
 [bundles]

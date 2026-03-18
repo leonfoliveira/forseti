@@ -4,10 +4,12 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.model.TestCaseExecutionResult
 import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import com.opencsv.CSVReader
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -18,7 +20,8 @@ import java.nio.file.Files
 class DockerSubmissionRunner(
     private val downloadAttachmentInternalUseCase: DownloadAttachmentInternalUseCase,
     private val createExecutionInternalUseCase: CreateExecutionInternalUseCase,
-    private val dockerSubmissionRunnerConfigFactory: DockerSubmissionRunnerConfigFactory,
+    @Value("\${spring.application.version}")
+    private val version: String,
 ) : SubmissionRunner {
     private val logger = SafeLogger(this::class)
 
@@ -35,130 +38,87 @@ class DockerSubmissionRunner(
             "Running submission: ${submission.id} for problem: ${problem.id} with language: ${submission.language}",
         )
 
+        // Create a temporary directory to store the code file
         val tmpDir = Files.createTempDirectory("forseti_${submission.id}").toFile()
-        logger.info("Temporary directory created: ${tmpDir.absolutePath}")
-        logger.info("Storing submission code file")
+        logger.info("Temporary directory created: ${tmpDir.absolutePath}.")
         // Code file needs to be stored in ROM memory for Docker to access it
         val codeFile = loadCode(submission, tmpDir)
-        logger.info("Code file stored at: ${codeFile.absolutePath}")
-        logger.info("Loading test cases")
+        logger.info("Code file loaded: ${codeFile.absolutePath}.")
         // Test cases can be loaded in RAM memory as they will be passed via stdin
         val testCases = loadTestCases(problem)
-        logger.info("Creating Docker container")
-        val config = dockerSubmissionRunnerConfigFactory.get(submission.language)
+        logger.info("Test cases loaded: ${testCases.size} test cases.")
 
-        val container =
-            DockerContainer.create(
-                imageName = config.image,
-                memoryLimit = problem.memoryLimit,
-                name = "forseti_sb.${submission.id}",
-            )
-        logger.info("Starting Docker container")
+        val container = DockerSandboxContainer(version, submission, codeFile)
         container.start()
 
-        logger.info("Copying code file to container")
-        container.copy(codeFile, "/app/${codeFile.name}")
-
         try {
-            config.createCompileCommand?.let {
-                logger.info("Compiling submission code")
-                container.exec(it(codeFile))
+            try {
+                container.compile()
+            } catch (ex: Exception) {
+                logger.info("Compilation failed: ${ex.message}")
+                return createExecutionInternalUseCase.execute(
+                    CreateExecutionInternalUseCase.Command(
+                        contest = submission.contest,
+                        member = submission.member,
+                        submission = submission,
+                        answer = Submission.Answer.COMPILATION_ERROR,
+                        totalTestCases = testCases.size,
+                        approvedTestCases = 0,
+                        results = emptyList(),
+                    ),
+                )
             }
 
-            val outputs = mutableListOf<String>()
-            var status = Submission.Answer.ACCEPTED
-            var approvedTestCases: Int = 0
-            logger.info("Running test cases")
+            val results = mutableListOf<TestCaseExecutionResult>()
+            var approvedTestCases = 0
+
+            logger.info("Running ${testCases.size} test cases")
             for ((index, testCase) in testCases.withIndex()) {
-                val input = testCase[0]
-                val expectedOutput = testCase[1]
-                try {
-                    val output =
-                        runCode(
-                            container = container,
-                            config = config,
-                            codeFile = codeFile,
-                            input = input,
-                            timeLimit = problem.timeLimit,
-                            memoryLimit = problem.memoryLimit,
-                        )
-                    outputs.add(output)
-                    val isCorrect = evaluate(output, expectedOutput)
-                    if (!isCorrect) {
-                        logger.info("Test case with index: $index failed")
-                        status = Submission.Answer.WRONG_ANSWER
-                        break
-                    }
-                    approvedTestCases += 1
-                    logger.info("All test cases passed")
-                } catch (_: DockerContainer.DockerTimeOutException) {
-                    logger.info("Test case with index: $index timed out")
+                val stdin = testCase[0]
+                val expectedStdout = testCase[1]
+
+                val result = container.run(stdin)
+                val answer = evaluate(result, expectedStdout)
+                results.add(
+                    TestCaseExecutionResult(
+                        answer = answer,
+                        exitCode = result.exitCode,
+                        cpuTime = result.cpuTime,
+                        clockTime = result.clockTime,
+                        peakMemory = result.peakMemory,
+                        stdin = stdin,
+                        stdout = result.stdout,
+                        stderr = result.stderr,
+                    ),
+                )
+
+                if (answer == Submission.Answer.ACCEPTED) {
+                    approvedTestCases++
+                } else {
+                    logger.info("Test case ${index + 1} failed with answer: $answer")
                     return createExecutionInternalUseCase.execute(
                         CreateExecutionInternalUseCase.Command(
                             contest = submission.contest,
                             member = submission.member,
                             submission = submission,
-                            answer = Submission.Answer.TIME_LIMIT_EXCEEDED,
+                            answer = answer,
                             totalTestCases = testCases.size,
                             approvedTestCases = approvedTestCases,
-                            input = problem.testCases,
-                            output = outputs,
-                        ),
-                    )
-                } catch (_: DockerContainer.DockerOOMKilledException) {
-                    logger.info("Test case with index: $index ran out of memory")
-                    return createExecutionInternalUseCase.execute(
-                        CreateExecutionInternalUseCase.Command(
-                            contest = submission.contest,
-                            member = submission.member,
-                            submission = submission,
-                            answer = Submission.Answer.MEMORY_LIMIT_EXCEEDED,
-                            totalTestCases = testCases.size,
-                            approvedTestCases = approvedTestCases,
-                            input = problem.testCases,
-                            output = outputs,
-                        ),
-                    )
-                } catch (ex: Exception) {
-                    logger.info("Error while running test case with index: $index: $ex")
-                    return createExecutionInternalUseCase.execute(
-                        CreateExecutionInternalUseCase.Command(
-                            contest = submission.contest,
-                            member = submission.member,
-                            submission = submission,
-                            answer = Submission.Answer.RUNTIME_ERROR,
-                            totalTestCases = testCases.size,
-                            approvedTestCases = approvedTestCases,
-                            input = problem.testCases,
-                            output = outputs,
+                            results = results,
                         ),
                     )
                 }
             }
+            logger.info("All test cases passed")
             return createExecutionInternalUseCase.execute(
                 CreateExecutionInternalUseCase.Command(
                     contest = submission.contest,
                     member = submission.member,
                     submission = submission,
-                    answer = status,
+                    answer = Submission.Answer.ACCEPTED,
                     totalTestCases = testCases.size,
                     approvedTestCases = approvedTestCases,
-                    input = problem.testCases,
-                    output = outputs,
-                ),
-            )
-        } catch (ex: Exception) {
-            logger.info("Error while compiling submission: $ex")
-            return createExecutionInternalUseCase.execute(
-                CreateExecutionInternalUseCase.Command(
-                    contest = submission.contest,
-                    member = submission.member,
-                    submission = submission,
-                    answer = Submission.Answer.COMPILATION_ERROR,
-                    totalTestCases = testCases.size,
-                    approvedTestCases = 0,
-                    input = problem.testCases,
-                    output = emptyList(),
+                    results = results,
                 ),
             )
         } finally {
@@ -209,39 +169,25 @@ class DockerSubmissionRunner(
     }
 
     /**
-     * Runs the code inside the Docker container with the given input, time limit, and memory limit.
-     *
-     * @param container The Docker container where the code will be executed.
-     * @param config The configuration for running the submission.
-     * @param codeFile The file containing the code to be executed.
-     * @param input The input to be provided to the code.
-     * @param timeLimit The time limit for execution in milliseconds.
-     * @param memoryLimit The memory limit for execution in bytes.
-     * @return The output produced by the code.
-     */
-    private fun runCode(
-        container: DockerContainer,
-        config: DockerSubmissionRunnerConfig,
-        codeFile: File,
-        input: String,
-        timeLimit: Int,
-        memoryLimit: Int,
-    ): String =
-        container.exec(
-            command = config.createRunCommand(codeFile, memoryLimit),
-            input = input,
-            timeLimit = timeLimit,
-        )
-
-    /**
      * Evaluates the output of the code against the expected output.
      *
-     * @param output The output produced by the code.
-     * @param expectedOutput The expected output for comparison.
-     * @return True if the output matches the expected output, false otherwise.
+     * @param result The result produced by the code execution, containing the status and outputs.
+     * @param expectedStdout The expected output for comparison.
+     * @return The submission answer based on the evaluation of the result against the expected output.
      */
     private fun evaluate(
-        output: String,
-        expectedOutput: String,
-    ): Boolean = output.replace("\n", "") == expectedOutput.replace("\n", "")
+        result: DockerSandboxContainer.RunResult,
+        expectedStdout: String,
+    ): Submission.Answer =
+        when (result.status) {
+            DockerSandboxContainer.RunResult.Status.MLE -> Submission.Answer.MEMORY_LIMIT_EXCEEDED
+            DockerSandboxContainer.RunResult.Status.TLE -> Submission.Answer.TIME_LIMIT_EXCEEDED
+            DockerSandboxContainer.RunResult.Status.RE -> Submission.Answer.RUNTIME_ERROR
+            DockerSandboxContainer.RunResult.Status.OK ->
+                if (result.stdout?.replace("\n", "") == expectedStdout.replace("\n", "")) {
+                    Submission.Answer.ACCEPTED
+                } else {
+                    Submission.Answer.WRONG_ANSWER
+                }
+        }
 }

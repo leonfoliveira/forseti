@@ -1,0 +1,271 @@
+================================
+C++ 17
+================================
+accepted.cpp
+
+time:0.002
+time-wall:0.005
+max-rss:3264
+csw-voluntary:15
+csw-forced:2
+exitcode:0
+
+stdout: 2
+stderr: 
+================================
+memory_limit_exceeded.cpp
+
+status:TO
+message:Time limit exceeded (wall clock)
+killed:1
+time:0.126
+time-wall:2.100
+max-rss:3456
+csw-voluntary:33692
+csw-forced:2
+
+stdout: 
+stderr: terminate called after throwing an instance of 'std::bad_alloc'
+  what():  std::bad_alloc
+================================
+runtime_error.cpp
+
+time:0.001
+time-wall:0.001
+max-rss:3648
+csw-voluntary:4
+csw-forced:2
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: 
+================================
+time_limit_exceeded.cpp
+
+status:TO
+message:Time limit exceeded
+killed:1
+time:1.100
+time-wall:1.100
+max-rss:3072
+csw-voluntary:4
+csw-forced:4
+
+stdout: 
+stderr: 
+================================
+Java 21
+================================
+Accepted.java
+
+time:0.090
+time-wall:0.096
+max-rss:36480
+csw-voluntary:707
+csw-forced:3
+exitcode:0
+
+stdout: 2
+stderr: 
+================================
+MemoryLimitExceeded.java
+
+time:0.043
+time-wall:0.033
+max-rss:32448
+csw-voluntary:156
+csw-forced:3
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at MemoryLimitExceeded.main(MemoryLimitExceeded.java:3)
+================================
+RuntimeError.java
+
+time:0.041
+time-wall:0.033
+max-rss:30912
+csw-voluntary:153
+csw-forced:2
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: Exception in thread "main" java.lang.RuntimeException: This is a runtime error
+	at RuntimeError.main(RuntimeError.java:3)
+================================
+TimeLimitExceeded.java
+
+status:TO
+message:Time limit exceeded
+killed:1
+time:1.111
+time-wall:1.101
+max-rss:30144
+csw-voluntary:170
+csw-forced:2
+
+stdout: 
+stderr: 
+================================
+Node 22
+================================
+accepted.js
+meta:
+time:0.033
+time-wall:0.113
+max-rss:45120
+csw-voluntary:377
+csw-forced:2
+exitcode:0
+
+stdout: 2
+stderr: 
+================================
+memory_limit_exceeded.js
+meta:
+time:0.138
+time-wall:0.255
+max-rss:106168
+csw-voluntary:3735
+csw-forced:6
+exitsig:6
+status:SG
+message:Caught fatal signal 6
+
+stdout: 
+stderr: 
+<--- Last few GCs --->
+
+[2:0x29397000]       87 ms: Mark-Compact (reduce) 59.3 (64.1) -> 36.9 (38.7) MB, pooled: 0 MB, 3.39 / 0.00 ms  (+ 0.0 ms in 0 steps since start of marking, biggest step 0.0 ms, walltime since start of marking 4 ms) (average mu = 0.826, current mu = 0.827)[2:0x29397000]       90 ms: Mark-Compact (reduce) 36.9 (38.7) -> 36.3 (38.7) MB, pooled: 0 MB, 2.84 / 0.00 ms  (average mu = 0.700, current mu = 0.004) last resort; GC in old space requested
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+----- Native stack trace -----
+
+ 1: 0xe42d60 node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/usr/bin/node]
+ 2: 0x121ddd0 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node]
+ 3: 0x121e0a7 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node]
+ 4: 0x143aa5c v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [/usr/bin/node]
+ 5: 0x1412c6e v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [/usr/bin/node]
+ 6: 0x14012cc v8::internal::FactoryBase<v8::internal::Factory>::AllocateRawArray(int, v8::internal::AllocationType) [/usr/bin/node]
+ 7: 0x1401cc2 v8::internal::FactoryBase<v8::internal::Factory>::NewFixedArray(int, v8::internal::AllocationType) [/usr/bin/node]
+ 8: 0x15e10f6  [/usr/bin/node]
+ 9: 0x15e129c  [/usr/bin/node]
+10: 0x1861a86 v8::internal::Runtime_GrowArrayElements(int, unsigned long*, v8::internal::Isolate*) [/usr/bin/node]
+11: 0xf2b9feac476 
+================================
+runtime_error.js
+meta:
+time:0.015
+time-wall:0.015
+max-rss:46464
+csw-voluntary:32
+csw-forced:2
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: /box/runtime_error.js:1
+throw Error()
+^
+
+Error
+    at Object.<anonymous> (/box/runtime_error.js:1:7)
+    at Module._compile (node:internal/modules/cjs/loader:1705:14)
+    at Object..js (node:internal/modules/cjs/loader:1838:10)
+    at Module.load (node:internal/modules/cjs/loader:1441:32)
+    at Function._load (node:internal/modules/cjs/loader:1263:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:328:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:171:5)
+    at node:internal/main/run_main_module:36:49
+
+Node.js v22.22.1
+================================
+time_limit_exceeded.js
+meta:
+status:TO
+message:Time limit exceeded
+killed:1
+time:1.102
+time-wall:1.101
+max-rss:48768
+csw-voluntary:23
+csw-forced:5
+
+stdout: 
+stderr: 
+================================
+Python 3.12
+================================
+accepted.py
+meta:
+time:0.011
+time-wall:0.028
+max-rss:9216
+csw-voluntary:77
+csw-forced:1
+exitcode:0
+
+stdout: 2
+stderr: 
+================================
+memory_limit_exceeded.py
+meta:
+time:0.008
+time-wall:0.007
+max-rss:9216
+csw-voluntary:4
+csw-forced:1
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: Traceback (most recent call last):
+  File "/box/memory_limit_exceeded.py", line 1, in <module>
+    a = 'x' * (10**10)
+        ~~~~^~~~~~~~~~
+MemoryError
+================================
+runtime_error.py
+meta:
+time:0.009
+time-wall:0.008
+max-rss:9216
+csw-voluntary:4
+csw-forced:2
+exitcode:1
+status:RE
+message:Exited with error status 1
+
+stdout: 
+stderr: Traceback (most recent call last):
+  File "/box/runtime_error.py", line 1, in <module>
+    raise Exception()
+Exception
+================================
+time_limit_exceeded.py
+meta:
+status:TO
+message:Time limit exceeded
+killed:1
+time:1.100
+time-wall:1.100
+max-rss:9024
+csw-voluntary:4
+csw-forced:3
+
+stdout: 
+stderr: 
+================================

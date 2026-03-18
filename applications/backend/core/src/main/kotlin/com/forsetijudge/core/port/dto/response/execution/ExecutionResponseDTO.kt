@@ -14,8 +14,10 @@ data class ExecutionResponseDTO(
     val answer: Submission.Answer,
     val totalTestCases: Int,
     val lastTestCase: Int?,
-    val input: AttachmentResponseDTO,
-    val output: AttachmentResponseDTO,
+    val maxCpuTime: Long?,
+    val maxClockTime: Long?,
+    val maxPeakMemory: Long?,
+    val result: AttachmentResponseDTO?,
     val version: Long,
 ) : Serializable
 
@@ -27,7 +29,9 @@ fun Execution.toResponseBodyDTO(): ExecutionResponseDTO =
         answer = answer,
         totalTestCases = totalTestCases,
         lastTestCase = approvedTestCases,
-        input = input.toResponseBodyDTO(),
-        output = output.toResponseBodyDTO(),
+        maxCpuTime = maxCpuTime,
+        maxClockTime = maxClockTime,
+        maxPeakMemory = maxPeakMemory,
+        result = result?.toResponseBodyDTO(),
         version = version,
     )
