@@ -19,7 +19,7 @@ nav:
       - Api: backend/api.md
       - AutoJudge: backend/autojudge.md
   - Test:
-      - Load: test/load.md
+      - Sandbox Limit: test/sandbox-limit.md
       - Regression: test/regression.md
 theme: readthedocs
 extra:
