@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentScanner
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -31,6 +32,7 @@ class UploadAttachmentService(
     private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val attachmentScanner: AttachmentScanner,
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
@@ -67,6 +69,10 @@ class UploadAttachmentService(
         authorizationConfigsByContext[command.context]
             ?.authorizeUpload(contest, member)
             ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
+
+        if (!attachmentScanner.isSecure(command.bytes)) {
+            throw ForbiddenException("Attachment content is not secure")
+        }
 
         val id = IdGenerator.getUUID()
         val attachment =
