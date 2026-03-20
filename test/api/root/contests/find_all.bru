@@ -1,11 +1,11 @@
 meta {
-  name: delete
+  name: find_all
   type: http
-  seq: 9
+  seq: 2
 }
 
-delete {
-  url: {{base_url}}/{{contest_id}}
+get {
+  url: {{base_url}}
   body: none
   auth: inherit
 }
