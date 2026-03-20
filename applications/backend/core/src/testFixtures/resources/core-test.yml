@@ -45,6 +45,9 @@ spring:
         hibernate:
           envers:
             do_not_audit_optimistic_locking_field: false
+clamav:
+  host: localhost
+  port: 3310
 minio:
   endpoint: http://localhost:9000
   access-key: forseti
