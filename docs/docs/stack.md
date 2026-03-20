@@ -59,3 +59,50 @@ Once deployed, public services are acessible through:
 - `http[s]://grafana.<domain>`: Grafana dashboards for monitoring and observability.
 - `http[s]://alloy.<domain>/collect`: Endpoint for Alloy to receive telemetry data from services.
 - `postgresql://postgres.<domain>:5432`: PostgreSQL database connection.
+
+### Resources
+
+Each service has configurable resource limits and reservations defined in `stack.conf`. This allows for efficient resource management and ensures that critical services have the necessary resources to operate effectively while preventing any single service from consuming excessive resources. The default values are:
+
+| Service                     | CPU Reservation | CPUs     | Memory Reservation | Memory Limit         |
+|-----------------------------|:---------------:|:--------:|:------------------:|:--------------------:|
+| Alloy                       | 0.05            | 0.1      | 64M                | 128M                 |
+| API                         | 0.5             | 1.0      | 512M               | 1G                   |
+| AutoJudge                   | 0.5             | 1.0      | 512M               | 1G                   |
+| AutoJudge Autoscaler        | 0.05            | 0.1      | 64M                | 128M                 |
+| cAdvisor                    | 0.05            | 0.1      | 64M                | 128M                 |
+| ClamAV                      | 0.5             | 1.0      | 1G                 | 2G                   |
+| Grafana                     | 0.25            | 0.5      | 256M               | 512M                 |
+| Loki                        | 0.25            | 0.5      | 256M               | 512M                 |
+| Migration (job)             | 0.1             | 0.2      | 128M               | 256M                 |
+| MinIO                       | 0.25            | 0.5      | 256M               | 512M                 |
+| MinIO Init (job)            | 0.05            | 0.1      | 64M                | 128M                 |
+| Node Exporter               | 0.05            | 0.1      | 64M                | 128M                 |
+| PostgreSQL                  | 0.5             | 1.0      | 512M               | 1G                   |
+| PostgreSQL Exporter         | 0.05            | 0.1      | 64M                | 128M                 |
+| Prometheus                  | 0.25            | 0.5      | 256M               | 512M                 |
+| RabbitMQ                    | 0.25            | 0.5      | 256M               | 512M                 |
+| Redis                       | 0.1             | 0.2      | 128M               | 256M                 |
+| Redis Exporter              | 0.05            | 0.1      | 64M                | 128M                 |
+| Tempo                       | 0.25            | 0.5      | 256M               | 512M                 |
+| Traefik                     | 0.1             | 0.2      | 128M               | 256M                 |
+| WebApp                      | 0.25            | 0.5      | 256M               | 512M                 |
+| **Total**                   | **4.40**        | **8.80** | **5184M (≈5.06G)** | **10368M (≈10.13G)** |
+
+### Scaling
+
+Services can be scaled horizontally by increasing the number of replicas. This allows the system to handle more concurrent users and requests. Use the [CLI](cli.md) to adjust the replica count for these services based on expected load. 
+
+The API and the WebApp are the primary candidates for scaling as they directly handle user interactions and can benefit from load distribution. 
+
+> Some services, such as PostgreSQL and RabbitMQ, are typically not scaled horizontally due to their stateful nature and the complexity of clustering. Instead, they can be optimized through resource allocation and configuration tuning.
+
+#### Scalling the AutoJudge
+
+The AutoJudge service is auto scaled based on the workload of the submission queue. The AutoJudge Autoscaler monitors the queue length and adjusts the number of AutoJudge instances accordingly to ensure timely processing of submissions while optimizing resource usage. There are two parameters that can be configured to control the scaling behavior:
+
+- `autojudge_autoscaler.min_replicas`: The minimum number of AutoJudge instances to maintain, even when the queue is empty. This ensures that there are always some instances available to handle incoming submissions without delay.
+- `autojudge_autoscaler.max_replicas`: The maximum number of AutoJudge instances that can be scaled up to handle a surge in submissions. This prevents excessive resource consumption during peak times while still allowing for increased processing capacity when needed.
+- `autojudge.max_concurrent_submissions`: The maximum number of submissions that a single AutoJudge instance can process concurrently. This helps to prevent overloading individual instances and ensures that resource limits are respected.
+
+> When setting these parameters, consider the memory limit of the problems and the expected submission rate to ensure fairness between contestants. A node running AutoJudge instances should have at least `max_memory_limit * replicas_in_node * max_concurrent_submissions` of available memory to avoid resource contention and ensure smooth operation.
