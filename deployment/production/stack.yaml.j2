@@ -125,6 +125,8 @@ services:
       {% else %}
       COOKIE_SECURE: "false"
       {% endif %}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -211,6 +213,8 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=80.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=30.0"
       SESSION_EXPIRATION: {{ session.expiration }}
       SESSION_ROOT_EXPIRATION: {{ session.root_expiration }}
