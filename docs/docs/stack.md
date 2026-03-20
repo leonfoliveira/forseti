@@ -14,6 +14,8 @@ The system stack is deployed using Docker Swarm, which allows for easy managemen
 
 **- cAdvisor:** Container advisor that collects resource usage and performance metrics from all Docker containers running on each node. Provides detailed container-level monitoring data.
 
+**- ClamAV:** Antivirus service that scans attachments for malware and viruses before they are uploaded to MinIO. Ensures the security of stored files and prevents malicious content from being processed by the system.
+
 **- Grafana:** Visualization platform that provides dashboards and alerting for system monitoring. Displays metrics, logs, and traces collected from the entire stack in an intuitive web interface.
 
 **- Loki:** Log aggregation system that collects, stores, and indexes logs from all services. Provides efficient log querying and integrates seamlessly with Grafana for log visualization.

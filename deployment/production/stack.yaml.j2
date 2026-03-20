@@ -358,6 +358,30 @@ services:
         source: /var/lib/docker
         target: /var/lib/docker
         read_only: true
+    
+  clamav:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: {{ clamav.cpus }}
+          memory: {{ clamav.memory_limit }}
+        reservations:
+          cpus: {{ clamav.cpus_reservation }}
+          memory: {{ clamav.memory_reservation }}
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'PING' | nc -w 5 localhost 3310"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: clamav/clamav:1.5.2
+    networks:
+      network:
 
   grafana:
     deploy:
