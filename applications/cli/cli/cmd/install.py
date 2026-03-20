@@ -36,7 +36,7 @@ def install_cmd(
     _install_certificates(stack)
     _build_sandboxes(docker_client, sandboxes)
     _pull_stack_images(docker_client, stack)
-    _update_clamav_db()
+    _update_clamav_db(docker_client)
 
     console.print()
     console.print(Messages.success("Installation complete!"))
@@ -141,24 +141,23 @@ def _pull_stack_images(docker_client, stack: DockerStack):
                 progress.advance(task)
 
 
-def _update_clamav_db():
-    signatures_path = os.path.join(__volumes_dir__, "clamav", "signatures")
-    base_url = "http://database.clamav.net/"
-    files = ["main.cvd", "daily.cvd", "bytecode.cvd"]
-
-    if not os.path.exists(signatures_path):
-        os.makedirs(signatures_path)
+def _update_clamav_db(docker_client):
+    folder = os.path.join(__volumes_dir__, "clamav", "db")
 
     with Progress(console=console) as progress:
         task = progress.add_task(
-            Messages.progress("Updating ClamAV database..."), total=len(files)
+            Messages.progress("Updating ClamAV database..."), total=2
         )
-        for file in files:
-            url = f"{base_url}{file}"
-            save_path = os.path.join(signatures_path, file)
-            with requests.get(url, stream=True) as r:
-                r.raise_for_status()
-                with open(save_path, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        f.write(chunk)
-            progress.advance(task)
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        progress.advance(task)
+
+        docker_client.containers.run(
+            image="python:3.12-alpine",
+            command='sh -c "pip3 install cvdupdate && cvd config set --dbdir /db && cvd update"',
+            volumes={folder: {"bind": "/db", "mode": "rw"}},
+            remove=True,
+            detach=False,
+        )
+        progress.advance(task)

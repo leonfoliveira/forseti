@@ -1,9 +1,9 @@
 from unittest.mock import patch, MagicMock
-from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
 from cli.cmd import app
+from cli.config import __volumes_dir__
 
 PACKAGE = "cli.cmd.install"
 
@@ -42,6 +42,9 @@ class TestInstall:
             mock_images.build = MagicMock()
             mock_images.pull = MagicMock()
             mock_docker_client.images = mock_images
+            mock_containers = MagicMock()
+            mock_containers.run = MagicMock()
+            mock_docker_client.containers = mock_containers
             yield mock_docker_client
 
     @pytest.fixture(autouse=True)
@@ -59,20 +62,6 @@ class TestInstall:
             mock_progress.return_value.__enter__.return_value = mock_progress_instance
             mock_progress_instance.add_task.return_value = "task_id"
             yield mock_progress_instance
-
-    @pytest.fixture(autouse=True)
-    def mock_requests_get(self):
-        with patch(f"{PACKAGE}.requests.get") as mock_get:
-            mock_response = MagicMock()
-            mock_response.content = b"data"
-            mock_response.raise_for_status = MagicMock()
-            mock_get.return_value = mock_response
-            # Ensure signatures directory exists on the real filesystem so
-            # writing downloaded files doesn't raise FileNotFoundError.
-            from cli.config import __volumes_dir__
-            signatures_path = Path(__volumes_dir__) / "clamav" / "signatures"
-            signatures_path.mkdir(parents=True, exist_ok=True)
-            yield mock_get
 
     @pytest.fixture(autouse=True)
     def mock_os_path_exists(self):
@@ -104,7 +93,7 @@ class TestInstall:
                     mock_future, mock_future, mock_future]  # 3 images
                 yield mock_executor_instance
 
-    def test_install_success(self, runner, mock_docker_client, mock_command_adapter, mock_requests_get):
+    def test_install_success(self, runner, mock_docker_client, mock_command_adapter):
         """Test successful installation"""
         result = runner.invoke(app, ["install"])
 
@@ -118,12 +107,19 @@ class TestInstall:
         # cpp17, java21, python312, node22
         assert mock_docker_client.images.build.call_count == 4
 
-        # Verify ClamAV database was updated
-        base_url = "http://database.clamav.net/"
-        expected_files = ["main.cvd", "daily.cvd", "bytecode.cvd"]
-        assert mock_requests_get.call_count == 3
-        for f in expected_files:
-            mock_requests_get.assert_any_call(f"{base_url}{f}", stream=True)
+        # Verify clamav DB update was called
+        mock_docker_client.containers.run.assert_called_with(
+            image="python:3.12-alpine",
+            command='sh -c "pip3 install cvdupdate && cvd config set --dbdir /db && cvd update"',
+            volumes={
+                f"{__volumes_dir__}/clamav/db": {
+                    'bind': '/db',
+                    'mode': 'rw'
+                }
+            },
+            remove=True,
+            detach=False
+        )
 
     def test_install_custom_sandboxes(self, runner, mock_docker_client):
         """Test installation with custom sandboxes list"""

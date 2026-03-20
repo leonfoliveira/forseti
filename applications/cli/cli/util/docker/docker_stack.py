@@ -36,17 +36,26 @@ class DockerStack:
         self.config["__version__"] = __version__
         self.config["__volumes_path__"] = __volumes_dir__
         self.config["__certs_path__"] = __certs_dir__
-        self.config["__root_password__"] = self.swarm.get_latest_secret("root_password")
-        self.config["__db_password__"] = self.swarm.get_latest_secret("db_password")
-        self.config["__redis_password__"] = self.swarm.get_latest_secret(
-            "redis_password"
-        )
-        self.config["__minio_password__"] = self.swarm.get_latest_secret(
-            "minio_password"
-        )
-        self.config["__rabbitmq_password__"] = self.swarm.get_latest_secret(
-            "rabbitmq_password"
-        )
+        if self.swarm.is_active:
+            self.config["__root_password__"] = self.swarm.get_latest_secret(
+                "root_password"
+            )
+            self.config["__db_password__"] = self.swarm.get_latest_secret("db_password")
+            self.config["__redis_password__"] = self.swarm.get_latest_secret(
+                "redis_password"
+            )
+            self.config["__minio_password__"] = self.swarm.get_latest_secret(
+                "minio_password"
+            )
+            self.config["__rabbitmq_password__"] = self.swarm.get_latest_secret(
+                "rabbitmq_password"
+            )
+        else:
+            self.config["__root_password__"] = "root_password"
+            self.config["__db_password__"] = "db_password"
+            self.config["__redis_password__"] = "redis_password"
+            self.config["__minio_password__"] = "minio_password"
+            self.config["__rabbitmq_password__"] = "rabbitmq_password"
 
         template_dir = os.path.dirname(__stack_template_file__)
 

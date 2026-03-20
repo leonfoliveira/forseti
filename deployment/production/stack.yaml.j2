@@ -392,7 +392,7 @@ services:
         target: /etc/clamav/freshclam.conf
         volume: {}
       - type: bind
-        source: {{ __volumes_path__ }}/clamav/signatures
+        source: {{ __volumes_path__ }}/clamav/db
         target: /var/lib/clamav
         read_only: true
 
