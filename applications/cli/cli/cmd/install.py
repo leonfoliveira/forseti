@@ -2,6 +2,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Annotated
 
+import requests
 import typer
 from rich.progress import Progress
 
@@ -9,6 +10,7 @@ from cli.composition import command_adapter, console, get_docker_client
 from cli.config import (
     __sandboxes_dir__,
     __version__,
+    __volumes_dir__,
 )
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
@@ -34,6 +36,7 @@ def install_cmd(
     _install_certificates(stack)
     _build_sandboxes(docker_client, sandboxes)
     _pull_stack_images(docker_client, stack)
+    _update_clamav_db()
 
     console.print()
     console.print(Messages.success("Installation complete!"))
@@ -136,3 +139,26 @@ def _pull_stack_images(docker_client, stack: DockerStack):
                     executor.shutdown(wait=False, cancel_futures=True)
                     raise typer.Exit(code=1)
                 progress.advance(task)
+
+
+def _update_clamav_db():
+    signatures_path = os.path.join(__volumes_dir__, "clamav", "signatures")
+    base_url = "http://database.clamav.net/"
+    files = ["main.cvd", "daily.cvd", "bytecode.cvd"]
+
+    if not os.path.exists(signatures_path):
+        os.makedirs(signatures_path)
+
+    with Progress(console=console) as progress:
+        task = progress.add_task(
+            Messages.progress("Updating ClamAV database..."), total=len(files)
+        )
+        for file in files:
+            url = f"{base_url}{file}"
+            save_path = os.path.join(signatures_path, file)
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(save_path, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            progress.advance(task)

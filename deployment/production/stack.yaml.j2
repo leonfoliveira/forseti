@@ -382,6 +382,19 @@ services:
     image: clamav/clamav:1.5.2
     networks:
       network:
+    volumes:
+      - type: bind
+        source: {{ __volumes_path__ }}/clamd.conf
+        target: /etc/clamav/clamd.conf
+        read_only: true
+      - type: bind
+        source: {{ __volumes_path__ }}/freshclam.conf
+        target: /etc/clamav/freshclam.conf
+        volume: {}
+      - type: bind
+        source: {{ __volumes_path__ }}/clamav/signatures
+        target: /var/lib/clamav
+        read_only: true
 
   grafana:
     deploy:

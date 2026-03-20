@@ -1,4 +1,5 @@
 from unittest.mock import patch, MagicMock
+from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
@@ -60,6 +61,20 @@ class TestInstall:
             yield mock_progress_instance
 
     @pytest.fixture(autouse=True)
+    def mock_requests_get(self):
+        with patch(f"{PACKAGE}.requests.get") as mock_get:
+            mock_response = MagicMock()
+            mock_response.content = b"data"
+            mock_response.raise_for_status = MagicMock()
+            mock_get.return_value = mock_response
+            # Ensure signatures directory exists on the real filesystem so
+            # writing downloaded files doesn't raise FileNotFoundError.
+            from cli.config import __volumes_dir__
+            signatures_path = Path(__volumes_dir__) / "clamav" / "signatures"
+            signatures_path.mkdir(parents=True, exist_ok=True)
+            yield mock_get
+
+    @pytest.fixture(autouse=True)
     def mock_os_path_exists(self):
         with patch(f"{PACKAGE}.os.path.exists") as mock_exists:
             mock_exists.return_value = False  # Directory doesn't exist
@@ -89,7 +104,7 @@ class TestInstall:
                     mock_future, mock_future, mock_future]  # 3 images
                 yield mock_executor_instance
 
-    def test_install_success(self, runner, mock_docker_client, mock_command_adapter):
+    def test_install_success(self, runner, mock_docker_client, mock_command_adapter, mock_requests_get):
         """Test successful installation"""
         result = runner.invoke(app, ["install"])
 
@@ -102,6 +117,13 @@ class TestInstall:
         # Verify sandboxes were built
         # cpp17, java21, python312, node22
         assert mock_docker_client.images.build.call_count == 4
+
+        # Verify ClamAV database was updated
+        base_url = "http://database.clamav.net/"
+        expected_files = ["main.cvd", "daily.cvd", "bytecode.cvd"]
+        assert mock_requests_get.call_count == 3
+        for f in expected_files:
+            mock_requests_get.assert_any_call(f"{base_url}{f}", stream=True)
 
     def test_install_custom_sandboxes(self, runner, mock_docker_client):
         """Test installation with custom sandboxes list"""
@@ -160,8 +182,10 @@ class TestInstall:
         """Test that certs directory is created when it doesn't exist"""
         result = runner.invoke(app, ["install"])
 
-        mock_os_path_exists.assert_called_with("./certs")
-        mock_os_makedirs.assert_called_with("./certs")
+        # `os.path.exists`/`os.makedirs` may be called for other paths
+        # during fixture setup; just assert the certs-related calls happened.
+        mock_os_path_exists.assert_any_call("./certs")
+        mock_os_makedirs.assert_any_call("./certs")
 
     def test_install_skips_certs_directory_creation_if_exists(self, runner, mock_os_path_exists, mock_os_makedirs):
         """Test that certs directory creation is skipped when it exists"""
@@ -206,4 +230,5 @@ class TestInstall:
         # 1. Certificates (3 steps)
         # 2. Sandboxes (3 sandboxes)
         # 3. Images (3 images from mock stack)
-        assert mock_progress.add_task.call_count == 3
+        # 4. ClamAV update (3 files)
+        assert mock_progress.add_task.call_count == 4
