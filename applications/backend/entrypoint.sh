@@ -64,6 +64,11 @@ if [ -n "$OTEL_EXPORTER_OTLP_TRACES_ENDPOINT" ]; then
     wait_for_service "$ALLOY_HOST" "$ALLOY_PORT" "Alloy" 30
 fi
 
+# Wait for ClamAV to be ready
+if [ -n "$CLAMAV_HOST" ] && [ -n "$CLAMAV_PORT" ]; then
+    wait_for_service "$CLAMAV_HOST" "$CLAMAV_PORT" "ClamAV" 30
+fi
+
 # Load secrets into environment variables
 if [ -n "$DB_PASSWORD_FILE" ]; then
     export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
