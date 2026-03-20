@@ -5,6 +5,7 @@ kotlin {
 dependencies {
     implementation(project(":core"))
 
+    implementation(libs.clamav.client)
     implementation(libs.bcrypt)
     implementation(libs.minio)
     implementation(libs.opencsv)

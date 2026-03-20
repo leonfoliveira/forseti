@@ -125,6 +125,8 @@ services:
       {% else %}
       COOKIE_SECURE: "false"
       {% endif %}
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
@@ -211,6 +213,8 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db_password
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
+      CLAMAV_HOST: clamav
+      CLAMAV_PORT: 3310
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=80.0 -XX:InitialRAMPercentage=50.0 -XX:MinRAMPercentage=30.0"
       SESSION_EXPIRATION: {{ session.expiration }}
       SESSION_ROOT_EXPIRATION: {{ session.root_expiration }}
@@ -357,6 +361,43 @@ services:
       - type: bind
         source: /var/lib/docker
         target: /var/lib/docker
+        read_only: true
+    
+  clamav:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: {{ clamav.cpus }}
+          memory: {{ clamav.memory_limit }}
+        reservations:
+          cpus: {{ clamav.cpus_reservation }}
+          memory: {{ clamav.memory_reservation }}
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'PING' | nc -w 5 localhost 3310"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: clamav/clamav:1.5.2
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: {{ __volumes_path__ }}/clamd.conf
+        target: /etc/clamav/clamd.conf
+        read_only: true
+      - type: bind
+        source: {{ __volumes_path__ }}/freshclam.conf
+        target: /etc/clamav/freshclam.conf
+        volume: {}
+      - type: bind
+        source: {{ __volumes_path__ }}/clamav/db
+        target: /var/lib/clamav
         read_only: true
 
   grafana:

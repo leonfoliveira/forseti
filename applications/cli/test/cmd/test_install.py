@@ -3,6 +3,7 @@ import pytest
 from typer.testing import CliRunner
 
 from cli.cmd import app
+from cli.config import __volumes_dir__
 
 PACKAGE = "cli.cmd.install"
 
@@ -41,6 +42,9 @@ class TestInstall:
             mock_images.build = MagicMock()
             mock_images.pull = MagicMock()
             mock_docker_client.images = mock_images
+            mock_containers = MagicMock()
+            mock_containers.run = MagicMock()
+            mock_docker_client.containers = mock_containers
             yield mock_docker_client
 
     @pytest.fixture(autouse=True)
@@ -103,6 +107,20 @@ class TestInstall:
         # cpp17, java21, python312, node22
         assert mock_docker_client.images.build.call_count == 4
 
+        # Verify clamav DB update was called
+        mock_docker_client.containers.run.assert_called_with(
+            image="python:3.12-alpine",
+            command='sh -c "pip3 install cvdupdate && cvd config set --dbdir /db && cvd update"',
+            volumes={
+                f"{__volumes_dir__}/clamav/db": {
+                    'bind': '/db',
+                    'mode': 'rw'
+                }
+            },
+            remove=True,
+            detach=False
+        )
+
     def test_install_custom_sandboxes(self, runner, mock_docker_client):
         """Test installation with custom sandboxes list"""
         result = runner.invoke(
@@ -160,8 +178,10 @@ class TestInstall:
         """Test that certs directory is created when it doesn't exist"""
         result = runner.invoke(app, ["install"])
 
-        mock_os_path_exists.assert_called_with("./certs")
-        mock_os_makedirs.assert_called_with("./certs")
+        # `os.path.exists`/`os.makedirs` may be called for other paths
+        # during fixture setup; just assert the certs-related calls happened.
+        mock_os_path_exists.assert_any_call("./certs")
+        mock_os_makedirs.assert_any_call("./certs")
 
     def test_install_skips_certs_directory_creation_if_exists(self, runner, mock_os_path_exists, mock_os_makedirs):
         """Test that certs directory creation is skipped when it exists"""
@@ -206,4 +226,5 @@ class TestInstall:
         # 1. Certificates (3 steps)
         # 2. Sandboxes (3 sandboxes)
         # 3. Images (3 images from mock stack)
-        assert mock_progress.add_task.call_count == 3
+        # 4. ClamAV update (3 files)
+        assert mock_progress.add_task.call_count == 4

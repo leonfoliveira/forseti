@@ -55,6 +55,7 @@ Installs all necessary dependencies for Forseti, including:
 - Self-signed certificates
 - Autojudge sandboxes built
 - Stack images pull
+- ClamAV database update
 
 **Options:**
 

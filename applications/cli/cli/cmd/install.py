@@ -2,6 +2,7 @@ import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Annotated
 
+import requests
 import typer
 from rich.progress import Progress
 
@@ -9,6 +10,7 @@ from cli.composition import command_adapter, console, get_docker_client
 from cli.config import (
     __sandboxes_dir__,
     __version__,
+    __volumes_dir__,
 )
 from cli.util.docker.docker_stack import DockerStack
 from cli.util.docker.docker_swarm import DockerSwarm
@@ -34,6 +36,7 @@ def install_cmd(
     _install_certificates(stack)
     _build_sandboxes(docker_client, sandboxes)
     _pull_stack_images(docker_client, stack)
+    _update_clamav_db(docker_client)
 
     console.print()
     console.print(Messages.success("Installation complete!"))
@@ -136,3 +139,25 @@ def _pull_stack_images(docker_client, stack: DockerStack):
                     executor.shutdown(wait=False, cancel_futures=True)
                     raise typer.Exit(code=1)
                 progress.advance(task)
+
+
+def _update_clamav_db(docker_client):
+    folder = os.path.join(__volumes_dir__, "clamav", "db")
+
+    with Progress(console=console) as progress:
+        task = progress.add_task(
+            Messages.progress("Updating ClamAV database..."), total=2
+        )
+
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        progress.advance(task)
+
+        docker_client.containers.run(
+            image="python:3.12-alpine",
+            command='sh -c "pip3 install cvdupdate && cvd config set --dbdir /db && cvd update"',
+            volumes={folder: {"bind": "/db", "mode": "rw"}},
+            remove=True,
+            detach=False,
+        )
+        progress.advance(task)

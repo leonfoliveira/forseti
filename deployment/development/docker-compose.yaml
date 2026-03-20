@@ -92,6 +92,22 @@ services:
       - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
 
+  clamav:
+    container_name: dev-forseti-clamav
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'PING' | nc -w 5 localhost 3310"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: clamav/clamav:1.5.2
+    networks:
+      - dev-forseti-network
+    ports:
+      - 3310:3310
+    profiles:
+      - infra
+
   migration:
     container_name: dev-forseti-migration
     entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"

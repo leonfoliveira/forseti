@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
+import com.forsetijudge.core.port.driven.bucket.AttachmentScanner
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
@@ -29,6 +30,7 @@ class UploadAttachmentServiceTest :
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val attachmentScanner = mockk<AttachmentScanner>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
         val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
@@ -37,6 +39,7 @@ class UploadAttachmentServiceTest :
                 attachmentRepository = attachmentRepository,
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
+                attachmentScanner = attachmentScanner,
                 attachmentBucket = attachmentBucket,
                 applicationEventPublisher = applicationEventPublisher,
             )
@@ -90,6 +93,22 @@ class UploadAttachmentServiceTest :
             }
         }
 
+        test("should throw ForbiddenException when content is not secure") {
+            val contest =
+                ContestMockBuilder.build(
+                    startAt = OffsetDateTime.now().minusHours(1),
+                    endAt = OffsetDateTime.now().plusHours(1),
+                )
+            val member = MemberMockBuilder.build(contest = contest, type = Member.Type.CONTESTANT)
+            every { contestRepository.findById(contextContestId) } returns contest
+            every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
+            every { attachmentScanner.isSecure(any()) } returns false
+
+            shouldThrow<ForbiddenException> {
+                sut.execute(command)
+            }
+        }
+
         fun assertUploadSuccessfully(
             contest: Contest = ContestMockBuilder.build(),
             member: Member = MemberMockBuilder.build(),
@@ -101,6 +120,7 @@ class UploadAttachmentServiceTest :
             every { contestRepository.findById(contest.id) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id) } returns actualMember
             every { attachmentRepository.save(any()) } returnsArgument 0
+            every { attachmentScanner.isSecure(any()) } returns true
             every { attachmentBucket.upload(any(), any()) } returns Unit
 
             ExecutionContextMockBuilder.build(contestId = contest.id, memberId = member.id)
