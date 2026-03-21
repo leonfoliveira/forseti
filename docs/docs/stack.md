@@ -64,30 +64,32 @@ Once deployed, public services are acessible through:
 
 Each service has configurable resource limits and reservations defined in `stack.conf`. This allows for efficient resource management and ensures that critical services have the necessary resources to operate effectively while preventing any single service from consuming excessive resources. The default values are:
 
-| Service                     | CPU Reservation | CPUs     | Memory Reservation | Memory Limit         |
-|-----------------------------|:---------------:|:--------:|:------------------:|:--------------------:|
-| Alloy                       | 0.05            | 0.1      | 64M                | 128M                 |
-| API                         | 0.5             | 1.0      | 512M               | 1G                   |
-| AutoJudge                   | 0.5             | 1.0      | 512M               | 1G                   |
-| AutoJudge Autoscaler        | 0.05            | 0.1      | 64M                | 128M                 |
-| cAdvisor                    | 0.05            | 0.1      | 64M                | 128M                 |
-| ClamAV                      | 0.5             | 1.0      | 1G                 | 2G                   |
-| Grafana                     | 0.25            | 0.5      | 256M               | 512M                 |
-| Loki                        | 0.25            | 0.5      | 256M               | 512M                 |
-| Migration (job)             | 0.1             | 0.2      | 128M               | 256M                 |
-| MinIO                       | 0.25            | 0.5      | 256M               | 512M                 |
-| MinIO Init (job)            | 0.05            | 0.1      | 64M                | 128M                 |
-| Node Exporter               | 0.05            | 0.1      | 64M                | 128M                 |
-| PostgreSQL                  | 0.5             | 1.0      | 512M               | 1G                   |
-| PostgreSQL Exporter         | 0.05            | 0.1      | 64M                | 128M                 |
-| Prometheus                  | 0.25            | 0.5      | 256M               | 512M                 |
-| RabbitMQ                    | 0.25            | 0.5      | 256M               | 512M                 |
-| Redis                       | 0.1             | 0.2      | 128M               | 256M                 |
-| Redis Exporter              | 0.05            | 0.1      | 64M                | 128M                 |
-| Tempo                       | 0.25            | 0.5      | 256M               | 512M                 |
-| Traefik                     | 0.1             | 0.2      | 128M               | 256M                 |
-| WebApp                      | 0.25            | 0.5      | 256M               | 512M                 |
-| **Total**                   | **4.40**        | **8.80** | **5184M (≈5.06G)** | **10368M (≈10.13G)** |
+| Service                     | Mode       | CPU Reservation | CPUs     | Memory Reservation | Memory Limit         |
+|-----------------------------|------------|:---------------:|:--------:|:------------------:|:--------------------:|
+| Alloy                       | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| API                         | replicated | 0.5             | 1.0      | 512M               | 1G                   |
+| AutoJudge                   | replicated | 0.5             | 1.0      | 512M               | 1G                   |
+| AutoJudge Autoscaler        | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| cAdvisor                    | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| ClamAV                      | global     | 0.5             | 1.0      | 1G                 | 2G                   |
+| Grafana                     | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| Loki                        | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| Migration (job)             | replicated | 0.1             | 0.2      | 128M               | 256M                 |
+| MinIO                       | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| MinIO Init (job)            | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| Node Exporter               | global     | 0.05            | 0.1      | 64M                | 128M                 |
+| PostgreSQL                  | replicated | 0.5             | 1.0      | 512M               | 1G                   |
+| PostgreSQL Exporter         | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| Prometheus                  | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| RabbitMQ                    | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| Redis                       | replicated | 0.1             | 0.2      | 128M               | 256M                 |
+| Redis Exporter              | replicated | 0.05            | 0.1      | 64M                | 128M                 |
+| Tempo                       | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| Traefik                     | replicated | 0.1             | 0.2      | 128M               | 256M                 |
+| WebApp                      | replicated | 0.25            | 0.5      | 256M               | 512M                 |
+| **Total**                   |            | **4.40**        | **8.80** | **5184M (≈5.06G)** | **10368M (≈10.13G)** |
+
+All replicated services start with 1 replica by default, except for the AutoJudge which is auto scaled based on the submission queue workload from 1 to 3 replicas. Global services run one instance per node in the swarm. These values can be adjusted in `stack.conf` to better fit the expected load and available resources of the deployment environment.
 
 ### Scaling
 
@@ -106,3 +108,14 @@ The AutoJudge service is auto scaled based on the workload of the submission que
 - `autojudge.max_concurrent_submissions`: The maximum number of submissions that a single AutoJudge instance can process concurrently. This helps to prevent overloading individual instances and ensures that resource limits are respected.
 
 > When setting these parameters, consider the memory limit of the problems and the expected submission rate to ensure fairness between contestants. A node running AutoJudge instances should have at least `max_memory_limit * replicas_in_node * max_concurrent_submissions` of available memory to avoid resource contention and ensure smooth operation.
+
+### Disable Telemetry
+
+Telemetry can be disabled by setting `global.telemetry` to `false` in `stack.conf`. This will remove the services related to observability (Alloy, cAdvisor, Grafana, Loki, Node Exporter, PostgreSQL Exporter, Redis Exporter, Tempo) from the stack. Disabling telemetry can reduce resource usage and simplify the deployment for smaller contests or testing environments where monitoring is not required. However, it also means that you will not have access to performance metrics, logs, or traces for troubleshooting and optimization. Summing the defaults for the observability services yields the approximate resources saved by disabling telemetry:
+
+- **CPU reservation (sum):** 1.00 cores
+- **CPU limit (sum):** 2.00 cores
+- **Memory reservation (sum):** 1088M (≈1.06 GB)
+- **Memory limit (sum):** 2176M (≈2.13 GB)
+
+> These values are the sum of the default reservations/limits for Alloy, cAdvisor, Grafana, Loki, Node Exporter, PostgreSQL Exporter, Redis Exporter and Tempo. Actual savings depend on which observability services are enabled in `stack.conf` and any custom resource values you set.

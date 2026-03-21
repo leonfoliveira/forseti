@@ -13,7 +13,7 @@ export const serverConfig = {
   apiInternalUrl: process.env.API_INTERNAL_URL || "http://localhost:8080",
   apiPublicUrl: process.env.API_PUBLIC_URL || "http://localhost:8080",
   wsPublicUrl: process.env.WS_PUBLIC_URL || "ws://localhost:8081",
-  alloyPublicUrl: process.env.ALLOY_PUBLIC_URL || "http://localhost:12347",
+  alloyPublicUrl: process.env.ALLOY_PUBLIC_URL,
   grafanaPublicUrl: process.env.GRAFANA_PUBLIC_URL || "http://localhost:4000",
 };
 
@@ -28,7 +28,7 @@ export type ClientConfig = {
   version: string;
   apiPublicUrl: string;
   wsPublicUrl: string;
-  alloyPublicUrl: string;
+  alloyPublicUrl?: string;
   grafanaPublicUrl: string;
 };
 export const clientConfig =

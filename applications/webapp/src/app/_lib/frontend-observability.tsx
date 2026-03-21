@@ -16,7 +16,7 @@ export default function FrontendObservability() {
       return;
     }
 
-    if (clientConfig.env !== "production") {
+    if (clientConfig.env !== "production" || !clientConfig.alloyPublicUrl) {
       return;
     }
 

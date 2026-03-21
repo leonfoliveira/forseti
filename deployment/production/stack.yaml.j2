@@ -15,6 +15,7 @@ secrets:
     external: true
 
 services:
+  {% if global.telemetry == "true" %}
   alloy:
     command:
       - run
@@ -36,7 +37,8 @@ services:
         {% endif %}
         - traefik.http.routers.alloy.middlewares=alloy-ratelimit
         - traefik.http.services.alloy.loadbalancer.server.port=12347
-      mode: global
+      mode: replicated
+      replicas: 1
       resources:
         limits:
           cpus: {{ alloy.cpus }}
@@ -65,6 +67,7 @@ services:
       - type: bind
         source: {{ __volumes_path__ }}/alloy/config.alloy
         target: /etc/alloy/config.alloy
+  {% endif %}
 
   api:
     deploy:
@@ -157,8 +160,12 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
+      {% if global.telemetry == "true" %}
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      {% else %}
+      OTEL_TRACES_EXPORTER: none
+      {% endif %}
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_SERVICE_NAME: api
@@ -238,8 +245,12 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
       ROOT_PASSWORD_FILE: /run/secrets/root_password
+      {% if global.telemetry == "true" %}
       OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://alloy:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+      {% else %}
+      OTEL_TRACES_EXPORTER: none
+      {% endif %}
       OTEL_LOGS_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_SERVICE_NAME: autojudge
@@ -321,6 +332,7 @@ services:
       - source: {{ __rabbitmq_password__ }}
         target: rabbitmq_password
 
+  {% if global.telemetry == "true" %}
   cadvisor:
     deploy:
       mode: global
@@ -362,6 +374,7 @@ services:
         source: /var/lib/docker
         target: /var/lib/docker
         read_only: true
+  {% endif %}
     
   clamav:
     deploy:
@@ -400,6 +413,7 @@ services:
         target: /var/lib/clamav
         read_only: true
 
+  {% if global.telemetry == "true" %}
   grafana:
     deploy:
       labels:
@@ -481,7 +495,9 @@ services:
       - type: bind
         source: {{ __volumes_path__ }}/grafana/provisioning/dashboards
         target: /etc/grafana/provisioning/dashboards
+  {% endif %}
 
+  {% if global.telemetry == "true" %}
   loki:
     deploy:
       mode: replicated
@@ -528,6 +544,7 @@ services:
     secrets:
       - source: {{ __minio_password__ }}
         target: minio_password
+  {% endif %}
 
   migration:
     deploy:
@@ -637,6 +654,7 @@ services:
       - source: {{ __minio_password__ }}
         target: minio_password
 
+  {% if global.telemetry == "true" %}
   node-exporter:
     command:
       - "--path.procfs=/host/proc"
@@ -679,6 +697,7 @@ services:
         source: /
         target: /rootfs
         read_only: true
+  {% endif %}
 
   postgres:
     deploy:
@@ -720,6 +739,7 @@ services:
         target: /var/lib/postgresql/data
         volume: {}
 
+  {% if global.telemetry == "true" %}
   postgres-exporter:
     deploy:
       mode: replicated
@@ -752,7 +772,9 @@ services:
     secrets:
       - source: {{ __db_password__ }}
         target: db_password
+  {% endif %}
 
+  {% if global.telemetry == "true" %}
   prometheus:
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
@@ -805,6 +827,7 @@ services:
         source: prometheus_data
         target: /prometheus
         volume: {}
+  {% endif %}
 
   rabbitmq:
     deploy:
@@ -891,6 +914,7 @@ services:
       - source: {{ __redis_password__ }}
         target: redis_password
 
+  {% if global.telemetry == "true" %}
   redis-exporter:
     command: sh -c "export REDIS_PASSWORD=$$(cat /run/secrets/redis_password) && /redis_exporter"
     deploy:
@@ -923,7 +947,9 @@ services:
     secrets:
       - source: {{ __redis_password__ }}
         target: redis_password
+  {% endif %}
 
+  {% if global.telemetry == "true" %}
   tempo:
     entrypoint: sh /entrypoint.sh
     environment:
@@ -973,6 +999,7 @@ services:
     secrets:
       - source: {{ __minio_password__ }}
         target: minio_password
+  {% endif %}
 
   traefik:
     command:
@@ -1087,7 +1114,9 @@ services:
       update_config:
         order: start-first
     environment:
+      {% if global.telemetry == "true" %}
       ALLOY_PUBLIC_URL: https://alloy.{{ global.domain }}
+      {% endif %}
       API_INTERNAL_URL: http://api:8080
       API_PUBLIC_URL: https://api.{{ global.domain }}
       APP_ENV: production
