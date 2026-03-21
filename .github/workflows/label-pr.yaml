@@ -36,7 +36,7 @@ jobs:
 
       - name: Add deployments label
         if: steps.changes.outputs.deployments == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -48,7 +48,7 @@ jobs:
 
       - name: Add backend label
         if: steps.changes.outputs.backend == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -60,7 +60,7 @@ jobs:
 
       - name: Add webapp label
         if: steps.changes.outputs.webapp == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -72,7 +72,7 @@ jobs:
 
       - name: Add CLI label
         if: steps.changes.outputs.cli == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -84,7 +84,7 @@ jobs:
 
       - name: Add documentation label
         if: steps.changes.outputs.docs == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
@@ -96,7 +96,7 @@ jobs:
 
       - name: Add test label
         if: steps.changes.outputs.test == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.addLabels({
