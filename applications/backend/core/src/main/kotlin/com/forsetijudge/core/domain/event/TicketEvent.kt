@@ -8,7 +8,7 @@ interface TicketEvent : BusinessEvent {
      *
      * @property ticketId the created ticket
      */
-    class Created(
+    data class Created(
         val ticketId: UUID,
     ) : TicketEvent
 
@@ -17,7 +17,7 @@ interface TicketEvent : BusinessEvent {
      *
      * @property ticketId the updated ticket
      */
-    class Updated(
+    data class Updated(
         val ticketId: UUID,
     ) : TicketEvent
 }

@@ -8,7 +8,7 @@ interface ExecutionEvent : BusinessEvent {
      *
      * @param executionId the created execution
      */
-    class Created(
+    data class Created(
         val executionId: UUID,
     ) : ExecutionEvent
 }

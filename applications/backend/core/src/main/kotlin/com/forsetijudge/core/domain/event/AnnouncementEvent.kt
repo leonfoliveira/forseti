@@ -8,7 +8,7 @@ interface AnnouncementEvent : BusinessEvent {
      *
      * @param announcementId the created announcement
      */
-    class Created(
+    data class Created(
         val announcementId: UUID,
     ) : AnnouncementEvent
 }

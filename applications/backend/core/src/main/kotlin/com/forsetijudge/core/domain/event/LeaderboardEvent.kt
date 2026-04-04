@@ -9,7 +9,7 @@ interface LeaderboardEvent : BusinessEvent {
      *
      * @property contestId The contest whose leaderboard was frozen.
      */
-    class Frozen(
+    data class Frozen(
         val contestId: UUID,
     ) : LeaderboardEvent
 
@@ -19,7 +19,7 @@ interface LeaderboardEvent : BusinessEvent {
      * @property contestId The contest whose leaderboard was unfrozen.
      * @property frozenAt The timestamp when the leaderboard was frozen.
      */
-    class Unfrozen(
+    data class Unfrozen(
         val contestId: UUID,
         val frozenAt: OffsetDateTime,
     ) : LeaderboardEvent

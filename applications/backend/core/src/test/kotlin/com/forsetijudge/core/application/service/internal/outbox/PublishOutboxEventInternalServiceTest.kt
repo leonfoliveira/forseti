@@ -1,12 +1,13 @@
 package com.forsetijudge.core.application.service.internal.outbox
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.port.driven.repository.OutboxEventRepository
 import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.core.spec.style.FunSpec
+import io.mockk.clearAllMocks
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
@@ -21,8 +22,13 @@ class PublishOutboxEventInternalServiceTest :
                 objectMapper = objectMapper,
             )
 
+        beforeEach {
+            clearAllMocks()
+        }
+
         test("execute should save the outbox event to the repository") {
             val event = AnnouncementEvent.Created(announcementId = IdGenerator.getUUID())
+            every { outboxEventRepository.save(any()) } returnsArgument 0
 
             sut.execute(
                 PublishOutboxEventInternalUseCase.Command(

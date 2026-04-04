@@ -26,7 +26,7 @@ class AnnouncementCreatedEventListenerTest :
 
         val sut =
             AnnouncementCreatedEventListener(
-                announcementRepository = mockk(),
+                announcementRepository = announcementRepository,
                 broadcastProducer = broadcastProducer,
             )
 

@@ -8,7 +8,7 @@ interface AttachmentEvent {
      *
      * @param attachmentId the uploaded attachment
      */
-    class Uploaded(
+    data class Uploaded(
         val attachmentId: UUID,
     ) : AttachmentEvent
 }

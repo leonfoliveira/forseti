@@ -8,7 +8,7 @@ interface SubmissionEvent : BusinessEvent {
      *
      * @param submissionId the created submission
      */
-    class Created(
+    data class Created(
         val submissionId: UUID,
     ) : SubmissionEvent
 
@@ -17,7 +17,7 @@ interface SubmissionEvent : BusinessEvent {
      *
      * @param submissionId the reset submission
      */
-    class Reset(
+    data class Reset(
         val submissionId: UUID,
     ) : SubmissionEvent
 
@@ -26,7 +26,7 @@ interface SubmissionEvent : BusinessEvent {
      *
      * @param submissionId the updated submission
      */
-    class Updated(
+    data class Updated(
         val submissionId: UUID,
     ) : SubmissionEvent
 }

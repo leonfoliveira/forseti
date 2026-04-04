@@ -8,7 +8,7 @@ interface ContestEvent : BusinessEvent {
      *
      * @property contestId The contest that was created.
      */
-    class Created(
+    data class Created(
         val contestId: UUID,
     ) : ContestEvent
 
@@ -17,7 +17,7 @@ interface ContestEvent : BusinessEvent {
      *
      * @property contestId The contest that was updated.
      */
-    class Updated(
+    data class Updated(
         val contestId: UUID,
     ) : ContestEvent
 
@@ -26,7 +26,7 @@ interface ContestEvent : BusinessEvent {
      *
      * @property contestId The contest that was deleted.
      */
-    class Deleted(
+    data class Deleted(
         val contestId: UUID,
     ) : ContestEvent
 }

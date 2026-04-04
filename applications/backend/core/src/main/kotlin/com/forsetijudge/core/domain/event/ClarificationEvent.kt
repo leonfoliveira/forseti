@@ -8,7 +8,7 @@ interface ClarificationEvent : BusinessEvent {
      *
      * @param clarificationId the created clarification
      */
-    class Created(
+    data class Created(
         val clarificationId: UUID,
     ) : ClarificationEvent
 
@@ -17,7 +17,7 @@ interface ClarificationEvent : BusinessEvent {
      *
      * @param clarificationId the deleted clarification
      */
-    class Deleted(
+    data class Deleted(
         val contestId: UUID,
         val clarificationId: UUID,
     ) : ClarificationEvent
