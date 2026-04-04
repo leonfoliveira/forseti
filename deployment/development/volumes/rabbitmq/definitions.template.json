@@ -43,6 +43,23 @@
   ],
   "queues": [
     {
+      "name": "outbox-event-queue",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-dead-letter-exchange": "direct-exchange",
+        "x-dead-letter-routing-key": "outbox-event-dlq-routing-key"
+      }
+    },
+    {
+      "name": "outbox-event-dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
       "name": "submission-queue",
       "vhost": "/",
       "durable": true,
@@ -105,6 +122,22 @@
     }
   ],
   "bindings": [
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "outbox-event-queue",
+      "destination_type": "queue",
+      "routing_key": "outbox-event-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "outbox-event-dlq",
+      "destination_type": "queue",
+      "routing_key": "outbox-event-dlq-routing-key",
+      "arguments": {}
+    },
     {
       "source": "direct-exchange",
       "vhost": "/",
