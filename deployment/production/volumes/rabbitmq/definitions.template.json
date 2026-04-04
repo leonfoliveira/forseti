@@ -21,6 +21,26 @@
       "read": ".*"
     }
   ],
+  "exchanges": [
+    {
+      "name": "direct-exchange",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "fanout-exchange",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
   "queues": [
     {
       "name": "submission-queue",
@@ -28,7 +48,8 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "submission-failed-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
+        "x-dead-letter-routing-key": "submission-failed-routing-key",
         "x-message-ttl": 300000,
         "x-max-priority": 10
       }
@@ -39,7 +60,8 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "submission-dlq-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
+        "x-dead-letter-routing-key": "submission-dlq-routing-key",
         "x-message-ttl": 60000
       }
     },
@@ -49,49 +71,47 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {}
-    }
-  ],
-  "exchanges": [
+    },
     {
-      "name": "submission-exchange",
+      "name": "attachment-bucket-cleaner-queue",
       "vhost": "/",
-      "type": "direct",
       "durable": true,
       "auto_delete": false,
-      "internal": false,
+      "arguments": {
+        "x-dead-letter-exchange": "direct-exchange",
+        "x-dead-letter-routing-key": "attachment-bucket-cleaner-dlq-routing-key",
+        "x-message-ttl": 60000
+      }
+    },
+    {
+      "name": "attachment-bucket-cleaner-dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
       "arguments": {}
     },
     {
-      "name": "submission-failed-exchange",
+      "name": "auto-freeze-queue",
       "vhost": "/",
-      "type": "direct",
       "durable": true,
       "auto_delete": false,
-      "internal": false,
-      "arguments": {}
+      "arguments": {
+        "x-dead-letter-exchange": "direct-exchange",
+        "x-dead-letter-routing-key": "auto-freeze-dlq-routing-key",
+        "x-message-ttl": 60000
+      }
     },
     {
-      "name": "submission-dlq-exchange",
+      "name": "auto-freeze-dlq",
       "vhost": "/",
-      "type": "direct",
       "durable": true,
       "auto_delete": false,
-      "internal": false,
-      "arguments": {}
-    },
-    {
-      "name": "websocket-exchange",
-      "vhost": "/",
-      "type": "fanout",
-      "durable": true,
-      "auto_delete": false,
-      "internal": false,
       "arguments": {}
     }
   ],
   "bindings": [
     {
-      "source": "submission-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-queue",
       "destination_type": "queue",
@@ -99,7 +119,7 @@
       "arguments": {}
     },
     {
-      "source": "submission-failed-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-failed-queue",
       "destination_type": "queue",
@@ -107,11 +127,43 @@
       "arguments": {}
     },
     {
-      "source": "submission-dlq-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-dlq",
       "destination_type": "queue",
       "routing_key": "submission-dlq-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "attachment-bucket-cleaner-queue",
+      "destination_type": "queue",
+      "routing_key": "attachment-bucket-cleaner-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "attachment-bucket-cleaner-dlq",
+      "destination_type": "queue",
+      "routing_key": "attachment-bucket-cleaner-dlq-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "auto-freeze-queue",
+      "destination_type": "queue",
+      "routing_key": "auto-freeze-routing-key",
+      "arguments": {}
+    },
+    {
+      "source": "direct-exchange",
+      "vhost": "/",
+      "destination": "auto-freeze-dlq",
+      "destination_type": "queue",
+      "routing_key": "auto-freeze-dlq-routing-key",
       "arguments": {}
     }
   ]

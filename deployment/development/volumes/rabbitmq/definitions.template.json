@@ -23,7 +23,7 @@
   ],
   "exchanges": [
     {
-      "name": "forseti-direct-exchange",
+      "name": "direct-exchange",
       "vhost": "/",
       "type": "direct",
       "durable": true,
@@ -32,7 +32,7 @@
       "arguments": {}
     },
     {
-      "name": "forseti-fanout-exchange",
+      "name": "fanout-exchange",
       "vhost": "/",
       "type": "fanout",
       "durable": true,
@@ -48,7 +48,7 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "forseti-direct-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
         "x-dead-letter-routing-key": "submission-failed-routing-key"
       }
     },
@@ -58,7 +58,7 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "forseti-direct-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
         "x-dead-letter-routing-key": "submission-dlq-routing-key"
       }
     },
@@ -75,7 +75,7 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "forseti-direct-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
         "x-dead-letter-routing-key": "attachment-bucket-cleaner-dlq-routing-key"
       }
     },
@@ -92,7 +92,7 @@
       "durable": true,
       "auto_delete": false,
       "arguments": {
-        "x-dead-letter-exchange": "forseti-direct-exchange",
+        "x-dead-letter-exchange": "direct-exchange",
         "x-dead-letter-routing-key": "auto-freeze-dlq-routing-key"
       }
     },
@@ -106,7 +106,7 @@
   ],
   "bindings": [
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-queue",
       "destination_type": "queue",
@@ -114,7 +114,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-failed-queue",
       "destination_type": "queue",
@@ -122,7 +122,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "submission-dlq",
       "destination_type": "queue",
@@ -130,7 +130,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "attachment-bucket-cleaner-queue",
       "destination_type": "queue",
@@ -138,7 +138,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "attachment-bucket-cleaner-dlq",
       "destination_type": "queue",
@@ -146,7 +146,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "auto-freeze-queue",
       "destination_type": "queue",
@@ -154,7 +154,7 @@
       "arguments": {}
     },
     {
-      "source": "forseti-direct-exchange",
+      "source": "direct-exchange",
       "vhost": "/",
       "destination": "auto-freeze-dlq",
       "destination_type": "queue",
