@@ -5,6 +5,7 @@ import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.freeze
+import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -14,6 +15,7 @@ import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
@@ -26,7 +28,7 @@ class FreezeLeaderboardService(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : FreezeLeaderboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -56,7 +58,11 @@ class FreezeLeaderboardService(
 
         freezeSubmissions(contest)
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(LeaderboardEvent.Frozen(contest.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                LeaderboardEvent.Frozen(contest.id),
+            ),
+        )
 
         logger.info("Leaderboard frozen successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

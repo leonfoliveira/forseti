@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.DeleteContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class DeleteContestService(
     private val memberRepository: MemberRepository,
     private val contestRepository: ContestRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : DeleteContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -42,7 +43,11 @@ class DeleteContestService(
 
         contest.deletedAt = ExecutionContext.get().startedAt
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Deleted(contest.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                ContestEvent.Deleted(contest.id),
+            ),
+        )
 
         logger.info("Contest deleted successfully")
     }

@@ -34,7 +34,6 @@ class UploadAttachmentService(
     private val memberRepository: MemberRepository,
     private val attachmentScanner: AttachmentScanner,
     private val attachmentBucket: AttachmentBucket,
-    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -87,7 +86,6 @@ class UploadAttachmentService(
         logger.info("Uploading ${command.bytes.size} bytes")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentEvent.Uploaded(attachment.id))
 
         logger.info("Attachment uploaded successfully with id = ${attachment.id}")
         return attachment.toResponseBodyDTO() to command.bytes

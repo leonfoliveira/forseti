@@ -5,12 +5,15 @@ import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.event.ClarificationEvent
+import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -26,13 +29,13 @@ class DeleteClarificationServiceTest :
     FunSpec({
         val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             DeleteClarificationService(
                 clarificationRepository = clarificationRepository,
                 memberRepository = memberRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val now = OffsetDateTime.now()
@@ -41,9 +44,8 @@ class DeleteClarificationServiceTest :
 
         beforeEach {
             clearAllMocks()
-            mockkStatic(OffsetDateTime::class)
-            every { OffsetDateTime.now() } returns now
             ExecutionContextMockBuilder.build(contextContestId, contextMemberId)
+            ExecutionContext.get().startedAt = now
         }
 
         val command =
@@ -91,6 +93,10 @@ class DeleteClarificationServiceTest :
 
             clarification.deletedAt shouldBe now
             verify { clarificationRepository.save(clarification) }
-            verify { applicationEventPublisher.publishEvent(match<ClarificationEvent.Deleted> { it.clarificationId == clarification.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is ClarificationEvent.Deleted && it.event.clarificationId == clarification.id },
+                )
+            }
         }
     })

@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -13,6 +14,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -29,13 +31,13 @@ class CreateContestServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             CreateContestService(
                 memberRepository = memberRepository,
                 contestRepository = contestRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -98,10 +100,8 @@ class CreateContestServiceTest :
                 val contest = contestSlot.captured
                 result shouldBe contest.toResponseBodyDTO()
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ContestEvent.Created> {
-                            it.contestId == contest.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ContestEvent.Created && it.event.contestId == contest.id },
                     )
                 }
             }

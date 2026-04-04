@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
@@ -19,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class UpdateTicketStatusService(
     private val ticketRepository: TicketRepository,
     private val memberRepository: MemberRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : UpdateTicketStatusUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -46,7 +47,11 @@ class UpdateTicketStatusService(
         ticket.staff = staff
         ticket.status = command.status
         ticketRepository.save(ticket)
-        applicationEventPublisher.publishEvent(TicketEvent.Updated(ticket.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                TicketEvent.Updated(ticket.id),
+            ),
+        )
 
         logger.info("Ticket status updated successfully")
         return ticket.toResponseBodyDTO()

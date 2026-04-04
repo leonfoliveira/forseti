@@ -12,6 +12,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -26,13 +27,13 @@ class ResetSubmissionServiceTest :
     FunSpec({
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             ResetSubmissionService(
                 submissionRepository = submissionRepository,
                 memberRepository = memberRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -95,7 +96,15 @@ class ResetSubmissionServiceTest :
             submission.status shouldBe Submission.Status.JUDGING
             submission.answer shouldBe null
             every { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Reset> { it.submissionId == submission.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is SubmissionEvent.Updated && it.event.submissionId == submission.id },
+                )
+            }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is SubmissionEvent.Reset && it.event.submissionId == submission.id },
+                )
+            }
         }
     })

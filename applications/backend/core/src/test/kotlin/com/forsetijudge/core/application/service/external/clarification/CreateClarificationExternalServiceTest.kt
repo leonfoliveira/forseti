@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -16,6 +17,7 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -31,7 +33,7 @@ class CreateClarificationExternalServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             CreateClarificationService(
@@ -39,7 +41,7 @@ class CreateClarificationExternalServiceTest :
                 memberRepository = memberRepository,
                 problemRepository = problemRepository,
                 clarificationRepository = clarificationRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -136,10 +138,8 @@ class CreateClarificationExternalServiceTest :
 
                 verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ClarificationEvent.Created> {
-                            it.clarificationId == result.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ClarificationEvent.Created && it.event.clarificationId == result.id },
                     )
                 }
             }
@@ -221,10 +221,8 @@ class CreateClarificationExternalServiceTest :
 
                 verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ClarificationEvent.Created> {
-                            it.clarificationId == result.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ClarificationEvent.Created && it.event.clarificationId == result.id },
                     )
                 }
             }

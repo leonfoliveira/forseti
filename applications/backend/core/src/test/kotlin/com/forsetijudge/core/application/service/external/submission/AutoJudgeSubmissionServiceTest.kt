@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -14,6 +15,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -28,14 +30,14 @@ class AutoJudgeSubmissionServiceTest :
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val submissionRunner = mockk<SubmissionRunner>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             AutoJudgeSubmissionService(
                 submissionRepository = submissionRepository,
                 memberRepository = memberRepository,
                 submissionRunner = submissionRunner,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextMemberId = IdGenerator.getUUID()
@@ -83,7 +85,7 @@ class AutoJudgeSubmissionServiceTest :
 
             verify(exactly = 0) { submissionRunner.run(any()) }
             verify(exactly = 0) { submissionRepository.save(any()) }
-            verify(exactly = 0) { applicationEventPublisher.publishEvent(any()) }
+            verify(exactly = 0) { publishOutboxEventInternalUseCase.execute(any()) }
         }
 
         test("should run submission but skip update if submission status changes to not JUDGING") {
@@ -102,7 +104,7 @@ class AutoJudgeSubmissionServiceTest :
 
             verify { submissionRunner.run(submission) }
             verify(exactly = 0) { submissionRepository.save(any()) }
-            verify(exactly = 0) { applicationEventPublisher.publishEvent(any()) }
+            verify(exactly = 0) { publishOutboxEventInternalUseCase.execute(any()) }
         }
 
         test("should run submission and update status and answer") {
@@ -119,6 +121,10 @@ class AutoJudgeSubmissionServiceTest :
             submission.status shouldBe Submission.Status.JUDGED
             submission.answer shouldBe execution.answer
             verify { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is SubmissionEvent.Updated && it.event.submissionId == submission.id },
+                )
+            }
         }
     })

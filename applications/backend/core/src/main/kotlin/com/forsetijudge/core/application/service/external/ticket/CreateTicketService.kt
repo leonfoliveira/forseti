@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.entity.ticket.NonTechnicalSupportTicket
 import com.forsetijudge.core.domain.entity.ticket.SubmissionPrintTicket
 import com.forsetijudge.core.domain.entity.ticket.TechnicalSupportTicket
+import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -18,6 +19,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.context.ApplicationEventPublisher
@@ -33,7 +35,7 @@ class CreateTicketService(
     private val memberRepository: MemberRepository,
     private val ticketRepository: TicketRepository,
     private val submissionRepository: SubmissionRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
     private val objectMapper: ObjectMapper,
 ) : CreateTicketUseCase {
     private val logger = SafeLogger(this::class)
@@ -60,7 +62,11 @@ class CreateTicketService(
             }
 
         ticketRepository.save(ticket)
-        applicationEventPublisher.publishEvent(TicketEvent.Created(ticket.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                TicketEvent.Created(ticket.id),
+            ),
+        )
 
         logger.info("Ticket created successfully with id: ${ticket.id}")
         return ticket.toResponseBodyDTO()
