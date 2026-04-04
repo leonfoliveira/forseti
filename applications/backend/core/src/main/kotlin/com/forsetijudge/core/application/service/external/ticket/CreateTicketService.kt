@@ -9,7 +9,6 @@ import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.entity.ticket.NonTechnicalSupportTicket
 import com.forsetijudge.core.domain.entity.ticket.SubmissionPrintTicket
 import com.forsetijudge.core.domain.entity.ticket.TechnicalSupportTicket
-import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -22,7 +21,6 @@ import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUs
 import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated

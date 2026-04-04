@@ -10,9 +10,6 @@ import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPriva
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.JudgePrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class TicketUpdatedEventListener(

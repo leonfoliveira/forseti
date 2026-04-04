@@ -19,7 +19,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 
 class CreateAnnouncementServiceTest :
     FunSpec({

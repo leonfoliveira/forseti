@@ -8,7 +8,6 @@ import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.domain.event.AttachmentEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -21,7 +20,6 @@ import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAtta
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import jakarta.validation.Valid
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated

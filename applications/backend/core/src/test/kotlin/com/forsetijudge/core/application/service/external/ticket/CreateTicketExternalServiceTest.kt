@@ -10,8 +10,6 @@ import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.entity.ticket.TechnicalSupportTicket
-import com.forsetijudge.core.domain.event.ClarificationEvent
-import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.event.TicketEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -29,7 +27,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class CreateTicketExternalServiceTest :
