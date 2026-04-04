@@ -20,14 +20,8 @@ import org.springframework.transaction.event.TransactionalEventListener
 class ClarificationCreatedEventListener(
     private val clarificationRepository: ClarificationRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<ClarificationEvent.Created>() {
-    @TransactionalEventListener(ClarificationEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: ClarificationEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: ClarificationEvent.Created) {
+) : BusinessEventListener<ClarificationEvent.Created> {
+    override fun handle(event: ClarificationEvent.Created) {
         val clarification =
             clarificationRepository.findById(event.clarificationId)
                 ?: throw NotFoundException("Could not find clarification with id: ${event.clarificationId}")

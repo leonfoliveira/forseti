@@ -25,14 +25,8 @@ class SubmissionUpdatedEventListener(
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
     private val broadcastProducer: BroadcastProducer,
     private val leaderboardCacheStore: LeaderboardCacheStore,
-) : BusinessEventListener<SubmissionEvent.Updated>() {
-    @TransactionalEventListener(SubmissionEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: SubmissionEvent.Updated) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: SubmissionEvent.Updated) {
+) : BusinessEventListener<SubmissionEvent.Updated> {
+    override fun handle(event: SubmissionEvent.Updated) {
         val submission =
             submissionRepository.findById(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")

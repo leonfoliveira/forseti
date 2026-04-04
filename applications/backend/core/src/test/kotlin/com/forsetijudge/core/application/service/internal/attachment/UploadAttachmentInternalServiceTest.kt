@@ -3,7 +3,7 @@ package com.forsetijudge.core.application.service.internal.attachment
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
-import com.forsetijudge.core.domain.event.AttachmentsEvent
+import com.forsetijudge.core.domain.event.AttachmentEvent
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
@@ -48,7 +48,7 @@ class UploadAttachmentInternalServiceTest :
 
             every { attachmentRepository.save(any()) } returnsArgument 0
             every { attachmentBucket.upload(any(), any()) } returns Unit
-            every { applicationEventPublisher.publishEvent(any<AttachmentsEvent.Uploaded>()) } returns Unit
+            every { applicationEventPublisher.publishEvent(any<AttachmentEvent.Uploaded>()) } returns Unit
 
             val result = sut.execute(command)
 
@@ -62,7 +62,7 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe command.contentType
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
 
         test("upload attachment without optional fields") {
@@ -78,7 +78,7 @@ class UploadAttachmentInternalServiceTest :
 
             every { attachmentRepository.save(any()) } returnsArgument 0
             every { attachmentBucket.upload(any(), any()) } returns Unit
-            every { applicationEventPublisher.publishEvent(any<AttachmentsEvent.Uploaded>()) } returns Unit
+            every { applicationEventPublisher.publishEvent(any<AttachmentEvent.Uploaded>()) } returns Unit
 
             val result = sut.execute(command)
 
@@ -92,6 +92,6 @@ class UploadAttachmentInternalServiceTest :
             attachment.contentType shouldBe "application/octet-stream"
             attachment.context shouldBe command.context
             verify { attachmentBucket.upload(attachment, command.bytes) }
-            verify { applicationEventPublisher.publishEvent(match<AttachmentsEvent.Uploaded> { it.attachmentId == attachment.id }) }
+            verify { applicationEventPublisher.publishEvent(match<AttachmentEvent.Uploaded> { it.attachmentId == attachment.id }) }
         }
     })

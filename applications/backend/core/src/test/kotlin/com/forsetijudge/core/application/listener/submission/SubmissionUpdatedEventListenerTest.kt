@@ -15,32 +15,29 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import java.time.OffsetDateTime
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [SubmissionUpdatedEventListener::class])
-class SubmissionUpdatedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val submissionRepository: SubmissionRepository,
-    @MockkBean(relaxed = true)
-    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
-    @MockkBean(relaxed = true)
-    private val leaderboardCacheStore: LeaderboardCacheStore,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    private val sut: SubmissionUpdatedEventListener,
-) : FunSpec({
+class SubmissionUpdatedEventListenerTest :
+    FunSpec({
+        val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
+        val buildLeaderboardCellInternalUseCase = mockk<BuildLeaderboardCellInternalUseCase>(relaxed = true)
+        val leaderboardCacheStore = mockk<LeaderboardCacheStore>(relaxed = true)
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+
+        val sut =
+            SubmissionUpdatedEventListener(
+                submissionRepository = submissionRepository,
+                buildLeaderboardCellInternalUseCase = buildLeaderboardCellInternalUseCase,
+                broadcastProducer = broadcastProducer,
+                leaderboardCacheStore = leaderboardCacheStore,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -68,7 +65,7 @@ class SubmissionUpdatedEventListenerTest(
                 )
             } returns leaderboardCell
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
             verify { broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
@@ -91,9 +88,7 @@ class SubmissionUpdatedEventListenerTest(
             }
             verify {
                 broadcastProducer.produce(
-                    ContestantDashboardBroadcastRoom(
-                        submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
+                    ContestantDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify {
@@ -111,10 +106,7 @@ class SubmissionUpdatedEventListenerTest(
                     StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
-
-            verify {
-                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
-            }
+            verify { leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell) }
         }
 
         test("should not produce to submission topic and leaderboard cell topic if contest is frozen") {
@@ -145,14 +137,14 @@ class SubmissionUpdatedEventListenerTest(
                 )
             } returns leaderboardCell
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
-            verify(
-                exactly = 0,
-            ) { broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
-            verify(
-                exactly = 0,
-            ) { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission)) }
+            verify(exactly = 0) {
+                broadcastProducer.produce(ContestantDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+            }
+            verify(exactly = 0) {
+                broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
+            }
             verify(exactly = 0) {
                 broadcastProducer.produce(
                     AdminDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
@@ -160,9 +152,7 @@ class SubmissionUpdatedEventListenerTest(
             }
             verify(exactly = 0) {
                 broadcastProducer.produce(
-                    ContestantDashboardBroadcastRoom(
-                        submission.contest.id,
-                    ).buildLeaderboardUpdatedEvent(leaderboardCell),
+                    ContestantDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
             verify(exactly = 0) {
@@ -180,8 +170,6 @@ class SubmissionUpdatedEventListenerTest(
                     StaffDashboardBroadcastRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
                 )
             }
-            verify(exactly = 0) {
-                leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
-            }
+            verify(exactly = 0) { leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell) }
         }
     })

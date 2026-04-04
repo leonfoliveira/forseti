@@ -2,13 +2,13 @@ package com.forsetijudge.core.domain.event
 
 import java.util.UUID
 
-abstract class ExecutionEvent : BusinessEvent() {
+interface ExecutionEvent : BusinessEvent {
     /**
      * Event published when an execution is created
      *
-     * @param execution the created execution
+     * @param executionId the created execution
      */
     class Created(
         val executionId: UUID,
-    ) : ExecutionEvent()
+    ) : ExecutionEvent
 }

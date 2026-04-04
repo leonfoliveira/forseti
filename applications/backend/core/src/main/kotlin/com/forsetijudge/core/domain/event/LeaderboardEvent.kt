@@ -3,24 +3,24 @@ package com.forsetijudge.core.domain.event
 import java.time.OffsetDateTime
 import java.util.UUID
 
-abstract class LeaderboardEvent : BusinessEvent() {
+interface LeaderboardEvent : BusinessEvent {
     /**
      * Event triggered when a contest's leaderboard is frozen.
      *
-     * @property contest The contest whose leaderboard was frozen.
+     * @property contestId The contest whose leaderboard was frozen.
      */
     class Frozen(
         val contestId: UUID,
-    ) : LeaderboardEvent()
+    ) : LeaderboardEvent
 
     /**
      * Event triggered when a contest's leaderboard is unfrozen.
      *
-     * @property contest The contest whose leaderboard was unfrozen.
+     * @property contestId The contest whose leaderboard was unfrozen.
      * @property frozenAt The timestamp when the leaderboard was frozen.
      */
     class Unfrozen(
         val contestId: UUID,
         val frozenAt: OffsetDateTime,
-    ) : LeaderboardEvent()
+    ) : LeaderboardEvent
 }

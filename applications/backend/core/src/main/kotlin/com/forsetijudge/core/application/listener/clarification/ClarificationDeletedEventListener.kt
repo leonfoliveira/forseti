@@ -16,14 +16,8 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ClarificationDeletedEventListener(
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<ClarificationEvent.Deleted>() {
-    @TransactionalEventListener(ClarificationEvent.Deleted::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: ClarificationEvent.Deleted) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: ClarificationEvent.Deleted) {
+) : BusinessEventListener<ClarificationEvent.Deleted> {
+    override fun handle(event: ClarificationEvent.Deleted) {
         broadcastProducer.produce(AdminDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
         broadcastProducer.produce(ContestantDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
         broadcastProducer.produce(GuestDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))

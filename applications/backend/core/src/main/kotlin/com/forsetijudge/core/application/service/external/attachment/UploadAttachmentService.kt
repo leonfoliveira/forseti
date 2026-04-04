@@ -8,7 +8,7 @@ import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.domain.event.AttachmentsEvent
+import com.forsetijudge.core.domain.event.AttachmentEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -87,7 +87,7 @@ class UploadAttachmentService(
         logger.info("Uploading ${command.bytes.size} bytes")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
+        applicationEventPublisher.publishEvent(AttachmentEvent.Uploaded(attachment.id))
 
         logger.info("Attachment uploaded successfully with id = ${attachment.id}")
         return attachment.toResponseBodyDTO() to command.bytes

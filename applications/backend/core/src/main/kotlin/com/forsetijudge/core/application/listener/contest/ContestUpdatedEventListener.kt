@@ -6,22 +6,13 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ContestUpdatedEventListener(
     private val contestRepository: ContestRepository,
     private val autoFreezeJobScheduler: AutoFreezeJobScheduler,
-) : BusinessEventListener<ContestEvent.Updated>() {
-    @TransactionalEventListener(ContestEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: ContestEvent.Updated) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: ContestEvent.Updated) {
+) : BusinessEventListener<ContestEvent.Updated> {
+    override fun handle(event: ContestEvent.Updated) {
         val contest =
             contestRepository.findById(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${event.contestId}")

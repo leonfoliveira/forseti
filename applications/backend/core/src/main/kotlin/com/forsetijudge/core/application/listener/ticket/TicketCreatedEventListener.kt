@@ -16,14 +16,8 @@ import org.springframework.transaction.event.TransactionalEventListener
 class TicketCreatedEventListener(
     private val ticketRepository: TicketRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<TicketEvent.Created>() {
-    @TransactionalEventListener(TicketEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: TicketEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: TicketEvent.Created) {
+) : BusinessEventListener<TicketEvent.Created> {
+    override fun handle(event: TicketEvent.Created) {
         val ticket =
             ticketRepository.findById(event.ticketId) ?: throw NotFoundException("Could not find ticket with id: ${event.ticketId}")
         val contest = ticket.contest

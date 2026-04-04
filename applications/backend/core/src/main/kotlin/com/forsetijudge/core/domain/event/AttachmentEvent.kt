@@ -1,15 +1,14 @@
 package com.forsetijudge.core.domain.event
 
-import org.springframework.context.ApplicationEvent
 import java.util.UUID
 
-object AttachmentsEvent {
+interface AttachmentEvent {
     /**
      * Event published when an attachment is uploaded
      *
-     * @param attachment the uploaded attachment
+     * @param attachmentId the uploaded attachment
      */
     class Uploaded(
         val attachmentId: UUID,
-    ) : ApplicationEvent(Any())
+    ) : AttachmentEvent
 }

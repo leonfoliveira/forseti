@@ -1,6 +1,5 @@
 package com.forsetijudge.api.application.listener
 
-import com.forsetijudge.core.application.listener.ApplicationEventListener
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member

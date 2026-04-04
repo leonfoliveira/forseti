@@ -11,33 +11,31 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ContestRepository
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.submission.FindAllSubmissionsByContestSinceLastFreezeInternalUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 import java.time.OffsetDateTime
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [LeaderboardUnfrozenEventListener::class])
-class LeaderboardUnfrozenEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val contestRepository: ContestRepository,
-    @MockkBean(relaxed = true)
-    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
-    @MockkBean(relaxed = true)
-    private val findAllSubmissionsByContestSinceLastFreezeInternalUseCase: FindAllSubmissionsByContestSinceLastFreezeInternalUseCase,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    private val sut: LeaderboardUnfrozenEventListener,
-) : FunSpec({
+class LeaderboardUnfrozenEventListenerTest :
+    FunSpec({
+        val contestRepository = mockk<ContestRepository>(relaxed = true)
+        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
+        val findAllSubmissionsByContestSinceLastFreezeInternalUseCase =
+            mockk<FindAllSubmissionsByContestSinceLastFreezeInternalUseCase>(relaxed = true)
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+
+        val sut =
+            LeaderboardUnfrozenEventListener(
+                contestRepository = contestRepository,
+                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
+                findAllSubmissionsByContestSinceLastFreezeInternalUseCase = findAllSubmissionsByContestSinceLastFreezeInternalUseCase,
+                broadcastProducer = broadcastProducer,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -53,7 +51,7 @@ class LeaderboardUnfrozenEventListenerTest(
                 leaderboard
             every { findAllSubmissionsByContestSinceLastFreezeInternalUseCase.execute(any()) } returns frozenSubmissions
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard)) }
             verify {

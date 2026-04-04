@@ -19,14 +19,8 @@ import org.springframework.transaction.event.TransactionalEventListener
 class AnnouncementCreatedEventListener(
     private val announcementRepository: AnnouncementRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<AnnouncementEvent.Created>() {
-    @TransactionalEventListener(AnnouncementEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: AnnouncementEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: AnnouncementEvent.Created) {
+) : BusinessEventListener<AnnouncementEvent.Created> {
+    override fun handle(event: AnnouncementEvent.Created) {
         val announcement =
             announcementRepository.findById(event.announcementId)
                 ?: throw NotFoundException("Could not find announcement with id: ${event.announcementId}")

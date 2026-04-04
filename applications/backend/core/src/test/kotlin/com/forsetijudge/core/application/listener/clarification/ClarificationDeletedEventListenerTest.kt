@@ -8,23 +8,20 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.ContestantDash
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [ClarificationDeletedEventListener::class])
-class ClarificationDeletedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    private val sut: ClarificationDeletedEventListener,
-) : FunSpec({
+class ClarificationDeletedEventListenerTest :
+    FunSpec({
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+
+        val sut =
+            ClarificationDeletedEventListener(
+                broadcastProducer = broadcastProducer,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -34,7 +31,7 @@ class ClarificationDeletedEventListenerTest(
             val clarificationId = IdGenerator.getUUID()
             val event = ClarificationEvent.Deleted(contestId, clarificationId)
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify {
                 broadcastProducer.produce(

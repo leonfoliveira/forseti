@@ -12,28 +12,25 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [SubmissionCreatedEventListener::class])
-class SubmissionCreatedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val submissionRepository: SubmissionRepository,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    @MockkBean(relaxed = true)
-    private val submissionQueueProducer: SubmissionQueueProducer,
-    private val sut: SubmissionCreatedEventListener,
-) : FunSpec({
+class SubmissionCreatedEventListenerTest :
+    FunSpec({
+        val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+        val submissionQueueProducer = mockk<SubmissionQueueProducer>(relaxed = true)
+
+        val sut =
+            SubmissionCreatedEventListener(
+                submissionRepository = submissionRepository,
+                broadcastProducer = broadcastProducer,
+                submissionQueueProducer = submissionQueueProducer,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -43,7 +40,7 @@ class SubmissionCreatedEventListenerTest(
             val event = SubmissionEvent.Created(submission.id)
             every { submissionRepository.findById(submission.id) } returns submission
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify { broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
             verify {
@@ -54,10 +51,7 @@ class SubmissionCreatedEventListenerTest(
             verify { broadcastProducer.produce(GuestDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
             verify { broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
             verify { broadcastProducer.produce(StaffDashboardBroadcastRoom(submission.contest.id).buildSubmissionCreatedEvent(submission)) }
-
-            verify {
-                submissionQueueProducer.produce(submission)
-            }
+            verify { submissionQueueProducer.produce(submission) }
         }
 
         test("should not produce to submission queue if auto judge is disabled") {
@@ -68,7 +62,7 @@ class SubmissionCreatedEventListenerTest(
             val event = SubmissionEvent.Created(submission.id)
             every { submissionRepository.findById(submission.id) } returns submission
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify(exactly = 0) {
                 submissionQueueProducer.produce(submission)

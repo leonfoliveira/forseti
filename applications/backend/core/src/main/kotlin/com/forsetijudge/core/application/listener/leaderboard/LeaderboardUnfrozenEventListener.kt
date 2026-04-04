@@ -13,9 +13,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.submission.FindAllSubmissionsByContestSinceLastFreezeInternalUseCase
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class LeaderboardUnfrozenEventListener(
@@ -23,14 +20,8 @@ class LeaderboardUnfrozenEventListener(
     private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
     private val findAllSubmissionsByContestSinceLastFreezeInternalUseCase: FindAllSubmissionsByContestSinceLastFreezeInternalUseCase,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<LeaderboardEvent.Unfrozen>() {
-    @TransactionalEventListener(LeaderboardEvent.Unfrozen::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: LeaderboardEvent.Unfrozen) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: LeaderboardEvent.Unfrozen) {
+) : BusinessEventListener<LeaderboardEvent.Unfrozen> {
+    override fun handle(event: LeaderboardEvent.Unfrozen) {
         val contest =
             contestRepository.findById(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${event.contestId}")

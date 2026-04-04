@@ -11,14 +11,8 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Component
 class ContestDeletedEventListener(
     val autoFreezeJobScheduler: AutoFreezeJobScheduler,
-) : BusinessEventListener<ContestEvent.Deleted>() {
-    @TransactionalEventListener(ContestEvent.Deleted::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: ContestEvent.Deleted) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: ContestEvent.Deleted) {
+) : BusinessEventListener<ContestEvent.Deleted> {
+    override fun handle(event: ContestEvent.Deleted) {
         autoFreezeJobScheduler.cancel(event.contestId)
     }
 }
