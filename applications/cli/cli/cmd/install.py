@@ -33,10 +33,12 @@ def install_cmd(
     swarm = DockerSwarm()
     stack = DockerStack(swarm=swarm)
 
-    _install_certificates(stack)
-    _build_sandboxes(docker_client, sandboxes)
     _pull_stack_images(docker_client, stack)
-    _update_clamav_db(docker_client)
+    _build_sandboxes(docker_client, sandboxes)
+    if stack.config.get("global", {}).get("tls", "false") == "true":
+        _install_certificates(stack)
+    if stack.config.get("clamav", {}).get("enabled", "false") == "true":
+        _update_clamav_db(docker_client)
 
     console.print()
     console.print(Messages.success("Installation complete!"))
