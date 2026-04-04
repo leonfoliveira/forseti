@@ -128,22 +128,6 @@ services:
       - ./volumes/debezium/application.properties:/debezium/config/application.properties:ro
       - dev-debezium_data:/debezium/data
 
-  clamav:
-    container_name: dev-forseti-clamav
-    healthcheck:
-      test: ["CMD-SHELL", "echo 'PING' | nc -w 5 localhost 3310"]
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: clamav/clamav:1.5.2
-    networks:
-      - dev-forseti-network
-    ports:
-      - 3310:3310
-    profiles:
-      - infra
-
   migration:
     container_name: dev-forseti-migration
     entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
@@ -178,8 +162,7 @@ services:
         condition: service_completed_successfully
     environment:
       API_PORT: 8080
-      CLAMAV_HOST: clamav
-      CLAMAV_PORT: 3310
+      CLAMAV_ENABLED: "false"
       COOKIE_SECURE: "false"
       DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
@@ -253,8 +236,7 @@ services:
         condition: service_completed_successfully
     environment:
       API_URL: http://api:8080
-      CLAMAV_HOST: clamav
-      CLAMAV_PORT: 3310
+      CLAMAV_ENABLED: "false"
       DB_PASSWORD: forsetijudge
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti

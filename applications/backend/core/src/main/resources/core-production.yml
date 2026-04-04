@@ -54,6 +54,7 @@ spring:
   quartz:
     max-retries: 2
 clamav:
+  enabled: ${CLAMAV_ENABLED:true}
   host: ${CLAMAV_HOST:clamav}
   port: ${CLAMAV_PORT:3310}
 minio:
