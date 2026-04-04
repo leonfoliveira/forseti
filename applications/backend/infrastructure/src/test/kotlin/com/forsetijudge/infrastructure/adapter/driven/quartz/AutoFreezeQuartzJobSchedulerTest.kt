@@ -1,9 +1,10 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
 import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.infrastructure.adapter.driving.job.AutoFreezeQuartzJob
+import com.forsetijudge.infrastructure.adapter.driving.job.QueueableQuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
-import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AutoFreezeJobPayload
+import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessageBody
+import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.AutoFreezeQueueMessageBody
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -15,8 +16,15 @@ import java.time.OffsetDateTime
 class AutoFreezeQuartzJobSchedulerTest :
     FunSpec({
         val quartzJobScheduler = mockk<QuartzJobScheduler>(relaxed = true)
+        val exchange = "test-exchange"
+        val routingKey = "test-routing-key"
 
-        val sut = AutoFreezeQuartzJobScheduler(quartzJobScheduler)
+        val sut =
+            AutoFreezeQuartzJobScheduler(
+                quartzJobScheduler = quartzJobScheduler,
+                exchange = exchange,
+                routingKey = routingKey,
+            )
 
         beforeEach {
             clearAllMocks()
@@ -28,16 +36,20 @@ class AutoFreezeQuartzJobSchedulerTest :
 
             sut.schedule(contestId, freezeAt)
 
-            val messageSlot = slot<QuartzMessage<AutoFreezeJobPayload>>()
+            val messageSlot = slot<QuartzMessage<QueueableJobMessageBody>>()
             verify {
                 quartzJobScheduler.schedule(
-                    jobClass = AutoFreezeQuartzJob::class,
+                    jobClass = QueueableQuartzJob::class,
                     message = capture(messageSlot),
                     at = freezeAt,
                 )
             }
-            messageSlot.captured.id shouldBe "${AutoFreezeQuartzJobScheduler.JOB_ID_PREFIX}:$contestId"
-            messageSlot.captured.payload!!.contestId shouldBe contestId
+            val message = messageSlot.captured
+            message.id shouldBe "${AutoFreezeQuartzJobScheduler.JOB_ID_PREFIX}:$contestId"
+            message.body.exchange shouldBe exchange
+            message.body.routingKey shouldBe routingKey
+            val body = message.body.body as AutoFreezeQueueMessageBody
+            body.contestId shouldBe contestId
         }
 
         test("should cancel a job successfully") {

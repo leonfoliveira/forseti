@@ -1,9 +1,11 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
-import com.forsetijudge.infrastructure.adapter.driving.job.AutoFreezeQuartzJob
+import com.forsetijudge.infrastructure.adapter.driving.job.QueueableQuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
-import com.forsetijudge.infrastructure.adapter.dto.quartz.payload.AutoFreezeJobPayload
+import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessageBody
+import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.AutoFreezeQueueMessageBody
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -11,6 +13,10 @@ import java.util.UUID
 @Component
 class AutoFreezeQuartzJobScheduler(
     private val quartzJobScheduler: QuartzJobScheduler,
+    @Value("\${spring.rabbitmq.exchange.direct}")
+    private val exchange: String,
+    @Value("\${spring.rabbitmq.routing-key.auto-freeze-routing-key}")
+    private val routingKey: String,
 ) : AutoFreezeJobScheduler {
     companion object {
         const val JOB_ID_PREFIX = "contest-auto-freeze"
@@ -24,11 +30,16 @@ class AutoFreezeQuartzJobScheduler(
         val message =
             QuartzMessage(
                 id = id,
-                payload = AutoFreezeJobPayload(contestId = contestId),
+                body =
+                    QueueableJobMessageBody(
+                        exchange = exchange,
+                        routingKey = routingKey,
+                        body = AutoFreezeQueueMessageBody(contestId = contestId),
+                    ),
             )
 
         quartzJobScheduler.schedule(
-            jobClass = AutoFreezeQuartzJob::class,
+            jobClass = QueueableQuartzJob::class,
             message = message,
             at = freezeAt,
         )

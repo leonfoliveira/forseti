@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class SubmissionQueueRabbitMQProducer(
     private val rabbitMQProducer: RabbitMQProducer,
-    @Value("\${spring.rabbitmq.exchange.submission-exchange}")
+    @Value("\${spring.rabbitmq.exchange.direct}")
     private val exchange: String,
     @Value("\${spring.rabbitmq.routing-key.submission-routing-key}")
     private val routingKey: String,

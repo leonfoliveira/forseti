@@ -35,7 +35,7 @@ class QuartzJobSchedulerTest :
             val message =
                 QuartzMessage(
                     id = "test-id",
-                    payload = "test-payload",
+                    body = "test-body",
                 )
             val at = OffsetDateTime.now()
 
@@ -53,8 +53,7 @@ class QuartzJobSchedulerTest :
             jobDetailSlot.captured.key.name shouldBe message.id
             jobDetailSlot.captured.jobDataMap.getString("id") shouldBe message.id
             jobDetailSlot.captured.jobDataMap.getString("traceId") shouldBe message.traceId
-            jobDetailSlot.captured.jobDataMap.getString("payload") shouldBe objectMapper.writeValueAsString(message.payload)
-            jobDetailSlot.captured.jobDataMap.getInt("retries") shouldBe message.retries
+            jobDetailSlot.captured.jobDataMap.getString("body") shouldBe objectMapper.writeValueAsString(message.body)
             triggerSlot.captured
                 .first()
                 .key.name shouldBe message.id
@@ -71,7 +70,7 @@ class QuartzJobSchedulerTest :
             val message =
                 QuartzMessage(
                     id = "test-id",
-                    payload = "test-payload",
+                    body = "test-body",
                 )
             val interval = 10.seconds.toJavaDuration()
             val startAt = OffsetDateTime.now()
@@ -90,8 +89,7 @@ class QuartzJobSchedulerTest :
             jobDetailSlot.captured.key.name shouldBe message.id
             jobDetailSlot.captured.jobDataMap.getString("id") shouldBe message.id
             jobDetailSlot.captured.jobDataMap.getString("traceId") shouldBe message.traceId
-            jobDetailSlot.captured.jobDataMap.getString("payload") shouldBe objectMapper.writeValueAsString(message.payload)
-            jobDetailSlot.captured.jobDataMap.getInt("retries") shouldBe message.retries
+            jobDetailSlot.captured.jobDataMap.getString("body") shouldBe objectMapper.writeValueAsString(message.body)
             triggerSlot.captured
                 .first()
                 .key.name shouldBe message.id

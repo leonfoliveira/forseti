@@ -29,12 +29,17 @@ spring:
     password: ${RABBITMQ_PASSWORD} # No default for security reasons
     virtual-host: ${RABBITMQ_VHOST:/}
     exchange:
-      submission-exchange: ${RABBITMQ_SUBMISSION_EXCHANGE:submission-exchange}
-      websocket-exchange: ${RABBITMQ_WEBSOCKET_EXCHANGE:websocket-exchange}
+      direct: ${RABBITMQ_DIRECT_EXCHANGE:forseti-direct-exchange}
+      fanout: ${RABBITMQ_FANOUT_EXCHANGE:forseti-fanout-exchange}
     queue:
+      attachment-bucket-cleaner-queue: ${RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE:attachment-bucket-cleaner-queue}
+      auto-freeze-queue: ${RABBITMQ_AUTO_FREEZE_QUEUE:auto-freeze-queue}
       submission-queue: ${RABBITMQ_SUBMISSION_QUEUE:submission-queue}
       submission-failed-queue: ${RABBITMQ_SUBMISSION_FAILED_QUEUE:submission-failed-queue}
     routing-key:
+      attachment-bucket-cleaner-routing-key: ${RABBITMQ_ATTACHMENT_BUCKET_CLEANER_ROUTING_KEY:attachment-bucket-cleaner-routing-key}
+      auto-freeze-routing-key: ${RABBITMQ_AUTO_FREEZE_ROUTING_KEY:auto-freeze-routing-key}
+      broadcast-event-routing-key: ${RABBITMQ_BROADCAST_EVENT_ROUTING_KEY:broadcast-event-routing-key}
       submission-routing-key: ${RABBITMQ_SUBMISSION_ROUTING_KEY:submission-routing-key}
     listener:
       simple:

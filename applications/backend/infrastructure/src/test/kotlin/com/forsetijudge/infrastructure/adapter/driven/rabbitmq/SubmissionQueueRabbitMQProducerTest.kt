@@ -18,7 +18,12 @@ class SubmissionQueueRabbitMQProducerTest :
         val exchange = "test-exchange"
         val routingKey = "test-routing-key"
 
-        val sut = SubmissionQueueRabbitMQProducer(rabbitMQProducer, exchange, routingKey)
+        val sut =
+            SubmissionQueueRabbitMQProducer(
+                rabbitMQProducer = rabbitMQProducer,
+                exchange = exchange,
+                routingKey = routingKey,
+            )
 
         beforeEach {
             clearAllMocks()
