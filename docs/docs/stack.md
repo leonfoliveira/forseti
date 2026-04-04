@@ -122,3 +122,12 @@ Telemetry can be disabled by setting `global.telemetry` to `false` in `stack.con
 - **Memory limit (sum):** 2176M (≈2.13 GB)
 
 > These values are the sum of the default reservations/limits for Alloy, cAdvisor, Grafana, Loki, Node Exporter, PostgreSQL Exporter, Redis Exporter and Tempo. Actual savings depend on which observability services are enabled in `stack.conf` and any custom resource values you set.
+
+### Disable ClamAV
+
+ClamAV can be disabled by setting `clamav.enabled` to `false` in `stack.conf`. This will remove the ClamAV service from the stack and disable virus scanning for attachments. Disabling ClamAV can drastically reduce resource usage and simplify the deployment, but it also means that uploaded files will not be scanned for malware, which could pose a security risk. The default resources saved by disabling ClamAV are:
+
+- **CPU reservation (sum):** 0.5 cores
+- **CPU limit (sum):** 1.0 cores
+- **Memory reservation (sum):** 1024M (≈1 GB)
+- **Memory limit (sum):** 2048M (≈2 GB)

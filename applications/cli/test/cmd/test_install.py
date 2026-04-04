@@ -23,7 +23,8 @@ class TestInstall:
     def mock_docker_stack(self):
         with patch(f"{PACKAGE}.DockerStack") as mock_docker_stack:
             mock_stack = mock_docker_stack.return_value
-            mock_stack.config = {"global": {"domain": "example.com"}}
+            mock_stack.config = {"global": {
+                "domain": "example.com", "tls": "true"}, "clamav": {"enabled": "true"}}
             mock_stack.stack_config = {
                 "services": {
                     "api": {"image": "forseti/api:latest"},

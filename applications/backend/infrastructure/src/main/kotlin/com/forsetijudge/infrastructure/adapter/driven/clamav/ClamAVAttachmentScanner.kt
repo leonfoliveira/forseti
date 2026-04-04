@@ -2,11 +2,13 @@ package com.forsetijudge.infrastructure.adapter.driven.clamav
 
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.port.driven.bucket.AttachmentScanner
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.stereotype.Component
 import xyz.capybara.clamav.ClamavClient
 import xyz.capybara.clamav.commands.scan.result.ScanResult
 
 @Component
+@ConditionalOnProperty(name = ["clamav.enabled"], havingValue = "true", matchIfMissing = true)
 class ClamAVAttachmentScanner(
     private val client: ClamavClient,
 ) : AttachmentScanner {
