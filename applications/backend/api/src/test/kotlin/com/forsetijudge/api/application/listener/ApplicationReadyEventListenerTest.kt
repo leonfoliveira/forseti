@@ -27,8 +27,6 @@ class ApplicationReadyEventListenerTest(
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @Value("\${security.root.password}")
     private val rootPassword: String,
-    @Value("\${jobs.attachment-bucket-cleaner.id}")
-    private val attachmentBucketCleanerJobId: String,
     @Value("\${jobs.attachment-bucket-cleaner.interval}")
     private val attachmentBucketCleanerJobInterval: String,
     private val sut: ApplicationReadyEventListener,
@@ -36,7 +34,7 @@ class ApplicationReadyEventListenerTest(
 
         test("should update root password on application ready") {
             val event = mockk<ApplicationReadyEvent>(relaxed = true)
-            sut.onApplicationEvent(event)
+            sut.onApplicationReady(event)
 
             verify {
                 updateMemberPasswordUseCase.execute(
@@ -61,7 +59,7 @@ class ApplicationReadyEventListenerTest(
             every { authenticateSystemUseCase.execute(any()) } returns Unit
 
             shouldNotThrow<ObjectOptimisticLockingFailureException> {
-                sut.onApplicationEvent(event)
+                sut.onApplicationReady(event)
             }
         }
 
@@ -74,7 +72,7 @@ class ApplicationReadyEventListenerTest(
                     ).milliseconds
 
             val event = mockk<ApplicationReadyEvent>(relaxed = true)
-            sut.onApplicationEvent(event)
+            sut.onApplicationReady(event)
 
             verify {
                 attachmentBucketCleanerJobScheduler.schedule(

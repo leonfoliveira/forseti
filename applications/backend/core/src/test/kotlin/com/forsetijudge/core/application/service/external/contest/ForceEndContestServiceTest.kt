@@ -11,6 +11,7 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -20,20 +21,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class ForceEndContestServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             ForceEndContestService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val now = OffsetDateTime.now()
@@ -108,6 +108,10 @@ class ForceEndContestServiceTest :
 
             result shouldBe contest.toWithMembersAndProblemsResponseBodyDTO()
             contest.endAt shouldBe now
-            verify { applicationEventPublisher.publishEvent(match<ContestEvent.Updated> { it.contestId == contest.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is ContestEvent.Updated && it.event.contestId == contest.id },
+                )
+            }
         }
     })

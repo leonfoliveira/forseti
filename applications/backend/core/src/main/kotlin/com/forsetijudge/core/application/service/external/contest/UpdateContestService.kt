@@ -19,10 +19,10 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import jakarta.validation.Valid
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -38,7 +38,7 @@ class UpdateContestService(
     private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -131,7 +131,11 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Updated(contest.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                ContestEvent.Updated(contest.id),
+            ),
+        )
 
         logger.info("Contest updated successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

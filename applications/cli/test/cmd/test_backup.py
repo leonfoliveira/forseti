@@ -44,6 +44,7 @@ class TestBackup:
 
         # Verify that docker containers.run was called for each volume
         expected_volumes = [
+            "forseti_debezium_data",
             "forseti_grafana_data",
             "forseti_minio_data",
             "forseti_postgres_data",
@@ -86,6 +87,7 @@ class TestBackup:
         result = runner.invoke(app, ["backup"])
 
         expected_volumes = [
+            "forseti_debezium_data",
             "forseti_grafana_data",
             "forseti_minio_data",
             "forseti_postgres_data",

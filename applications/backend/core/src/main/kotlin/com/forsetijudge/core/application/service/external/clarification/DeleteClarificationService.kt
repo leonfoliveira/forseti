@@ -9,7 +9,7 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
-import org.springframework.context.ApplicationEventPublisher
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class DeleteClarificationService(
     private val clarificationRepository: ClarificationRepository,
     private val memberRepository: MemberRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : DeleteClarificationUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -42,7 +42,11 @@ class DeleteClarificationService(
         clarification.deletedAt = ExecutionContext.get().startedAt
 
         clarificationRepository.save(clarification)
-        applicationEventPublisher.publishEvent(ClarificationEvent.Deleted(contextContestId, clarification.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                ClarificationEvent.Deleted(contextContestId, clarification.id),
+            ),
+        )
 
         logger.info("Clarification deleted successfully")
     }

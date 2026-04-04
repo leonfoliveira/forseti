@@ -11,10 +11,10 @@ import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import jakarta.validation.Valid
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -25,7 +25,7 @@ class CreateAnnouncementService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val announcementRepository: AnnouncementRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : CreateAnnouncementUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -56,7 +56,9 @@ class CreateAnnouncementService(
                 text = command.text,
             )
         announcementRepository.save(announcement)
-        applicationEventPublisher.publishEvent(AnnouncementEvent.Created(announcement.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(AnnouncementEvent.Created(announcement.id)),
+        )
 
         logger.info("Announcement created successfully with id = ${announcement.id}")
         return announcement.toResponseBodyDTO()

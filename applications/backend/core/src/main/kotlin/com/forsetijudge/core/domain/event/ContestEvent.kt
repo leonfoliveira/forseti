@@ -2,31 +2,31 @@ package com.forsetijudge.core.domain.event
 
 import java.util.UUID
 
-abstract class ContestEvent : BusinessEvent() {
+interface ContestEvent : BusinessEvent {
     /**
      * Event triggered when a contest is created.
      *
-     * @property contest The contest that was created.
+     * @property contestId The contest that was created.
      */
-    class Created(
+    data class Created(
         val contestId: UUID,
-    ) : ContestEvent()
+    ) : ContestEvent
 
     /**
      * Event triggered when a contest is updated.
      *
-     * @property contest The contest that was updated.
+     * @property contestId The contest that was updated.
      */
-    class Updated(
+    data class Updated(
         val contestId: UUID,
-    ) : ContestEvent()
+    ) : ContestEvent
 
     /**
      * Event triggered when a contest is deleted.
      *
-     * @property contest The contest that was deleted.
+     * @property contestId The contest that was deleted.
      */
-    class Deleted(
+    data class Deleted(
         val contestId: UUID,
-    ) : ContestEvent()
+    ) : ContestEvent
 }

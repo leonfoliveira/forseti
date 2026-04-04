@@ -2,6 +2,7 @@ name: forseti-dev
 services:
   postgres:
     container_name: dev-forseti-postgres
+    command: postgres -c wal_level=logical
     environment:
       POSTGRES_USER: forseti
       POSTGRES_PASSWORD: forsetijudge
@@ -92,6 +93,41 @@ services:
       - ./volumes/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
       - ./volumes/rabbitmq/definitions.template.json:/etc/rabbitmq/definitions.template.json:ro
 
+  debezium:
+    container_name: dev-forseti-debezuim
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: forseti
+      DB_PASSWORD: forsetijudge
+      DB_NAME: forseti
+      QUARKUS_HEALTH_ENABLED: "true"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: forseti
+      RABBITMQ_PASSWORD: forsetijudge
+      RABBITMQ_OUTBOX_EVENT_EXCHANGE: direct-exchange
+      RABBITMQ_OUTBOX_EVENT_ROUTING_KEY: outbox-event-routing-key
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/q/health/live"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: debezium/server:2.7.3.Final
+    networks:
+      - dev-forseti-network
+    profiles:
+      - infra
+    volumes:
+      - ./volumes/debezium/application.properties:/debezium/config/application.properties:ro
+      - dev-debezium_data:/debezium/data
+
   clamav:
     container_name: dev-forseti-clamav
     healthcheck:
@@ -162,10 +198,17 @@ services:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
+      RABBITMQ_DIRECT_EXCHANGE: direct-exchange
+      RABBITMQ_FANOUT_EXCHANGE: fanout-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE: attachment-bucket-cleaner-queue
+      RABBITMQ_AUTO_FREEZE_QUEUE: auto-freeze-queue
+      RABBITMQ_OUTBOX_EVENT_QUEUE: outbox-event-queue
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
-      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
-      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_ROUTING_KEY: attachment-bucket-cleaner-routing-key
+      RABBITMQ_AUTO_FREEZE_ROUTING_KEY: auto-freeze-routing-key
+      RABBITMQ_BROADCAST_EVENT_ROUTING_KEY: broadcast-event-routing-key
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: forsetijudge
@@ -230,10 +273,17 @@ services:
       RABBITMQ_USER: forseti
       RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
+      RABBITMQ_DIRECT_EXCHANGE: direct-exchange
+      RABBITMQ_FANOUT_EXCHANGE: fanout-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE: attachment-bucket-cleaner-queue
+      RABBITMQ_AUTO_FREEZE_QUEUE: auto-freeze-queue
+      RABBITMQ_OUTBOX_EVENT_QUEUE: outbox-event-queue
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
-      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
-      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_ROUTING_KEY: attachment-bucket-cleaner-routing-key
+      RABBITMQ_AUTO_FREEZE_ROUTING_KEY: auto-freeze-routing-key
+      RABBITMQ_BROADCAST_EVENT_ROUTING_KEY: broadcast-event-routing-key
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: forsetijudge
@@ -299,3 +349,4 @@ volumes:
   dev-redis_data:
   dev-minio_data:
   dev-rabbitmq_data:
+  dev-debezium_data:

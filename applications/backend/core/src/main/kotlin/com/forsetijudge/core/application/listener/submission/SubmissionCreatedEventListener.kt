@@ -13,25 +13,16 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class SubmissionCreatedEventListener(
     private val submissionRepository: SubmissionRepository,
     private val broadcastProducer: BroadcastProducer,
     private val submissionQueueProducer: SubmissionQueueProducer,
-) : BusinessEventListener<SubmissionEvent.Created>() {
+) : BusinessEventListener<SubmissionEvent.Created> {
     private val logger = SafeLogger(this::class)
 
-    @TransactionalEventListener(SubmissionEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: SubmissionEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: SubmissionEvent.Created) {
+    override fun handle(event: SubmissionEvent.Created) {
         val submission =
             submissionRepository.findById(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")

@@ -19,6 +19,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -26,7 +27,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class CreateTicketExternalServiceTest :
@@ -35,17 +35,17 @@ class CreateTicketExternalServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val ticketRepository = mockk<TicketRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
         val objectMapper = jacksonObjectMapper()
 
         val sut =
             CreateTicketService(
-                contestRepository,
-                memberRepository,
-                ticketRepository,
-                submissionRepository,
-                applicationEventPublisher,
-                objectMapper,
+                contestRepository = contestRepository,
+                memberRepository = memberRepository,
+                ticketRepository = ticketRepository,
+                submissionRepository = submissionRepository,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                objectMapper = objectMapper,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -193,7 +193,11 @@ class CreateTicketExternalServiceTest :
                         "attachmentId" to attachmentId.toString(),
                     )
                 verify { ticketRepository.save(any()) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
+                verify {
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is TicketEvent.Created && it.event.ticketId == result.id },
+                    )
+                }
             }
         }
 
@@ -275,7 +279,11 @@ class CreateTicketExternalServiceTest :
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
                 verify { ticketRepository.save(any()) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
+                verify {
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is TicketEvent.Created && it.event.ticketId == result.id },
+                    )
+                }
             }
         }
 
@@ -357,7 +365,11 @@ class CreateTicketExternalServiceTest :
                         objectMapper.convertValue(command.properties, TechnicalSupportTicket.Properties::class.java),
                     )
                 verify { ticketRepository.save(any()) }
-                verify { applicationEventPublisher.publishEvent(match<TicketEvent.Created> { it.ticketId == result.id }) }
+                verify {
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is TicketEvent.Created && it.event.ticketId == result.id },
+                    )
+                }
             }
         }
     })

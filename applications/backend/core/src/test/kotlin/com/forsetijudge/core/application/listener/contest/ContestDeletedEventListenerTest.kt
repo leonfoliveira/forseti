@@ -3,23 +3,20 @@ package com.forsetijudge.core.application.listener.contest
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [ContestDeletedEventListener::class])
-class ContestDeletedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val autoFreezeJobScheduler: AutoFreezeJobScheduler,
-    private val sut: ContestDeletedEventListener,
-) : FunSpec({
+class ContestDeletedEventListenerTest :
+    FunSpec({
+        val autoFreezeJobScheduler = mockk<AutoFreezeJobScheduler>(relaxed = true)
+
+        val sut =
+            ContestDeletedEventListener(
+                autoFreezeJobScheduler = autoFreezeJobScheduler,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -28,12 +25,10 @@ class ContestDeletedEventListenerTest(
             val contestId = IdGenerator.getUUID()
             val event = ContestEvent.Deleted(contestId)
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify {
-                autoFreezeJobScheduler.cancel(
-                    contestId,
-                )
+                autoFreezeJobScheduler.cancel(contestId)
             }
         }
     })

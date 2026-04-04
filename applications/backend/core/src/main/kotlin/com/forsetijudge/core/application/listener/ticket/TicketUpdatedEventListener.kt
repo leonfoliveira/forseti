@@ -10,22 +10,13 @@ import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPriva
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.JudgePrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class TicketUpdatedEventListener(
     private val ticketRepository: TicketRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<TicketEvent.Updated>() {
-    @TransactionalEventListener(TicketEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: TicketEvent.Updated) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: TicketEvent.Updated) {
+) : BusinessEventListener<TicketEvent.Updated> {
+    override fun handle(event: TicketEvent.Updated) {
         val ticket =
             ticketRepository.findById(event.ticketId) ?: throw NotFoundException("Could not find ticket with id: ${event.ticketId}")
         val contest = ticket.contest

@@ -10,9 +10,9 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.ResetSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class ResetSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val memberRepository: MemberRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : ResetSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -46,8 +46,16 @@ class ResetSubmissionService(
         submission.answer = null
 
         submissionRepository.save(submission)
-        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(submission.id))
-        applicationEventPublisher.publishEvent(SubmissionEvent.Reset(submission.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                SubmissionEvent.Updated(submission.id),
+            ),
+        )
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                SubmissionEvent.Reset(submission.id),
+            ),
+        )
 
         logger.info("Submission reset successfully")
         return submission.toWithCodeAndExecutionResponseBodyDTO()

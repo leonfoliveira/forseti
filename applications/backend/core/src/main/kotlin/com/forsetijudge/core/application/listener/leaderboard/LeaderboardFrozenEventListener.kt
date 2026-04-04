@@ -11,22 +11,13 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class LeaderboardFrozenEventListener(
     private val contestRepository: ContestRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<LeaderboardEvent.Frozen>() {
-    @TransactionalEventListener(LeaderboardEvent.Frozen::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: LeaderboardEvent.Frozen) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: LeaderboardEvent.Frozen) {
+) : BusinessEventListener<LeaderboardEvent.Frozen> {
+    override fun handle(event: LeaderboardEvent.Frozen) {
         val contest =
             contestRepository.findById(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${event.contestId}")

@@ -10,26 +10,23 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [ClarificationCreatedEventListener::class])
-class ClarificationCreatedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val clarificationRepository: ClarificationRepository,
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    private val sut: ClarificationCreatedEventListener,
-) : FunSpec({
+class ClarificationCreatedEventListenerTest :
+    FunSpec({
+        val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+
+        val sut =
+            ClarificationCreatedEventListener(
+                clarificationRepository = clarificationRepository,
+                broadcastProducer = broadcastProducer,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -39,7 +36,7 @@ class ClarificationCreatedEventListenerTest(
             val event = ClarificationEvent.Created(clarification.id)
             every { clarificationRepository.findById(clarification.id) } returns clarification
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify {
                 broadcastProducer.produce(
@@ -74,7 +71,7 @@ class ClarificationCreatedEventListenerTest(
             val event = ClarificationEvent.Created(clarification.id)
             every { clarificationRepository.findById(clarification.id) } returns clarification
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify {
                 broadcastProducer.produce(

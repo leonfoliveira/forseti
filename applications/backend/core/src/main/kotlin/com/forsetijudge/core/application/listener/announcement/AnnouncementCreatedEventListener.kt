@@ -11,22 +11,13 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class AnnouncementCreatedEventListener(
     private val announcementRepository: AnnouncementRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<AnnouncementEvent.Created>() {
-    @TransactionalEventListener(AnnouncementEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: AnnouncementEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: AnnouncementEvent.Created) {
+) : BusinessEventListener<AnnouncementEvent.Created> {
+    override fun handle(event: AnnouncementEvent.Created) {
         val announcement =
             announcementRepository.findById(event.announcementId)
                 ?: throw NotFoundException("Could not find announcement with id: ${event.announcementId}")

@@ -8,7 +8,6 @@ import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.domain.event.AttachmentsEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
@@ -21,7 +20,6 @@ import com.forsetijudge.core.port.driving.usecase.external.attachment.UploadAtta
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
 import jakarta.validation.Valid
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -34,7 +32,6 @@ class UploadAttachmentService(
     private val memberRepository: MemberRepository,
     private val attachmentScanner: AttachmentScanner,
     private val attachmentBucket: AttachmentBucket,
-    private val applicationEventPublisher: ApplicationEventPublisher,
 ) : UploadAttachmentUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -87,7 +84,6 @@ class UploadAttachmentService(
         logger.info("Uploading ${command.bytes.size} bytes")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
 
         logger.info("Attachment uploaded successfully with id = ${attachment.id}")
         return attachment.toResponseBodyDTO() to command.bytes

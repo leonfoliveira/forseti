@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.CreateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -22,20 +23,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class CreateContestServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             CreateContestService(
                 memberRepository = memberRepository,
                 contestRepository = contestRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -98,10 +98,8 @@ class CreateContestServiceTest :
                 val contest = contestSlot.captured
                 result shouldBe contest.toResponseBodyDTO()
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ContestEvent.Created> {
-                            it.contestId == contest.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ContestEvent.Created && it.event.contestId == contest.id },
                     )
                 }
             }

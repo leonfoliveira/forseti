@@ -34,6 +34,7 @@ spring:
     queue:
       attachment-bucket-cleaner: ${RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE:attachment-bucket-cleaner-queue}
       auto-freeze: ${RABBITMQ_AUTO_FREEZE_QUEUE:auto-freeze-queue}
+      outbox-event: ${RABBITMQ_OUTBOX_EVENT_QUEUE:outbox-event-queue}
       submission: ${RABBITMQ_SUBMISSION_QUEUE:submission-queue}
       submission-failed: ${RABBITMQ_SUBMISSION_FAILED_QUEUE:submission-failed-queue}
     routing-key:

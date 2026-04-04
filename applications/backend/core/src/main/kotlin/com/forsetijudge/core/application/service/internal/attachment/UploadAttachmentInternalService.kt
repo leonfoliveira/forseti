@@ -3,7 +3,7 @@ package com.forsetijudge.core.application.service.internal.attachment
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.domain.event.AttachmentsEvent
+import com.forsetijudge.core.domain.event.AttachmentEvent
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
@@ -38,7 +38,7 @@ class UploadAttachmentInternalService(
         logger.info("Uploading ${command.bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
         attachmentBucket.upload(attachment, command.bytes)
-        applicationEventPublisher.publishEvent(AttachmentsEvent.Uploaded(attachment.id))
+        applicationEventPublisher.publishEvent(AttachmentEvent.Uploaded(attachment.id))
 
         return attachment to command.bytes
     }

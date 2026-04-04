@@ -23,6 +23,7 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -32,7 +33,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class UpdateContestServiceTest :
@@ -43,7 +43,7 @@ class UpdateContestServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             UpdateContestService(
@@ -53,7 +53,7 @@ class UpdateContestServiceTest :
                 memberRepository = memberRepository,
                 hasher = hasher,
                 testCasesValidator = testCasesValidator,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val now = OffsetDateTime.now()
@@ -478,10 +478,8 @@ class UpdateContestServiceTest :
                 verify { testCasesValidator.validate(testCasesAttachment) }
                 verify { contestRepository.save(contest) }
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ContestEvent.Updated> {
-                            it.contestId == contest.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ContestEvent.Updated && it.event.contestId == contest.id },
                     )
                 }
             }

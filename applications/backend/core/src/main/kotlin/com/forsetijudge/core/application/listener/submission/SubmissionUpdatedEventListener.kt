@@ -15,9 +15,6 @@ import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class SubmissionUpdatedEventListener(
@@ -25,14 +22,8 @@ class SubmissionUpdatedEventListener(
     private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
     private val broadcastProducer: BroadcastProducer,
     private val leaderboardCacheStore: LeaderboardCacheStore,
-) : BusinessEventListener<SubmissionEvent.Updated>() {
-    @TransactionalEventListener(SubmissionEvent.Updated::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: SubmissionEvent.Updated) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: SubmissionEvent.Updated) {
+) : BusinessEventListener<SubmissionEvent.Updated> {
+    override fun handle(event: SubmissionEvent.Updated) {
         val submission =
             submissionRepository.findById(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")

@@ -2,22 +2,22 @@ package com.forsetijudge.core.domain.event
 
 import java.util.UUID
 
-abstract class TicketEvent : BusinessEvent() {
+interface TicketEvent : BusinessEvent {
     /**
      * Event triggered when a new ticket is created
      *
-     * @property ticket the created ticket
+     * @property ticketId the created ticket
      */
-    class Created(
+    data class Created(
         val ticketId: UUID,
-    ) : TicketEvent()
+    ) : TicketEvent
 
     /**
      * Event triggered when a ticket is updated
      *
-     * @property ticket the updated ticket
+     * @property ticketId the updated ticket
      */
-    class Updated(
+    data class Updated(
         val ticketId: UUID,
-    ) : TicketEvent()
+    ) : TicketEvent
 }

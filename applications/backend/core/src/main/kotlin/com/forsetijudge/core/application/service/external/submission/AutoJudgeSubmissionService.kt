@@ -12,7 +12,7 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
 import com.forsetijudge.core.port.driving.usecase.external.submission.AutoJudgeSubmissionUseCase
-import org.springframework.context.ApplicationEventPublisher
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,7 +21,7 @@ class AutoJudgeSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val memberRepository: MemberRepository,
     private val submissionRunner: SubmissionRunner,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : AutoJudgeSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -92,7 +92,11 @@ class AutoJudgeSubmissionService(
         postJudgeSubmission.answer = answer
         postJudgeSubmission.status = Submission.Status.JUDGED
         submissionRepository.save(postJudgeSubmission)
-        applicationEventPublisher.publishEvent(SubmissionEvent.Updated(postJudgeSubmission.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                SubmissionEvent.Updated(postJudgeSubmission.id),
+            ),
+        )
 
         logger.info("Submission judged")
     }

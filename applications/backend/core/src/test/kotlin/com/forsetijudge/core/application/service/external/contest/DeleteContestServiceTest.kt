@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -18,20 +19,19 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class DeleteContestServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             DeleteContestService(
                 memberRepository = memberRepository,
                 contestRepository = contestRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val now = OffsetDateTime.now()
@@ -100,10 +100,8 @@ class DeleteContestServiceTest :
                 contest.deletedAt shouldBe now
                 verify { contestRepository.save(contest) }
                 verify {
-                    applicationEventPublisher.publishEvent(
-                        match<ContestEvent.Deleted> {
-                            it.contestId == contest.id
-                        },
+                    publishOutboxEventInternalUseCase.execute(
+                        match { it.event is ContestEvent.Deleted && it.event.contestId == contest.id },
                     )
                 }
             }

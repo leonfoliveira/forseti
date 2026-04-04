@@ -16,6 +16,8 @@ The system stack is deployed using Docker Swarm, which allows for easy managemen
 
 **- ClamAV:** Antivirus service that scans attachments for malware and viruses before they are uploaded to MinIO. Ensures the security of stored files and prevents malicious content from being processed by the system.
 
+**- Debezium:** Change data capture service that monitors PostgreSQL for new outbox events and forwards them to RabbitMQ. Enables event-driven architecture and real-time processing of database changes.
+
 **- Grafana:** Visualization platform that provides dashboards and alerting for system monitoring. Displays metrics, logs, and traces collected from the entire stack in an intuitive web interface.
 
 **- Loki:** Log aggregation system that collects, stores, and indexes logs from all services. Provides efficient log querying and integrates seamlessly with Grafana for log visualization.
@@ -72,6 +74,7 @@ Each service has configurable resource limits and reservations defined in `stack
 | AutoJudge Autoscaler        | replicated | 0.05            | 0.1      | 64M                | 128M                 |
 | cAdvisor                    | replicated | 0.05            | 0.1      | 64M                | 128M                 |
 | ClamAV                      | global     | 0.5             | 1.0      | 1G                 | 2G                   |
+| Debezium                    | replicated | 0.1             | 0.25     | 128M               | 256M                 |
 | Grafana                     | replicated | 0.25            | 0.5      | 256M               | 512M                 |
 | Loki                        | replicated | 0.25            | 0.5      | 256M               | 512M                 |
 | Migration (job)             | replicated | 0.1             | 0.2      | 128M               | 256M                 |

@@ -27,27 +27,27 @@ abstract class RabbitMQConsumer<TBody : Serializable> {
     protected val logger = SafeLogger(this::class)
 
     open fun receiveMessage(message: Message) {
-        val id = UUID.fromString(message.messageProperties.headers["id"] as String)
-        val contestId = (message.messageProperties.headers["contest-id"] as? String)?.let { UUID.fromString(it) }
-        val body = objectMapper.readValue(message.body, getBodyType())
-
-        ExecutionContext.start(contestId = contestId)
-
-        logger.info("Received message with id: $id and body: $body")
-
-        authenticateSystemUseCase.execute(
-            AuthenticateSystemUseCase.Command(
-                login = memberLogin,
-                type = memberType,
-            ),
-        )
-
         try {
+            val id = (message.messageProperties.headers["id"] as? String)?.let { UUID.fromString(it) } ?: UUID.randomUUID()
+            val contestId = (message.messageProperties.headers["contest-id"] as? String)?.let { UUID.fromString(it) }
+            val body = objectMapper.readValue(message.body, getBodyType())
+
+            ExecutionContext.start(contestId = contestId)
+
+            logger.info("Received message with id: $id and body: $body")
+
+            authenticateSystemUseCase.execute(
+                AuthenticateSystemUseCase.Command(
+                    login = memberLogin,
+                    type = memberType,
+                ),
+            )
+
             logger.info("Starting to handle message")
             handleBody(body)
             logger.info("Finished handling message")
         } catch (ex: Exception) {
-            logger.error("Error thrown from consumer ${this.javaClass.simpleName}: ${ex.message}")
+            logger.error("Error thrown from consumer ${this.javaClass.simpleName}: ${ex.javaClass.name}: ${ex.message}")
             throw ex
         }
     }

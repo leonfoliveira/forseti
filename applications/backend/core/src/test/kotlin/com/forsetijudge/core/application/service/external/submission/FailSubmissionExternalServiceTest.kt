@@ -12,6 +12,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.FailSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -19,19 +20,18 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 
 class FailSubmissionExternalServiceTest :
     FunSpec({
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             FailSubmissionService(
                 submissionRepository = submissionRepository,
                 memberRepository = memberRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextMemberId = IdGenerator.getUUID()
@@ -80,7 +80,7 @@ class FailSubmissionExternalServiceTest :
             sut.execute(command)
 
             verify(exactly = 0) { submissionRepository.save(any()) }
-            verify(exactly = 0) { applicationEventPublisher.publishEvent(any()) }
+            verify(exactly = 0) { publishOutboxEventInternalUseCase.execute(any()) }
         }
 
         test("should fail submission successfully") {
@@ -94,6 +94,10 @@ class FailSubmissionExternalServiceTest :
 
             submission.status shouldBe Submission.Status.FAILED
             verify { submissionRepository.save(submission) }
-            verify { applicationEventPublisher.publishEvent(match<SubmissionEvent.Updated> { it.submissionId == submission.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is SubmissionEvent.Updated && it.event.submissionId == submission.id },
+                )
+            }
         }
     })

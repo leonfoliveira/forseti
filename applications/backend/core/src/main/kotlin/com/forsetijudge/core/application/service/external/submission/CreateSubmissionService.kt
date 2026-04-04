@@ -17,10 +17,10 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import jakarta.validation.Valid
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
@@ -34,7 +34,7 @@ class CreateSubmissionService(
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
-    private val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -85,7 +85,11 @@ class CreateSubmissionService(
             )
         submissionRepository.save(submission)
         frozenSubmissionRepository.save(submission.freeze())
-        applicationEventPublisher.publishEvent(SubmissionEvent.Created(submission.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                SubmissionEvent.Created(submission.id),
+            ),
+        )
 
         logger.info("Submission created")
         return submission.toWithCodeResponseBodyDTO()

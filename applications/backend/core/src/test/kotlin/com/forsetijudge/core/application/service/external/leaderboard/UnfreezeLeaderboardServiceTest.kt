@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -18,20 +19,19 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class UnfreezeLeaderboardServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             UnfreezeLeaderboardService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                applicationEventPublisher = applicationEventPublisher,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -96,6 +96,10 @@ class UnfreezeLeaderboardServiceTest :
             result shouldBe contest.toWithMembersAndProblemsResponseBodyDTO()
             contest.frozenAt shouldBe null
             verify { contestRepository.save(contest) }
-            verify { applicationEventPublisher.publishEvent(match<LeaderboardEvent.Unfrozen> { it.contestId == contest.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is LeaderboardEvent.Unfrozen && it.event.contestId == contest.id },
+                )
+            }
         }
     })

@@ -22,7 +22,6 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.time.OffsetDateTime
 
 class UploadAttachmentServiceTest :
@@ -32,7 +31,6 @@ class UploadAttachmentServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val attachmentScanner = mockk<AttachmentScanner>(relaxed = true)
         val attachmentBucket = mockk<AttachmentBucket>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 
         val sut =
             UploadAttachmentService(
@@ -41,7 +39,6 @@ class UploadAttachmentServiceTest :
                 memberRepository = memberRepository,
                 attachmentScanner = attachmentScanner,
                 attachmentBucket = attachmentBucket,
-                applicationEventPublisher = applicationEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()

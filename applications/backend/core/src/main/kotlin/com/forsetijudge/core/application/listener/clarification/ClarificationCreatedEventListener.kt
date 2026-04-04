@@ -12,22 +12,13 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.transaction.event.TransactionPhase
-import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ClarificationCreatedEventListener(
     private val clarificationRepository: ClarificationRepository,
     private val broadcastProducer: BroadcastProducer,
-) : BusinessEventListener<ClarificationEvent.Created>() {
-    @TransactionalEventListener(ClarificationEvent.Created::class, phase = TransactionPhase.AFTER_COMMIT)
-    override fun onApplicationEvent(event: ClarificationEvent.Created) {
-        super.onApplicationEvent(event)
-    }
-
-    @Transactional(readOnly = true)
-    override fun handleEvent(event: ClarificationEvent.Created) {
+) : BusinessEventListener<ClarificationEvent.Created> {
+    override fun handle(event: ClarificationEvent.Created) {
         val clarification =
             clarificationRepository.findById(event.clarificationId)
                 ?: throw NotFoundException("Could not find clarification with id: ${event.clarificationId}")

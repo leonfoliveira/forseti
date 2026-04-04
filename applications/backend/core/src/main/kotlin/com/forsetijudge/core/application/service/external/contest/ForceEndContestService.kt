@@ -9,9 +9,9 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceEndContestUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class ForceEndContestService(
     val contestRepository: ContestRepository,
     val memberRepository: MemberRepository,
-    val applicationEventPublisher: ApplicationEventPublisher,
+    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
 ) : ForceEndContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -44,7 +44,11 @@ class ForceEndContestService(
 
         contest.endAt = ExecutionContext.get().startedAt
         contestRepository.save(contest)
-        applicationEventPublisher.publishEvent(ContestEvent.Updated(contest.id))
+        publishOutboxEventInternalUseCase.execute(
+            PublishOutboxEventInternalUseCase.Command(
+                ContestEvent.Updated(contest.id),
+            ),
+        )
 
         logger.info("Contest force ended successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

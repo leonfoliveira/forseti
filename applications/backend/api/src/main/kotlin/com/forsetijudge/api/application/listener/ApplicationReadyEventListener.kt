@@ -1,10 +1,11 @@
 package com.forsetijudge.api.application.listener
 
-import com.forsetijudge.core.application.listener.ApplicationEventListener
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.job.AttachmentBucketCleanerJobScheduler
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.member.UpdateMemberPasswordUseCase
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.context.event.ApplicationReadyEvent
@@ -15,13 +16,18 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Component
 class ApplicationReadyEventListener(
+    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     private val updateMemberPasswordUseCase: UpdateMemberPasswordUseCase,
     private val attachmentBucketCleanerJobScheduler: AttachmentBucketCleanerJobScheduler,
+    @Value("\${security.member-login}")
+    private val memberLogin: String,
+    @Value("\${security.member-type}")
+    private val memberType: Member.Type,
     @Value("\${security.root.password}")
     private val rootPassword: String,
     @Value("\${jobs.attachment-bucket-cleaner.interval}")
     private val attachmentBucketCleanerJobInterval: String,
-) : ApplicationEventListener() {
+) {
     private val logger = SafeLogger(this::class)
 
     /**
@@ -30,7 +36,13 @@ class ApplicationReadyEventListener(
     @EventListener(ApplicationReadyEvent::class)
     @Suppress("unused")
     fun onApplicationReady(event: ApplicationReadyEvent) {
-        super.onApplicationEvent(event)
+        ExecutionContext.start()
+        authenticateSystemUseCase.execute(
+            AuthenticateSystemUseCase.Command(
+                login = memberLogin,
+                type = memberType,
+            ),
+        )
 
         try {
             updateMemberPasswordUseCase.execute(

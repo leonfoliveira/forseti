@@ -9,26 +9,23 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
-import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.context.ActiveProfiles
 
-@ActiveProfiles("test")
-@SpringBootTest(classes = [AnnouncementCreatedEventListener::class])
-class AnnouncementCreatedEventListenerTest(
-    @MockkBean(relaxed = true)
-    private val authenticateSystemUseCase: AuthenticateSystemUseCase,
-    @MockkBean(relaxed = true)
-    private val announcementRepository: AnnouncementRepository,
-    @MockkBean(relaxed = true)
-    private val broadcastProducer: BroadcastProducer,
-    private val sut: AnnouncementCreatedEventListener,
-) : FunSpec({
+class AnnouncementCreatedEventListenerTest :
+    FunSpec({
+        val announcementRepository = mockk<AnnouncementRepository>(relaxed = true)
+        val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
+
+        val sut =
+            AnnouncementCreatedEventListener(
+                announcementRepository = announcementRepository,
+                broadcastProducer = broadcastProducer,
+            )
+
         beforeEach {
             clearAllMocks()
         }
@@ -38,7 +35,7 @@ class AnnouncementCreatedEventListenerTest(
             val event = AnnouncementEvent.Created(announcement.id)
             every { announcementRepository.findById(announcement.id) } returns announcement
 
-            sut.onApplicationEvent(event)
+            sut.handle(event)
 
             verify {
                 broadcastProducer.produce(

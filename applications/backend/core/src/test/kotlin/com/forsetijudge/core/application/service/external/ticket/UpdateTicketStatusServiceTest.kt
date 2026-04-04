@@ -12,6 +12,7 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
+import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -20,20 +21,19 @@ import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.springframework.context.ApplicationEventPublisher
 import java.io.Serializable
 
 class UpdateTicketStatusServiceTest :
     FunSpec({
         val ticketRepository = mockk<TicketRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val applicationEventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
+        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
 
         val sut =
             UpdateTicketStatusService(
-                ticketRepository,
-                memberRepository,
-                applicationEventPublisher,
+                ticketRepository = ticketRepository,
+                memberRepository = memberRepository,
+                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -92,6 +92,10 @@ class UpdateTicketStatusServiceTest :
             result shouldBe ticket.toResponseBodyDTO()
             result.status shouldBe command.status
             verify { ticketRepository.save(any()) }
-            verify { applicationEventPublisher.publishEvent(match<TicketEvent.Updated> { it.ticketId == ticket.id }) }
+            verify {
+                publishOutboxEventInternalUseCase.execute(
+                    match { it.event is TicketEvent.Updated && it.event.ticketId == result.id },
+                )
+            }
         }
     })
