@@ -16,14 +16,14 @@ import org.springframework.amqp.core.Message
 import org.springframework.boot.test.context.SpringBootTest
 import java.io.Serializable
 
-@SpringBootTest(classes = [SocketIOFanoutRabbitMQConsumer::class, JacksonConfig::class])
-class SocketIOFanoutRabbitMQConsumerTest(
+@SpringBootTest(classes = [BroadcastEventRabbitMQConsumer::class, JacksonConfig::class])
+class BroadcastEventRabbitMQConsumerTest(
     @MockkBean(relaxed = true)
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     @MockkBean(relaxed = true)
     private val socketIOBroadcastEmitter: SocketIOBroadcastEmitter,
     private val objectMapper: ObjectMapper,
-    private val sut: SocketIOFanoutRabbitMQConsumer,
+    private val sut: BroadcastEventRabbitMQConsumer,
 ) : FunSpec({
 
         beforeEach {

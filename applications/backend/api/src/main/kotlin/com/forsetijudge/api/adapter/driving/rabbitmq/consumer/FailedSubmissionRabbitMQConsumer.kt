@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class FailedSubmissionRabbitMQConsumer(
     private val failSubmissionUseCase: FailSubmissionUseCase,
 ) : RabbitMQConsumer<SubmissionQueueMessageBody>() {
-    @RabbitListener(queues = ["\${spring.rabbitmq.queue.submission-failed-queue}"])
+    @RabbitListener(queues = ["\${spring.rabbitmq.queue.submission-failed}"])
     override fun receiveMessage(message: Message) {
         super.receiveMessage(message)
     }

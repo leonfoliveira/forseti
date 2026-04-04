@@ -27,10 +27,10 @@ spring:
       submission-exchange: submission-exchange
       websocket-exchange: websocket-exchange
     queue:
-      submission-queue: submission-queue
-      submission-failed-queue: submission-failed-queue
+      submission: submission
+      submission-failed: submission-failed
     routing-key:
-      submission-routing-key: submission-routing-key
+      submission: submission
   quartz:
     job-store-type: memory
     max-retries: 0

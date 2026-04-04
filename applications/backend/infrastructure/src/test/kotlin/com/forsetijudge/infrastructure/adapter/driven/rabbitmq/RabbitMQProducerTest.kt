@@ -15,7 +15,11 @@ class RabbitMQProducerTest :
         val rabbitTemplate = mockk<RabbitTemplate>(relaxed = true)
         val objectMapper = ObjectMapper()
 
-        val sut = RabbitMQProducer(rabbitTemplate, objectMapper)
+        val sut =
+            RabbitMQProducer(
+                rabbitTemplate = rabbitTemplate,
+                objectMapper = objectMapper,
+            )
 
         beforeTest {
             clearAllMocks()

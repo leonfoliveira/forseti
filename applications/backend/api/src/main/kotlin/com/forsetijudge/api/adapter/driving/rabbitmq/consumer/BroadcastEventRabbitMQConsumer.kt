@@ -12,7 +12,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.stereotype.Component
 
 @Component
-class SocketIOFanoutRabbitMQConsumer(
+class BroadcastEventRabbitMQConsumer(
     private val socketIOBroadcastEmitter: SocketIOBroadcastEmitter,
 ) : RabbitMQConsumer<BroadcastEventFanoutQueueMessageBody>() {
     @RabbitListener(
@@ -28,9 +28,10 @@ class SocketIOFanoutRabbitMQConsumer(
                     ),
                 exchange =
                     Exchange(
-                        value = "\${spring.rabbitmq.exchange.websocket-exchange}",
+                        value = "\${spring.rabbitmq.exchange.fanout}",
                         type = "fanout",
                     ),
+                key = ["\${spring.rabbitmq.routing-key.broadcast-event}"],
             ),
         ],
     )

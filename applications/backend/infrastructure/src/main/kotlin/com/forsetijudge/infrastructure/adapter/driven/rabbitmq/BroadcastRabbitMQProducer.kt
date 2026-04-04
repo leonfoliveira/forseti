@@ -12,13 +12,16 @@ import org.springframework.stereotype.Component
 class BroadcastRabbitMQProducer(
     private val rabbitMQProducer: RabbitMQProducer,
     private val broadCastEventRedisStore: BroadcastEventRedisStore,
-    @Value("\${spring.rabbitmq.exchange.websocket-exchange}")
+    @Value("\${spring.rabbitmq.exchange.fanout}")
     private val exchange: String,
+    @Value("\${spring.rabbitmq.routing-key.broadcast-event}")
+    private val routingKey: String,
 ) : BroadcastProducer {
     override fun produce(event: BroadcastEvent) {
         val message =
             RabbitMQMessage(
                 exchange = exchange,
+                routingKey = routingKey,
                 body =
                     BroadcastEventFanoutQueueMessageBody(
                         room = event.room,

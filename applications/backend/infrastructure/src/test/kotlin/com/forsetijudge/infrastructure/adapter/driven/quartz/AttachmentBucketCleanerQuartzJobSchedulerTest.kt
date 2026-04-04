@@ -1,7 +1,8 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
-import com.forsetijudge.infrastructure.adapter.driving.job.AttachmentBucketCleanerQuartzJob
+import com.forsetijudge.infrastructure.adapter.driving.job.QueueableQuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
+import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessageBody
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -17,8 +18,15 @@ import kotlin.time.toJavaDuration
 class AttachmentBucketCleanerQuartzJobSchedulerTest :
     FunSpec({
         val quartzJobScheduler = mockk<QuartzJobScheduler>(relaxed = true)
+        val exchange = "test-exchange"
+        val routingKey = "test-routing-key"
 
-        val sut = AttachmentBucketCleanerQuartzJobScheduler(quartzJobScheduler)
+        val sut =
+            AttachmentBucketCleanerQuartzJobScheduler(
+                quartzJobScheduler = quartzJobScheduler,
+                exchange = exchange,
+                routingKey = routingKey,
+            )
 
         val now = OffsetDateTime.now()
 
@@ -33,15 +41,18 @@ class AttachmentBucketCleanerQuartzJobSchedulerTest :
 
             sut.schedule(interval)
 
-            val messageSlot = slot<QuartzMessage<*>>()
+            val messageSlot = slot<QuartzMessage<QueueableJobMessageBody>>()
             verify {
                 quartzJobScheduler.schedule(
-                    jobClass = AttachmentBucketCleanerQuartzJob::class,
+                    jobClass = QueueableQuartzJob::class,
                     message = capture(messageSlot),
                     startAt = now.plus(interval.toJavaDuration()),
                     interval = interval.toJavaDuration(),
                 )
             }
-            messageSlot.captured.id shouldBe AttachmentBucketCleanerQuartzJobScheduler.ID
+            val message = messageSlot.captured
+            message.id shouldBe AttachmentBucketCleanerQuartzJobScheduler.ID
+            message.body.exchange shouldBe exchange
+            message.body.routingKey shouldBe routingKey
         }
     })

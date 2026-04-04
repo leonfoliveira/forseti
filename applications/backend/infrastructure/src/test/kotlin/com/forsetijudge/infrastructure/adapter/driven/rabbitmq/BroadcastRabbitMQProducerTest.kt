@@ -17,8 +17,15 @@ class BroadcastRabbitMQProducerTest :
         val rabbitMQProducer = mockk<RabbitMQProducer>(relaxed = true)
         val broadCastEventRedisStore = mockk<BroadcastEventRedisStore>(relaxed = true)
         val exchange = "test-exchange"
+        val routingKey = "test-routing-key"
 
-        val sut = BroadcastRabbitMQProducer(rabbitMQProducer, broadCastEventRedisStore, exchange)
+        val sut =
+            BroadcastRabbitMQProducer(
+                rabbitMQProducer = rabbitMQProducer,
+                broadCastEventRedisStore = broadCastEventRedisStore,
+                exchange = exchange,
+                routingKey = routingKey,
+            )
 
         beforeEach {
             clearAllMocks()
@@ -41,7 +48,7 @@ class BroadcastRabbitMQProducerTest :
                 rabbitMQProducer.produce(capture(messageSlot))
             }
             messageSlot.captured.exchange shouldBe exchange
-            messageSlot.captured.routingKey shouldBe ""
+            messageSlot.captured.routingKey shouldBe routingKey
             messageSlot.captured.body.room shouldBe event.room
             messageSlot.captured.body.name shouldBe event.name
             messageSlot.captured.body.data shouldBe event.data

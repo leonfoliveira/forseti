@@ -36,8 +36,7 @@ class QuartzJobScheduler(
                 .usingJobData("id", message.id)
                 .usingJobData("contestId", message.contestId.toString())
                 .usingJobData("traceId", message.traceId)
-                .usingJobData("payload", objectMapper.writeValueAsString(message.payload))
-                .usingJobData("retries", message.retries)
+                .usingJobData("body", objectMapper.writeValueAsString(message.body))
                 .storeDurably()
                 .build()
 
@@ -73,9 +72,9 @@ class QuartzJobScheduler(
                 .newJob(jobClass.java)
                 .withIdentity(message.id)
                 .usingJobData("id", message.id)
+                .usingJobData("contestId", message.contestId.toString())
                 .usingJobData("traceId", message.traceId)
-                .usingJobData("payload", objectMapper.writeValueAsString(message.payload))
-                .usingJobData("retries", message.retries)
+                .usingJobData("body", objectMapper.writeValueAsString(message.body))
                 .storeDurably()
                 .build()
 
