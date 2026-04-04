@@ -129,7 +129,7 @@ class DockerSandboxContainer(
                             codeFile.nameWithoutExtension,
                         )
                     },
-                ),            
+                ),
             Submission.Language.PYTHON_312 to
                 Config(
                     language = Submission.Language.PYTHON_312,

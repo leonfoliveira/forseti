@@ -3,10 +3,8 @@ package com.forsetijudge.api.adapter.driving.rabbitmq.consumer
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
-import com.forsetijudge.core.port.driving.usecase.external.attachment.CleanUncommitedAttachmentsUseCase
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
-import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.AttachmentBucketCleanerQueueMessageBody
 import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.body.AutoFreezeQueueMessageBody
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec

@@ -7,13 +7,11 @@ import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
 import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessageBody
 import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.quartz.JobDataMap
 import org.quartz.JobExecutionContext
-import org.quartz.JobExecutionException
 import java.io.Serializable
 
 class QueueableQuartzJobTest :

@@ -8,7 +8,6 @@ import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessa
 import com.forsetijudge.infrastructure.adapter.dto.rabbitmq.RabbitMQMessage
 import org.quartz.DisallowConcurrentExecution
 import org.quartz.JobExecutionContext
-import org.quartz.JobExecutionException
 import org.quartz.PersistJobDataAfterExecution
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.quartz.QuartzJobBean
