@@ -149,13 +149,19 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
+      RABBITMQ_DIRECT_EXCHANGE: direct-exchange
+      RABBITMQ_FANOUT_EXCHANGE: fanout-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE: attachment-bucket-cleaner-queue
+      RABBITMQ_AUTO_FREEZE_QUEUE: auto-freeze-queue
+      RABBITMQ_OUTBOX_EVENT_QUEUE: outbox-event-queue
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
-      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
-      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_ROUTING_KEY: attachment-bucket-cleaner-routing-key
+      RABBITMQ_AUTO_FREEZE_ROUTING_KEY: auto-freeze-routing-key
+      RABBITMQ_BROADCAST_EVENT_ROUTING_KEY: broadcast-event-routing-key
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
@@ -234,13 +240,19 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: forseti
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq_password
+      RABBITMQ_PASSWORD: forsetijudge
       RABBITMQ_VHOST: /
+      RABBITMQ_DIRECT_EXCHANGE: direct-exchange
+      RABBITMQ_FANOUT_EXCHANGE: fanout-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_QUEUE: attachment-bucket-cleaner-queue
+      RABBITMQ_AUTO_FREEZE_QUEUE: auto-freeze-queue
+      RABBITMQ_OUTBOX_EVENT_QUEUE: outbox-event-queue
       RABBITMQ_SUBMISSION_QUEUE: submission-queue
-      RABBITMQ_SUBMISSION_EXCHANGE: submission-exchange
-      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       RABBITMQ_SUBMISSION_FAILED_QUEUE: submission-failed-queue
-      RABBITMQ_WEBSOCKET_EXCHANGE: websocket-exchange
+      RABBITMQ_ATTACHMENT_BUCKET_CLEANER_ROUTING_KEY: attachment-bucket-cleaner-routing-key
+      RABBITMQ_AUTO_FREEZE_ROUTING_KEY: auto-freeze-routing-key
+      RABBITMQ_BROADCAST_EVENT_ROUTING_KEY: broadcast-event-routing-key
+      RABBITMQ_SUBMISSION_ROUTING_KEY: submission-routing-key
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD_FILE: /run/secrets/redis_password
@@ -412,6 +424,60 @@ services:
         source: {{ __volumes_path__ }}/clamav/db
         target: /var/lib/clamav
         read_only: true
+
+  debezium:
+    deploy:
+      mode: replicated
+      replicas: 1
+      resources:
+        limits:
+          cpus: {{ debezium.cpus }}
+          memory: {{ debezium.memory_limit }}
+        reservations:
+          cpus: {{ debezium.cpus_reservation }}
+          memory: {{ debezium.memory_reservation }}
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    entrypoint: sh -c "export DB_PASSWORD=$$(cat /run/secrets/db_password) && export RABBITMQ_PASSWORD=$$(cat /run/secrets/rabbitmq_password) && /debezium/run.sh"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: forseti
+      DB_NAME: forseti
+      QUARKUS_HEALTH_ENABLED: "true"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: forseti
+      RABBITMQ_OUTBOX_EVENT_EXCHANGE: direct-exchange
+      RABBITMQ_OUTBOX_EVENT_ROUTING_KEY: outbox-event-routing-key
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8080/q/health/live
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 30s
+    image: debezium/server:2.7.3.Final
+    networks:
+      network:
+    volumes:
+      - type: bind
+        source: {{ __volumes_path__ }}/debezium/application.properties
+        target: /debezium/config/application.properties
+        read_only: true
+      - type: volume
+        source: debezium_data
+        target: /debezium/data
+        volume: {}
+    secrets:
+      - source: {{ __db_password__ }}
+        target: db_password
+      - source: {{ __rabbitmq_password__ }}
+        target: rabbitmq_password
 
   {% if global.telemetry == "true" %}
   grafana:
@@ -1136,6 +1202,7 @@ services:
       network:
 
 volumes:
+  debezium_data:
   grafana_data:
   loki_data:
   minio_data:

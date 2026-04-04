@@ -9,6 +9,9 @@ create table outbox_event (
     version bigint not null default 1
 );
 
+create index idx_outbox_event_status on outbox_event (status);
+create index idx_outbox_event_event_type on outbox_event (event_type);
+
 create table outbox_event_aud (
     rev bigint not null,
     revtype smallint not null,

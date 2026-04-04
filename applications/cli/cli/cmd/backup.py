@@ -11,6 +11,7 @@ def backup_cmd():
     """
     docker_client = get_docker_client()
     volumes = (
+        "forseti_debezium_data",
         "forseti_grafana_data",
         "forseti_minio_data",
         "forseti_postgres_data",

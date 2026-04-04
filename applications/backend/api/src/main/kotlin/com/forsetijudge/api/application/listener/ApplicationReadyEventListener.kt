@@ -19,6 +19,10 @@ class ApplicationReadyEventListener(
     private val authenticateSystemUseCase: AuthenticateSystemUseCase,
     private val updateMemberPasswordUseCase: UpdateMemberPasswordUseCase,
     private val attachmentBucketCleanerJobScheduler: AttachmentBucketCleanerJobScheduler,
+    @Value("\${security.member-login}")
+    private val memberLogin: String,
+    @Value("\${security.member-type}")
+    private val memberType: Member.Type,
     @Value("\${security.root.password}")
     private val rootPassword: String,
     @Value("\${jobs.attachment-bucket-cleaner.interval}")
@@ -35,8 +39,8 @@ class ApplicationReadyEventListener(
         ExecutionContext.start()
         authenticateSystemUseCase.execute(
             AuthenticateSystemUseCase.Command(
-                login = Member.ROOT_LOGIN,
-                type = Member.Type.ROOT,
+                login = memberLogin,
+                type = memberType,
             ),
         )
 
