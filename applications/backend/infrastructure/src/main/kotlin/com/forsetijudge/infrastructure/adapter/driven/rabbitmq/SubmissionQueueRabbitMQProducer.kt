@@ -13,7 +13,7 @@ class SubmissionQueueRabbitMQProducer(
     private val rabbitMQProducer: RabbitMQProducer,
     @Value("\${spring.rabbitmq.exchange.direct}")
     private val exchange: String,
-    @Value("\${spring.rabbitmq.routing-key.submission-routing-key}")
+    @Value("\${spring.rabbitmq.routing-key.submission}")
     private val routingKey: String,
 ) : SubmissionQueueProducer {
     override fun produce(submission: Submission) {

@@ -28,7 +28,7 @@ class BroadcastEventRabbitMQConsumer(
                     ),
                 exchange =
                     Exchange(
-                        value = "\${spring.rabbitmq.exchange.websocket-exchange}",
+                        value = "\${spring.rabbitmq.exchange.fanout}",
                         type = "fanout",
                     ),
                 key = ["\${spring.rabbitmq.routing-key.broadcast-event}"],

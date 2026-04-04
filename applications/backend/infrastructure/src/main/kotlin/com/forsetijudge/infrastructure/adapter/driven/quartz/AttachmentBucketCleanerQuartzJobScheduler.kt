@@ -16,7 +16,7 @@ class AttachmentBucketCleanerQuartzJobScheduler(
     private val quartzJobScheduler: QuartzJobScheduler,
     @Value("\${spring.rabbitmq.exchange.direct}")
     private val exchange: String,
-    @Value("\${spring.rabbitmq.routing-key.attachment-bucket-cleaner-routing-key}")
+    @Value("\${spring.rabbitmq.routing-key.attachment-bucket-cleaner}")
     private val routingKey: String,
 ) : AttachmentBucketCleanerJobScheduler {
     companion object {

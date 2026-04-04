@@ -15,7 +15,7 @@ class AutoFreezeQuartzJobScheduler(
     private val quartzJobScheduler: QuartzJobScheduler,
     @Value("\${spring.rabbitmq.exchange.direct}")
     private val exchange: String,
-    @Value("\${spring.rabbitmq.routing-key.auto-freeze-routing-key}")
+    @Value("\${spring.rabbitmq.routing-key.auto-freeze}")
     private val routingKey: String,
 ) : AutoFreezeJobScheduler {
     companion object {

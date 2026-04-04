@@ -12,7 +12,7 @@ class SubmissionQueueRabbitMQConsumer(
     private val autoJudgeSubmissionUseCase: AutoJudgeSubmissionUseCase,
 ) : RabbitMQConsumer<SubmissionQueueMessageBody>() {
     @RabbitListener(
-        queues = ["\${spring.rabbitmq.queue.submission-queue}"],
+        queues = ["\${spring.rabbitmq.queue.submission}"],
         concurrency = "\${submission.max-concurrent}",
     )
     override fun receiveMessage(message: Message) {

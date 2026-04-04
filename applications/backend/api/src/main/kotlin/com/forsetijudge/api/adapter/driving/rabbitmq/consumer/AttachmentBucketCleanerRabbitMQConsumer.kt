@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class AttachmentBucketCleanerRabbitMQConsumer(
     private val cleanAttachmentBucketUseCase: CleanUncommitedAttachmentsUseCase,
 ) : RabbitMQConsumer<AttachmentBucketCleanerQueueMessageBody>() {
-    @RabbitListener(queues = ["\${spring.rabbitmq.queue.attachment-bucket-cleaner-queue}"])
+    @RabbitListener(queues = ["\${spring.rabbitmq.queue.attachment-bucket-cleaner}"])
     override fun receiveMessage(message: Message) {
         super.receiveMessage(message)
     }

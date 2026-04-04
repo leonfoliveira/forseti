@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 class AutoFreezeRabbitMQConsumer(
     private val freezeLeaderboardUseCase: FreezeLeaderboardUseCase,
 ) : RabbitMQConsumer<AutoFreezeQueueMessageBody>() {
-    @RabbitListener(queues = ["\${spring.rabbitmq.queue.auto-freeze-queue}"])
+    @RabbitListener(queues = ["\${spring.rabbitmq.queue.auto-freeze}"])
     override fun receiveMessage(message: Message) {
         super.receiveMessage(message)
     }
