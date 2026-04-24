@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.contest
 
+import com.forsetijudge.core.application.helper.AttachmentWriterHelper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Attachment
@@ -18,7 +19,6 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.cryptography.Hasher
-import com.forsetijudge.core.port.driven.repository.AttachmentRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
@@ -37,23 +37,23 @@ import java.time.OffsetDateTime
 
 class UpdateContestServiceTest :
     FunSpec({
-        val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
         val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
 
         val sut =
             UpdateContestService(
-                attachmentRepository = attachmentRepository,
                 contestRepository = contestRepository,
                 problemRepository = problemRepository,
                 memberRepository = memberRepository,
                 hasher = hasher,
                 testCasesValidator = testCasesValidator,
                 publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                attachmentWriterHelper = attachmentWriterHelper,
             )
 
         val now = OffsetDateTime.now()
@@ -274,88 +274,6 @@ class UpdateContestServiceTest :
                 }
             }
 
-            test("should throw NotFoundException when problem description attachment does not exist") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contextContestId,
-                        members = listOf(MemberMockBuilder.build(id = command.members[0].id!!)),
-                        problems = listOf(ProblemMockBuilder.build(id = command.problems[0].id!!)),
-                        endAt = now.plusHours(1),
-                    )
-                val member = MemberMockBuilder.build(type = Member.Type.ADMIN, contest = contest)
-                every { contestRepository.findById(contextContestId) } returns contest
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-                every { contestRepository.existsBySlugAndIdNot(command.slug, contextContestId) } returns false
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].description.id, contextContestId) } returns null
-
-                shouldThrow<NotFoundException> {
-                    sut.execute(command)
-                }
-            }
-
-            test("should throw ForbiddenException when problem description attachment has wrong context") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contextContestId,
-                        members = listOf(MemberMockBuilder.build(id = command.members[0].id!!)),
-                        problems = listOf(ProblemMockBuilder.build(id = command.problems[0].id!!)),
-                        endAt = now.plusHours(1),
-                    )
-                val descriptionAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
-                val member = MemberMockBuilder.build(type = Member.Type.ADMIN, contest = contest)
-                every { contestRepository.findById(contextContestId) } returns contest
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-                every { contestRepository.existsBySlugAndIdNot(command.slug, contextContestId) } returns false
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].description.id, contextContestId) } returns
-                    descriptionAttachment
-
-                shouldThrow<ForbiddenException> {
-                    sut.execute(command)
-                }
-            }
-
-            test("should throw NotFoundException when problem test cases attachment does not exist") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contextContestId,
-                        members = listOf(MemberMockBuilder.build(id = command.members[0].id!!)),
-                        problems = listOf(ProblemMockBuilder.build(id = command.problems[0].id!!)),
-                        endAt = now.plusHours(1),
-                    )
-                val member = MemberMockBuilder.build(type = Member.Type.ADMIN, contest = contest)
-                every { contestRepository.findById(contextContestId) } returns contest
-                every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-                every { contestRepository.existsBySlugAndIdNot(command.slug, contextContestId) } returns false
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].description.id, contextContestId) } returns
-                    AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].testCases.id, contextContestId) } returns null
-
-                shouldThrow<NotFoundException> {
-                    sut.execute(command)
-                }
-            }
-
-            test("should throw ForbiddenException when problem test cases attachment has wrong context") {
-                val contest =
-                    ContestMockBuilder.build(
-                        id = contextContestId,
-                        members = listOf(MemberMockBuilder.build(id = command.members[0].id!!)),
-                        problems = listOf(ProblemMockBuilder.build(id = command.problems[0].id!!)),
-                        endAt = now.plusHours(1),
-                    )
-                val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.SUBMISSION_CODE)
-                every { contestRepository.findById(contextContestId) } returns contest
-                every { contestRepository.existsBySlugAndIdNot(command.slug, contextContestId) } returns false
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].description.id, contextContestId) } returns
-                    AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
-                every { attachmentRepository.findByIdAndContestId(command.problems[0].testCases.id, contextContestId) } returns
-                    testCasesAttachment
-
-                shouldThrow<ForbiddenException> {
-                    sut.execute(command)
-                }
-            }
-
             test("should update contest successfully") {
                 val inputMemberToCreate = command.members[0].copy(id = null)
                 val inputProblemToCreate = command.problems[0].copy(id = null)
@@ -409,13 +327,37 @@ class UpdateContestServiceTest :
                         isCommited = false,
                     )
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES, isCommited = false)
-                every { attachmentRepository.findByIdAndContestId(inputProblemToCreate.description.id, contextContestId) } returns
+                every {
+                    attachmentWriterHelper.commit(
+                        inputProblemToCreate.description.id,
+                        contextContestId,
+                        Attachment.Context.PROBLEM_DESCRIPTION,
+                    )
+                } returns
                     descriptionAttachment
-                every { attachmentRepository.findByIdAndContestId(inputProblemToCreate.testCases.id, contextContestId) } returns
+                every {
+                    attachmentWriterHelper.commit(
+                        inputProblemToCreate.testCases.id,
+                        contextContestId,
+                        Attachment.Context.PROBLEM_TEST_CASES,
+                    )
+                } returns
                     testCasesAttachment
-                every { attachmentRepository.findByIdAndContestId(inputProblemToUpdateFull.description.id, contextContestId) } returns
+                every {
+                    attachmentWriterHelper.commit(
+                        inputProblemToUpdateFull.description.id,
+                        contextContestId,
+                        Attachment.Context.PROBLEM_DESCRIPTION,
+                    )
+                } returns
                     descriptionAttachment
-                every { attachmentRepository.findByIdAndContestId(inputProblemToUpdateFull.testCases.id, contextContestId) } returns
+                every {
+                    attachmentWriterHelper.commit(
+                        inputProblemToUpdateFull.testCases.id,
+                        contextContestId,
+                        Attachment.Context.PROBLEM_TEST_CASES,
+                    )
+                } returns
                     testCasesAttachment
                 every { contestRepository.save(any<Contest>()) } answers { firstArg() }
 
@@ -456,21 +398,17 @@ class UpdateContestServiceTest :
                 contest.problems[1].color shouldBe inputProblemToUpdateMinimum.color.lowercase()
                 contest.problems[1].title shouldBe inputProblemToUpdateMinimum.title
                 contest.problems[1].description shouldBe problemToUpdateMinimum.description
-                contest.problems[1].description.isCommited shouldBe true
                 contest.problems[1].timeLimit shouldBe problemToUpdateMinimum.timeLimit
                 contest.problems[1].memoryLimit shouldBe problemToUpdateMinimum.memoryLimit
                 contest.problems[1].testCases shouldBe problemToUpdateMinimum.testCases
-                contest.problems[1].testCases.isCommited shouldBe true
                 contest.problems[2].id shouldBe inputProblemToUpdateFull.id
                 contest.problems[2].letter shouldBe inputProblemToUpdateFull.letter
                 contest.problems[2].color shouldBe inputProblemToUpdateFull.color.lowercase()
                 contest.problems[2].title shouldBe inputProblemToUpdateFull.title
                 contest.problems[2].description shouldBe descriptionAttachment
-                contest.problems[2].description.isCommited shouldBe true
                 contest.problems[2].timeLimit shouldBe inputProblemToUpdateFull.timeLimit
                 contest.problems[2].memoryLimit shouldBe inputProblemToUpdateFull.memoryLimit
                 contest.problems[2].testCases shouldBe testCasesAttachment
-                contest.problems[2].testCases.isCommited shouldBe true
 
                 problemToDelete.description.isCommited shouldBe false
                 problemToDelete.testCases.isCommited shouldBe false
