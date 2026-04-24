@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
+import com.forsetijudge.core.application.helper.AttachmentWriterHelper
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
@@ -34,23 +35,23 @@ import io.mockk.verify
 
 class CreateSubmissionExternalServiceTest :
     FunSpec({
-        val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
         val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
 
         val sut =
             CreateSubmissionService(
-                attachmentRepository = attachmentRepository,
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
                 problemRepository = problemRepository,
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
                 publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                attachmentWriterHelper = attachmentWriterHelper,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -131,39 +132,6 @@ class CreateSubmissionExternalServiceTest :
             shouldThrow<NotFoundException> { sut.execute(command) }
         }
 
-        test("should throw NotFoundException when code does not exist") {
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = ExecutionContext.get().startedAt.minusHours(1),
-                    endAt = ExecutionContext.get().startedAt.plusHours(2),
-                )
-            val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
-            val problem = ProblemMockBuilder.build()
-            every { contestRepository.findById(any()) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
-            every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
-            every { attachmentRepository.findByIdAndContestId(command.code.id, contextContestId) } returns null
-
-            shouldThrow<NotFoundException> { sut.execute(command) }
-        }
-
-        test("should throw ForbiddenException when code context is not SUBMISSION_CODE") {
-            val contest =
-                ContestMockBuilder.build(
-                    startAt = ExecutionContext.get().startedAt.minusHours(1),
-                    endAt = ExecutionContext.get().startedAt.plusHours(2),
-                )
-            val member = MemberMockBuilder.build(type = Member.Type.CONTESTANT, contest = contest)
-            val problem = ProblemMockBuilder.build()
-            val code = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_DESCRIPTION)
-            every { contestRepository.findById(any()) } returns contest
-            every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
-            every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
-            every { attachmentRepository.findByIdAndContestId(command.code.id, contextContestId) } returns code
-
-            shouldThrow<ForbiddenException> { sut.execute(command) }
-        }
-
         test("should create submission successfully") {
             val contest =
                 ContestMockBuilder.build(
@@ -176,7 +144,7 @@ class CreateSubmissionExternalServiceTest :
             every { contestRepository.findById(any()) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
             every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
-            every { attachmentRepository.findByIdAndContestId(command.code.id, contextContestId) } returns code
+            every { attachmentWriterHelper.commit(command.code.id, contextContestId, Attachment.Context.SUBMISSION_CODE) } returns code
             every { submissionRepository.save(any()) } answers { firstArg() }
             every { frozenSubmissionRepository.save(any()) } answers { firstArg() }
 
@@ -191,7 +159,6 @@ class CreateSubmissionExternalServiceTest :
             submission.status shouldBe Submission.Status.JUDGING
             submission.answer shouldBe null
             submission.code shouldBe code
-            submission.code.isCommited shouldBe true
             result shouldBe submission.toWithCodeResponseBodyDTO()
             verify { frozenSubmissionRepository.save(any()) }
             verify {

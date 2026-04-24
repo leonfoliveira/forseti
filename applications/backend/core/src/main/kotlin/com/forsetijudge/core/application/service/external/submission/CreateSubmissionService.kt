@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
+import com.forsetijudge.core.application.helper.AttachmentWriterHelper
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
@@ -28,13 +29,13 @@ import org.springframework.validation.annotation.Validated
 @Service
 @Validated
 class CreateSubmissionService(
-    private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val attachmentWriterHelper: AttachmentWriterHelper,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -63,18 +64,16 @@ class CreateSubmissionService(
             problemRepository.findByIdAndContestId(command.problemId, contextContestId)
                 ?: throw NotFoundException("Could not find problem with id = ${command.problemId} in contest")
         val code =
-            attachmentRepository.findByIdAndContestId(command.code.id, contextContestId)
-                ?: throw NotFoundException("Could not find code attachment with id = ${command.code.id} in contest")
-
-        if (code.context != Attachment.Context.SUBMISSION_CODE) {
-            throw ForbiddenException("Attachment with id = ${command.code.id} is not a submission code")
-        }
+            attachmentWriterHelper.commit(
+                attachmentId = command.code.id,
+                contestId = contextContestId,
+                context = Attachment.Context.SUBMISSION_CODE,
+            )
 
         if (contest.languages.none { it == command.language }) {
             throw ForbiddenException("Language ${command.language} is not allowed for this contest")
         }
 
-        code.isCommited = true
         val submission =
             Submission(
                 member = member,
