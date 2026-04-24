@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.contest
 
+import com.forsetijudge.core.application.helper.AttachmentWriterHelper
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.TestCasesValidator
@@ -32,13 +33,13 @@ import java.util.UUID
 @Service
 @Validated
 class UpdateContestService(
-    private val attachmentRepository: AttachmentRepository,
     private val contestRepository: ContestRepository,
     private val problemRepository: ProblemRepository,
     private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val attachmentWriterHelper: AttachmentWriterHelper,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -177,22 +178,9 @@ class UpdateContestService(
     ): Problem {
         logger.info("Creating problem with title: ${problemDTO.title}")
 
-        val description =
-            attachmentRepository.findByIdAndContestId(problemDTO.description.id, contest.id)
-                ?: throw NotFoundException("Could not find description attachment with id: ${problemDTO.description.id} in this contest")
-        if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
-            throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
-        }
-        description.isCommited = true
-
-        val testCases =
-            attachmentRepository.findByIdAndContestId(problemDTO.testCases.id, contest.id)
-                ?: throw NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id} in this contest")
-        if (testCases.context != Attachment.Context.PROBLEM_TEST_CASES) {
-            throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
-        }
+        val description = attachmentWriterHelper.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
+        val testCases = attachmentWriterHelper.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
         testCasesValidator.validate(testCases)
-        testCases.isCommited = true
 
         val problem =
             Problem(
@@ -257,26 +245,12 @@ class UpdateContestService(
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
         if (problem.description.id != problemDTO.description.id) {
-            val description =
-                attachmentRepository.findByIdAndContestId(problemDTO.description.id, contest.id)
-                    ?: throw NotFoundException(
-                        "Could not find description attachment with id: ${problemDTO.description.id} in this contest",
-                    )
-            if (description.context != Attachment.Context.PROBLEM_DESCRIPTION) {
-                throw ForbiddenException("Attachment with id: ${description.id} is not a valid problem description")
-            }
-            description.isCommited = true
+            val description = attachmentWriterHelper.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
             problem.description = description
         }
         if (problem.testCases.id != problemDTO.testCases.id) {
-            val testCases =
-                attachmentRepository.findByIdAndContestId(problemDTO.testCases.id, contest.id)
-                    ?: throw NotFoundException("Could not find testCases attachment with id: ${problemDTO.testCases.id} in this contest")
-            if (testCases.context != Attachment.Context.PROBLEM_TEST_CASES) {
-                throw ForbiddenException("Attachment with id: ${testCases.id} is not a valid problem test cases")
-            }
+            val testCases = attachmentWriterHelper.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
             testCasesValidator.validate(testCases)
-            testCases.isCommited = true
             problem.testCases = testCases
         }
 
