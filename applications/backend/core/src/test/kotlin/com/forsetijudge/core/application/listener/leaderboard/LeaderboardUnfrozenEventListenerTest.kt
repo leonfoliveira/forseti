@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.listener.leaderboard
 
-import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
-import com.forsetijudge.core.application.service.internal.submission.SubmissionFinder
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
+import com.forsetijudge.core.application.helper.submission.SubmissionFinder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.event.LeaderboardEvent

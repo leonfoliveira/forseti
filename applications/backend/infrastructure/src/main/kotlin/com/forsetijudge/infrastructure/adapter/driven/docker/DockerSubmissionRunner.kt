@@ -1,7 +1,7 @@
 package com.forsetijudge.infrastructure.adapter.driven.docker
 
-import com.forsetijudge.core.application.service.internal.attachment.AttachmentDownloader
-import com.forsetijudge.core.application.service.internal.execution.ExecutionCreator
+import com.forsetijudge.core.application.helper.attachment.AttachmentDownloader
+import com.forsetijudge.core.application.helper.execution.ExecutionCreator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem

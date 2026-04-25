@@ -1,0 +1,143 @@
+package com.forsetijudge.core.application.helper.leaderboard
+
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
+import com.forsetijudge.core.domain.entity.ContestMockBuilder
+import com.forsetijudge.core.domain.entity.MemberMockBuilder
+import com.forsetijudge.core.domain.entity.ProblemMockBuilder
+import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
+import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
+import com.forsetijudge.core.domain.model.Leaderboard
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+
+class LeaderboardCellBuilderTest :
+    FunSpec({
+        val sut = LeaderboardCellBuilder()
+
+        val contest = ContestMockBuilder.build()
+        val member = MemberMockBuilder.build()
+        val problem = ProblemMockBuilder.build()
+
+        beforeEach {
+            clearAllMocks()
+            ExecutionContextMockBuilder.build()
+        }
+
+        test("should build leaderboard cell without submissions") {
+            val cell =
+                sut.build(
+                    contest = contest,
+                    member = member,
+                    problem = problem,
+                    submissions = emptyList(),
+                )
+
+            cell shouldBe
+                Leaderboard.Cell(
+                    memberId = member.id,
+                    problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
+                    isAccepted = false,
+                    acceptedAt = null,
+                    wrongSubmissions = 0,
+                    penalty = 0,
+                )
+        }
+
+        test("should build leaderboard cell with accepted submission") {
+            val acceptedSubmission =
+                SubmissionMockBuilder.build(
+                    createdAt = contest.startAt.plusMinutes(30),
+                    answer = Submission.Answer.ACCEPTED,
+                )
+
+            val cell =
+                sut.build(
+                    contest = contest,
+                    member = member,
+                    problem = problem,
+                    submissions = listOf(acceptedSubmission),
+                )
+
+            cell shouldBe
+                Leaderboard.Cell(
+                    memberId = member.id,
+                    problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
+                    isAccepted = true,
+                    acceptedAt = acceptedSubmission.createdAt,
+                    wrongSubmissions = 0,
+                    penalty = 30,
+                )
+        }
+
+        test("should build leaderboard cell with wrong submission") {
+            val wrongSubmission1 =
+                SubmissionMockBuilder.build(
+                    createdAt = contest.startAt.plusMinutes(10),
+                    answer = Submission.Answer.WRONG_ANSWER,
+                )
+
+            val cell =
+                sut.build(
+                    contest = contest,
+                    member = member,
+                    problem = problem,
+                    submissions = listOf(wrongSubmission1),
+                )
+
+            cell shouldBe
+                Leaderboard.Cell(
+                    memberId = member.id,
+                    problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
+                    isAccepted = false,
+                    acceptedAt = null,
+                    wrongSubmissions = 1,
+                    penalty = 0,
+                )
+        }
+
+        test("should build leaderboard cell with wrong submissions and accepted submission") {
+            val wrongSubmission1 =
+                SubmissionMockBuilder.build(
+                    createdAt = contest.startAt.plusMinutes(10),
+                    answer = Submission.Answer.WRONG_ANSWER,
+                )
+            val acceptedSubmission =
+                SubmissionMockBuilder.build(
+                    createdAt = contest.startAt.plusMinutes(20),
+                    answer = Submission.Answer.ACCEPTED,
+                )
+            val wrongSubmission2 =
+                SubmissionMockBuilder.build(
+                    createdAt = contest.startAt.plusMinutes(30),
+                    answer = Submission.Answer.WRONG_ANSWER,
+                )
+
+            val cell =
+                sut.build(
+                    contest = contest,
+                    member = member,
+                    problem = problem,
+                    submissions = listOf(wrongSubmission1, acceptedSubmission, wrongSubmission2),
+                )
+
+            cell shouldBe
+                Leaderboard.Cell(
+                    memberId = member.id,
+                    problemId = problem.id,
+                    problemLetter = problem.letter,
+                    problemColor = problem.color,
+                    isAccepted = true,
+                    acceptedAt = acceptedSubmission.createdAt,
+                    wrongSubmissions = 1,
+                    penalty = 30 + 10,
+                )
+        }
+    })

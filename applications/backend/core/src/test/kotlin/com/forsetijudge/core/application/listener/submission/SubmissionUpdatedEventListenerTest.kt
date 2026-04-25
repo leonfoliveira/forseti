@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.listener.submission
 
-import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardCellBuilder
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission

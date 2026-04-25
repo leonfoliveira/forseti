@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.listener.leaderboard
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
-import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
-import com.forsetijudge.core.application.service.internal.submission.SubmissionFinder
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
+import com.forsetijudge.core.application.helper.submission.SubmissionFinder
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
