@@ -1,9 +1,9 @@
 package com.forsetijudge.core.application.service.attachment
 
-import com.forsetijudge.core.application.service.external.attachment.auth.ExecutionOutputAuthorizationConfig
-import com.forsetijudge.core.application.service.external.attachment.auth.ProblemDescriptionAuthorizationConfig
-import com.forsetijudge.core.application.service.external.attachment.auth.ProblemTestCasesAuthorizationConfig
-import com.forsetijudge.core.application.service.external.attachment.auth.SubmissionCodeAuthorizationConfig
+import com.forsetijudge.core.application.service.attachment.auth.ExecutionOutputAuthorizationConfig
+import com.forsetijudge.core.application.service.attachment.auth.ProblemDescriptionAuthorizationConfig
+import com.forsetijudge.core.application.service.attachment.auth.ProblemTestCasesAuthorizationConfig
+import com.forsetijudge.core.application.service.attachment.auth.SubmissionCodeAuthorizationConfig
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.ForbiddenException
