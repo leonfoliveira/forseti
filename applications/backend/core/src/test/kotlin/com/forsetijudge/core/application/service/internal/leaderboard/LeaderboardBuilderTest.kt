@@ -16,8 +16,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
@@ -26,21 +24,21 @@ import io.mockk.mockk
 import io.mockk.verify
 import java.time.OffsetDateTime
 
-class BuildLeaderboardInternalServiceTest :
+class LeaderboardBuilderTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
-        val buildLeaderboardCellInternalUseCase = mockk<BuildLeaderboardCellInternalUseCase>(relaxed = true)
+        val leaderboardCellBuilder = mockk<LeaderboardCellBuilder>(relaxed = true)
         val leaderboardCacheStore = mockk<LeaderboardCacheStore>(relaxed = true)
 
         val sut =
-            BuildLeaderboardInternalService(
+            LeaderboardBuilder(
                 memberRepository = memberRepository,
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
-                buildLeaderboardCellInternalUseCase = buildLeaderboardCellInternalUseCase,
+                leaderboardCellBuilder = leaderboardCellBuilder,
                 leaderboardCacheStore = leaderboardCacheStore,
             )
 
@@ -84,7 +82,7 @@ class BuildLeaderboardInternalServiceTest :
                     memberWithDoubleAcceptedSubmission,
                 )
 
-            every { buildLeaderboardCellInternalUseCase.execute(any()) } returnsMany
+            every { leaderboardCellBuilder.build(any(), any(), any(), any()) } returnsMany
                 listOf(
                     // memberWithNoSubmission
                     Leaderboard.Cell(
@@ -197,7 +195,7 @@ class BuildLeaderboardInternalServiceTest :
                     ),
                 )
 
-            val result = sut.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
+            val result = sut.build(contest = contest)
 
             result shouldBe
                 Leaderboard(
@@ -402,7 +400,7 @@ class BuildLeaderboardInternalServiceTest :
                     ),
                 )
             } returns listOf(member)
-            every { buildLeaderboardCellInternalUseCase.execute(any()) } returns
+            every { leaderboardCellBuilder.build(any(), any(), any(), any()) } returns
                 Leaderboard.Cell(
                     memberId = member.id,
                     problemId = problem.id,
@@ -414,13 +412,14 @@ class BuildLeaderboardInternalServiceTest :
                     penalty = 0,
                 )
 
-            sut.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
+            sut.build(contest = contest)
 
             verify {
-                buildLeaderboardCellInternalUseCase.execute(
-                    withArg { command ->
-                        command.submissions shouldBe emptyList()
-                    },
+                leaderboardCellBuilder.build(
+                    any(),
+                    any(),
+                    any(),
+                    emptyList(),
                 )
             }
         }

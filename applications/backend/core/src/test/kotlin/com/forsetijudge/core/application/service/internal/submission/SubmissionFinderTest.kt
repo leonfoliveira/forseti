@@ -13,12 +13,12 @@ import io.mockk.every
 import io.mockk.mockk
 import java.time.OffsetDateTime
 
-class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
+class SubmissionFinderTest :
     FunSpec({
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
 
         val sut =
-            FindAllSubmissionsByContestSinceLastFreezeInternalService(
+            SubmissionFinder(
                 submissionRepository = submissionRepository,
             )
 
@@ -30,13 +30,9 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
             ExecutionContextMockBuilder.build(contestId = contextContestId, memberId = contextMemberId)
         }
 
-        val command =
-            FindAllSubmissionsByContestSinceLastFreezeInternalUseCase.Command(
-                contest = ContestMockBuilder.build(),
-                frozenAt = OffsetDateTime.now().minusHours(1),
-            )
-
         test("should return submissions since last freeze") {
+            val contest = ContestMockBuilder.build()
+            val frozenAt = OffsetDateTime.now().minusDays(1)
             val submissions =
                 listOf(
                     SubmissionMockBuilder.build(),
@@ -44,12 +40,16 @@ class FindAllSubmissionsByContestSinceLastFreezeServiceTest :
                 )
             every {
                 submissionRepository.findByContestIdAndCreatedAtGreaterThanEqual(
-                    command.contest.id,
-                    command.frozenAt,
+                    contest.id,
+                    frozenAt,
                 )
             } returns submissions
 
-            val result = sut.execute(command)
+            val result =
+                sut.findAllByContestSinceLastFreeze(
+                    contest = contest,
+                    frozenAt = frozenAt,
+                )
 
             result shouldBe submissions
         }

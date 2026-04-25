@@ -3,43 +3,51 @@ package com.forsetijudge.core.application.service.internal.attachment
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.AttachmentEvent
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
 import com.forsetijudge.core.port.driven.repository.AttachmentRepository
-import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
-class UploadAttachmentInternalService(
+class AttachmentUploader(
     private val attachmentRepository: AttachmentRepository,
     private val attachmentBucket: AttachmentBucket,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) : UploadAttachmentInternalUseCase {
+) {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(command: UploadAttachmentInternalUseCase.Command): Pair<Attachment, ByteArray> {
+    fun upload(
+        contest: Contest,
+        member: Member,
+        filename: String?,
+        contentType: String?,
+        context: Attachment.Context,
+        bytes: ByteArray,
+    ): Pair<Attachment, ByteArray> {
         logger.info(
-            "Uploading attachment for contest with id: ${command.contest.id}, member with id: ${command.member.id} " +
-                "and context: ${command.context}",
+            "Uploading attachment for contest with id: ${contest.id}, member with id: ${member.id} " +
+                "and context: $context",
         )
 
         val id = IdGenerator.getUUID()
         val attachment =
             Attachment(
                 id = id,
-                contest = command.contest,
-                member = command.member,
-                filename = command.filename ?: id.toString(),
-                contentType = command.contentType ?: "application/octet-stream",
-                context = command.context,
+                contest = contest,
+                member = member,
+                filename = filename ?: id.toString(),
+                contentType = contentType ?: "application/octet-stream",
+                context = context,
             )
 
-        logger.info("Uploading ${command.bytes.size} bytes to attachment with id: ${attachment.id}")
+        logger.info("Uploading ${bytes.size} bytes to attachment with id: ${attachment.id}")
         attachmentRepository.save(attachment)
-        attachmentBucket.upload(attachment, command.bytes)
+        attachmentBucket.upload(attachment, bytes)
         applicationEventPublisher.publishEvent(AttachmentEvent.Uploaded(attachment.id))
 
-        return attachment to command.bytes
+        return attachment to bytes
     }
 }

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -13,7 +14,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildContestantDashboardUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -25,7 +25,7 @@ class BuildContestantDashboardService(
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val ticketRepository: TicketRepository,
-    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
+    private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildContestantDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -46,7 +46,7 @@ class BuildContestantDashboardService(
             .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .throwIfErrors()
 
-        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
+        val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =
             if (contest.isFrozen) {
                 frozenSubmissionRepository.findAllByContestId(contest.id).map { it.unfreeze() }

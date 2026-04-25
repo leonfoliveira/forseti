@@ -1,21 +1,24 @@
 package com.forsetijudge.core.application.service.internal.execution
 
+import com.forsetijudge.core.application.service.internal.attachment.AttachmentUploader
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Execution
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.ExecutionEvent
+import com.forsetijudge.core.domain.model.TestCaseExecutionResult
 import com.forsetijudge.core.port.driven.repository.ExecutionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
 
 @Service
-class CreateExecutionInternalService(
+class ExecutionCreator(
     private val executionRepository: ExecutionRepository,
-    private val uploadAttachmentInternalUseCase: UploadAttachmentInternalUseCase,
+    private val attachmentUploader: AttachmentUploader,
     private val applicationEventPublisher: ApplicationEventPublisher,
-) : CreateExecutionInternalUseCase {
+) {
     private val logger = SafeLogger(this::class)
 
     companion object {
@@ -23,19 +26,27 @@ class CreateExecutionInternalService(
         const val RESULT_CONTENT_TYPE = "text/csv"
     }
 
-    override fun execute(command: CreateExecutionInternalUseCase.Command): Execution {
-        logger.info("Creating execution for submission with id: ${command.submission.id}")
+    fun create(
+        contest: Contest,
+        member: Member,
+        submission: Submission,
+        answer: Submission.Answer,
+        totalTestCases: Int,
+        approvedTestCases: Int,
+        results: List<TestCaseExecutionResult>,
+    ): Execution {
+        logger.info("Creating execution for submission with id: ${submission.id}")
 
         val execution =
             Execution(
-                submission = command.submission,
-                answer = command.answer,
-                totalTestCases = command.totalTestCases,
-                approvedTestCases = command.approvedTestCases,
-                maxCpuTime = command.results.maxOfOrNull { it.cpuTime },
-                maxClockTime = command.results.maxOfOrNull { it.clockTime },
-                maxPeakMemory = command.results.maxOfOrNull { it.peakMemory },
-                details = uploadDetails(command),
+                submission = submission,
+                answer = answer,
+                totalTestCases = totalTestCases,
+                approvedTestCases = approvedTestCases,
+                maxCpuTime = results.maxOfOrNull { it.cpuTime },
+                maxClockTime = results.maxOfOrNull { it.clockTime },
+                maxPeakMemory = results.maxOfOrNull { it.peakMemory },
+                details = uploadDetails(contest, member, results),
             )
         executionRepository.save(execution)
         applicationEventPublisher.publishEvent(ExecutionEvent.Created(execution.id))
@@ -44,16 +55,20 @@ class CreateExecutionInternalService(
         return execution
     }
 
-    private fun uploadDetails(command: CreateExecutionInternalUseCase.Command): Attachment? {
-        if (command.results.isEmpty()) {
+    private fun uploadDetails(
+        contest: Contest,
+        member: Member,
+        results: List<TestCaseExecutionResult>,
+    ): Attachment? {
+        if (results.isEmpty()) {
             logger.info("No test case execution results. Skipping attachment upload.")
             return null
         }
 
-        logger.info("Uploading execution result with ${command.results.size} test cases.")
+        logger.info("Uploading execution result with ${results.size} test cases.")
         val csvContent =
             "answer,exit_code,cpu_time,clock_time,peak_memory,stdin,stdout,stderr\n" +
-                command.results
+                results
                     .mapIndexed { index, result ->
                         listOf(
                             index,
@@ -69,16 +84,14 @@ class CreateExecutionInternalService(
                     }.joinToString(separator = "\n")
         val bytes = csvContent.toByteArray()
         val attachment =
-            uploadAttachmentInternalUseCase
-                .execute(
-                    UploadAttachmentInternalUseCase.Command(
-                        contest = command.contest,
-                        member = command.member,
-                        filename = RESULT_FILENAME,
-                        contentType = RESULT_CONTENT_TYPE,
-                        context = Attachment.Context.EXECUTION_DETAILS,
-                        bytes = bytes,
-                    ),
+            attachmentUploader
+                .upload(
+                    contest = contest,
+                    member = member,
+                    filename = RESULT_FILENAME,
+                    contentType = RESULT_CONTENT_TYPE,
+                    context = Attachment.Context.EXECUTION_DETAILS,
+                    bytes = bytes,
                 ).first
         attachment.isCommited = true
         return attachment

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.contest
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -10,7 +11,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.ForceStartContestUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -18,9 +18,9 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ForceStartContestService(
-    val contestRepository: ContestRepository,
-    val memberRepository: MemberRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val contestRepository: ContestRepository,
+    private val memberRepository: MemberRepository,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : ForceStartContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -49,11 +49,7 @@ class ForceStartContestService(
 
         contest.startAt = ExecutionContext.get().startedAt
         contestRepository.save(contest)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                ContestEvent.Updated(contest.id),
-            ),
-        )
+        outboxEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest force started successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

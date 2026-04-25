@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -14,7 +15,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -32,7 +32,7 @@ class FreezeLeaderboardServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             FreezeLeaderboardService(
@@ -40,7 +40,7 @@ class FreezeLeaderboardServiceTest :
                 memberRepository = memberRepository,
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val now = OffsetDateTime.now()
@@ -113,8 +113,8 @@ class FreezeLeaderboardServiceTest :
             verify { frozenSubmissionRepository.saveAll(any()) }
             verify { contestRepository.save(contest) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is LeaderboardEvent.Frozen && it.event.contestId == contest.id },
+                outboxEventPublisher.publish(
+                    match { it is LeaderboardEvent.Frozen && it.contestId == contest.id },
                 )
             }
         }

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -12,7 +13,6 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -26,13 +26,13 @@ class UpdateAnswerSubmissionServiceTest :
     FunSpec({
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             UpdateAnswerSubmissionService(
                 submissionRepository = submissionRepository,
                 memberRepository = memberRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -97,8 +97,8 @@ class UpdateAnswerSubmissionServiceTest :
             result.answer shouldBe command.answer
             verify { submissionRepository.save(submission) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is SubmissionEvent.Updated && it.event.submissionId == submission.id },
+                outboxEventPublisher.publish(
+                    match { it is SubmissionEvent.Updated && it.submissionId == submission.id },
                 )
             }
         }

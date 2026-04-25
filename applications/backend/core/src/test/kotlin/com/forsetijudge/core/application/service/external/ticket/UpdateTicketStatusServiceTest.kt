@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.ticket
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -12,11 +13,8 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
-import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -27,13 +25,13 @@ class UpdateTicketStatusServiceTest :
     FunSpec({
         val ticketRepository = mockk<TicketRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             UpdateTicketStatusService(
                 ticketRepository = ticketRepository,
                 memberRepository = memberRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -87,14 +85,12 @@ class UpdateTicketStatusServiceTest :
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns staff
             every { ticketRepository.save(any()) } returnsArgument 0
 
-            val result = sut.execute(command)
+            sut.execute(command)
 
-            result shouldBe ticket.toResponseBodyDTO()
-            result.status shouldBe command.status
             verify { ticketRepository.save(any()) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is TicketEvent.Updated && it.event.ticketId == result.id },
+                outboxEventPublisher.publish(
+                    match { it is TicketEvent.Updated && it.ticketId == ticket.id },
                 )
             }
         }

@@ -1,5 +1,7 @@
 package com.forsetijudge.core.application.service.external.authentication
 
+import com.forsetijudge.core.application.service.internal.session.SessionCreator
+import com.forsetijudge.core.application.service.internal.session.SessionDeleter
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
@@ -12,8 +14,6 @@ import com.forsetijudge.core.port.driven.cryptography.Hasher
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.SignInUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -27,16 +27,16 @@ class SignInServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val createSessionInternalUseCase = mockk<CreateSessionInternalUseCase>(relaxed = true)
-        val deleteAllSessionsByMemberInternalUseCase = mockk<DeleteAllSessionsByMemberInternalUseCase>(relaxed = true)
+        val sessionCreator = mockk<SessionCreator>(relaxed = true)
+        val sessionDeleter = mockk<SessionDeleter>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
 
         val sut =
             SignInService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                createSessionInternalUseCase = createSessionInternalUseCase,
-                deleteAllSessionsByMemberInternalUseCase = deleteAllSessionsByMemberInternalUseCase,
+                sessionCreator = sessionCreator,
+                sessionDeleter = sessionDeleter,
                 hasher = hasher,
             )
 
@@ -102,13 +102,13 @@ class SignInServiceTest :
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByLoginAndContestIdOrContestIsNull(command.login, contextContestId) } returns member
             every { hasher.verify(any(), any()) } returns true
-            every { createSessionInternalUseCase.execute(any()) } returns session
+            every { sessionCreator.create(any()) } returns session
 
             val result = sut.execute(command)
 
             result shouldBe session.toResponseBodyDTO()
             verify { hasher.verify(command.password, member.password) }
-            verify { deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member)) }
-            verify { createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member)) }
+            verify { sessionDeleter.deleteAllByMember(member) }
+            verify { sessionCreator.create(member) }
         }
     })

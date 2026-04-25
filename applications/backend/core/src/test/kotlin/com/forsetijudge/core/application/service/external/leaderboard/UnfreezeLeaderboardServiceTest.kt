@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -25,13 +26,13 @@ class UnfreezeLeaderboardServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             UnfreezeLeaderboardService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -97,8 +98,8 @@ class UnfreezeLeaderboardServiceTest :
             contest.frozenAt shouldBe null
             verify { contestRepository.save(contest) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is LeaderboardEvent.Unfrozen && it.event.contestId == contest.id },
+                outboxEventPublisher.publish(
+                    match { it is LeaderboardEvent.Unfrozen && it.contestId == contest.id },
                 )
             }
         }

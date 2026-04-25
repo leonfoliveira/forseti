@@ -12,35 +12,34 @@ import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
 
 @Service
-class BuildLeaderboardInternalService(
+class LeaderboardBuilder(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
-    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
+    private val leaderboardCellBuilder: LeaderboardCellBuilder,
     private val leaderboardCacheStore: LeaderboardCacheStore,
-) : BuildLeaderboardInternalUseCase {
+) {
     private val logger = SafeLogger(this::class)
 
-    @Transactional(readOnly = true)
-    override fun execute(command: BuildLeaderboardInternalUseCase.Command): Leaderboard {
-        logger.info("Building leaderboard for contest with id: ${command.contest.id}, bypassFreeze: ${command.bypassFreeze}")
+    fun build(
+        contest: Contest,
+        shouldBypassFreeze: Boolean = false,
+    ): Leaderboard {
+        logger.info("Building leaderboard for contest with id: ${contest.id}, shouldBypassFreeze: $shouldBypassFreeze")
 
         val contestants =
             memberRepository.findAllByContestIdAndTypeIn(
-                command.contest.id,
+                contest.id,
                 listOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT),
             )
-        val problems = command.contest.problems
+        val problems = contest.problems
 
         val rows =
-            buildRows(command, command.contest, contestants, problems)
+            buildRows(contest, contestants, problems, shouldBypassFreeze)
                 .sortedWith { a, b ->
                     if (a.score != b.score) {
                         return@sortedWith -a.score.compareTo(b.score)
@@ -61,8 +60,8 @@ class BuildLeaderboardInternalService(
                             .sortedByDescending { it }
 
                     for (i in aAcceptedTimes.indices) {
-                        val acceptedDiff = Duration.between(command.contest.startAt, aAcceptedTimes[i]).toMinutes().toInt()
-                        val bAcceptedDiff = Duration.between(command.contest.startAt, bAcceptedTimes[i]).toMinutes().toInt()
+                        val acceptedDiff = Duration.between(contest.startAt, aAcceptedTimes[i]).toMinutes().toInt()
+                        val bAcceptedDiff = Duration.between(contest.startAt, bAcceptedTimes[i]).toMinutes().toInt()
                         if (acceptedDiff != bAcceptedDiff) {
                             return@sortedWith acceptedDiff.compareTo(bAcceptedDiff)
                         }
@@ -72,9 +71,9 @@ class BuildLeaderboardInternalService(
                 }
 
         return Leaderboard(
-            contestId = command.contest.id,
-            contestStartAt = command.contest.startAt,
-            isFrozen = command.contest.isFrozen,
+            contestId = contest.id,
+            contestStartAt = contest.startAt,
+            isFrozen = contest.isFrozen,
             rows = rows,
             issuedAt = ExecutionContext.Companion.get().startedAt,
         )
@@ -88,12 +87,12 @@ class BuildLeaderboardInternalService(
      * @param problems the list of problems in the contest
      */
     private fun buildRows(
-        command: BuildLeaderboardInternalUseCase.Command,
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
+        shouldBypassFreeze: Boolean,
     ): List<Leaderboard.Row> {
-        val cells = buildCells(command, contest, members, problems)
+        val cells = buildCells(contest, members, problems, shouldBypassFreeze)
         val cellsByMemberId = cells.groupBy { it.memberId }
 
         val rows =
@@ -124,13 +123,13 @@ class BuildLeaderboardInternalService(
      * @param problems the list of problems in the contest
      */
     private fun buildCells(
-        command: BuildLeaderboardInternalUseCase.Command,
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
+        shouldBypassFreeze: Boolean,
     ): List<Leaderboard.Cell> {
         val cachedCells =
-            if (command.bypassFreeze) {
+            if (shouldBypassFreeze) {
                 emptyMap()
             } else {
                 leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy {
@@ -140,7 +139,7 @@ class BuildLeaderboardInternalService(
             }
 
         val submissionsForNonCachedMemberProblemPairs =
-            if (contest.isFrozen && !command.bypassFreeze) {
+            if (contest.isFrozen && !shouldBypassFreeze) {
                 frozenSubmissionRepository
                     .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
                         contestId = contest.id,
@@ -161,13 +160,11 @@ class BuildLeaderboardInternalService(
                 .map { member ->
                     problems.map { problem ->
                         cachedCells[member.id to problem.id]?.first()
-                            ?: buildLeaderboardCellInternalUseCase.execute(
-                                BuildLeaderboardCellInternalUseCase.Command(
-                                    contest = contest,
-                                    member = member,
-                                    problem = problem,
-                                    submissions = submissionsForNonCachedMemberProblemPairs[member.id to problem.id] ?: emptyList(),
-                                ),
+                            ?: leaderboardCellBuilder.build(
+                                contest = contest,
+                                member = member,
+                                problem = problem,
+                                submissions = submissionsForNonCachedMemberProblemPairs[member.id to problem.id] ?: emptyList(),
                             )
                     }
                 }.flatten()

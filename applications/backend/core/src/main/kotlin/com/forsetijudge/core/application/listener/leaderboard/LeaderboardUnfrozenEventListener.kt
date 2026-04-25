@@ -1,6 +1,8 @@
 package com.forsetijudge.core.application.listener.leaderboard
 
 import com.forsetijudge.core.application.listener.BusinessEventListener
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
+import com.forsetijudge.core.application.service.internal.submission.SubmissionFinder
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
@@ -10,26 +12,21 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ContestRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.submission.FindAllSubmissionsByContestSinceLastFreezeInternalUseCase
 import org.springframework.stereotype.Component
 
 @Component
 class LeaderboardUnfrozenEventListener(
     private val contestRepository: ContestRepository,
-    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
-    private val findAllSubmissionsByContestSinceLastFreezeInternalUseCase: FindAllSubmissionsByContestSinceLastFreezeInternalUseCase,
+    private val leaderboardBuilder: LeaderboardBuilder,
+    private val submissionFinder: SubmissionFinder,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<LeaderboardEvent.Unfrozen> {
     override fun handle(event: LeaderboardEvent.Unfrozen) {
         val contest =
             contestRepository.findById(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${event.contestId}")
-        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
-        val frozenSubmissions =
-            findAllSubmissionsByContestSinceLastFreezeInternalUseCase.execute(
-                FindAllSubmissionsByContestSinceLastFreezeInternalUseCase.Command(contest = contest, frozenAt = event.frozenAt),
-            )
+        val leaderboard = leaderboardBuilder.build(contest = contest)
+        val frozenSubmissions = submissionFinder.findAllByContestSinceLastFreeze(contest = contest, frozenAt = event.frozenAt)
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(contest.id).buildLeaderboardUnfrozenEvent(leaderboard))
         broadcastProducer.produce(

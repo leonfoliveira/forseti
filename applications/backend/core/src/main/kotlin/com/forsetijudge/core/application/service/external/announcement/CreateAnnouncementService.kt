@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.announcement
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Announcement
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import jakarta.validation.Valid
@@ -25,7 +25,7 @@ class CreateAnnouncementService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val announcementRepository: AnnouncementRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : CreateAnnouncementUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -56,9 +56,7 @@ class CreateAnnouncementService(
                 text = command.text,
             )
         announcementRepository.save(announcement)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(AnnouncementEvent.Created(announcement.id)),
-        )
+        outboxEventPublisher.publish(AnnouncementEvent.Created(announcement.id))
 
         logger.info("Announcement created successfully with id = ${announcement.id}")
         return announcement.toResponseBodyDTO()

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.ticket
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -9,7 +10,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.UpdateTicketStatusUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class UpdateTicketStatusService(
     private val ticketRepository: TicketRepository,
     private val memberRepository: MemberRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : UpdateTicketStatusUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -46,11 +46,7 @@ class UpdateTicketStatusService(
         ticket.staff = staff
         ticket.status = command.status
         ticketRepository.save(ticket)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                TicketEvent.Updated(ticket.id),
-            ),
-        )
+        outboxEventPublisher.publish(TicketEvent.Updated(ticket.id))
 
         logger.info("Ticket status updated successfully")
         return ticket.toResponseBodyDTO()

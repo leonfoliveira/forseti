@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -14,7 +15,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
@@ -37,7 +37,7 @@ class BuildAdminDashboardServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val ticketRepository = mockk<TicketRepository>(relaxed = true)
-        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
+        val leaderboardBuilder = mockk<LeaderboardBuilder>(relaxed = true)
 
         val sut =
             BuildAdminDashboardService(
@@ -45,7 +45,7 @@ class BuildAdminDashboardServiceTest :
                 memberRepository = memberRepository,
                 submissionRepository = submissionRepository,
                 ticketRepository = ticketRepository,
-                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
+                leaderboardBuilder = leaderboardBuilder,
             )
 
         val contestId = IdGenerator.getUUID()
@@ -92,7 +92,7 @@ class BuildAdminDashboardServiceTest :
             val memberTickets = listOf(TicketMockBuilder.build<Serializable>())
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { leaderboardBuilder.build(any()) } returns leaderboard
             every { submissionRepository.findAllByContestId(contest.id) } returns submissions
             every { ticketRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberTickets
 

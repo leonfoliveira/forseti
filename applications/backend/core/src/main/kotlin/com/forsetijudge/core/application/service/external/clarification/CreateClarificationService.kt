@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.clarification
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Clarification
@@ -13,7 +14,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import jakarta.validation.Valid
@@ -28,7 +28,7 @@ class CreateClarificationService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val clarificationRepository: ClarificationRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : CreateClarificationUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -88,9 +88,7 @@ class CreateClarificationService(
                 parent = parent,
             )
         clarificationRepository.save(clarification)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(ClarificationEvent.Created(clarification.id)),
-        )
+        outboxEventPublisher.publish(ClarificationEvent.Created(clarification.id))
 
         logger.info("Clarification created successfully with id = ${clarification.id}")
         return clarification.toResponseBodyDTO()

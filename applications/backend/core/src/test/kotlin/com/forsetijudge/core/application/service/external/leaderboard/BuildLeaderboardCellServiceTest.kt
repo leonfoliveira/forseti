@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -14,7 +15,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -30,7 +30,7 @@ class BuildLeaderboardCellServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
-        val buildLeaderboardCellInternalUseCase = mockk<BuildLeaderboardCellInternalUseCase>(relaxed = true)
+        val leaderboardCellBuilder = mockk<LeaderboardCellBuilder>(relaxed = true)
 
         val sut =
             BuildLeaderboardCellService(
@@ -38,7 +38,7 @@ class BuildLeaderboardCellServiceTest :
                 memberRepository = memberRepository,
                 problemRepository = problemRepository,
                 submissionRepository = submissionRepository,
-                buildLeaderboardCellInternalUseCase = buildLeaderboardCellInternalUseCase,
+                leaderboardCellBuilder = leaderboardCellBuilder,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -138,7 +138,7 @@ class BuildLeaderboardCellServiceTest :
                     wrongSubmissions = 0,
                     penalty = 0,
                 )
-            every { buildLeaderboardCellInternalUseCase.execute(any()) } returns cell
+            every { leaderboardCellBuilder.build(any(), any(), any(), any()) } returns cell
             val command = BuildLeaderboardCellUseCase.Command(problemId = problemId, memberId = memberId)
 
             val result = sut.execute(command)

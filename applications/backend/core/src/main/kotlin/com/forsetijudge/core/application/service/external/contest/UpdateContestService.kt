@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.contest
 
 import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.TestCasesValidator
@@ -19,7 +20,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import jakarta.validation.Valid
@@ -37,7 +37,7 @@ class UpdateContestService(
     private val memberRepository: MemberRepository,
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
     private val attachmentWriterHelper: AttachmentWriterHelper,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -131,13 +131,9 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                ContestEvent.Updated(contest.id),
-            ),
-        )
+        outboxEventPublisher.publish(ContestEvent.Updated(contest.id))
 
-        logger.info("Contest updated successfully")
+        logger.info("Contest updated successfully with id: ${contest.id}")
         return contest.toWithMembersAndProblemsResponseBodyDTO()
     }
 

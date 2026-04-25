@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.ticket
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
@@ -18,7 +19,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import com.forsetijudge.core.port.driving.usecase.external.ticket.CreateTicketUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.ticket.TicketResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.ticket.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -33,7 +33,7 @@ class CreateTicketService(
     private val memberRepository: MemberRepository,
     private val ticketRepository: TicketRepository,
     private val submissionRepository: SubmissionRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
     private val objectMapper: ObjectMapper,
 ) : CreateTicketUseCase {
     private val logger = SafeLogger(this::class)
@@ -60,13 +60,9 @@ class CreateTicketService(
             }
 
         ticketRepository.save(ticket)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                TicketEvent.Created(ticket.id),
-            ),
-        )
+        outboxEventPublisher.publish(TicketEvent.Created(ticket.id))
 
-        logger.info("Ticket created successfully with id: ${ticket.id}")
+        logger.info("Ticket created successfully with id = ${ticket.id}")
         return ticket.toResponseBodyDTO()
     }
 

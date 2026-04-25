@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -10,7 +11,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.UnfreezeLeaderboardUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class UnfreezeLeaderboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : UnfreezeLeaderboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -48,13 +48,8 @@ class UnfreezeLeaderboardService(
 
         val frozenAt = contest.frozenAt!!
         contest.frozenAt = null
-
         contestRepository.save(contest)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                LeaderboardEvent.Unfrozen(contest.id, frozenAt),
-            ),
-        )
+        outboxEventPublisher.publish(LeaderboardEvent.Unfrozen(contest.id, frozenAt))
 
         logger.info("Leaderboard unfrozen successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

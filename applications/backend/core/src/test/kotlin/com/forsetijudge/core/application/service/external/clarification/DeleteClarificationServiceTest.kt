@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.clarification
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -12,7 +13,6 @@ import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.DeleteClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -26,13 +26,13 @@ class DeleteClarificationServiceTest :
     FunSpec({
         val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             DeleteClarificationService(
                 clarificationRepository = clarificationRepository,
                 memberRepository = memberRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val now = OffsetDateTime.now()
@@ -89,10 +89,12 @@ class DeleteClarificationServiceTest :
             sut.execute(command)
 
             clarification.deletedAt shouldBe now
-            verify { clarificationRepository.save(clarification) }
+            verify { clarificationRepository.save(match { it.id == clarification.id }) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is ClarificationEvent.Deleted && it.event.clarificationId == clarification.id },
+                outboxEventPublisher.publish(
+                    match {
+                        it is ClarificationEvent.Deleted && it.contestId == contextContestId && it.clarificationId == clarification.id
+                    },
                 )
             }
         }

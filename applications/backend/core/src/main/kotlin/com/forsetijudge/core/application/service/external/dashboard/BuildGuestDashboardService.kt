@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.unfreeze
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -9,7 +10,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildGuestDashboardUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ class BuildGuestDashboardService(
     private val contestRepository: ContestRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
-    private val buildLeaderboardInternalUseCase: BuildLeaderboardInternalUseCase,
+    private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildGuestDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -36,7 +36,7 @@ class BuildGuestDashboardService(
             throw NotFoundException("Guest dashboard is not enabled for this contest")
         }
 
-        val leaderboard = buildLeaderboardInternalUseCase.execute(BuildLeaderboardInternalUseCase.Command(contest = contest))
+        val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =
             if (contest.isFrozen) {
                 frozenSubmissionRepository.findAllByContestId(contest.id).map { it.unfreeze() }

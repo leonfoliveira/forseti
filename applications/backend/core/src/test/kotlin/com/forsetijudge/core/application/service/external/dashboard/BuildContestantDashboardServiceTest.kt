@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.dashboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -17,7 +18,6 @@ import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driven.repository.TicketRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
@@ -43,7 +43,7 @@ class BuildContestantDashboardServiceTest :
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
         val ticketRepository = mockk<TicketRepository>(relaxed = true)
-        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
+        val leaderboardBuilder = mockk<LeaderboardBuilder>(relaxed = true)
 
         val sut =
             BuildContestantDashboardService(
@@ -52,7 +52,7 @@ class BuildContestantDashboardServiceTest :
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
                 ticketRepository = ticketRepository,
-                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
+                leaderboardBuilder = leaderboardBuilder,
             )
 
         val contestId = IdGenerator.getUUID()
@@ -100,7 +100,7 @@ class BuildContestantDashboardServiceTest :
             val memberTickets = listOf(TicketMockBuilder.build<Serializable>(member = member))
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { leaderboardBuilder.build(any()) } returns leaderboard
             every { submissionRepository.findAllByContestId(contest.id) } returns submissions
             every { submissionRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberSubmissions
             every { ticketRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberTickets
@@ -127,7 +127,7 @@ class BuildContestantDashboardServiceTest :
             val memberTickets = listOf(TicketMockBuilder.build<Serializable>(member = member))
             every { contestRepository.findById(contestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(memberId, contestId) } returns member
-            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { leaderboardBuilder.build(any()) } returns leaderboard
             every { frozenSubmissionRepository.findAllByContestId(contest.id) } returns frozenSubmissions
             every { submissionRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberSubmissions
             every { ticketRepository.findAllByContestIdAndMemberId(contest.id, memberId) } returns memberTickets

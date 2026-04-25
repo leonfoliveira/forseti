@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -10,7 +11,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.UpdateAnswerSubmissionUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class UpdateAnswerSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val memberRepository: MemberRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : UpdateAnswerSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -48,11 +48,7 @@ class UpdateAnswerSubmissionService(
         submission.answer = command.answer
 
         submissionRepository.save(submission)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                SubmissionEvent.Updated(submission.id),
-            ),
-        )
+        outboxEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
         logger.info("Submission answer updated successfully")
         return submission.toWithCodeAndExecutionResponseBodyDTO()

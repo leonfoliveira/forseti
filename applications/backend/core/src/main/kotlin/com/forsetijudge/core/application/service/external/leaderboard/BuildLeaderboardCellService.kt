@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Submission
@@ -10,7 +11,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardCellUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -21,7 +21,7 @@ class BuildLeaderboardCellService(
     private val memberRepository: MemberRepository,
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
-    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
+    private val leaderboardCellBuilder: LeaderboardCellBuilder,
 ) : BuildLeaderboardCellUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -58,14 +58,13 @@ class BuildLeaderboardCellService(
                 status = Submission.Status.JUDGED,
             )
 
-        val internalCommand =
-            BuildLeaderboardCellInternalUseCase.Command(
+        val cell =
+            leaderboardCellBuilder.build(
                 contest = contest,
                 member = member,
                 problem = problem,
                 submissions = submissions,
             )
-        val cell = buildLeaderboardCellInternalUseCase.execute(internalCommand)
 
         logger.info("Leaderboard cell built successfully")
         return cell.toResponseBodyDTO()

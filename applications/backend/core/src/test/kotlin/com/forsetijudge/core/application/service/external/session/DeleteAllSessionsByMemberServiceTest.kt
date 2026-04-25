@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.session
 
+import com.forsetijudge.core.application.service.internal.session.SessionDeleter
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -16,12 +17,12 @@ import org.junit.jupiter.api.assertThrows
 class DeleteAllSessionsByMemberServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val deleteAllSessionsByMemberInternalUseCase = mockk<DeleteAllSessionsByMemberInternalUseCase>(relaxed = true)
+        val sessionDeleter = mockk<SessionDeleter>(relaxed = true)
 
         val sut =
             DeleteAllSessionsByMemberService(
                 memberRepository = memberRepository,
-                deleteAllSessionsByMemberInternalUseCase = deleteAllSessionsByMemberInternalUseCase,
+                sessionDeleter = sessionDeleter,
             )
 
         val contextMemberId = IdGenerator.getUUID()
@@ -46,10 +47,8 @@ class DeleteAllSessionsByMemberServiceTest :
             sut.execute()
 
             verify {
-                deleteAllSessionsByMemberInternalUseCase.execute(
-                    DeleteAllSessionsByMemberInternalUseCase.Command(
-                        member = member,
-                    ),
+                sessionDeleter.deleteAllByMember(
+                    member = member,
                 )
             }
         }

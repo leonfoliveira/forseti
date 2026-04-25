@@ -8,16 +8,14 @@ import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class CreateSessionInternalService(
+class SessionCreator(
     private val sessionRepository: SessionRepository,
-    private val deleteAllSessionsByMemberInternalUseCase: DeleteAllSessionsByMemberInternalUseCase,
+    private val sessionDeleter: SessionDeleter,
     private val sessionCache: SessionCache,
     @Value("\${security.session.expiration.default}")
     private val defaultExpiration: String,
@@ -25,16 +23,16 @@ class CreateSessionInternalService(
     private val rootExpiration: String,
     @Value("\${security.session.expiration.system}")
     private val systemExpiration: String,
-) : CreateSessionInternalUseCase {
+) {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(command: CreateSessionInternalUseCase.Command): Session {
-        logger.info("Creating session for member with id = ${command.member.id}")
+    fun create(member: Member): Session {
+        logger.info("Creating session for member with id = ${member.id}")
 
-        deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(command.member))
+        sessionDeleter.deleteAllByMember(member)
 
         val expiresAtOffset =
-            when (command.member.type) {
+            when (member.type) {
                 Member.Type.ROOT -> UnitUtil.parseTimeValue(rootExpiration)
                 Member.Type.API,
                 Member.Type.AUTOJUDGE,
@@ -44,7 +42,7 @@ class CreateSessionInternalService(
 
         val session =
             Session(
-                member = command.member,
+                member = member,
                 csrfToken = IdGenerator.getUUID(),
                 expiresAt = ExecutionContext.get().startedAt.plusSeconds(expiresAtOffset / 1000),
             )

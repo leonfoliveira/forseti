@@ -6,7 +6,6 @@ import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.repository.SessionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.driving.usecase.internal.session.DeleteAllSessionsByMemberInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.core.spec.style.FunSpec
@@ -18,19 +17,19 @@ import io.mockk.mockkStatic
 import io.mockk.verify
 import java.time.OffsetDateTime
 
-class CreateSessionInternalServiceTest :
+class SessionCreatorTest :
     FunSpec({
         val sessionRepository = mockk<SessionRepository>(relaxed = true)
-        val deleteAllSessionsByMemberInternalUseCase = mockk<DeleteAllSessionsByMemberInternalUseCase>(relaxed = true)
+        val sessionDeleter = mockk<SessionDeleter>(relaxed = true)
         val sessionCache = mockk<SessionCache>(relaxed = true)
         val defaultExpiration = "1h"
         val rootExpiration = "1h"
         val systemExpiration = "1h"
 
         val sut =
-            CreateSessionInternalService(
+            SessionCreator(
                 sessionRepository = sessionRepository,
-                deleteAllSessionsByMemberInternalUseCase = deleteAllSessionsByMemberInternalUseCase,
+                sessionDeleter = sessionDeleter,
                 sessionCache = sessionCache,
                 defaultExpiration = defaultExpiration,
                 rootExpiration = rootExpiration,
@@ -55,19 +54,16 @@ class CreateSessionInternalServiceTest :
         ).forEach { memberType ->
             test("should create session successfully for $memberType member") {
                 val member = MemberMockBuilder.build(type = memberType)
-                val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
 
-                val result = sut.execute(command)
+                val result = sut.create(member)
 
                 result.member shouldBe member
                 result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }
                 verify {
-                    deleteAllSessionsByMemberInternalUseCase.execute(
-                        DeleteAllSessionsByMemberInternalUseCase.Command(
-                            member,
-                        ),
+                    sessionDeleter.deleteAllByMember(
+                        member,
                     )
                 }
             }
@@ -75,35 +71,27 @@ class CreateSessionInternalServiceTest :
 
         test("should create session successfully for root member") {
             val member = MemberMockBuilder.build(type = Member.Type.ROOT)
-            val command = CreateSessionInternalUseCase.Command(member)
             every { sessionRepository.save(any()) } answers { firstArg() }
 
-            val result = sut.execute(command)
+            val result = sut.create(member)
 
             result.member shouldBe member
             result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
             verify { sessionRepository.save(result) }
-            verify { deleteAllSessionsByMemberInternalUseCase.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member)) }
+            verify { sessionDeleter.deleteAllByMember(member) }
         }
 
         listOf(Member.Type.API, Member.Type.AUTOJUDGE).forEach { memberType ->
             test("should create session successfully for $memberType member") {
                 val member = MemberMockBuilder.build(type = memberType)
-                val command = CreateSessionInternalUseCase.Command(member)
                 every { sessionRepository.save(any()) } answers { firstArg() }
 
-                val result = sut.execute(command)
+                val result = sut.create(member)
 
                 result.member shouldBe member
                 result.expiresAt shouldBe ExecutionContext.get().startedAt.plusHours(1)
                 verify { sessionRepository.save(result) }
-                verify {
-                    deleteAllSessionsByMemberInternalUseCase.execute(
-                        DeleteAllSessionsByMemberInternalUseCase.Command(
-                            member,
-                        ),
-                    )
-                }
+                verify { sessionDeleter.deleteAllByMember(member) }
                 verify { sessionCache.cache(result.toResponseBodyDTO()) }
             }
         }

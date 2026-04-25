@@ -14,13 +14,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
-class DeleteAllSessionsByMemberInternalServiceTest :
+class SessionDeleterTest :
     FunSpec({
         val sessionRepository = mockk<SessionRepository>(relaxed = true)
         val sessionCache = mockk<SessionCache>(relaxed = true)
 
         val sut =
-            DeleteAllSessionsByMemberInternalService(
+            SessionDeleter(
                 sessionRepository = sessionRepository,
                 sessionCache = sessionCache,
             )
@@ -36,7 +36,7 @@ class DeleteAllSessionsByMemberInternalServiceTest :
             every { sessionRepository.findAllByMemberIdAndExpiresAtGreaterThan(member.id, ExecutionContext.get().startedAt) } returns
                 sessions
 
-            sut.execute(DeleteAllSessionsByMemberInternalUseCase.Command(member = member))
+            sut.deleteAllByMember(member)
 
             verify { sessionRepository.saveAll(sessions) }
             sessions.forEach { it.deletedAt == ExecutionContext.get().startedAt }

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.submission
 
 import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
@@ -20,7 +21,6 @@ import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.submission.CreateSubmissionUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
@@ -39,8 +39,8 @@ class CreateSubmissionExternalServiceTest :
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
         val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             CreateSubmissionService(
@@ -49,7 +49,7 @@ class CreateSubmissionExternalServiceTest :
                 problemRepository = problemRepository,
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
                 attachmentWriterHelper = attachmentWriterHelper,
             )
 
@@ -161,8 +161,8 @@ class CreateSubmissionExternalServiceTest :
             result shouldBe submission.toWithCodeResponseBodyDTO()
             verify { frozenSubmissionRepository.save(any()) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is SubmissionEvent.Created && it.event.submissionId == submission.id },
+                outboxEventPublisher.publish(
+                    match { it is SubmissionEvent.Created && it.submissionId == result.id },
                 )
             }
         }

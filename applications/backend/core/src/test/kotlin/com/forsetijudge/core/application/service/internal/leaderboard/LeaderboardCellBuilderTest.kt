@@ -7,14 +7,13 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.Leaderboard
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 
-class BuildLeaderboardCellInternalServiceTest :
+class LeaderboardCellBuilderTest :
     FunSpec({
-        val sut = BuildLeaderboardCellInternalService()
+        val sut = LeaderboardCellBuilder()
 
         val contest = ContestMockBuilder.build()
         val member = MemberMockBuilder.build()
@@ -26,16 +25,13 @@ class BuildLeaderboardCellInternalServiceTest :
         }
 
         test("should build leaderboard cell without submissions") {
-
-            val command =
-                BuildLeaderboardCellInternalUseCase.Command(
+            val cell =
+                sut.build(
                     contest = contest,
                     member = member,
                     problem = problem,
                     submissions = emptyList(),
                 )
-
-            val cell = sut.execute(command)
 
             cell shouldBe
                 Leaderboard.Cell(
@@ -57,15 +53,13 @@ class BuildLeaderboardCellInternalServiceTest :
                     answer = Submission.Answer.ACCEPTED,
                 )
 
-            val command =
-                BuildLeaderboardCellInternalUseCase.Command(
+            val cell =
+                sut.build(
                     contest = contest,
                     member = member,
                     problem = problem,
                     submissions = listOf(acceptedSubmission),
                 )
-
-            val cell = sut.execute(command)
 
             cell shouldBe
                 Leaderboard.Cell(
@@ -87,15 +81,13 @@ class BuildLeaderboardCellInternalServiceTest :
                     answer = Submission.Answer.WRONG_ANSWER,
                 )
 
-            val command =
-                BuildLeaderboardCellInternalUseCase.Command(
+            val cell =
+                sut.build(
                     contest = contest,
                     member = member,
                     problem = problem,
                     submissions = listOf(wrongSubmission1),
                 )
-
-            val cell = sut.execute(command)
 
             cell shouldBe
                 Leaderboard.Cell(
@@ -127,15 +119,13 @@ class BuildLeaderboardCellInternalServiceTest :
                     answer = Submission.Answer.WRONG_ANSWER,
                 )
 
-            val command =
-                BuildLeaderboardCellInternalUseCase.Command(
+            val cell =
+                sut.build(
                     contest = contest,
                     member = member,
                     problem = problem,
                     submissions = listOf(wrongSubmission1, acceptedSubmission, wrongSubmission2),
                 )
-
-            val cell = sut.execute(command)
 
             cell shouldBe
                 Leaderboard.Cell(

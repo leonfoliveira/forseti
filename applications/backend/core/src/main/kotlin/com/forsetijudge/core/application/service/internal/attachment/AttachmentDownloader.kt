@@ -1,20 +1,20 @@
 package com.forsetijudge.core.application.service.internal.attachment
 
 import com.forsetijudge.core.application.util.SafeLogger
+import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.port.driven.bucket.AttachmentBucket
-import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
 import org.springframework.stereotype.Service
 
 @Service
-class DownloadAttachmentInternalService(
+class AttachmentDownloader(
     private val attachmentBucket: AttachmentBucket,
-) : DownloadAttachmentInternalUseCase {
+) {
     private val logger = SafeLogger(this::class)
 
-    override fun execute(command: DownloadAttachmentInternalUseCase.Command): ByteArray {
-        logger.info("Downloading attachment with id: ${command.attachment.id}")
+    fun download(attachment: Attachment): ByteArray {
+        logger.info("Downloading attachment with id: ${attachment.id}")
 
-        val bytes = attachmentBucket.download(command.attachment)
+        val bytes = attachmentBucket.download(attachment)
 
         logger.info("Attachment downloaded successfully, size: ${bytes.size} bytes")
         return bytes

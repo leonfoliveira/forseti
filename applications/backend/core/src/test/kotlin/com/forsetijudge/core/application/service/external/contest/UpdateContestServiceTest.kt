@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.external.contest
 
 import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Attachment
@@ -23,7 +24,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.contest.UpdateContestUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -41,8 +41,8 @@ class UpdateContestServiceTest :
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
         val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
 
         val sut =
@@ -52,7 +52,7 @@ class UpdateContestServiceTest :
                 memberRepository = memberRepository,
                 hasher = hasher,
                 testCasesValidator = testCasesValidator,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
                 attachmentWriterHelper = attachmentWriterHelper,
             )
 
@@ -416,8 +416,8 @@ class UpdateContestServiceTest :
                 verify { testCasesValidator.validate(testCasesAttachment) }
                 verify { contestRepository.save(contest) }
                 verify {
-                    publishOutboxEventInternalUseCase.execute(
-                        match { it.event is ContestEvent.Updated && it.event.contestId == contest.id },
+                    outboxEventPublisher.publish(
+                        match { it is ContestEvent.Updated && it.contestId == contest.id },
                     )
                 }
             }

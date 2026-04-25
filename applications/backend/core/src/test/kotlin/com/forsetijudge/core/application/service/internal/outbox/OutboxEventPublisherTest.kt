@@ -11,13 +11,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
-class PublishOutboxEventInternalServiceTest :
+class OutboxEventPublisherTest :
     FunSpec({
         val outboxEventRepository = mockk<OutboxEventRepository>(relaxed = true)
         val objectMapper = JacksonConfig().objectMapper()
 
         val sut =
-            PublishOutboxEventInternalService(
+            OutboxEventPublisher(
                 outboxEventRepository = outboxEventRepository,
                 objectMapper = objectMapper,
             )
@@ -30,11 +30,7 @@ class PublishOutboxEventInternalServiceTest :
             val event = AnnouncementEvent.Created(announcementId = IdGenerator.getUUID())
             every { outboxEventRepository.save(any()) } returnsArgument 0
 
-            sut.execute(
-                PublishOutboxEventInternalUseCase.Command(
-                    event = event,
-                ),
-            )
+            sut.publish(event = event)
 
             verify {
                 outboxEventRepository.save(

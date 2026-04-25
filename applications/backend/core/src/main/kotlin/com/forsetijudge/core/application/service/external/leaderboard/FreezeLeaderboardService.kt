@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
@@ -14,7 +15,6 @@ import com.forsetijudge.core.port.driven.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.FreezeLeaderboardUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -26,7 +26,7 @@ class FreezeLeaderboardService(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
-    private val publishOutboxEventInternalUseCase: PublishOutboxEventInternalUseCase,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) : FreezeLeaderboardUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -56,11 +56,7 @@ class FreezeLeaderboardService(
 
         freezeSubmissions(contest)
         contestRepository.save(contest)
-        publishOutboxEventInternalUseCase.execute(
-            PublishOutboxEventInternalUseCase.Command(
-                LeaderboardEvent.Frozen(contest.id),
-            ),
-        )
+        outboxEventPublisher.publish(LeaderboardEvent.Frozen(contest.id))
 
         logger.info("Leaderboard frozen successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.announcement
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -12,7 +13,6 @@ import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.announcement.CreateAnnouncementUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -25,14 +25,14 @@ class CreateAnnouncementServiceTest :
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val announcementRepository = mockk<AnnouncementRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             CreateAnnouncementService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
                 announcementRepository = announcementRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -90,8 +90,8 @@ class CreateAnnouncementServiceTest :
 
             verify { announcementRepository.save(match { it.id == announcement.id }) }
             verify {
-                publishOutboxEventInternalUseCase.execute(
-                    match { it.event is AnnouncementEvent.Created && it.event.announcementId == announcement.id },
+                outboxEventPublisher.publish(
+                    match { it is AnnouncementEvent.Created && it.announcementId == announcement.id },
                 )
             }
         }

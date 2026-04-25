@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.clarification
 
+import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.entity.Contest
@@ -16,7 +17,6 @@ import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driven.repository.ProblemRepository
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.outbox.PublishOutboxEventInternalUseCase
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
@@ -31,7 +31,7 @@ class CreateClarificationExternalServiceTest :
         val memberRepository = mockk<MemberRepository>(relaxed = true)
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val clarificationRepository = mockk<ClarificationRepository>(relaxed = true)
-        val publishOutboxEventInternalUseCase = mockk<PublishOutboxEventInternalUseCase>(relaxed = true)
+        val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
             CreateClarificationService(
@@ -39,7 +39,7 @@ class CreateClarificationExternalServiceTest :
                 memberRepository = memberRepository,
                 problemRepository = problemRepository,
                 clarificationRepository = clarificationRepository,
-                publishOutboxEventInternalUseCase = publishOutboxEventInternalUseCase,
+                outboxEventPublisher = outboxEventPublisher,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -136,8 +136,8 @@ class CreateClarificationExternalServiceTest :
 
                 verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
-                    publishOutboxEventInternalUseCase.execute(
-                        match { it.event is ClarificationEvent.Created && it.event.clarificationId == result.id },
+                    outboxEventPublisher.publish(
+                        match { it is ClarificationEvent.Created && it.clarificationId == result.id },
                     )
                 }
             }
@@ -219,8 +219,8 @@ class CreateClarificationExternalServiceTest :
 
                 verify { clarificationRepository.save(match { it.id == result.id }) }
                 verify {
-                    publishOutboxEventInternalUseCase.execute(
-                        match { it.event is ClarificationEvent.Created && it.event.clarificationId == result.id },
+                    outboxEventPublisher.publish(
+                        match { it is ClarificationEvent.Created && it.clarificationId == result.id },
                     )
                 }
             }

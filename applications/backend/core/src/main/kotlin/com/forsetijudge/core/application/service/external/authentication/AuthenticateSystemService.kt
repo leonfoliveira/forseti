@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.authentication
 
+import com.forsetijudge.core.application.service.internal.session.SessionCreator
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
@@ -9,7 +10,6 @@ import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.cryptography.Hasher
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import org.springframework.stereotype.Service
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class AuthenticateSystemService(
     private val memberRepository: MemberRepository,
-    private val createSessionInternalUseCase: CreateSessionInternalUseCase,
+    private val sessionCreator: SessionCreator,
     private val hasher: Hasher,
     private val sessionCache: SessionCache,
 ) : AuthenticateSystemUseCase {
@@ -84,8 +84,7 @@ class AuthenticateSystemService(
     }
 
     fun createSession(member: Member): SessionResponseBodyDTO {
-        val session =
-            createSessionInternalUseCase.execute(CreateSessionInternalUseCase.Command(member))
+        val session = sessionCreator.create(member)
         logger.info("Created new session with id: ${session.id}")
         return session.toResponseBodyDTO()
     }

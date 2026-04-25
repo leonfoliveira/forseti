@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.leaderboard
 
+import com.forsetijudge.core.application.service.internal.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
@@ -11,7 +12,6 @@ import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLeaderboardUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardInternalUseCase
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -25,13 +25,13 @@ class BuildLeaderboardServiceTest :
     FunSpec({
         val contestRepository = mockk<ContestRepository>(relaxed = true)
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val buildLeaderboardInternalUseCase = mockk<BuildLeaderboardInternalUseCase>(relaxed = true)
+        val leaderboardBuilder = mockk<LeaderboardBuilder>(relaxed = true)
 
         val sut =
             BuildLeaderboardService(
                 contestRepository = contestRepository,
                 memberRepository = memberRepository,
-                buildLeaderboardInternalUseCase = buildLeaderboardInternalUseCase,
+                leaderboardBuilder = leaderboardBuilder,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -74,7 +74,7 @@ class BuildLeaderboardServiceTest :
             val leaderboard = LeaderboardMockBuilder.build()
             every { contestRepository.findById(contextContestId) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contextContestId) } returns member
-            every { buildLeaderboardInternalUseCase.execute(any()) } returns leaderboard
+            every { leaderboardBuilder.build(any()) } returns leaderboard
 
             val result = sut.execute(BuildLeaderboardUseCase.Command())
 

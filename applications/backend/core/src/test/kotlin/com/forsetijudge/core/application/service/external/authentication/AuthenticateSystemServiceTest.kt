@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.external.authentication
 
+import com.forsetijudge.core.application.service.internal.session.SessionCreator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
@@ -9,7 +10,6 @@ import com.forsetijudge.core.port.driven.cache.SessionCache
 import com.forsetijudge.core.port.driven.cryptography.Hasher
 import com.forsetijudge.core.port.driven.repository.MemberRepository
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.session.CreateSessionInternalUseCase
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FunSpec
@@ -24,14 +24,14 @@ import java.time.OffsetDateTime
 class AuthenticateSystemServiceTest :
     FunSpec({
         val memberRepository = mockk<MemberRepository>(relaxed = true)
-        val createSessionInternalUseCase = mockk<CreateSessionInternalUseCase>(relaxed = true)
+        val sessionCreator = mockk<SessionCreator>(relaxed = true)
         val hasher = mockk<Hasher>(relaxed = true)
         val sessionCache = mockk<SessionCache>(relaxed = true)
 
         val sut =
             AuthenticateSystemService(
                 memberRepository = memberRepository,
-                createSessionInternalUseCase = createSessionInternalUseCase,
+                sessionCreator = sessionCreator,
                 hasher = hasher,
                 sessionCache = sessionCache,
             )
@@ -62,7 +62,7 @@ class AuthenticateSystemServiceTest :
         test("should authenticate new member") {
             val expectedSession = SessionMockBuilder.build()
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns null
-            every { createSessionInternalUseCase.execute(any()) } returns expectedSession
+            every { sessionCreator.create(any()) } returns expectedSession
 
             sut.execute(command)
 
@@ -81,7 +81,7 @@ class AuthenticateSystemServiceTest :
             val existingMember = MemberMockBuilder.build()
             val expectedSession = SessionMockBuilder.build(member = existingMember)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
-            every { createSessionInternalUseCase.execute(any()) } returns expectedSession
+            every { sessionCreator.create(any()) } returns expectedSession
 
             sut.execute(command)
 
@@ -100,7 +100,7 @@ class AuthenticateSystemServiceTest :
 
             val session = ExecutionContext.getSession()
             session.id shouldBe cachedSession.id
-            verify(exactly = 0) { createSessionInternalUseCase.execute(any()) }
+            verify(exactly = 0) { sessionCreator.create(any()) }
         }
 
         test("should create new session if cached session is invalid") {
@@ -109,13 +109,13 @@ class AuthenticateSystemServiceTest :
             val newSession = SessionMockBuilder.build(member = existingMember)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { sessionCache.getByMemberId(any()) } returns cachedSession.toResponseBodyDTO()
-            every { createSessionInternalUseCase.execute(any()) } returns newSession
+            every { sessionCreator.create(any()) } returns newSession
 
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
             session.id shouldBe newSession.id
-            verify { createSessionInternalUseCase.execute(any()) }
+            verify { sessionCreator.create(any()) }
             verify { sessionCache.evict(any()) }
         }
 
@@ -124,12 +124,12 @@ class AuthenticateSystemServiceTest :
             val newSession = SessionMockBuilder.build(member = existingMember)
             every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
             every { sessionCache.getByMemberId(any()) } returns null
-            every { createSessionInternalUseCase.execute(any()) } returns newSession
+            every { sessionCreator.create(any()) } returns newSession
 
             sut.execute(command)
 
             val session = ExecutionContext.getSession()
             session.id shouldBe newSession.id
-            verify { createSessionInternalUseCase.execute(any()) }
+            verify { sessionCreator.create(any()) }
         }
     })
