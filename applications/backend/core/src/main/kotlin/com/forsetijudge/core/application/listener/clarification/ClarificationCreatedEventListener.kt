@@ -12,12 +12,14 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ClarificationRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class ClarificationCreatedEventListener(
     private val clarificationRepository: ClarificationRepository,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<ClarificationEvent.Created> {
+    @Transactional
     override fun handle(event: ClarificationEvent.Created) {
         val clarification =
             clarificationRepository.findById(event.clarificationId)

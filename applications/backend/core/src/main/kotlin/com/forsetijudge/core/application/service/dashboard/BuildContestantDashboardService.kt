@@ -17,6 +17,7 @@ import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildContes
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BuildContestantDashboardService(
@@ -29,6 +30,7 @@ class BuildContestantDashboardService(
 ) : BuildContestantDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional(readOnly = true)
     override fun execute(): ContestantDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()

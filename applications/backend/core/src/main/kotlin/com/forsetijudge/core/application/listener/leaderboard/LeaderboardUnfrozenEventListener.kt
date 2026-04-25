@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.listener.leaderboard
 
-import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.helper.submission.SubmissionFinder
+import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.event.LeaderboardEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class LeaderboardUnfrozenEventListener(
@@ -21,6 +22,7 @@ class LeaderboardUnfrozenEventListener(
     private val submissionFinder: SubmissionFinder,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<LeaderboardEvent.Unfrozen> {
+    @Transactional
     override fun handle(event: LeaderboardEvent.Unfrozen) {
         val contest =
             contestRepository.findById(event.contestId)

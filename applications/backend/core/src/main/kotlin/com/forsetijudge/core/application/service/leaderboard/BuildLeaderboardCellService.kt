@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.driving.usecase.external.leaderboard.BuildLead
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BuildLeaderboardCellService(
@@ -25,6 +26,7 @@ class BuildLeaderboardCellService(
 ) : BuildLeaderboardCellUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional(readOnly = true)
     override fun execute(command: BuildLeaderboardCellUseCase.Command): LeaderboardCellResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()

@@ -7,6 +7,7 @@ import com.forsetijudge.core.port.driving.usecase.external.contest.FindContestBy
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class FindContestBySlugService(
@@ -14,6 +15,7 @@ class FindContestBySlugService(
 ) : FindContestBySlugUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional(readOnly = true)
     override fun execute(command: FindContestBySlugUseCase.Command): ContestResponseBodyDTO {
         logger.info("Finding contest by slug: ${command.slug}")
 

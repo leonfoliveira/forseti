@@ -8,12 +8,14 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.TicketRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class TicketCreatedEventListener(
     private val ticketRepository: TicketRepository,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<TicketEvent.Created> {
+    @Transactional
     override fun handle(event: TicketEvent.Created) {
         val ticket =
             ticketRepository.findById(event.ticketId) ?: throw NotFoundException("Could not find ticket with id: ${event.ticketId}")

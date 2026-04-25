@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildGuestD
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BuildGuestDashboardService(
@@ -23,6 +24,7 @@ class BuildGuestDashboardService(
 ) : BuildGuestDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional(readOnly = true)
     override fun execute(): GuestDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
 

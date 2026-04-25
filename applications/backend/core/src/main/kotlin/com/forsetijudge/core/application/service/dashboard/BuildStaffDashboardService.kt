@@ -15,6 +15,7 @@ import com.forsetijudge.core.port.driving.usecase.external.dashboard.BuildStaffD
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class BuildStaffDashboardService(
@@ -26,6 +27,7 @@ class BuildStaffDashboardService(
 ) : BuildStaffDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional(readOnly = true)
     override fun execute(): StaffDashboardResponseBodyDTO {
         val contextContestId = ExecutionContext.getContestId()
         val contextMemberId = ExecutionContext.getMemberId()

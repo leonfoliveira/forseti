@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SubmissionResetEventListener(
@@ -15,6 +16,7 @@ class SubmissionResetEventListener(
 ) : BusinessEventListener<SubmissionEvent.Reset> {
     private val logger = SafeLogger(this::class)
 
+    @Transactional
     override fun handle(event: SubmissionEvent.Reset) {
         val submission =
             submissionRepository.findById(event.submissionId)
