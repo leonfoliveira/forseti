@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.outbox
 
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.application.listener.announcement.AnnouncementCreatedEventListener
 import com.forsetijudge.core.application.listener.clarification.ClarificationCreatedEventListener
-import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.OutboxEvent
 import com.forsetijudge.core.domain.entity.OutboxEventMockBuilder

@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.helper.leaderboard
 
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
-import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder

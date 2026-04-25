@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.authentication
 
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.application.helper.session.SessionCreator
 import com.forsetijudge.core.application.helper.session.SessionDeleter
-import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.MemberMockBuilder
 import com.forsetijudge.core.domain.entity.SessionMockBuilder

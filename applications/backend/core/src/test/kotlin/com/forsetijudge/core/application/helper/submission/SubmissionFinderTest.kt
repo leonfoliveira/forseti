@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.helper.submission
 
-import com.forsetijudge.core.application.helper.submission.SubmissionFinder
 import com.forsetijudge.core.application.helper.IdGenerator
+import com.forsetijudge.core.application.helper.submission.SubmissionFinder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
