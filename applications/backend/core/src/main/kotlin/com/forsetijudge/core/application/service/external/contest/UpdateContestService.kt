@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.external.contest
 
-import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.helper.AttachmentCommiter
 import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
@@ -38,7 +38,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val outboxEventPublisher: OutboxEventPublisher,
-    private val attachmentWriterHelper: AttachmentWriterHelper,
+    private val attachmentCommiter: AttachmentCommiter,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -173,8 +173,8 @@ class UpdateContestService(
     ): Problem {
         logger.info("Creating problem with title: ${problemDTO.title}")
 
-        val description = attachmentWriterHelper.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
-        val testCases = attachmentWriterHelper.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
+        val description = attachmentCommiter.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
+        val testCases = attachmentCommiter.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
         testCasesValidator.validate(testCases)
 
         val problem =
@@ -240,11 +240,11 @@ class UpdateContestService(
                 ?: throw NotFoundException("Could not find problem with id = ${problemDTO.id}")
 
         if (problem.description.id != problemDTO.description.id) {
-            val description = attachmentWriterHelper.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
+            val description = attachmentCommiter.commit(problemDTO.description.id, contest.id, Attachment.Context.PROBLEM_DESCRIPTION)
             problem.description = description
         }
         if (problem.testCases.id != problemDTO.testCases.id) {
-            val testCases = attachmentWriterHelper.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
+            val testCases = attachmentCommiter.commit(problemDTO.testCases.id, contest.id, Attachment.Context.PROBLEM_TEST_CASES)
             testCasesValidator.validate(testCases)
             problem.testCases = testCases
         }

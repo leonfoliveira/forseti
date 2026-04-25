@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
-import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.helper.AttachmentCommiter
 import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
@@ -34,7 +34,7 @@ class CreateSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val outboxEventPublisher: OutboxEventPublisher,
-    private val attachmentWriterHelper: AttachmentWriterHelper,
+    private val attachmentCommiter: AttachmentCommiter,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -63,7 +63,7 @@ class CreateSubmissionService(
             problemRepository.findByIdAndContestId(command.problemId, contextContestId)
                 ?: throw NotFoundException("Could not find problem with id = ${command.problemId} in contest")
         val code =
-            attachmentWriterHelper.commit(
+            attachmentCommiter.commit(
                 attachmentId = command.code.id,
                 contestId = contextContestId,
                 context = Attachment.Context.SUBMISSION_CODE,

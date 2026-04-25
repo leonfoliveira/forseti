@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.external.contest
 
-import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.helper.AttachmentCommiter
 import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.application.util.TestCasesValidator
@@ -43,7 +43,7 @@ class UpdateContestServiceTest :
         val hasher = mockk<Hasher>(relaxed = true)
         val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
         val testCasesValidator = mockk<TestCasesValidator>(relaxed = true)
-        val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
+        val attachmentCommiter = mockk<AttachmentCommiter>(relaxed = true)
 
         val sut =
             UpdateContestService(
@@ -53,7 +53,7 @@ class UpdateContestServiceTest :
                 hasher = hasher,
                 testCasesValidator = testCasesValidator,
                 outboxEventPublisher = outboxEventPublisher,
-                attachmentWriterHelper = attachmentWriterHelper,
+                attachmentCommiter = attachmentCommiter,
             )
 
         val now = OffsetDateTime.now()
@@ -328,7 +328,7 @@ class UpdateContestServiceTest :
                     )
                 val testCasesAttachment = AttachmentMockBuilder.build(context = Attachment.Context.PROBLEM_TEST_CASES, isCommited = false)
                 every {
-                    attachmentWriterHelper.commit(
+                    attachmentCommiter.commit(
                         inputProblemToCreate.description.id,
                         contextContestId,
                         Attachment.Context.PROBLEM_DESCRIPTION,
@@ -336,7 +336,7 @@ class UpdateContestServiceTest :
                 } returns
                     descriptionAttachment
                 every {
-                    attachmentWriterHelper.commit(
+                    attachmentCommiter.commit(
                         inputProblemToCreate.testCases.id,
                         contextContestId,
                         Attachment.Context.PROBLEM_TEST_CASES,
@@ -344,7 +344,7 @@ class UpdateContestServiceTest :
                 } returns
                     testCasesAttachment
                 every {
-                    attachmentWriterHelper.commit(
+                    attachmentCommiter.commit(
                         inputProblemToUpdateFull.description.id,
                         contextContestId,
                         Attachment.Context.PROBLEM_DESCRIPTION,
@@ -352,7 +352,7 @@ class UpdateContestServiceTest :
                 } returns
                     descriptionAttachment
                 every {
-                    attachmentWriterHelper.commit(
+                    attachmentCommiter.commit(
                         inputProblemToUpdateFull.testCases.id,
                         contextContestId,
                         Attachment.Context.PROBLEM_TEST_CASES,

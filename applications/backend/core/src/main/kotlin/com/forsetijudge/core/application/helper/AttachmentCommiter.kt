@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component
 import java.util.UUID
 
 @Component
-class AttachmentWriterHelper(
+class AttachmentCommiter(
     private val attachmentRepository: AttachmentRepository,
 ) {
     private val logger = SafeLogger(this::class)

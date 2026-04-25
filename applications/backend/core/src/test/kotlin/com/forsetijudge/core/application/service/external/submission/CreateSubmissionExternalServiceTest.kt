@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.external.submission
 
-import com.forsetijudge.core.application.helper.AttachmentWriterHelper
+import com.forsetijudge.core.application.helper.AttachmentCommiter
 import com.forsetijudge.core.application.service.internal.outbox.OutboxEventPublisher
 import com.forsetijudge.core.application.util.IdGenerator
 import com.forsetijudge.core.domain.entity.Attachment
@@ -39,7 +39,7 @@ class CreateSubmissionExternalServiceTest :
         val problemRepository = mockk<ProblemRepository>(relaxed = true)
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
         val frozenSubmissionRepository = mockk<FrozenSubmissionRepository>(relaxed = true)
-        val attachmentWriterHelper = mockk<AttachmentWriterHelper>(relaxed = true)
+        val attachmentCommiter = mockk<AttachmentCommiter>(relaxed = true)
         val outboxEventPublisher = mockk<OutboxEventPublisher>(relaxed = true)
 
         val sut =
@@ -50,7 +50,7 @@ class CreateSubmissionExternalServiceTest :
                 submissionRepository = submissionRepository,
                 frozenSubmissionRepository = frozenSubmissionRepository,
                 outboxEventPublisher = outboxEventPublisher,
-                attachmentWriterHelper = attachmentWriterHelper,
+                attachmentCommiter = attachmentCommiter,
             )
 
         val contextContestId = IdGenerator.getUUID()
@@ -143,7 +143,7 @@ class CreateSubmissionExternalServiceTest :
             every { contestRepository.findById(any()) } returns contest
             every { memberRepository.findByIdAndContestIdOrContestIsNull(any(), any()) } returns member
             every { problemRepository.findByIdAndContestId(command.problemId, contextContestId) } returns problem
-            every { attachmentWriterHelper.commit(command.code.id, contextContestId, Attachment.Context.SUBMISSION_CODE) } returns code
+            every { attachmentCommiter.commit(command.code.id, contextContestId, Attachment.Context.SUBMISSION_CODE) } returns code
             every { submissionRepository.save(any()) } answers { firstArg() }
             every { frozenSubmissionRepository.save(any()) } answers { firstArg() }
 

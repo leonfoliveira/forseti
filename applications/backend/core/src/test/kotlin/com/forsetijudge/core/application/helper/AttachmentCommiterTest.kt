@@ -13,12 +13,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 
-class AttachmentWriterHelperTest :
+class AttachmentCommiterTest :
     FunSpec({
         val attachmentRepository = mockk<AttachmentRepository>(relaxed = true)
 
         val sut =
-            AttachmentWriterHelper(
+            AttachmentCommiter(
                 attachmentRepository = attachmentRepository,
             )
 
