@@ -10,7 +10,6 @@ import com.forsetijudge.core.domain.event.ExecutionEvent
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.domain.model.TestCaseExecutionResult
 import com.forsetijudge.core.port.driven.repository.ExecutionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.attachment.UploadAttachmentInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
