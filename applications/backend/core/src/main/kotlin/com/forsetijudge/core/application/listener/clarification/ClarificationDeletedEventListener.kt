@@ -9,11 +9,13 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.GuestDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class ClarificationDeletedEventListener(
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<ClarificationEvent.Deleted> {
+    @Transactional
     override fun handle(event: ClarificationEvent.Deleted) {
         broadcastProducer.produce(AdminDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))
         broadcastProducer.produce(ContestantDashboardBroadcastRoom(event.contestId).buildClarificationDeletedEvent(event.clarificationId))

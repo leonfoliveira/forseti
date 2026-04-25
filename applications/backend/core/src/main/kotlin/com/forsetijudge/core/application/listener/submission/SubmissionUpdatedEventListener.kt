@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.listener.submission
 
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.application.listener.BusinessEventListener
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
@@ -13,16 +14,17 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SubmissionUpdatedEventListener(
     private val submissionRepository: SubmissionRepository,
-    private val buildLeaderboardCellInternalUseCase: BuildLeaderboardCellInternalUseCase,
+    private val leaderboardCellBuilder: LeaderboardCellBuilder,
     private val broadcastProducer: BroadcastProducer,
     private val leaderboardCacheStore: LeaderboardCacheStore,
 ) : BusinessEventListener<SubmissionEvent.Updated> {
+    @Transactional
     override fun handle(event: SubmissionEvent.Updated) {
         val submission =
             submissionRepository.findById(event.submissionId)
@@ -33,10 +35,7 @@ class SubmissionUpdatedEventListener(
                 problemId = submission.problem.id,
                 status = Submission.Status.JUDGED,
             )
-        val leaderboardCell =
-            buildLeaderboardCellInternalUseCase.execute(
-                BuildLeaderboardCellInternalUseCase.Command(submission.contest, submission.member, submission.problem, cellSubmissions),
-            )
+        val leaderboardCell = leaderboardCellBuilder.build(submission.contest, submission.member, submission.problem, cellSubmissions)
 
         broadcastProducer.produce(AdminDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))
         broadcastProducer.produce(JudgeDashboardBroadcastRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission))

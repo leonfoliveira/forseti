@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.http.middleware
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.model.ExecutionContext
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

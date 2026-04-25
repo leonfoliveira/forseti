@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driving.job
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.infrastructure.adapter.driven.rabbitmq.RabbitMQProducer
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage

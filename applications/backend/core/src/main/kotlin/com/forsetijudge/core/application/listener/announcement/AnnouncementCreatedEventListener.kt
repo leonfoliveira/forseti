@@ -11,12 +11,14 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.AnnouncementRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class AnnouncementCreatedEventListener(
     private val announcementRepository: AnnouncementRepository,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<AnnouncementEvent.Created> {
+    @Transactional
     override fun handle(event: AnnouncementEvent.Created) {
         val announcement =
             announcementRepository.findById(event.announcementId)

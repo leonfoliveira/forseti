@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.listener.contest
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.port.driven.job.AutoFreezeJobScheduler
 import io.kotest.core.spec.style.FunSpec

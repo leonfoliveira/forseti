@@ -3,7 +3,7 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.ticket.CreateTicketRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.ticket.UpdateTicketStatusRequestBodyDTO
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.Ticket
 import com.forsetijudge.core.domain.entity.TicketMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder

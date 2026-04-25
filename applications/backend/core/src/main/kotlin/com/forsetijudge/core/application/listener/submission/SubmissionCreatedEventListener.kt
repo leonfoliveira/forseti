@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class SubmissionCreatedEventListener(
@@ -22,6 +23,7 @@ class SubmissionCreatedEventListener(
 ) : BusinessEventListener<SubmissionEvent.Created> {
     private val logger = SafeLogger(this::class)
 
+    @Transactional
     override fun handle(event: SubmissionEvent.Created) {
         val submission =
             submissionRepository.findById(event.submissionId)

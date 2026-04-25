@@ -2,7 +2,7 @@ package com.forsetijudge.api.adapter.driving.http.controller.contests
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.clarification.CreateClarificationRequestBodyDTO
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.ClarificationMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.clarification.CreateClarificationUseCase

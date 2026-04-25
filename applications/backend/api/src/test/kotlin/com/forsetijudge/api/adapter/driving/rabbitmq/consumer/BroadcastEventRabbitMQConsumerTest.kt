@@ -2,7 +2,7 @@ package com.forsetijudge.api.adapter.driving.rabbitmq.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase

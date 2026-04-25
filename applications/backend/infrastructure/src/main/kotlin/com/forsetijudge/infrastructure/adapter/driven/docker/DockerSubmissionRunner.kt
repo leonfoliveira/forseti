@@ -1,13 +1,13 @@
 package com.forsetijudge.infrastructure.adapter.driven.docker
 
+import com.forsetijudge.core.application.helper.attachment.AttachmentDownloader
+import com.forsetijudge.core.application.helper.execution.ExecutionCreator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.TestCaseExecutionResult
 import com.forsetijudge.core.port.driven.sandbox.SubmissionRunner
-import com.forsetijudge.core.port.driving.usecase.internal.attachment.DownloadAttachmentInternalUseCase
-import com.forsetijudge.core.port.driving.usecase.internal.execution.CreateExecutionInternalUseCase
 import com.opencsv.CSVReader
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -18,8 +18,8 @@ import java.nio.file.Files
 
 @Component
 class DockerSubmissionRunner(
-    private val downloadAttachmentInternalUseCase: DownloadAttachmentInternalUseCase,
-    private val createExecutionInternalUseCase: CreateExecutionInternalUseCase,
+    private val attachmentDownloader: AttachmentDownloader,
+    private val executionCreator: ExecutionCreator,
     @Value("\${spring.application.version}")
     private val version: String,
 ) : SubmissionRunner {
@@ -56,16 +56,14 @@ class DockerSubmissionRunner(
                 container.compile()
             } catch (ex: Exception) {
                 logger.info("Compilation failed: ${ex.message}")
-                return createExecutionInternalUseCase.execute(
-                    CreateExecutionInternalUseCase.Command(
-                        contest = submission.contest,
-                        member = submission.member,
-                        submission = submission,
-                        answer = Submission.Answer.COMPILATION_ERROR,
-                        totalTestCases = testCases.size,
-                        approvedTestCases = 0,
-                        results = emptyList(),
-                    ),
+                return executionCreator.create(
+                    contest = submission.contest,
+                    member = submission.member,
+                    submission = submission,
+                    answer = Submission.Answer.COMPILATION_ERROR,
+                    totalTestCases = testCases.size,
+                    approvedTestCases = 0,
+                    results = emptyList(),
                 )
             }
 
@@ -96,30 +94,26 @@ class DockerSubmissionRunner(
                     approvedTestCases++
                 } else {
                     logger.info("Test case ${index + 1} failed with answer: $answer")
-                    return createExecutionInternalUseCase.execute(
-                        CreateExecutionInternalUseCase.Command(
-                            contest = submission.contest,
-                            member = submission.member,
-                            submission = submission,
-                            answer = answer,
-                            totalTestCases = testCases.size,
-                            approvedTestCases = approvedTestCases,
-                            results = results,
-                        ),
+                    return executionCreator.create(
+                        contest = submission.contest,
+                        member = submission.member,
+                        submission = submission,
+                        answer = answer,
+                        totalTestCases = testCases.size,
+                        approvedTestCases = approvedTestCases,
+                        results = results,
                     )
                 }
             }
             logger.info("All test cases passed")
-            return createExecutionInternalUseCase.execute(
-                CreateExecutionInternalUseCase.Command(
-                    contest = submission.contest,
-                    member = submission.member,
-                    submission = submission,
-                    answer = Submission.Answer.ACCEPTED,
-                    totalTestCases = testCases.size,
-                    approvedTestCases = approvedTestCases,
-                    results = results,
-                ),
+            return executionCreator.create(
+                contest = submission.contest,
+                member = submission.member,
+                submission = submission,
+                answer = Submission.Answer.ACCEPTED,
+                totalTestCases = testCases.size,
+                approvedTestCases = approvedTestCases,
+                results = results,
             )
         } finally {
             container.kill()
@@ -139,10 +133,8 @@ class DockerSubmissionRunner(
         tmpDir: File,
     ): File {
         val bytes =
-            downloadAttachmentInternalUseCase.execute(
-                DownloadAttachmentInternalUseCase.Command(
-                    attachment = submission.code,
-                ),
+            attachmentDownloader.download(
+                attachment = submission.code,
             )
         val romFile = File(tmpDir, submission.code.filename)
         romFile.writeBytes(bytes)
@@ -152,15 +144,13 @@ class DockerSubmissionRunner(
     /**
      * Downloads the test cases from the attachment bucket and parses them as CSV.
      *
-     * @param problem The problem containing the test cases attachment.
+     * @param problem The problem containing the test cases' attachment.
      * @return A list of test cases, where each test case is represented as an array of strings.
      */
     private fun loadTestCases(problem: Problem): List<Array<String>> {
         val bytes =
-            downloadAttachmentInternalUseCase.execute(
-                DownloadAttachmentInternalUseCase.Command(
-                    attachment = problem.testCases,
-                ),
+            attachmentDownloader.download(
+                attachment = problem.testCases,
             )
         val csvReader = CSVReader(InputStreamReader(ByteArrayInputStream(bytes)))
         return csvReader.use { reader ->

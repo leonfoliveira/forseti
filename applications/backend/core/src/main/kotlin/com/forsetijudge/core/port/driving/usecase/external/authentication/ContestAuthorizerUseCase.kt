@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.driving.usecase.external.authentication
 
-import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 
 interface ContestAuthorizerUseCase {
     /**

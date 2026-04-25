@@ -1,6 +1,6 @@
 package com.forsetijudge.core.domain.entity.aud
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO

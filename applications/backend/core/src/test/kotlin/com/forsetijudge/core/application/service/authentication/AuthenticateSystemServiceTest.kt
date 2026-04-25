@@ -1,0 +1,135 @@
+package com.forsetijudge.core.application.service.authentication
+
+import com.forsetijudge.core.application.helper.session.SessionCreator
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.MemberMockBuilder
+import com.forsetijudge.core.domain.entity.SessionMockBuilder
+import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.model.ExecutionContext
+import com.forsetijudge.core.port.driven.cache.SessionCache
+import com.forsetijudge.core.port.driven.cryptography.Hasher
+import com.forsetijudge.core.port.driven.repository.MemberRepository
+import com.forsetijudge.core.port.driving.usecase.external.authentication.AuthenticateSystemUseCase
+import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.slot
+import io.mockk.verify
+import java.time.OffsetDateTime
+
+class AuthenticateSystemServiceTest :
+    FunSpec({
+        val memberRepository = mockk<MemberRepository>(relaxed = true)
+        val sessionCreator = mockk<SessionCreator>(relaxed = true)
+        val hasher = mockk<Hasher>(relaxed = true)
+        val sessionCache = mockk<SessionCache>(relaxed = true)
+
+        val sut =
+            AuthenticateSystemService(
+                memberRepository = memberRepository,
+                sessionCreator = sessionCreator,
+                hasher = hasher,
+                sessionCache = sessionCache,
+            )
+
+        beforeEach {
+            clearAllMocks()
+            ExecutionContext.clear()
+            every { hasher.hash(any()) } returns "hashed_password"
+            every { memberRepository.save(any()) } returnsArgument 0
+        }
+
+        test("should throw ForbiddenException for invalid member type") {
+            val command =
+                AuthenticateSystemUseCase.Command(
+                    login = "system_user",
+                    type = Member.Type.CONTESTANT,
+                )
+
+            shouldThrow<ForbiddenException> { sut.execute(command) }
+        }
+
+        val command =
+            AuthenticateSystemUseCase.Command(
+                login = "system_user",
+                type = Member.Type.API,
+            )
+
+        test("should authenticate new member") {
+            val expectedSession = SessionMockBuilder.build()
+            every { memberRepository.findByLoginAndContestIsNull(command.login) } returns null
+            every { sessionCreator.create(any()) } returns expectedSession
+
+            sut.execute(command)
+
+            val session = ExecutionContext.getSession()
+            session shouldBe expectedSession.toResponseBodyDTO()
+            val newMemberSlot = slot<Member>()
+            verify { memberRepository.save(capture(newMemberSlot)) }
+            val newMember = newMemberSlot.captured
+            newMember.name shouldBe command.login
+            newMember.login shouldBe command.login
+            newMember.type shouldBe command.type
+            newMember.password shouldBe "hashed_password"
+        }
+
+        test("should authenticate existing member") {
+            val existingMember = MemberMockBuilder.build()
+            val expectedSession = SessionMockBuilder.build(member = existingMember)
+            every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
+            every { sessionCreator.create(any()) } returns expectedSession
+
+            sut.execute(command)
+
+            val session = ExecutionContext.getSession()
+            session shouldBe expectedSession.toResponseBodyDTO()
+            verify { memberRepository.save(existingMember) }
+        }
+
+        test("should use cached session if valid") {
+            val existingMember = MemberMockBuilder.build()
+            val cachedSession = SessionMockBuilder.build(member = existingMember, expiresAt = OffsetDateTime.now().plusHours(1))
+            every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
+            every { sessionCache.getByMemberId(any()) } returns cachedSession.toResponseBodyDTO()
+
+            sut.execute(command)
+
+            val session = ExecutionContext.getSession()
+            session.id shouldBe cachedSession.id
+            verify(exactly = 0) { sessionCreator.create(any()) }
+        }
+
+        test("should create new session if cached session is invalid") {
+            val existingMember = MemberMockBuilder.build()
+            val cachedSession = SessionMockBuilder.build(member = existingMember, expiresAt = OffsetDateTime.now().minusHours(1))
+            val newSession = SessionMockBuilder.build(member = existingMember)
+            every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
+            every { sessionCache.getByMemberId(any()) } returns cachedSession.toResponseBodyDTO()
+            every { sessionCreator.create(any()) } returns newSession
+
+            sut.execute(command)
+
+            val session = ExecutionContext.getSession()
+            session.id shouldBe newSession.id
+            verify { sessionCreator.create(any()) }
+            verify { sessionCache.evict(any()) }
+        }
+
+        test("should create new session if no cached session is found") {
+            val existingMember = MemberMockBuilder.build()
+            val newSession = SessionMockBuilder.build(member = existingMember)
+            every { memberRepository.findByLoginAndContestIsNull(command.login) } returns existingMember
+            every { sessionCache.getByMemberId(any()) } returns null
+            every { sessionCreator.create(any()) } returns newSession
+
+            sut.execute(command)
+
+            val session = ExecutionContext.getSession()
+            session.id shouldBe newSession.id
+            verify { sessionCreator.create(any()) }
+        }
+    })

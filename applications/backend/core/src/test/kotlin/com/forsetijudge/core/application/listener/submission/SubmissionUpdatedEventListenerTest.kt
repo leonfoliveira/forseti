@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.listener.submission
 
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.ProblemMockBuilder
 import com.forsetijudge.core.domain.entity.Submission
@@ -15,7 +16,6 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.pprivate.ContestantPrivateBroadcastRoom
 import com.forsetijudge.core.port.driven.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.driven.repository.SubmissionRepository
-import com.forsetijudge.core.port.driving.usecase.internal.leaderboard.BuildLeaderboardCellInternalUseCase
 import io.kotest.core.spec.style.FunSpec
 import io.mockk.clearAllMocks
 import io.mockk.every
@@ -26,14 +26,14 @@ import java.time.OffsetDateTime
 class SubmissionUpdatedEventListenerTest :
     FunSpec({
         val submissionRepository = mockk<SubmissionRepository>(relaxed = true)
-        val buildLeaderboardCellInternalUseCase = mockk<BuildLeaderboardCellInternalUseCase>(relaxed = true)
+        val leaderboardCellBuilder = mockk<LeaderboardCellBuilder>(relaxed = true)
         val leaderboardCacheStore = mockk<LeaderboardCacheStore>(relaxed = true)
         val broadcastProducer = mockk<BroadcastProducer>(relaxed = true)
 
         val sut =
             SubmissionUpdatedEventListener(
                 submissionRepository = submissionRepository,
-                buildLeaderboardCellInternalUseCase = buildLeaderboardCellInternalUseCase,
+                leaderboardCellBuilder = leaderboardCellBuilder,
                 broadcastProducer = broadcastProducer,
                 leaderboardCacheStore = leaderboardCacheStore,
             )
@@ -55,13 +55,11 @@ class SubmissionUpdatedEventListenerTest :
                 )
             } returns listOf(submission)
             every {
-                buildLeaderboardCellInternalUseCase.execute(
-                    BuildLeaderboardCellInternalUseCase.Command(
-                        submission.contest,
-                        submission.member,
-                        submission.problem,
-                        listOf(submission),
-                    ),
+                leaderboardCellBuilder.build(
+                    submission.contest,
+                    submission.member,
+                    submission.problem,
+                    listOf(submission),
                 )
             } returns leaderboardCell
 
@@ -127,13 +125,11 @@ class SubmissionUpdatedEventListenerTest :
                 )
             } returns listOf(submission)
             every {
-                buildLeaderboardCellInternalUseCase.execute(
-                    BuildLeaderboardCellInternalUseCase.Command(
-                        submission.contest,
-                        submission.member,
-                        submission.problem,
-                        listOf(submission),
-                    ),
+                leaderboardCellBuilder.build(
+                    submission.contest,
+                    submission.member,
+                    submission.problem,
+                    listOf(submission),
                 )
             } returns leaderboardCell
 

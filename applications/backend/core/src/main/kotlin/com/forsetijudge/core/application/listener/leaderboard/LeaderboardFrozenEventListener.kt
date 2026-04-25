@@ -11,12 +11,14 @@ import com.forsetijudge.core.port.driven.broadcast.room.dashboard.JudgeDashboard
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.StaffDashboardBroadcastRoom
 import com.forsetijudge.core.port.driven.repository.ContestRepository
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 @Component
 class LeaderboardFrozenEventListener(
     private val contestRepository: ContestRepository,
     private val broadcastProducer: BroadcastProducer,
 ) : BusinessEventListener<LeaderboardEvent.Frozen> {
+    @Transactional
     override fun handle(event: LeaderboardEvent.Frozen) {
         val contest =
             contestRepository.findById(event.contestId)

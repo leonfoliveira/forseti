@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.redis
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.model.LeaderboardMockBuilder
 import com.forsetijudge.core.testcontainer.RedisTestContainer

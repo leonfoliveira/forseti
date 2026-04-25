@@ -1,6 +1,6 @@
 package com.forsetijudge.core.domain.model
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.Member
 import java.time.OffsetDateTime
 import java.util.UUID

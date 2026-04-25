@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.dto.rabbitmq
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.model.ExecutionContext
 import java.io.Serializable
 import java.util.UUID

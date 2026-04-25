@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driving.http.controller.contests
 
 import com.forsetijudge.api.adapter.driving.http.advice.GlobalExceptionHandler
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
