@@ -1,7 +1,7 @@
 package com.forsetijudge.api.adapter.driving.socketio.listener
 
 import com.corundumstudio.socketio.SocketIOClient
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.Session
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContext

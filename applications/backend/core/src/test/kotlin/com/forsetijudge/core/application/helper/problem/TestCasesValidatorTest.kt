@@ -1,4 +1,4 @@
-package com.forsetijudge.core.application.util
+package com.forsetijudge.core.application.helper.problem
 
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.exception.BusinessException

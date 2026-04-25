@@ -1,6 +1,6 @@
 package com.forsetijudge.core.domain.entity
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.model.ExecutionContext
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column

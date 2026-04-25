@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.http.controller.contests
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder
 import com.forsetijudge.core.port.driving.usecase.external.attachment.DownloadAttachmentUseCase

@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.helper.attachment
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest

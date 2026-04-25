@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.helper.session
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.application.util.UnitUtil
 import com.forsetijudge.core.domain.entity.Member

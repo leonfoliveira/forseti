@@ -1,6 +1,6 @@
 package com.forsetijudge.core.domain.model
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.port.dto.response.member.MemberWithContestAndLoginResponseDTO
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO

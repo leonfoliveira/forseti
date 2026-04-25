@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.service.announcement
 
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.outbox.OutboxEventPublisher
-import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Member

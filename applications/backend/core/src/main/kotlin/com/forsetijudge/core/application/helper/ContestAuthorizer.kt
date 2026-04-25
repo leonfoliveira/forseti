@@ -1,4 +1,4 @@
-package com.forsetijudge.core.application.util
+package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member

@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.service.leaderboard
 
 import com.forsetijudge.core.application.helper.outbox.OutboxEventPublisher
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.MemberMockBuilder

@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.quartz
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.infrastructure.adapter.driving.job.QueueableQuartzJob
 import com.forsetijudge.infrastructure.adapter.dto.quartz.QuartzMessage
 import com.forsetijudge.infrastructure.adapter.dto.quartz.body.QueueableJobMessageBody

@@ -1,6 +1,6 @@
 package com.forsetijudge.api.adapter.driving.socketio.listener
 
-import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder
 import com.forsetijudge.core.domain.entity.Member

@@ -1,4 +1,4 @@
-package com.forsetijudge.core.application.util
+package com.forsetijudge.core.application.helper
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

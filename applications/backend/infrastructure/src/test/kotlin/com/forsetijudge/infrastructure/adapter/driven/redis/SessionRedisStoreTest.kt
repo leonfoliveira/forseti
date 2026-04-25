@@ -1,6 +1,6 @@
 package com.forsetijudge.infrastructure.adapter.driven.redis
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.api.adapter.dto.request.attachment.AttachmentRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.submission.CreateSubmissionRequestBodyDTO
 import com.forsetijudge.api.adapter.dto.request.submission.UpdateAnswerSubmissionRequestBodyDTO
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.entity.SubmissionMockBuilder
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder

@@ -2,7 +2,7 @@ package com.forsetijudge.api.adapter.driving.socketio.listener
 
 import com.corundumstudio.socketio.SocketIOClient
 import com.forsetijudge.api.adapter.driven.socketio.SocketIOBroadcastEmitter
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.port.driven.broadcast.BroadcastEvent
 import com.forsetijudge.infrastructure.adapter.driven.redis.BroadcastEventRedisStore

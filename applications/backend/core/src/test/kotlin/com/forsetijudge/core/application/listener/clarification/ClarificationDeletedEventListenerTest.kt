@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.listener.clarification
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.port.driven.broadcast.BroadcastProducer
 import com.forsetijudge.core.port.driven.broadcast.room.dashboard.AdminDashboardBroadcastRoom

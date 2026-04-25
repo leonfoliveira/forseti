@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.service.ticket
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.outbox.OutboxEventPublisher
-import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member

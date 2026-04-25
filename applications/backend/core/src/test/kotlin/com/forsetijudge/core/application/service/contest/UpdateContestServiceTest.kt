@@ -2,8 +2,8 @@ package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.application.helper.outbox.OutboxEventPublisher
-import com.forsetijudge.core.application.util.IdGenerator
-import com.forsetijudge.core.application.util.TestCasesValidator
+import com.forsetijudge.core.application.helper.IdGenerator
+import com.forsetijudge.core.application.helper.problem.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.Contest

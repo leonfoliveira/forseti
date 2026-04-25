@@ -2,7 +2,7 @@ package com.forsetijudge.core.application.service.ticket
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.forsetijudge.core.application.helper.outbox.OutboxEventPublisher
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.AttachmentMockBuilder
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.ContestMockBuilder

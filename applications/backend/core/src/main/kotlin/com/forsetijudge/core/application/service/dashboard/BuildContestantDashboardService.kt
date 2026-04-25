@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.service.dashboard
 
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
-import com.forsetijudge.core.application.util.ContestAuthorizer
 import com.forsetijudge.core.application.util.SafeLogger
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.unfreeze

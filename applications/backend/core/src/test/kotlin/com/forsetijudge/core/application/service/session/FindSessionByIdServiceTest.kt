@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.session
 
-import com.forsetijudge.core.application.util.IdGenerator
+import com.forsetijudge.core.application.helper.IdGenerator
 import com.forsetijudge.core.domain.entity.SessionMockBuilder
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.ExecutionContextMockBuilder

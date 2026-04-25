@@ -1,6 +1,6 @@
 package com.forsetijudge.core.application.service.attachment.auth
 
-import com.forsetijudge.core.application.util.ContestAuthorizer
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
