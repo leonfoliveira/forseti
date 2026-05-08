@@ -47,7 +47,9 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
         /filename="?([^"]+)"?/,
       )?.[1] || "download",
       {
-        type: response.headers["content-type"] || "application/octet-stream",
+        type: !!response.headers["content-type"]
+          ? String(response.headers["content-type"])
+          : "application/octet-stream",
       },
     );
   }
