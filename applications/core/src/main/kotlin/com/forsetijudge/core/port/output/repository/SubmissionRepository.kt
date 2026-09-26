@@ -1,0 +1,61 @@
+package com.forsetijudge.core.port.output.repository
+
+import com.forsetijudge.core.domain.entity.Submission
+import java.time.OffsetDateTime
+import java.util.UUID
+import org.springframework.data.jpa.repository.Query
+
+/**
+ * Accessor for persistence operations related to Submission entity
+ */
+interface SubmissionRepository : BaseRepository<Submission> {
+    @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND deletedAt IS NULL")
+    fun findById(id: UUID): Submission?
+
+    @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND deletedAt IS NULL")
+    fun findAllByContestId(contestId: UUID): List<Submission>
+
+    @Query(
+        """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.member.id = ?2 AND deletedAt IS NULL""",
+    )
+    fun findAllByContestIdAndMemberId(
+        contestId: UUID,
+        memberId: UUID,
+    ): List<Submission>
+
+    @Query(
+        """SELECT s FROM Submission s WHERE s.problem.contest.id = :contestId AND s.status = :status AND deletedAt IS NULL
+           AND CONCAT(s.member.id, ':', s.problem.id) NOT IN :excludedPairs""",
+    )
+    fun findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
+        contestId: UUID,
+        status: Submission.Status,
+        excludedPairs: Collection<String>,
+    ): List<Submission>
+
+    @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND s.problem.contest.id = ?2 AND deletedAt IS NULL")
+    fun findByIdAndContestId(
+        id: UUID,
+        contestId: UUID,
+    ): Submission?
+
+    @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND s.problem.contest.id = ?2 AND s.member.id = ?3 AND deletedAt IS NULL")
+    fun findByIdAndContestIdAndMemberId(
+        id: UUID,
+        contestId: UUID,
+        memberId: UUID,
+    ): Submission?
+
+    @Query("SELECT s FROM Submission s WHERE s.member.id = ?1 AND s.problem.id = ?2 AND s.status = ?3 AND deletedAt IS NULL")
+    fun findAllByMemberIdAndProblemIdAndStatus(
+        memberId: UUID,
+        problemId: UUID,
+        status: Submission.Status,
+    ): List<Submission>
+
+    @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.createdAt >= ?2 AND deletedAt IS NULL")
+    fun findByContestIdAndCreatedAtGreaterThanEqual(
+        contestId: UUID,
+        createdAt: OffsetDateTime,
+    ): List<Submission>
+}

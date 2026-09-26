@@ -9,13 +9,11 @@ import java.util.UUID
  *
  * @param contestId The ID of the contest.
  * @param rows A list of rows corresponding to each contestant in the contest, containing information about their performance.
- * @param issuedAt The time when the leaderboard was generated.
  */
 data class Leaderboard(
     val contestId: UUID,
     val contestStartAt: OffsetDateTime,
     val rows: List<Row>,
-    val issuedAt: OffsetDateTime,
 ) {
     /**
      * Represents a row in the leaderboard, which corresponds to a contestant and contains information about their performance in the contest.
