@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/forseti}
+    username: ${DB_USER:forseti}
+    password: ${DB_PASSWORD:forsetijudge}
+    driver-class-name: org.postgresql.Driver
+  cloud:
+    aws:
+      region:
+        static: us-east-1
+      credentials:
+        access-key: ${AWS_ACCESS_KEY:localstack}
+        secret-key: ${AWS_SECRET_KEY:localstack}
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+security:
+  session:
+    expiration:
+      default: ${SESSION_EXPIRATION:12h}
+      root: ${SESSION_ROOT_EXPIRATION:12h}
