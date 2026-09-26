@@ -6,7 +6,17 @@ interface ForceEndContestUseCase {
     /**
      * Forces the end of a contest.
      *
+     * @param command The command containing the contest ID to force end.
      * @return The updated Contest object after being forced to end.
      */
-    fun execute(): ContestWithMembersAndProblemsResponseBodyDTO
+    fun execute(command: Command): ContestWithMembersAndProblemsResponseBodyDTO
+
+    /**
+     * Command for forcing the end of a contest.
+     *
+     * @param contestId The ID of the contest to force end.
+     */
+    data class Command(
+        val contestId: Long,
+    )
 }

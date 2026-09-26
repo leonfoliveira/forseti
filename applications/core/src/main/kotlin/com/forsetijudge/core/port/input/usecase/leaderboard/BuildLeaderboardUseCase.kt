@@ -6,7 +6,7 @@ interface BuildLeaderboardUseCase {
     /**
      * Builds the leaderboard for a specific contest.
      *
-     * @return The result of building the leaderboard, including the leaderboard data.
+     * @return The result of building the leaderboard.
      */
     fun execute(): LeaderboardResponseBodyDTO
 }

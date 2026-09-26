@@ -6,7 +6,18 @@ interface BuildJudgeDashboardUseCase {
     /**
      * Builds the judge dashboard by aggregating various metrics and information relevant to judges.
      *
+     * @param command The command containing the necessary parameters to build the judge dashboard.
+     *
      * @return An JudgeDashboardResultDTO containing the aggregated data for the judge dashboard.
      */
-    fun execute(): JudgeDashboardResponseBodyDTO
+    fun execute(command: Command): JudgeDashboardResponseBodyDTO
+
+    /**
+     * Command for building the judge dashboard.
+     *
+     * @param commandId The ID of the command to build the judge dashboard.
+     */
+    data class Command(
+        val commandId: Long,
+    )
 }

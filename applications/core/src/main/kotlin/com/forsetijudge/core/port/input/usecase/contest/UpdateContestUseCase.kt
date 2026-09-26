@@ -30,6 +30,7 @@ interface UpdateContestUseCase {
     /**
      * Command for updating a contest, containing all necessary fields for the update operation.
      *
+     * @param contestId The ID of the contest to be updated.
      * @param slug The unique slug for the contest, used in URLs and must be unique across all contests.
      * @param title The title of the contest, which must not be blank and has a maximum length of 255 characters.
      * @param languages The list of programming languages allowed in the
@@ -41,6 +42,7 @@ interface UpdateContestUseCase {
      * @param problems The list of problems included in the contest, which must have unique letters and valid attributes such as time and memory limits.
      */
     data class Command(
+        val contestId: Long,
         @field:NotBlank(message = "'slug' must not be blank")
         @field:Size(max = 30, message = "'slug' must be at most 30 characters long")
         @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "'slug' can only contain letters, numbers, and hyphens")

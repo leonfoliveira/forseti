@@ -5,9 +5,9 @@ import java.util.UUID
 
 interface BuildLeaderboardCellUseCase {
     /**
-     * Builds a cell for the leaderboard based on the given contest, problem, and submissions.
+     * Builds a cell for the leaderboard based on the given member and problem.
      *
-     * @param command The command containing the contest, problem, and submissions to build the cell for.
+     * @param command The command containing the member and problem to build the cell for.
      * @return A pair containing the built leaderboard cell and the ID of the member for whom the cell was built.
      */
     fun execute(command: Command): LeaderboardCellResponseBodyDTO

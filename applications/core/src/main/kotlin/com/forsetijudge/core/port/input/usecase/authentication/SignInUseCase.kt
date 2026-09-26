@@ -14,10 +14,12 @@ interface SignInUseCase {
     /**
      * Command for signing in a user.
      *
+     * @param contestId The ID of the contest the user is trying to sign in to.
      * @param login The user's login (username or email).
      * @param password The user's password.
      */
     data class Command(
+        val contestId: String,
         val login: String,
         val password: String,
     )
