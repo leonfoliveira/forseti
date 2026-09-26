@@ -1,0 +1,12 @@
+package com.forsetijudge.core.port.input.usecase.dashboard
+
+import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
+
+interface BuildGuestDashboardUseCase {
+    /**
+     * Builds the guest dashboard by aggregating various metrics and information relevant to guests.
+     *
+     * @return An GuestDashboardResultDTO containing the aggregated data for the guest dashboard.
+     */
+    fun execute(): GuestDashboardResponseBodyDTO
+}

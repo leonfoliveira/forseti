@@ -1,0 +1,12 @@
+package com.forsetijudge.core.port.input.usecase.dashboard
+
+import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
+
+interface BuildJudgeDashboardUseCase {
+    /**
+     * Builds the judge dashboard by aggregating various metrics and information relevant to judges.
+     *
+     * @return An JudgeDashboardResultDTO containing the aggregated data for the judge dashboard.
+     */
+    fun execute(): JudgeDashboardResponseBodyDTO
+}
