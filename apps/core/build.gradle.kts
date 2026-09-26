@@ -22,14 +22,16 @@ plugins {
 dependencies {
     implementation(libs.bcrypt)
     implementation(libs.hibernateEnvers)
-    implementation(libs.hibernateTypes)
+    implementation(libs.hypersistenceUtilsHibernate70)
     implementation(libs.jacksonModuleKotlin)
     implementation(libs.kotlinReflect)
     implementation(libs.kotlinxDatetime)
-    implementation(libs.kotlinxSerialization)
+    implementation(libs.kotlinxSerializationJson)
     implementation(libs.kotlinxCoroutines)
     implementation(libs.nettySocketio)
     implementation(libs.opencsv)
+    implementation(libs.opentelemetryApi)
+    implementation(libs.opentelemetryInstrumentationLogbackMdc)
     implementation(libs.postgresql)
     implementation(libs.springBootStarter)
     implementation(libs.springBootStarterDataJpa)
@@ -49,7 +51,11 @@ dependencies {
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
     testImplementation(libs.springmockk)
+    testImplementation(libs.testcontainersLocalstack)
     testImplementation(libs.testcontainersJunitJupiter)
+    testImplementation(libs.testcontainersPostgresql)
+
+    developmentOnly(libs.springBootDevTools)
 }
 
 buildscript {
@@ -60,7 +66,7 @@ buildscript {
 
 val yaml = Yaml()
 val activeProfile = System.getenv("SPRING_PROFILES_ACTIVE") ?: "development"
-val configFile = File("$rootDir/src/main/resources/application-$activeProfile.yaml")
+val configFile = File("$rootDir/src/main/resources/application.yaml")
 val config: Map<String, Any> = yaml.load(configFile.inputStream())
 
 @Suppress("UNCHECKED_CAST")

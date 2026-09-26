@@ -1,0 +1,80 @@
+package com.forsetijudge.core.domain.entity
+
+import com.forsetijudge.core.util.IdGenerator
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToOne
+import jakarta.persistence.Table
+import java.time.OffsetDateTime
+import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
+
+@Entity
+@Table(name = "execution")
+@Audited
+@SQLRestriction("deleted_at IS NULL")
+class Execution(
+    id: UUID = IdGenerator.getUUID(),
+    createdAt: OffsetDateTime = OffsetDateTime.now(),
+    updatedAt: OffsetDateTime = OffsetDateTime.now(),
+    deletedAt: OffsetDateTime? = null,
+    version: Long = 1L,
+    /**
+     * The submission to which this execution belongs.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    @Audited(withModifiedFlag = false)
+    val submission: Submission,
+    /**
+     * The answer after the execution of the submission.
+     */
+    @Column("answer")
+    @Enumerated(EnumType.STRING)
+    @Audited(withModifiedFlag = false)
+    val answer: Submission.Answer,
+    /**
+     * Number of test cases in the execution.
+     */
+    @Column("total_test_cases", nullable = false)
+    @Audited(withModifiedFlag = false)
+    val totalTestCases: Int = 1,
+    /**
+     * Index of the last test case executed.
+     */
+    @Column("approved_test_cases")
+    @Audited(withModifiedFlag = false)
+    val approvedTestCases: Int,
+    /**
+     * The maximum cpu time a test case took during the execution in milliseconds.
+     */
+    @Column("max_cpu_time")
+    @Audited(withModifiedFlag = false)
+    val maxCpuTime: Long? = null,
+    /**
+     * The maximum clock time a test case took during the execution in milliseconds.
+     */
+    @Column("max_clock_time")
+    @Audited(withModifiedFlag = false)
+    val maxClockTime: Long? = null,
+    /**
+     * The maximum peak memory a test case took during the execution in kilobytes.
+     */
+    @Column("max_peak_memory")
+    @Audited(withModifiedFlag = false)
+    val maxPeakMemory: Long? = null,
+    /**
+     * The details of the execution, such as the output of each test case.
+     */
+    @OneToOne(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
+    @JoinColumn(nullable = false)
+    @Audited(withModifiedFlag = false)
+    val details: Attachment? = null,
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
