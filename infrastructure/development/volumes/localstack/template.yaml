@@ -1,0 +1,113 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Forseti Infrastructure setup for local development using LocalStack
+
+Resources:
+  # --- S3 ---
+  CoreS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: core-bucket
+
+  # --- S3 Policies ---
+  CoreS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CoreS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "s3:*"
+            Resource: !Sub "${CoreS3Bucket.Arn}/*"
+
+  # --- SNS ---
+  CoreBusinessEventsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: core-business-events-topic
+
+  JudgeBusinessEventsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: judge-business-events-topic
+
+  # --- SNS Policies ---
+  CoreBusinessEventsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref CoreBusinessEventsTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "sns:*"
+            Resource: !Ref CoreBusinessEventsTopic
+
+  JudgeBusinessEventsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref JudgeBusinessEventsTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "sns:*"
+            Resource: !Ref JudgeBusinessEventsTopic
+
+  # --- SQS ---
+  CoreSubmissionResultQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: core-submission-result-queue
+
+  JudgeSubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: judge-submission-queue
+
+  # --- SQS Policies ---
+  CoreSubmissionResultQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref CoreSubmissionResultQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "sqs:*"
+            Resource: !GetAtt CoreSubmissionResultQueue.Arn
+
+  JudgeSubmissionQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref JudgeSubmissionQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "sqs:*"
+            Resource: !GetAtt JudgeSubmissionQueue.Arn
+
+  # --- SQS Subscriptions ---
+  CoreSubmissionResultQueueSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref JudgeBusinessEventsTopic
+      Protocol: sqs
+      Endpoint: !GetAtt CoreSubmissionResultQueue.Arn
+
+  JudgeSubmissionQueueSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref CoreBusinessEventsTopic
+      Protocol: sqs
+      Endpoint: !GetAtt JudgeSubmissionQueue.Arn
