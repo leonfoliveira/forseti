@@ -1,0 +1,55 @@
+package com.forsetijudge.core.application.helper.attachment.auth
+
+import com.forsetijudge.core.application.helper.ContestAuthorizer
+import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.exception.ForbiddenException
+
+class ExecutionOutputAuthorizationConfig : AttachmentAuthorizationConfig() {
+    // Upload authorizations
+
+    override fun authorizeAdminUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Admin cannot upload execution outputs")
+
+    override fun authorizeJudgeUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Judge cannot upload execution outputs")
+
+    override fun authorizeContestantUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Contestant cannot upload execution outputs")
+
+    // Download authorizations
+
+    override fun authorizeAdminDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
+    }
+
+    override fun authorizeJudgeDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
+    }
+
+    override fun authorizeContestantDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Contestant cannot download execution outputs")
+
+    override fun authorizeGuestDownload(
+        contest: Contest,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Guest cannot download execution outputs")
+}

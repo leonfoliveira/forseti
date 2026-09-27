@@ -22,6 +22,10 @@ class Attachment(
     updatedAt: OffsetDateTime = OffsetDateTime.now(),
     deletedAt: OffsetDateTime? = null,
     version: Long = 1L,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "contest_id", nullable = false)
+    @Audited(withModifiedFlag = false)
+    val contest: Contest,
     /**
      * The member who uploaded this attachment.
      */

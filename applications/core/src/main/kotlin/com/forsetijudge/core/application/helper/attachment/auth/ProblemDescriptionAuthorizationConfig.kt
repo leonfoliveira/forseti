@@ -1,0 +1,66 @@
+package com.forsetijudge.core.application.helper.attachment.auth
+
+import com.forsetijudge.core.application.helper.ContestAuthorizer
+import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Contest
+import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.exception.ForbiddenException
+
+class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig() {
+    // Upload authorizations
+
+    override fun authorizeAdminUpload(
+        contest: Contest,
+        member: Member,
+    ) {
+        ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
+    }
+
+    override fun authorizeJudgeUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Judges cannot upload problem description attachments")
+
+    override fun authorizeContestantUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Contestants cannot upload problem description attachments")
+
+    // Download authorizations
+
+    override fun authorizeAdminDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
+    }
+
+    override fun authorizeJudgeDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
+    }
+
+    override fun authorizeContestantDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest)
+            .requireMemberToBelong()
+            .requireContestStarted()
+            .throwIfErrors()
+    }
+
+    override fun authorizeGuestDownload(
+        contest: Contest,
+        attachment: Attachment,
+    ) {
+        ContestAuthorizer(contest)
+            .requireContestStarted()
+            .throwIfErrors()
+    }
+}
