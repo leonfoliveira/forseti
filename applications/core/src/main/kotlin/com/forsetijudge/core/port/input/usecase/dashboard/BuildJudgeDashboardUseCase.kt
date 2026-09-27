@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.input.usecase.dashboard
 
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
+import java.util.UUID
 
 interface BuildJudgeDashboardUseCase {
     /**
@@ -15,9 +16,9 @@ interface BuildJudgeDashboardUseCase {
     /**
      * Command for building the judge dashboard.
      *
-     * @param commandId The ID of the command to build the judge dashboard.
+     * @param contestId The ID of the contest for which the judge dashboard is being built.
      */
     data class Command(
-        val commandId: Long,
+        val contestId: UUID,
     )
 }

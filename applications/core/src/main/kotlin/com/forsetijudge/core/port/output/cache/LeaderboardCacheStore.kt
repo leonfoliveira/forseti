@@ -21,5 +21,5 @@ interface LeaderboardCacheStore {
      * @param contestId The ID of the contest for which to retrieve the cached cells.
      * @return A list of cached cells for the specified contest.
      */
-    fun getCellsByContestId(contestId: String): List<Leaderboard.Cell>
+    fun getAllCellsByContestId(contestId: UUID): List<Leaderboard.Cell>
 }

@@ -37,5 +37,5 @@ management:
 security:
   session:
     expiration:
-      default: ${SESSION_EXPIRATION:12h}
-      root: ${SESSION_ROOT_EXPIRATION:12h}
+      default_seconds: ${SESSION_EXPIRATION_SECONDS:86400}
+      root_seconds: ${SESSION_ROOT_EXPIRATION_SECONDS:86400}

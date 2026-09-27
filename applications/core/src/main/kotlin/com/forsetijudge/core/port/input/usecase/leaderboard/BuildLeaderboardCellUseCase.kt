@@ -15,10 +15,12 @@ interface BuildLeaderboardCellUseCase {
     /**
      * Command for building a leaderboard cell.
      *
+     * @param contestId The ID of the contest for which the cell is being built.
      * @param memberId The ID of the member for whom the cell is being built.
      * @param problemId The ID of the problem for which the cell is being built.
      */
     data class Command(
+        val contestId: UUID,
         val memberId: UUID,
         val problemId: UUID,
     )

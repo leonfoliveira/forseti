@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.input.usecase.authentication
 
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import java.util.UUID
 
 interface SignInUseCase {
     /**
@@ -14,12 +15,12 @@ interface SignInUseCase {
     /**
      * Command for signing in a user.
      *
-     * @param contestId The ID of the contest the user is trying to sign in to.
+     * @param contestId The ID of the contest the user is trying to sign in to. Optional; can be null if not signing in to a specific contest.
      * @param login The user's login (username or email).
      * @param password The user's password.
      */
     data class Command(
-        val contestId: String,
+        val contestId: UUID?,
         val login: String,
         val password: String,
     )

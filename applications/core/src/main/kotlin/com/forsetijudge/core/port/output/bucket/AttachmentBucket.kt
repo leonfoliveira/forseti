@@ -18,4 +18,23 @@ interface AttachmentBucket {
      * @return the upload URL
      */
     fun getUploadUrl(attachment: Attachment): String
+
+    /**
+     * Downloads the attachment data
+     *
+     * @param attachment the attachment metadata
+     * @return the attachment data as a byte array
+     */
+    fun download(attachment: Attachment): ByteArray
+
+    /**
+     * Uploads the attachment data
+     *
+     * @param attachment the attachment metadata
+     * @param data the attachment data as a byte array
+     */
+    fun upload(
+        attachment: Attachment,
+        data: ByteArray,
+    )
 }

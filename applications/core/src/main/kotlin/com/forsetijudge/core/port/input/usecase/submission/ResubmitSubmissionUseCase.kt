@@ -15,9 +15,11 @@ interface ResubmitSubmissionUseCase {
     /**
      * Command for submitting a submission.
      *
+     * @param contestId The ID of the contest to which the submission belongs.
      * @param submissionId The ID of the submission to be rerun.
      */
     data class Command(
+        val contestId: UUID,
         val submissionId: UUID,
     )
 }

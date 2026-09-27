@@ -20,12 +20,14 @@ interface CreateSubmissionUseCase {
     /**
      * Command for creating a new submission.
      *
+     * @param contestId The ID of the contest in which the submission is being made.
      * @param memberId The ID of the member making the submission.
      * @param problemId The ID of the problem for which the submission is being made.
      * @param language The programming language used in the submission.
      * @param code The code of the submission, provided as an attachment input DTO.
      */
     data class Command(
+        val contestId: UUID,
         val memberId: UUID,
         val problemId: UUID,
         val language: Submission.Language,

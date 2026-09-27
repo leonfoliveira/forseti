@@ -1,5 +1,7 @@
 package com.forsetijudge.core.port.input.usecase.contest
 
+import java.util.UUID
+
 interface DeleteContestUseCase {
     /**
      * Deletes a contest with the provided command.
@@ -14,6 +16,6 @@ interface DeleteContestUseCase {
      * @param contestId The ID of the contest to be deleted.
      */
     data class Command(
-        val contestId: String,
+        val contestId: UUID,
     )
 }

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.input.usecase.contest
 
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import java.util.UUID
 
 interface ForceEndContestUseCase {
     /**
@@ -17,6 +18,6 @@ interface ForceEndContestUseCase {
      * @param contestId The ID of the contest to force end.
      */
     data class Command(
-        val contestId: Long,
+        val contestId: UUID,
     )
 }

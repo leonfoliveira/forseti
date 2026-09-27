@@ -42,7 +42,7 @@ interface UpdateContestUseCase {
      * @param problems The list of problems included in the contest, which must have unique letters and valid attributes such as time and memory limits.
      */
     data class Command(
-        val contestId: Long,
+        val contestId: UUID,
         @field:NotBlank(message = "'slug' must not be blank")
         @field:Size(max = 30, message = "'slug' must be at most 30 characters long")
         @field:Pattern(regexp = "^[a-zA-Z0-9-]+$", message = "'slug' can only contain letters, numbers, and hyphens")

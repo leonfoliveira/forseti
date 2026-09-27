@@ -4,7 +4,6 @@ import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.port.dto.response.member.MemberWithContestAndLoginResponseDTO
 import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
 import io.opentelemetry.api.trace.Span
-import java.time.OffsetDateTime
 import java.util.UUID
 import org.slf4j.MDC
 
@@ -13,7 +12,6 @@ data class ExecutionContext(
     var traceId: String,
     var contestId: UUID? = null,
     var session: SessionResponseBodyDTO? = null,
-    var startedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
     companion object {
         private var instance = ThreadLocal<ExecutionContext>()
@@ -31,7 +29,6 @@ data class ExecutionContext(
             traceId: String? = null,
             contestId: UUID? = null,
             session: SessionResponseBodyDTO? = null,
-            startedAt: OffsetDateTime = OffsetDateTime.now(),
         ): ExecutionContext {
             val traceId =
                 traceId ?: Span
@@ -44,7 +41,6 @@ data class ExecutionContext(
                     traceId = traceId,
                     contestId = contestId,
                     session = session,
-                    startedAt = startedAt,
                 )
 
             instance.set(context)

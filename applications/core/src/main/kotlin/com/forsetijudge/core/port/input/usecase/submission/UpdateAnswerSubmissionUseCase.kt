@@ -16,10 +16,12 @@ interface UpdateAnswerSubmissionUseCase {
     /**
      * Command for updating the answer of a submission.
      *
+     * @param contestId The ID of the contest to which the submission belongs.
      * @param submissionId The ID of the submission to be updated.
      * @param answer The new answer to be set for the submission.
      */
     data class Command(
+        val contestId: UUID,
         val submissionId: UUID,
         val answer: Submission.Answer,
     )
