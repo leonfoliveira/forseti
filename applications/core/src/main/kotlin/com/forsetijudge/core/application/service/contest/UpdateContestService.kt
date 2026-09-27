@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.application.helper.problem.TestCasesValidator
@@ -7,6 +8,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
+import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -37,6 +39,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val attachmentCommiter: AttachmentCommiter,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -117,6 +120,7 @@ class UpdateContestService(
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
         contestRepository.save(contest)
+        businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest updated successfully with id: ${contest.id}")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

@@ -1,7 +1,9 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -22,6 +24,7 @@ import org.springframework.validation.annotation.Validated
 class CreateContestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : CreateContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -60,6 +63,7 @@ class CreateContestService(
                 endAt = command.endAt,
             )
         contestRepository.save(contest)
+        businessEventPublisher.publish(ContestEvent.Created(contest.id))
 
         logger.info("Contest created successfully with id = ${contest.id}")
         return contest.toResponseBodyDTO()

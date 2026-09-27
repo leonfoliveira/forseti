@@ -10,7 +10,6 @@ import org.slf4j.MDC
 data class ExecutionContext(
     var ip: String? = null,
     var traceId: String,
-    var contestId: UUID? = null,
     var session: SessionResponseBodyDTO? = null,
 ) {
     companion object {
@@ -21,13 +20,11 @@ data class ExecutionContext(
          *
          * @param ip The IP address of the requester. This can be null for workers or internal services.
          * @param traceId The trace ID for tracking requests.
-         * @param contestId The contest ID associated with the request, if applicable. This can be null for requests that are not related to a specific contest.
          * @return A new RequestContext instance with the provided parameters and the current timestamp as the start time.
          */
         fun start(
             ip: String? = null,
             traceId: String? = null,
-            contestId: UUID? = null,
             session: SessionResponseBodyDTO? = null,
         ): ExecutionContext {
             val traceId =
@@ -39,7 +36,6 @@ data class ExecutionContext(
                 ExecutionContext(
                     ip = ip,
                     traceId = traceId,
-                    contestId = contestId,
                     session = session,
                 )
 
@@ -86,10 +82,6 @@ data class ExecutionContext(
         }
 
         fun getSession(): SessionResponseBodyDTO = get().session ?: throw UnauthorizedException("Not authenticated")
-
-        fun getContestId(): UUID = get().contestId ?: throw UnauthorizedException("Contest ID is not available in the current context")
-
-        fun getContestIdNullable(): UUID? = get().contestId
 
         fun getMemberId(): UUID = get().session?.member?.id ?: throw UnauthorizedException("Not authenticated")
 

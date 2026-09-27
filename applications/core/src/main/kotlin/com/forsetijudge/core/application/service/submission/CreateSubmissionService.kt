@@ -1,10 +1,12 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
@@ -29,6 +31,7 @@ class CreateSubmissionService(
     private val problemRepository: ProblemRepository,
     private val submissionRepository: SubmissionRepository,
     private val attachmentCommiter: AttachmentCommiter,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -82,6 +85,7 @@ class CreateSubmissionService(
                 code = code,
             )
         submissionRepository.save(submission)
+        businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
 
         logger.info("Submission created successfully with id = ${submission.id}")
         return submission.toWithCodeResponseBodyDTO()

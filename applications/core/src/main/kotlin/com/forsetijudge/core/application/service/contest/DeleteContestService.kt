@@ -1,7 +1,9 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.input.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class DeleteContestService(
     private val memberRepository: MemberRepository,
     private val contestRepository: ContestRepository,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : DeleteContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -44,6 +47,7 @@ class DeleteContestService(
 
         contest.deletedAt = OffsetDateTime.now()
         contestRepository.save(contest)
+        businessEventPublisher.publish(ContestEvent.Deleted(command.contestId))
 
         logger.info("Contest deleted successfully")
     }

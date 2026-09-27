@@ -1,7 +1,9 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
@@ -19,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class ForceStartContestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : ForceStartContestUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -53,6 +56,7 @@ class ForceStartContestService(
 
         contest.startAt = OffsetDateTime.now()
         contestRepository.save(contest)
+        businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest force started successfully")
         return contest.toWithMembersAndProblemsResponseBodyDTO()

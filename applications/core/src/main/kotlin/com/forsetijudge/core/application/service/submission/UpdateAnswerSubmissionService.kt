@@ -1,8 +1,10 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
+import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional
 class UpdateAnswerSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val memberRepository: MemberRepository,
+    private val businessEventPublisher: BusinessEventPublisher,
 ) : UpdateAnswerSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -51,6 +54,7 @@ class UpdateAnswerSubmissionService(
         submission.answer = command.answer
 
         submissionRepository.save(submission)
+        businessEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
         logger.info("Submission answer updated successfully")
         return submission.toWithCodeAndExecutionResponseBodyDTO()
