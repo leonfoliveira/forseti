@@ -8,7 +8,11 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - SERVICES=s3,sqs,cloudformation,secretsmanager
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4566/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -f http://localhost:4566/_localstack/health || exit 1",
+        ]
       timeout: 5s
       interval: 15s
       retries: 5

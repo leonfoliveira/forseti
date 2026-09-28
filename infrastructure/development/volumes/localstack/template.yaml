@@ -6,7 +6,7 @@ Resources:
   CoreS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: core-bucket
+      BucketName: dev-forseti-core-bucket
 
   # --- S3 Policies ---
   CoreS3BucketPolicy:
@@ -21,68 +21,48 @@ Resources:
             Action: "s3:*"
             Resource: !Sub "${CoreS3Bucket.Arn}/*"
 
-  # --- SNS ---
-  CoreBusinessEventsTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      TopicName: core-business-events-topic
-
-  JudgeBusinessEventsTopic:
-    Type: AWS::SNS::Topic
-    Properties:
-      TopicName: judge-business-events-topic
-
-  # --- SNS Policies ---
-  CoreBusinessEventsTopicPolicy:
-    Type: AWS::SNS::TopicPolicy
-    Properties:
-      Topics:
-        - !Ref CoreBusinessEventsTopic
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "sns:*"
-            Resource: !Ref CoreBusinessEventsTopic
-
-  JudgeBusinessEventsTopicPolicy:
-    Type: AWS::SNS::TopicPolicy
-    Properties:
-      Topics:
-        - !Ref JudgeBusinessEventsTopic
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "sns:*"
-            Resource: !Ref JudgeBusinessEventsTopic
-
   # --- SQS ---
-  CoreSubmissionResultQueue:
+  CoreSubmissionFailedQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: core-submission-result-queue
+      QueueName: dev-forseti-core-submission-failed-queue
+
+  CoreSubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-forseti-core-submission-judged-queue
 
   JudgeSubmissionQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: judge-submission-queue
+      QueueName: dev-forseti-judge-submission-queue
 
   # --- SQS Policies ---
-  CoreSubmissionResultQueuePolicy:
+  CoreSubmissionFailedQueuePolicy:
     Type: AWS::SQS::QueuePolicy
     Properties:
       Queues:
-        - !Ref CoreSubmissionResultQueue
+        - !Ref CoreSubmissionFailedQueue
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Principal: "*"
             Action: "sqs:*"
-            Resource: !GetAtt CoreSubmissionResultQueue.Arn
+            Resource: !GetAtt CoreSubmissionFailedQueue.Arn
+
+  CoreSubmissionJudgedQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref CoreSubmissionJudgedQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "sqs:*"
+            Resource: !GetAtt CoreSubmissionJudgedQueue.Arn
 
   JudgeSubmissionQueuePolicy:
     Type: AWS::SQS::QueuePolicy
@@ -96,18 +76,3 @@ Resources:
             Principal: "*"
             Action: "sqs:*"
             Resource: !GetAtt JudgeSubmissionQueue.Arn
-
-  # --- SQS Subscriptions ---
-  CoreSubmissionResultQueueSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      TopicArn: !Ref JudgeBusinessEventsTopic
-      Protocol: sqs
-      Endpoint: !GetAtt CoreSubmissionResultQueue.Arn
-
-  JudgeSubmissionQueueSubscription:
-    Type: AWS::SNS::Subscription
-    Properties:
-      TopicArn: !Ref CoreBusinessEventsTopic
-      Protocol: sqs
-      Endpoint: !GetAtt JudgeSubmissionQueue.Arn

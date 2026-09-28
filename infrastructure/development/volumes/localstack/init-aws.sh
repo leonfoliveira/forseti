@@ -1,4 +1,5 @@
 #!/bin/bash
+
 echo "=== Deploying CloudFormation Stack in LocalStack ==="
 
 awslocal cloudformation create-stack \

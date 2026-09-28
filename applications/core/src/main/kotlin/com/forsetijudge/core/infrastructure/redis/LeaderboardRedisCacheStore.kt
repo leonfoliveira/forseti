@@ -1,12 +1,12 @@
 package com.forsetijudge.core.infrastructure.redis
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 

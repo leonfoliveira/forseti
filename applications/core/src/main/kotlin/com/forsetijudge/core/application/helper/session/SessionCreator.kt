@@ -9,7 +9,9 @@ import com.forsetijudge.core.util.IdGenerator
 import com.forsetijudge.core.util.SafeLogger
 import java.time.OffsetDateTime
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
+@Component
 class SessionCreator(
     private val sessionRepository: SessionRepository,
     private val sessionDeleter: SessionDeleter,

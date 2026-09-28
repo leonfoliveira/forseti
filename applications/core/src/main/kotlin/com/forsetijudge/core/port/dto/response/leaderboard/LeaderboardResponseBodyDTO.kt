@@ -9,7 +9,6 @@ import java.util.UUID
 data class LeaderboardResponseBodyDTO(
     val contestId: UUID,
     val rows: List<Row>,
-    val issuedAt: OffsetDateTime,
 ) : Serializable {
     data class Row(
         val memberId: UUID,
@@ -52,5 +51,4 @@ fun Leaderboard.toResponseBodyDTO(): LeaderboardResponseBodyDTO =
                         },
                 )
             },
-        issuedAt = this.issuedAt,
     )

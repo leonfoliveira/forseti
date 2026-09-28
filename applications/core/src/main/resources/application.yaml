@@ -47,7 +47,7 @@ spring:
   # Redis configuration
   data:
     redis:
-      host: ${REDIS_HOST:redis}
+      host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:forsetijudge}
 
@@ -60,6 +60,9 @@ management:
 
 # Security configuration
 security:
+  cookie:
+    domain: ${WEBAPP_PUBLIC_URL:*}
+    secure: ${SECURE_COOKIES:false}
   session:
     expiration:
       default_seconds: ${SESSION_EXPIRATION_SECONDS:86400}

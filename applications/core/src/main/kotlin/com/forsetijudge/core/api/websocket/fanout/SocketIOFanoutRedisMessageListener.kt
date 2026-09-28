@@ -1,11 +1,11 @@
 package com.forsetijudge.core.api.websocket.fanout
 
 import com.corundumstudio.socketio.SocketIOServer
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Lazy
 import org.springframework.data.redis.connection.Message
 import org.springframework.data.redis.connection.MessageListener
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 
 @Component
 class SocketIOFanoutRedisMessageListener(

@@ -13,7 +13,7 @@ class SubmissionFailedSQSConsumer(
 ) {
     private val logger = SafeLogger(this::class)
 
-    @SqsListener($$"${sprinb.cloud.aws.sqs.queue.submission-failed-queue}")
+    @SqsListener($$"${spring.cloud.aws.sqs.submission-failed-queue}")
     fun listen(body: Body) {
         logger.info("Received submission failed message for submissionId = ${body.submissionId}")
 

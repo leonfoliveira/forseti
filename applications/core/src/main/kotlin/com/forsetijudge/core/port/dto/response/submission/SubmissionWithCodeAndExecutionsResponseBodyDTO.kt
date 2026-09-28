@@ -3,8 +3,6 @@ package com.forsetijudge.core.port.dto.response.submission
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.execution.ExecutionResponseDTO
-import com.forsetijudge.core.port.dto.response.execution.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseBodyDTO
@@ -23,7 +21,6 @@ data class SubmissionWithCodeAndExecutionsResponseBodyDTO(
     val status: Submission.Status,
     val answer: Submission.Answer?,
     val code: AttachmentResponseDTO,
-    val executions: List<ExecutionResponseDTO> = emptyList(),
     val version: Long,
 ) : Serializable
 
@@ -38,6 +35,5 @@ fun Submission.toWithCodeAndExecutionResponseBodyDTO(): SubmissionWithCodeAndExe
         status = status,
         answer = answer,
         code = code.toResponseBodyDTO(),
-        executions = executions.map { it.toResponseBodyDTO() },
         version = version,
     )

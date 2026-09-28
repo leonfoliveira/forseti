@@ -1,9 +1,9 @@
 package com.forsetijudge.core.api.websocket.fanout
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.forsetijudge.core.infrastructure.redis.RedisPubSubConfig
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
+import tools.jackson.databind.ObjectMapper
 
 @Component
 class SocketIOFanoutRedisMessageProducer(

@@ -14,7 +14,7 @@ class SubmissionJudgedSQSConsumer(
 ) {
     private val logger = SafeLogger(this::class)
 
-    @SqsListener($$"${sprinb.cloud.aws.sqs.queue.submission-judged-queue}")
+    @SqsListener($$"${spring.cloud.aws.sqs.submission-judged-queue}")
     fun listen(body: Body) {
         logger.info("Received submission judged message for submissionId = ${body.submissionId}")
 

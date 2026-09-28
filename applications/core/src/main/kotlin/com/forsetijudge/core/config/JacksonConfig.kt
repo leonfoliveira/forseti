@@ -3,16 +3,15 @@ package com.forsetijudge.core.config
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import org.springframework.boot.jackson.autoconfigure.JsonMapperBuilderCustomizer
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Primary
 import tools.jackson.core.JsonGenerator
 import tools.jackson.databind.DeserializationFeature
-import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.SerializationContext
 import tools.jackson.databind.ValueSerializer
+import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.module.SimpleModule
-import tools.jackson.module.kotlin.jacksonMapperBuilder
 
 @Configuration
 class JacksonConfig {
@@ -35,12 +34,16 @@ class JacksonConfig {
     }
 
     /**
-     * Configures and provides a customized Jackson ObjectMapper bean.
+     * Customizes the Jackson JsonMapper.Builder used by Spring Boot's own
+     * auto-configured ObjectMapper bean ("jacksonJsonMapper"):
      * - Registers a module to handle OffsetDateTime serialization.
      * - Disables failure on unknown properties during deserialization.
      *
-     * Note: Jackson 3's ObjectMapper is immutable once built, so all configuration
-     * (modules, features) must be applied through its builder before calling build().
+     * We rely on Spring Boot's JacksonAutoConfiguration to build and expose the
+     * single, primary ObjectMapper bean rather than defining our own, since
+     * declaring a second @Primary ObjectMapper bean here would conflict with
+     * Boot's "jacksonJsonMapper" bean (NoUniqueBeanDefinitionException).
+     *
      * java.time (JSR-310) support is now built directly into jackson-databind core in
      * Jackson 3, so no separate jackson-datatype-jsr310 module is needed; we only
      * register a small module to override the default OffsetDateTime serializer.
@@ -48,14 +51,13 @@ class JacksonConfig {
      * WRITE_DATES_AS_TIMESTAMPS feature toggle no longer exists/is needed.
      */
     @Bean
-    @Primary
-    fun objectMapper(): ObjectMapper {
-        val offsetDateTimeModule = SimpleModule()
-        offsetDateTimeModule.addSerializer(OffsetDateTime::class.java, OffsetDateTimeSerializer())
+    fun jsonMapperBuilderCustomizer(): JsonMapperBuilderCustomizer =
+        JsonMapperBuilderCustomizer { builder: JsonMapper.Builder ->
+            val offsetDateTimeModule = SimpleModule()
+            offsetDateTimeModule.addSerializer(OffsetDateTime::class.java, OffsetDateTimeSerializer())
 
-        return jacksonMapperBuilder()
-            .addModule(offsetDateTimeModule)
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .build()
-    }
+            builder
+                .addModule(offsetDateTimeModule)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        }
 }
