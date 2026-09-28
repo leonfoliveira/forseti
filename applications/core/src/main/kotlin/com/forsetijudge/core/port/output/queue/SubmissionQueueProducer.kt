@@ -23,8 +23,8 @@ interface SubmissionQueueProducer {
      * @param testCasesId The ID of the test cases attachment.
      */
     data class Message(
-        val contestId: String,
-        val submissionId: String,
+        val contestId: UUID,
+        val submissionId: UUID,
         val language: Submission.Language,
         val codeId: UUID,
         val timeLimitMs: Int,
