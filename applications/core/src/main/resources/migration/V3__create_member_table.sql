@@ -40,3 +40,13 @@ create table member_aud
     constraint fk_contest_id foreign key (contest_id) references contest (id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );
+
+insert into revinfo(rev, "timestamp")
+values (nextval('revinfo_seq'), now());
+
+insert into member (id, created_at, updated_at, contest_id, type, name, login, password, version)
+values ('00000000-0000-0000-0000-000000000000', now(), now(), null, 'ROOT', 'Root', 'root', '', 1);
+
+insert into member_aud (rev, revtype, id, created_at, updated_at, contest_id, type, name, login, password, version)
+values (currval('revinfo_seq'), 0, '00000000-0000-0000-0000-000000000000', now(), now(), null, 'ROOT', 'Root', 'root',
+        '', 1);

@@ -40,6 +40,7 @@ dependencies {
     implementation(libs.springBootStarterWeb)
     implementation(libs.springBootStarterWebsocket)
     implementation(libs.springCloudAwsStarterS3)
+    implementation(libs.springCloudAwsStarterSecretsManager)
     implementation(libs.springCloudAwsStarterSQS)
     implementation(libs.uuidCreator)
 

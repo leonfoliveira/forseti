@@ -6,7 +6,7 @@ services:
       - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
       - DEBUG=0
       - DOCKER_HOST=unix:///var/run/docker.sock
-      - SERVICES=s3,sqs,sns,cloudformation,secretsmanager
+      - SERVICES=s3,sqs,cloudformation,secretsmanager
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:4566/health || exit 1"]
       timeout: 5s
