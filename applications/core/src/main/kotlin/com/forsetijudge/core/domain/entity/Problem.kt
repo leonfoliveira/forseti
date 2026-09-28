@@ -58,13 +58,13 @@ class Problem(
     /**
      * Time limit for solving the problem, in milliseconds.
      */
-    @Column(name = "time_limit", nullable = false)
-    var timeLimit: Int,
+    @Column(name = "time_limit_ms", nullable = false)
+    var timeLimitMs: Int,
     /**
      * Memory limit for solving the problem, in megabytes.
      */
-    @Column(name = "memory_limit", nullable = false)
-    var memoryLimit: Int,
+    @Column(name = "memory_limit_mb", nullable = false)
+    var memoryLimitMb: Int,
     /**
      * Input format for the problem, which specifies how the input data is structured.
      */

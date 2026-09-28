@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.HandlerMethod
 
 @RestControllerAdvice
+@Suppress("unused")
 class GlobalExceptionAdvice {
     private val logger = SafeLogger(this::class)
 

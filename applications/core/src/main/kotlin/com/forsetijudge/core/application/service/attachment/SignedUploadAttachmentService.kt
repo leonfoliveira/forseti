@@ -1,7 +1,6 @@
 package com.forsetijudge.core.application.service.attachment
 
 import com.forsetijudge.core.application.helper.ContestAuthorizer
-import com.forsetijudge.core.application.helper.attachment.auth.ExecutionOutputAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemDescriptionAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemTestCasesAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.SubmissionCodeAuthorizationConfig
@@ -35,7 +34,6 @@ class SignedUploadAttachmentService(
 
     private val authorizationConfigsByContext =
         mapOf(
-            Attachment.Context.EXECUTION_DETAILS to ExecutionOutputAuthorizationConfig(),
             Attachment.Context.PROBLEM_DESCRIPTION to ProblemDescriptionAuthorizationConfig(),
             Attachment.Context.PROBLEM_TEST_CASES to ProblemTestCasesAuthorizationConfig(),
             Attachment.Context.SUBMISSION_CODE to SubmissionCodeAuthorizationConfig(),

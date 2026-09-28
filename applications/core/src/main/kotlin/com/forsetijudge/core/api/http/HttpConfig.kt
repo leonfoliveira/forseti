@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 @Suppress("unused")
 class HttpConfig(
-    @Value("\${server.cors.allowed-origins}")
+    @Value($$"${server.cors.allowed-origins}")
     private val allowedOrigins: String,
 ) : WebMvcConfigurer {
     /**

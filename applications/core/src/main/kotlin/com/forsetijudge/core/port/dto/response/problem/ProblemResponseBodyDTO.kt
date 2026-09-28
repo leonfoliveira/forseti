@@ -29,7 +29,7 @@ fun Problem.toResponseBodyDTO(): ProblemResponseBodyDTO =
         color = this.color,
         title = this.title,
         description = this.description.toResponseBodyDTO(),
-        timeLimit = this.timeLimit,
-        memoryLimit = this.memoryLimit,
+        timeLimit = this.timeLimitMs,
+        memoryLimit = this.memoryLimitMb,
         version = this.version,
     )

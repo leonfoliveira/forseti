@@ -174,8 +174,8 @@ class UpdateContestService(
                 color = problemDTO.color.lowercase(),
                 title = problemDTO.title,
                 description = description,
-                timeLimit = problemDTO.timeLimit,
-                memoryLimit = problemDTO.memoryLimit,
+                timeLimitMs = problemDTO.timeLimit,
+                memoryLimitMb = problemDTO.memoryLimit,
                 testCases = testCases,
                 contest = contest,
             )
@@ -244,8 +244,8 @@ class UpdateContestService(
 
         problem.letter = problemDTO.letter
         problem.title = problemDTO.title
-        problem.timeLimit = problemDTO.timeLimit
-        problem.memoryLimit = problemDTO.memoryLimit
+        problem.timeLimitMs = problemDTO.timeLimit
+        problem.memoryLimitMb = problemDTO.memoryLimit
 
         return problem
     }

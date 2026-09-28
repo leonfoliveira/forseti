@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class CookieBuilder(
-    @Value("\${security.cookie.domain}")
+    @Value($$"${security.cookie.domain}")
     private val cookieDomain: String,
-    @Value("\${security.cookie.secure}")
+    @Value($$"${security.cookie.secure}")
     private val cookieSecure: Boolean,
 ) {
     /**

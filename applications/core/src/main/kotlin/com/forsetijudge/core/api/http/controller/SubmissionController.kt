@@ -7,7 +7,7 @@ import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndE
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
 import com.forsetijudge.core.port.input.usecase.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.input.usecase.submission.ResubmitSubmissionUseCase
-import com.forsetijudge.core.port.input.usecase.submission.UpdateAnswerSubmissionUseCase
+import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
 class SubmissionController(
     private val createSubmissionUseCase: CreateSubmissionUseCase,
     private val resubmitSubmissionUseCase: ResubmitSubmissionUseCase,
-    private val updateAnswerSubmissionUseCase: UpdateAnswerSubmissionUseCase,
+    private val updateSubmissionAnswerUseCase: UpdateSubmissionAnswerUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -70,8 +70,8 @@ class SubmissionController(
     ): ResponseEntity<SubmissionWithCodeAndExecutionsResponseBodyDTO> {
         logger.info("[PUT] /v1/contests/$contestId/submissions/$submissionId:update-answer")
         val submission =
-            updateAnswerSubmissionUseCase.execute(
-                UpdateAnswerSubmissionUseCase.Command(
+            updateSubmissionAnswerUseCase.execute(
+                UpdateSubmissionAnswerUseCase.Command(
                     contestId = contestId,
                     submissionId = submissionId,
                     answer = body.answer,

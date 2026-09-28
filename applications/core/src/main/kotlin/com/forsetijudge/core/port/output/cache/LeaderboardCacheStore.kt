@@ -8,11 +8,11 @@ interface LeaderboardCacheStore {
      * Caches a cell of the leaderboard.
      *
      * @param contestId The ID of the contest to which the cell belongs.
-     * @param row The row to be cached.
+     * @param cell The cell to be cached.
      */
     fun cacheCell(
         contestId: UUID,
-        row: Leaderboard.Cell,
+        cell: Leaderboard.Cell,
     )
 
     /**

@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 @Suppress("unused")
 class SocketIOConfig(
-    @Value("\${server.cors.allowed-origins}")
+    @Value($$"${server.cors.allowed-origins}")
     private val allowedOrigins: String,
-    @Value("\${server.ws-port}")
+    @Value($$"${server.ws-port}")
     private val port: Int,
     private val socketIOJoinListener: SocketIOJoinListener,
 ) {

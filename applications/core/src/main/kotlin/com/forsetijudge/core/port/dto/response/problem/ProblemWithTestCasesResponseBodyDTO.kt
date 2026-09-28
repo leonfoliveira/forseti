@@ -29,8 +29,8 @@ fun Problem.toWithTestCasesResponseBodyDTO(): ProblemWithTestCasesResponseBodyDT
         color = color,
         title = title,
         description = description.toResponseBodyDTO(),
-        timeLimit = timeLimit,
-        memoryLimit = memoryLimit,
+        timeLimit = timeLimitMs,
+        memoryLimit = memoryLimitMb,
         testCases = testCases.toResponseBodyDTO(),
         version = version,
     )

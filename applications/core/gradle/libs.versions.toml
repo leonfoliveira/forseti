@@ -59,7 +59,6 @@ springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-
 springBootStarterWebsocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "springBoot" }
 springBootTestcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "springBoot" }
 springCloudAwsStarterS3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "springBoot" }
-springCloudAwsStarterSNS = { module = "io.awspring.cloud:spring-cloud-aws-starter-sns", version.ref = "springBoot" }
 springCloudAwsStarterSQS = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "springBoot" }
 springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
 testcontainersLocalstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }

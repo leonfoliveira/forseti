@@ -8,7 +8,7 @@ import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
-import com.forsetijudge.core.port.input.usecase.submission.UpdateAnswerSubmissionUseCase
+import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.ExecutionContext
@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UpdateAnswerSubmissionService(
+class UpdateSubmissionAnswerService(
     private val submissionRepository: SubmissionRepository,
     private val memberRepository: MemberRepository,
     private val businessEventPublisher: BusinessEventPublisher,
-) : UpdateAnswerSubmissionUseCase {
+) : UpdateSubmissionAnswerUseCase {
     private val logger = SafeLogger(this::class)
 
     /**
@@ -31,7 +31,7 @@ class UpdateAnswerSubmissionService(
      * @return The updated submission with its code result.
      */
     @Transactional
-    override fun execute(command: UpdateAnswerSubmissionUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
+    override fun execute(command: UpdateSubmissionAnswerUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
         val contextMemberId = ExecutionContext.getMemberId()
 
         logger.info(
