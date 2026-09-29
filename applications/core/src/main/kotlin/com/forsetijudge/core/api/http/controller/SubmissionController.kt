@@ -49,7 +49,7 @@ class SubmissionController(
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:resubmit")
-    @PreAuthorize("hasRole('ROOT', 'ADMIN', 'JUDGE')")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
     fun resubmit(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
@@ -66,7 +66,7 @@ class SubmissionController(
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
-    @PreAuthorize("hasRole('ROOT', 'ADMIN', 'JUDGE')")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
     fun updateAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,

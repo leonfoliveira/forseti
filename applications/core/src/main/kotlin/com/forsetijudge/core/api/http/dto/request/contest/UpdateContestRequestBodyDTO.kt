@@ -14,21 +14,9 @@ data class UpdateContestRequestBodyDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
-    val autoFreezeAt: OffsetDateTime? = null,
-    val settings: Settings,
     val members: List<Member>,
     val problems: List<Problem>,
 ) {
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    data class Settings(
-        val isAutoJudgeEnabled: Boolean,
-        val isClarificationEnabled: Boolean,
-        val isSubmissionPrintTicketEnabled: Boolean,
-        val isTechnicalSupportTicketEnabled: Boolean,
-        val isNonTechnicalSupportTicketEnabled: Boolean,
-        val isGuestEnabled: Boolean,
-    )
-
     @JsonIgnoreProperties(ignoreUnknown = true)
     data class Member(
         val id: UUID? = null,

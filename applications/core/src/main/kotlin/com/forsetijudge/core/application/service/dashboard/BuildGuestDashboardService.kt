@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.dashboard
 
+import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
@@ -34,6 +35,10 @@ class BuildGuestDashboardService(
         val contest =
             contestRepository.findById(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id ${command.contestId}")
+
+        ContestAuthorizer(contest)
+            .requireContestStarted()
+            .throwIfErrors()
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions = submissionRepository.findAllByContestId(contest.id)

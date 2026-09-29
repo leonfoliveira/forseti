@@ -94,16 +94,6 @@ class ContestController(
                     languages = body.languages,
                     startAt = body.startAt,
                     endAt = body.endAt,
-                    autoFreezeAt = body.autoFreezeAt,
-                    settings =
-                        UpdateContestUseCase.Command.Settings(
-                            isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
-                            isClarificationEnabled = body.settings.isClarificationEnabled,
-                            isSubmissionPrintTicketEnabled = body.settings.isSubmissionPrintTicketEnabled,
-                            isTechnicalSupportTicketEnabled = body.settings.isTechnicalSupportTicketEnabled,
-                            isNonTechnicalSupportTicketEnabled = body.settings.isNonTechnicalSupportTicketEnabled,
-                            isGuestEnabled = body.settings.isGuestEnabled,
-                        ),
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(

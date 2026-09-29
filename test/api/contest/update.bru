@@ -10,6 +10,10 @@ put {
   auth: inherit
 }
 
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
 body:json {
   {
       "id": "{{contest_id}}",
@@ -21,8 +25,8 @@ body:json {
         "PYTHON_312",
         "NODE_22"
       ],
-      "startAt": "{{start_at}}",
-      "endAt": "{{end_at}}",
+      "startAt": "2099-01-01T00:00:00Z",
+      "endAt": "2099-01-02T00:00:00Z",
       "members": [
         {
           "type": "ADMIN",
@@ -59,6 +63,35 @@ body:json {
         }
       ]
     }
+}
+
+vars:post-response {
+  problem_id: res.body.problems[0].id
+}
+
+script:pre-request {
+  async function upload(filename, context, contentType) {
+    bru.setVar("attachment_filename", filename)
+    bru.setVar("attachment_context", context)
+    bru.setVar("attachment_content_type", contentType)
+    
+    const signResult = await bru.runRequest("attachment/get_signed_upload_url")
+    
+    const attachment = signResult.data.attachment  
+    bru.setVar("file_path", `../files/${filename}`)
+    bru.setVar("file_content_type", contentType)
+    
+    await bru.runRequest(`attachment/upload/${filename.split('.')[0]}`)
+    
+    return attachment.id
+  }
+  
+  const descriptionAttachmentId = await upload("problem_description.pdf", "PROBLEM_DESCRIPTION", "application/pdf")
+  const testCasesAttachmentId = await upload("problem_test_cases.csv", "PROBLEM_TEST_CASES", "text/csv")
+  
+  bru.setVar("description_attachment_id", descriptionAttachmentId)
+  bru.setVar("test_cases_attachment_id", testCasesAttachmentId)
+  
 }
 
 settings {

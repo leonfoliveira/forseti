@@ -10,14 +10,46 @@ post {
   auth: inherit
 }
 
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
 body:json {
   {
     "problemId": "{{problem_id}}",
     "language": "PYTHON_312",
     "code": {
-      "id": "{{code_id}}"
+      "id": "{{code_attachment_id}}"
     }
   }
+}
+
+vars:post-response {
+  submission_id: res.body.id
+}
+
+script:pre-request {
+  async function upload(filename, context, contentType) {
+    bru.setVar("attachment_filename", filename)
+    bru.setVar("attachment_context", context)
+    bru.setVar("attachment_content_type", contentType)
+    
+    const signResult = await bru.runRequest("attachment/get_signed_upload_url")
+    console.log(signResult)
+    
+    const attachment = signResult.data.attachment  
+    bru.setVar("file_path", `../files/${filename}`)
+    bru.setVar("file_content_type", contentType)
+    
+    await bru.runRequest(`attachment/upload/${filename.split('.')[0]}`)
+    
+    return attachment.id
+  }
+  
+  const codeAttachmentId = await upload("submission_code.py", "SUBMISSION_CODE", "text/x-python")
+  
+  bru.setVar("code_attachment_id", codeAttachmentId)
+  
 }
 
 settings {

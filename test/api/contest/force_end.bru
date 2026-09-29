@@ -5,9 +5,13 @@ meta {
 }
 
 put {
-  url: {{api_url}}/v1/contests/{{contest_id}}:force-start
+  url: {{api_url}}/v1/contests/{{contest_id}}:force-end
   body: none
   auth: inherit
+}
+
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
 }
 
 settings {

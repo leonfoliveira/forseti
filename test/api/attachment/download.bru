@@ -1,11 +1,11 @@
 meta {
-  name: find_by_id
+  name: download
   type: http
-  seq: 1
+  seq: 3
 }
 
 get {
-  url: {{api_url}}/v1/contests/slug/{{slug}}
+  url: {{attachment_download_url}}
   body: none
   auth: inherit
 }
@@ -13,4 +13,5 @@ get {
 settings {
   encodeUrl: true
   timeout: 0
+  forwardAuthorizationHeader: false
 }

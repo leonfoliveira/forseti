@@ -12,12 +12,18 @@ post {
 
 body:json {
   {
-    "password": "forsetijudge"
+    "login": "{{member_login}}",
+    "password": "123"
   }
 }
 
 vars:pre-request {
   contest_id: 
+  member_login: contestant
+}
+
+vars:post-response {
+  csrf_token: res.headers["set-cookie"][1].match(/csrf_token=(.+?)(;|$)/)[1]
 }
 
 settings {

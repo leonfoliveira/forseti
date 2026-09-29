@@ -33,7 +33,7 @@ class SignedDownloadAttachmentService(
         )
 
     /**
-     * Downloads an attachment by its ID and returns the download metadata.
+     * Get metadata and signed download URL for an attachment by its ID and contest ID.
      *
      * @param command The command containing the ID of the attachment to be downloaded.
      * @return A pair containing the attachment metadata and the byte array of the attachment content.
@@ -42,7 +42,7 @@ class SignedDownloadAttachmentService(
     override fun execute(command: SignedDownloadAttachmentUseCase.Command): SignedDownloadAttachmentResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberIdNullable()
 
-        logger.info("Downloading attachment with id: ${command.attachmentId}")
+        logger.info("Getting signed download URL for attachment with id = ${command.attachmentId} by member with id = $contextMemberId")
 
         val member =
             contextMemberId?.let {
@@ -59,7 +59,7 @@ class SignedDownloadAttachmentService(
 
         val downloadUrl = attachmentBucket.getDownloadUrl(attachment)
 
-        logger.info("Attachment downloaded successfully")
+        logger.info("Generated signed download URL successfully")
         return attachment.toDownloadSignedResponseBodyDTO(downloadUrl)
     }
 }

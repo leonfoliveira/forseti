@@ -17,10 +17,10 @@ interface MemberRepository : BaseRepository<Member> {
         contestId: UUID,
     ): Member?
 
-    @Query("SELECT m FROM Member m WHERE m.id = ?1 AND m.contest IS NULL AND m.deletedAt IS NULL")
-    fun findByIdAndContestIsNull(id: UUID): Member?
-
-    @Query("SELECT m FROM Member m WHERE m.id = ?1 AND (m.contest IS NULL OR m.contest.id = ?2) AND m.deletedAt IS NULL")
+    @Query(
+        "SELECT m FROM Member m LEFT JOIN m.contest c " +
+            "WHERE m.id = ?1 AND (c IS NULL OR c.id = ?2) AND m.deletedAt IS NULL",
+    )
     fun findByIdAndContestIdOrContestIsNull(
         id: UUID,
         contestId: UUID,
@@ -29,14 +29,11 @@ interface MemberRepository : BaseRepository<Member> {
     @Query("SELECT m FROM Member m WHERE m.login = ?1 AND m.contest IS NULL AND m.deletedAt IS NULL")
     fun findByLoginAndContestIsNull(login: String): Member?
 
-    @Query("SELECT m FROM Member m WHERE m.login = ?1 AND (m.contest IS NULL OR m.contest.id = ?2) AND m.deletedAt IS NULL")
+    @Query(
+        "SELECT m FROM Member m LEFT JOIN m.contest c " +
+            "WHERE m.login = ?1 AND (c IS NULL OR c.id = ?2) AND m.deletedAt IS NULL",
+    )
     fun findByLoginAndContestIdOrContestIsNull(
-        login: String,
-        contestId: UUID,
-    ): Member?
-
-    @Query("SELECT m FROM Member m WHERE m.login = ?1 AND m.contest.id = ?2 AND m.deletedAt IS NULL")
-    fun findByLoginAndContestId(
         login: String,
         contestId: UUID,
     ): Member?

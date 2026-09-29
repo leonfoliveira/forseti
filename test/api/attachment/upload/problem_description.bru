@@ -1,0 +1,21 @@
+meta {
+  name: problem_description
+  type: http
+  seq: 1
+}
+
+put {
+  url: {{attachment_upload_url}}
+  body: file
+  auth: inherit
+}
+
+body:file {
+  file: @file(\\wsl.localhost\Ubuntu\home\leonfoliveira\forseti\test\files\problem_description.pdf) @contentType(application/pdf)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

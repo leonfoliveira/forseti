@@ -40,7 +40,7 @@ class SignedUploadAttachmentService(
         )
 
     /**
-     * Uploads an attachment to a contest.
+     * Creates an attachment with a signed upload URL for a contest.
      *
      * @param command The command containing the details of the attachment to be uploaded.
      * @return The uploaded attachment entity, including its ID and metadata.
@@ -51,7 +51,7 @@ class SignedUploadAttachmentService(
     ): SignedUploadAttachmentResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
-        logger.info("Uploading attachment")
+        logger.info("Creating attachment for contest with id = ${command.contestId} by member with id = $contextMemberId")
 
         val contest =
             contestRepository.findById(command.contestId)
@@ -62,12 +62,12 @@ class SignedUploadAttachmentService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireContestNotEnded()
+            .requireContestActive()
             .throwIfErrors()
 
         authorizationConfigsByContext[command.context]
             ?.authorizeUpload(contest, member)
-            ?: throw ForbiddenException("Cannot upload attachment with context ${command.context}")
+            ?: throw ForbiddenException("Cannot create attachment with context ${command.context}")
 
         val id = IdGenerator.getUUID()
         val attachment =
@@ -82,7 +82,7 @@ class SignedUploadAttachmentService(
         attachmentRepository.save(attachment)
         val uploadUrl = attachmentBucket.getUploadUrl(attachment)
 
-        logger.info("Attachment uploaded successfully with id = ${attachment.id}")
+        logger.info("Attachment created successfully with id = ${attachment.id}")
         return attachment.toUploadSignedResponseBodyDTO(uploadUrl)
     }
 }

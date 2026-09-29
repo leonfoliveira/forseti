@@ -1,0 +1,21 @@
+meta {
+  name: submission_code
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{attachment_upload_url}}
+  body: file
+  auth: inherit
+}
+
+body:file {
+  file: @file(\\wsl.localhost\Ubuntu\home\leonfoliveira\forseti\test\files\submission_code.py)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

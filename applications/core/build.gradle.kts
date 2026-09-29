@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.opentelemetryInstrumentationLogbackMdc)
     implementation(libs.postgresql)
     implementation(libs.springBootStarter)
+    implementation(libs.springBootStarterActuator)
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterDataRedis)
     implementation(libs.springBootStarterSecurity)

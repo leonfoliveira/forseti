@@ -29,7 +29,7 @@ class DashboardController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/contests/{contestId}/dashboard/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun getAdminDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<AdminDashboardResponseBodyDTO> {

@@ -14,6 +14,7 @@ spring:
       s3:
         endpoint: ${AWS_S3_ENDPOINT:http://localhost:4566}
         bucket: ${AWS_S3_BUCKET:dev-forseti-core-bucket}
+        path-style-access-enabled: ${AWS_S3_PATH_STYLE_ACCESS_ENABLED:true}
         signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
         signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
       sns:

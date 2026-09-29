@@ -10,6 +10,10 @@ put {
   auth: inherit
 }
 
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
 body:json {
   {
     "answer": "ACCEPTED"

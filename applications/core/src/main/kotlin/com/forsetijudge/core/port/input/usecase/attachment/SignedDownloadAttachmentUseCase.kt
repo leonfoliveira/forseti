@@ -5,7 +5,7 @@ import java.util.UUID
 
 interface SignedDownloadAttachmentUseCase {
     /**
-     * Downloads an attachment by its ID and returns the download metadata.
+     * Get metadata and signed download URL for an attachment by its ID and contest ID.
      *
      * @param command The command containing the ID of the attachment to be downloaded.
      * @return A [SignedDownloadAttachmentResponseDTO] containing the attachment metadata and a signed download URL.

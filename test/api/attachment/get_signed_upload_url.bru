@@ -10,12 +10,27 @@ post {
   auth: inherit
 }
 
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
 body:json {
   {
-    "filename": "code.py",
-    "context": "SUBMISSION_CODE",
-    "contentType": "text/x-python"
+    "filename": "{{attachment_filename}}",
+    "context": "{{attachment_context}}",
+    "contentType": "{{attachment_content_type}}"
   }
+}
+
+vars:pre-request {
+  attachment_filename: problem_description.pdf
+  attachment_context: PROBLEM_DESCRIPTION
+  attachment_content_type: application/pdf
+}
+
+vars:post-response {
+  attachment_id: res.body.attachment_id
+  attachment_upload_url: decodeURIComponent(res.body.uploadUrl)
 }
 
 settings {

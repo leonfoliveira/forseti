@@ -48,6 +48,7 @@ class BuildContestantDashboardService(
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
             .requireMemberType(Member.Type.CONTESTANT)
+            .requireContestStarted()
             .throwIfErrors()
 
         val leaderboard = leaderboardBuilder.build(contest = contest)

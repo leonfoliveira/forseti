@@ -53,7 +53,7 @@ class AttachmentS3Bucket(
     }
 
     override fun getUploadUrl(attachment: Attachment): String {
-        logger.info("Generating upload URL for attachment with ID: ${attachment.id}")
+        logger.info("Generating signed upload URL for attachment with ID: ${attachment.id}")
         val key = "$PREFIX${attachment.id}"
 
         val objectRequest =
@@ -75,7 +75,7 @@ class AttachmentS3Bucket(
     }
 
     override fun download(attachment: Attachment): ByteArray {
-        logger.info("Generating download URL for attachment with ID: ${attachment.id}")
+        logger.info("Downloading attachment with ID: ${attachment.id}")
         val key = "$PREFIX${attachment.id}"
 
         val objectRequest =

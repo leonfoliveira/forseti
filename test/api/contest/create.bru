@@ -24,13 +24,14 @@ body:json {
         "PYTHON_312",
         "NODE_22"
       ],
-      "startAt": "{{$isoTimestamp}}",
-      "endAt": "{{$isoTimestamp}}"
+      "startAt": "2099-01-01T00:00:00Z",
+      "endAt": "2099-01-02T00:00:00Z"
     }
 }
 
 vars:post-response {
-  ~contest_id: 
+  contest_slug: res.body.slug
+  contest_id: res.body.id
 }
 
 settings {

@@ -44,7 +44,7 @@ class SessionCreator(
             Session(
                 member = member,
                 csrfToken = IdGenerator.getUUID(),
-                expiresAt = OffsetDateTime.now().plusSeconds(expiresAtOffset / 1000),
+                expiresAt = OffsetDateTime.now().plusSeconds(expiresAtOffset),
             )
         sessionRepository.save(session)
         sessionCache.cache(session.toResponseBodyDTO())

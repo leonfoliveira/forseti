@@ -11,7 +11,7 @@ import java.util.UUID
 
 interface SignedUploadAttachmentUseCase {
     /**
-     * Uploads an attachment to a contest.
+     * Creates an attachment with a signed upload URL for a contest.
      *
      * @param command The command containing the details of the attachment to be uploaded.
      * @return A response DTO containing the signed upload URL and other relevant information.
@@ -21,7 +21,7 @@ interface SignedUploadAttachmentUseCase {
     ): SignedUploadAttachmentResponseDTO
 
     /**
-     * Command class for uploading an attachment.
+     * Command class for creating an attachment with a signed upload URL for a contest.
      *
      * @param contestId The ID of the contest to which the attachment belongs.
      * @param filename The original filename of the attachment (nullable).
