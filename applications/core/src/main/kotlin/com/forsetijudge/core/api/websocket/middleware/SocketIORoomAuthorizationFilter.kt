@@ -167,7 +167,7 @@ class SocketIORoomAuthorizationFilter(
 
         return try {
             val session = findSessionByIdUseCase.execute(FindSessionByIdUseCase.Command(sessionId = sessionId))
-            memberRepository.findById(session.member.id)
+            memberRepository.findById(session.memberId)
         } catch (exception: Exception) {
             logger.info("Could not resolve session from websocket handshake: ${exception.message}")
             null

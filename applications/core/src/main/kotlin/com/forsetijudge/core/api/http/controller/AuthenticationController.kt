@@ -5,7 +5,7 @@ import com.forsetijudge.core.api.http.dto.request.authentication.AuthenticateToC
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.input.usecase.authentication.SignInUseCase
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
@@ -30,7 +30,7 @@ class AuthenticationController(
     @PostMapping("/root:sign-in")
     fun authenticateRoot(
         @RequestBody body: AuthenticateRootRequestBodyDTO,
-    ): ResponseEntity<SessionResponseBodyDTO> {
+    ): ResponseEntity<Session> {
         logger.info("[POST] /v1/root:sign-in")
         val session =
             signInUseCase.execute(
@@ -54,7 +54,7 @@ class AuthenticationController(
     fun authenticateToContest(
         @PathVariable contestId: UUID,
         @RequestBody body: AuthenticateToContestRequestBodyDTO,
-    ): ResponseEntity<SessionResponseBodyDTO> {
+    ): ResponseEntity<Session> {
         logger.info("[POST] /v1/contests/$contestId:sign-in")
         val session =
             signInUseCase.execute(

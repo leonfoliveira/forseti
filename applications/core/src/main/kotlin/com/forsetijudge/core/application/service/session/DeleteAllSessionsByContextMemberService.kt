@@ -29,7 +29,7 @@ class DeleteAllSessionsByContextMemberService(
             memberRepository.findById(contextMemberId)
                 ?: throw NotFoundException("Member with id $contextMemberId not found")
 
-        sessionDeleter.deleteAllByMember(member)
+        sessionDeleter.deleteByMember(member)
 
         logger.info("All sessions deleted successfully")
     }

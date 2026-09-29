@@ -29,11 +29,10 @@ class SessionRevisionEntity(
     @Column(name = "timestamp", nullable = false)
     private val timestamp: LocalDateTime = LocalDateTime.now(),
     /**
-     * The ID of the session that made the change.
+     * The ID of the member (user) associated with the session that made the change.
      * This is useful for tracking which user made the change.
      */
-    @Column(name = "session_id")
-    var sessionId: UUID? = null,
+    var memberId: UUID? = null,
     /**
      * The IP address from which the request originated.
      * This can be useful for security and auditing purposes.

@@ -16,7 +16,7 @@ class SessionRevisionListener : RevisionListener {
 
         val authentication = SecurityContextHolder.getContext().authentication as? SessionAuthentication
 
-        sessionRevisionEntity.sessionId = authentication?.session?.id
+        sessionRevisionEntity.memberId = authentication?.principal
         sessionRevisionEntity.ip = authentication?.ip
         sessionRevisionEntity.traceId = MDC.get("traceId")
     }

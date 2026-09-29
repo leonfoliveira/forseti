@@ -1,6 +1,6 @@
 package com.forsetijudge.core.infrastructure.redis
 
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.output.cache.SessionCache
 import com.forsetijudge.core.util.SafeLogger
 import java.time.Duration
@@ -19,16 +19,16 @@ class SessionRedisCacheStore(
 
     companion object {
         const val STORE_KEY = "session"
-        const val MEMBER_STORE_KEY = "session_member"
+        const val MEMBER_STORE_KEY = "session:member"
     }
 
     /**
      * Stores the given session in the Redis cache. Using two indexes:
      * sessionId -> session and memberId -> sessionId
      */
-    override fun cache(session: SessionResponseBodyDTO) {
+    override fun cache(session: Session) {
         val key = "${STORE_KEY}:${session.id}"
-        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
         val ttl = Duration.between(OffsetDateTime.now(), session.expiresAt)
         logger.info("Caching session with key $key")
 
@@ -36,10 +36,12 @@ class SessionRedisCacheStore(
         redisTemplate.opsForValue().set(key, rawSession, ttl)
         redisTemplate.opsForValue().set(memberKey, key, ttl)
 
+        clean(session)
+
         logger.info("Session cached successfully")
     }
 
-    override fun get(id: UUID): SessionResponseBodyDTO? {
+    override fun get(id: UUID): Session? {
         val key = "${STORE_KEY}:$id"
         logger.info("Retrieving session with key $key")
 
@@ -49,14 +51,14 @@ class SessionRedisCacheStore(
             return null
         }
 
-        val session = objectMapper.readValue(rawSession, SessionResponseBodyDTO::class.java)
+        val session = objectMapper.readValue(rawSession, Session::class.java)
         logger.info("Session retrieved successfully for key $key")
         return session
     }
 
-    override fun evict(session: SessionResponseBodyDTO) {
+    override fun evict(session: Session) {
         val key = "${STORE_KEY}:${session.id}"
-        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
         logger.info("Evicting session with key $key and member key $memberKey")
 
         redisTemplate.delete(key)
@@ -77,5 +79,21 @@ class SessionRedisCacheStore(
         }
 
         logger.info("Session evicted successfully")
+    }
+
+    /**
+     * Sets the expiration time for the given session key and its associated member key to prevent stale data from accumulating in Redis.
+     * @param session The session to clean up.
+     */
+    private fun clean(session: Session) {
+        val key = "${STORE_KEY}:${session.id}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
+        val ttl = Duration.between(OffsetDateTime.now(), session.expiresAt)
+        logger.info("Setting expiration for session key $key and member key $memberKey to $ttl")
+
+        redisTemplate.expire(key, ttl)
+        redisTemplate.expire(memberKey, ttl)
+
+        logger.info("Expiration set successfully for session key $key and member key $memberKey")
     }
 }

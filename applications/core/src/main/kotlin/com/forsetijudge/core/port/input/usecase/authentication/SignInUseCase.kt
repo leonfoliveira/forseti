@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.authentication
 
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import java.util.UUID
 
 interface SignInUseCase {
@@ -10,7 +10,7 @@ interface SignInUseCase {
      * @param command The command containing the login credentials.
      * @return The created session if authentication is successful.
      */
-    fun execute(command: Command): SessionResponseBodyDTO
+    fun execute(command: Command): Session
 
     /**
      * Command for signing in a user.

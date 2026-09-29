@@ -5,8 +5,7 @@ import com.forsetijudge.core.application.helper.session.SessionDeleter
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.input.usecase.authentication.SignInUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
 import com.forsetijudge.core.port.output.repository.ContestRepository
@@ -38,7 +37,7 @@ class SignInService(
      * @return The created session if authentication is successful.
      */
     @Transactional
-    override fun execute(command: SignInUseCase.Command): SessionResponseBodyDTO {
+    override fun execute(command: SignInUseCase.Command): Session {
         logger.info("Authenticating to contest with id = ${command.contestId} and login = ${command.login}")
 
         val contest =
@@ -65,10 +64,10 @@ class SignInService(
             }
         }
 
-        sessionDeleter.deleteAllByMember(member)
+        sessionDeleter.deleteByMember(member)
         val session = sessionCreator.create(member)
 
         logger.info("Finished authenticating member with session id = ${session.id}")
-        return session.toResponseBodyDTO()
+        return session
     }
 }

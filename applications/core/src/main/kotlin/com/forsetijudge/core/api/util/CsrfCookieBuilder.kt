@@ -1,6 +1,6 @@
 package com.forsetijudge.core.api.util
 
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import java.time.Duration
 import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
@@ -19,7 +19,7 @@ class CsrfCookieBuilder(
      * @param session The session for which to build the CSRF token cookie.
      * @return The CSRF token cookie string.
      */
-    fun buildCookie(session: SessionResponseBodyDTO): String =
+    fun buildCookie(session: Session): String =
         cookieBuilder
             .from(CSRF_COOKIE_NAME, session.csrfToken.toString())
             .maxAge(Duration.between(OffsetDateTime.now(), session.expiresAt))

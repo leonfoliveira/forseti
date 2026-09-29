@@ -3,7 +3,7 @@ package com.forsetijudge.core.api.http.controller
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
 import com.forsetijudge.core.application.helper.AuthenticationHelper
-import com.forsetijudge.core.port.dto.response.session.SessionResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.input.usecase.session.DeleteAllSessionsByContextMemberUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.HttpHeaders
@@ -24,7 +24,7 @@ class SessionController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/sessions/me")
-    fun getSession(): ResponseEntity<SessionResponseBodyDTO> {
+    fun getSession(): ResponseEntity<Session> {
         logger.info("[GET] /v1/sessions/me")
         val session = AuthenticationHelper.getCurrentSession()
         return ResponseEntity.ok(session)

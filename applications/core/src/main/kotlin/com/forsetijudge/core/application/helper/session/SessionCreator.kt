@@ -1,10 +1,8 @@
 package com.forsetijudge.core.application.helper.session
 
 import com.forsetijudge.core.domain.entity.Member
-import com.forsetijudge.core.domain.entity.Session
-import com.forsetijudge.core.port.dto.response.session.toResponseBodyDTO
+import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.output.cache.SessionCache
-import com.forsetijudge.core.port.output.repository.SessionRepository
 import com.forsetijudge.core.util.IdGenerator
 import com.forsetijudge.core.util.SafeLogger
 import java.time.OffsetDateTime
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Component
 
 @Component
 class SessionCreator(
-    private val sessionRepository: SessionRepository,
     private val sessionDeleter: SessionDeleter,
     private val sessionCache: SessionCache,
     @Value($$"${security.session.expiration.default_seconds}")
@@ -32,7 +29,7 @@ class SessionCreator(
     fun create(member: Member): Session {
         logger.info("Creating session for member with id = ${member.id}")
 
-        sessionDeleter.deleteAllByMember(member)
+        sessionDeleter.deleteByMember(member)
 
         val expiresAtOffset =
             when (member.type) {
@@ -42,12 +39,14 @@ class SessionCreator(
 
         val session =
             Session(
-                member = member,
+                id = IdGenerator.getUUID(),
+                memberId = member.id,
+                memberType = member.type,
+                memberName = member.name,
                 csrfToken = IdGenerator.getUUID(),
                 expiresAt = OffsetDateTime.now().plusSeconds(expiresAtOffset),
             )
-        sessionRepository.save(session)
-        sessionCache.cache(session.toResponseBodyDTO())
+        sessionCache.cache(session)
 
         logger.info("Session created successfully with id = ${session.id}")
         return session
