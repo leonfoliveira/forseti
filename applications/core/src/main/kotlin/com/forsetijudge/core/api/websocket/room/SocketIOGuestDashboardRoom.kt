@@ -10,10 +10,6 @@ import java.util.UUID
 class SocketIOGuestDashboardRoom(
     contestId: UUID,
 ) {
-    companion object {
-        val pattern = Regex("/contests/(?<contestId>[a-f0-9\\-]+)/dashboard/guest")
-    }
-
     private val name = "/contests/$contestId/dashboard/guest"
 
     fun buildLeaderboardUpdatedEvent(leaderboardCell: Leaderboard.Cell) =

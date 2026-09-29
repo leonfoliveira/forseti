@@ -3,6 +3,7 @@ package com.forsetijudge.core.api.listener
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
 import com.forsetijudge.core.api.websocket.room.SocketIOAdminDashboardRoom
 import com.forsetijudge.core.api.websocket.room.SocketIOContestantDashboardRoom
+import com.forsetijudge.core.api.websocket.room.SocketIOContestantPrivateRoom
 import com.forsetijudge.core.api.websocket.room.SocketIOGuestDashboardRoom
 import com.forsetijudge.core.api.websocket.room.SocketIOJudgeDashboardRoom
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
@@ -35,6 +36,17 @@ class ApiSubmissionUpdatedEventListener(
         val leaderboardCell =
             leaderboardCellBuilder.build(submission.contest, submission.member, submission.problem, cellSubmissions)
 
+        socketIOFanoutRedisMessageProducer.produce(
+            SocketIOAdminDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission),
+        )
+        socketIOFanoutRedisMessageProducer.produce(
+            SocketIOJudgeDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission),
+        )
+        socketIOFanoutRedisMessageProducer.produce(
+            SocketIOContestantPrivateRoom(submission.contest.id, submission.member.id).buildSubmissionUpdatedEvent(
+                submission,
+            ),
+        )
         socketIOFanoutRedisMessageProducer.produce(
             SocketIOContestantDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(
                 submission,
