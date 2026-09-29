@@ -92,7 +92,7 @@ class GlobalExceptionHandler {
         logger.info("Method validation error occurred, message: ${ex.message}")
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponseBodyDTO(ex.message ?: "Validation failed"))
+            .body(ErrorResponseBodyDTO(ex.message))
     }
 
     /**
@@ -129,7 +129,7 @@ class GlobalExceptionHandler {
         logger.info("Missing request parameter, message: ${ex.message}")
         return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponseBodyDTO(ex.message ?: "Missing required request parameter"))
+            .body(ErrorResponseBodyDTO(ex.message))
     }
 
     /**
