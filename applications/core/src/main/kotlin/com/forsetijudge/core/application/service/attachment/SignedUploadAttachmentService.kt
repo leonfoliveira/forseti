@@ -62,7 +62,6 @@ class SignedUploadAttachmentService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireContestActive()
             .throwIfErrors()
 
         authorizationConfigsByContext[command.context]

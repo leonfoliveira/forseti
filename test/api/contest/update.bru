@@ -77,7 +77,7 @@ script:pre-request {
     
     const signResult = await bru.runRequest("attachment/get_signed_upload_url")
     
-    const attachment = signResult.data.attachment  
+    const attachment = signResult.data.attachment
     bru.setVar("file_path", `../files/${filename}`)
     bru.setVar("file_content_type", contentType)
     

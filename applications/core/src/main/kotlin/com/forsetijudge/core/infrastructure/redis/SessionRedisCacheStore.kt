@@ -34,7 +34,7 @@ class SessionRedisCacheStore(
 
         val rawSession = objectMapper.writeValueAsString(session)
         redisTemplate.opsForValue().set(key, rawSession, ttl)
-        redisTemplate.opsForValue().set(memberKey, key, ttl)
+        redisTemplate.opsForValue().set(memberKey, session.id.toString(), ttl)
 
         clean(session)
 
@@ -71,10 +71,11 @@ class SessionRedisCacheStore(
         val memberKey = "${MEMBER_STORE_KEY}:$memberId"
         logger.info("Evicting sessions with member key $memberKey")
 
-        val sessionKey = redisTemplate.opsForValue().get(memberKey)
+        val sessionId = redisTemplate.opsForValue().get(memberKey)
 
         redisTemplate.delete(memberKey)
-        if (sessionKey != null) {
+        if (sessionId != null) {
+            val sessionKey = "${STORE_KEY}:$sessionId"
             redisTemplate.delete(sessionKey)
         }
 
