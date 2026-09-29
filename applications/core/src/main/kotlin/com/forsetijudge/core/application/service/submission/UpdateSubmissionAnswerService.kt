@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecution
 import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -32,7 +32,7 @@ class UpdateSubmissionAnswerService(
      */
     @Transactional
     override fun execute(command: UpdateSubmissionAnswerUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info(
             "Updating answer for submission with id: ${command.submissionId} to answer: ${command.answer}",

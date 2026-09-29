@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.attachment
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemDescriptionAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemTestCasesAuthorizationConfig
@@ -14,7 +15,6 @@ import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.IdGenerator
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
@@ -49,7 +49,7 @@ class SignedUploadAttachmentService(
     override fun execute(
         @Valid command: SignedUploadAttachmentUseCase.Command,
     ): SignedUploadAttachmentResponseDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Uploading attachment")
 

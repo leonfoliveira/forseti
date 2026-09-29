@@ -1,0 +1,67 @@
+meta {
+  name: update
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{api_url}}/v1/contests/{{contest_id}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "id": "{{contest_id}}",
+      "slug": "{{$randomWord}}",
+      "title": "{{$randomWords}}",
+      "languages": [
+        "CPP_17",
+        "JAVA_21",
+        "PYTHON_312",
+        "NODE_22"
+      ],
+      "startAt": "{{start_at}}",
+      "endAt": "{{end_at}}",
+      "members": [
+        {
+          "type": "ADMIN",
+          "name": "{{$randomFirstName}}",
+          "login": "admin",
+          "password": "123"
+        },
+        {
+          "type": "JUDGE",
+          "name": "{{$randomFirstName}}",
+          "login": "judge",
+          "password": "123"
+        },
+        {
+          "type": "CONTESTANT",
+          "name": "{{$randomFirstName}}",
+          "login": "contestant",
+          "password": "123"
+        }
+      ],
+      "problems": [
+        {
+          "letter": "A",
+          "color": "#ffffff",
+          "title": "{{$randomWords}}",
+          "description": {
+            "id": "{{description_attachment_id}}"
+          },
+          "timeLimit": 1000,
+          "memoryLimit": 1024,
+          "testCases": {
+            "id": "{{test_cases_attachment_id}}"
+          }
+        }
+      ]
+    }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

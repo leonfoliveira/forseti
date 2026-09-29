@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUse
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -28,6 +29,7 @@ class DashboardController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/contests/{contestId}/dashboard/admin")
+    @PreAuthorize("hasRole('ADMIN')")
     fun getAdminDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<AdminDashboardResponseBodyDTO> {
@@ -40,6 +42,7 @@ class DashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/contestant")
+    @PreAuthorize("hasRole('CONTESTANT')")
     fun getContestantDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestantDashboardResponseBodyDTO> {
@@ -64,6 +67,7 @@ class DashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/judge")
+    @PreAuthorize("hasRole('JUDGE')")
     fun getJudgeDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<JudgeDashboardResponseBodyDTO> {

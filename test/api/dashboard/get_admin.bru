@@ -1,0 +1,16 @@
+meta {
+  name: get_admin
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/v1/contests/{{contest_id}}/dashboard/admin
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

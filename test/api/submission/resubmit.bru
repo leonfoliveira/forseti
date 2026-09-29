@@ -1,0 +1,16 @@
+meta {
+  name: resubmit
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{api_url}}/v1/contests/{{contest_id}}/submissions/{{submission_id}}:resubmit
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

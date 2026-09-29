@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
@@ -20,7 +21,6 @@ import com.forsetijudge.core.port.output.cryptography.Hasher
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
 import java.time.OffsetDateTime
@@ -53,7 +53,7 @@ class UpdateContestService(
     override fun execute(
         @Valid command: UpdateContestUseCase.Command,
     ): ContestWithMembersAndProblemsResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
         val now = OffsetDateTime.now()
 
         logger.info("Updating contest with id: ${command.contestId} by member with id: $contextMemberId")

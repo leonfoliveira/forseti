@@ -1,0 +1,16 @@
+meta {
+  name: find_all
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/v1/contests
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

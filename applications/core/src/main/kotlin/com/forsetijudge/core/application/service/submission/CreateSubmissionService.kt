@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.submission
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
@@ -16,7 +17,6 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
@@ -45,7 +45,7 @@ class CreateSubmissionService(
     override fun execute(
         @Valid command: CreateSubmissionUseCase.Command,
     ): SubmissionWithCodeResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Creating submission for member with id: $contextMemberId and problem with id: ${command.problemId}")
 

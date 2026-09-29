@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
@@ -8,7 +9,6 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.input.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
@@ -29,7 +29,7 @@ class DeleteContestService(
      */
     @Transactional
     override fun execute(command: DeleteContestUseCase.Command) {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Deleting contest with id: ${command.contestId} by member with id: $contextMemberId")
 

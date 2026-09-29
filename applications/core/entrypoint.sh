@@ -3,13 +3,18 @@
 set -e
 
 # Load secrets into environment variables
-if [ -n "$DB_PASSWORD_FILE" ]; then
-    export DB_PASSWORD=$(cat "$DB_PASSWORD_FILE")
-fi
+SECRET_FILES=(
+    "AWS_ACCESS_KEY_FILE"
+    "AWS_SECRET_KEY_FILE"
+    "DB_PASSWORD_FILE"
+    "REDIS_PASSWORD_FILE"
+)
 
-if [ -n "$REDIS_PASSWORD_FILE" ]; then
-    export REDIS_PASSWORD=$(cat "$REDIS_PASSWORD_FILE")
-fi
+for secret_file in "${SECRET_FILES[@]}"; do
+    if [ -n "${!secret_file}" ]; then
+        export "${secret_file%_FILE}=$(cat "${!secret_file}")"
+    fi
+done
 
 echo "Starting application..."
 exec java -javaagent:opentelemetry-javaagent.jar -jar app.jar

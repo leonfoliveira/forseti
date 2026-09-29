@@ -1,0 +1,16 @@
+meta {
+  name: get_judge
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/v1/contests/{{contest_id}}/dashboard/judge
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

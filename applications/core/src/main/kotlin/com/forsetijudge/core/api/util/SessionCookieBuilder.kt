@@ -10,7 +10,7 @@ class SessionCookieBuilder(
     private val cookieBuilder: CookieBuilder,
 ) {
     companion object {
-        private const val SESSION_COOKIE_NAME = "session_id"
+        const val SESSION_COOKIE_NAME = "session_id"
     }
 
     /**

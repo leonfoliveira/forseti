@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.leaderboard
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.Submission
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -34,7 +34,7 @@ class BuildLeaderboardCellService(
      */
     @Transactional(readOnly = true)
     override fun execute(command: BuildLeaderboardCellUseCase.Command): LeaderboardCellResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info(
             "Building leaderboard cell for contest with id: ${command.contestId}, memberId: ${command.memberId} " +

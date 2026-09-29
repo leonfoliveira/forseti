@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.attachment
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemDescriptionAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemTestCasesAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.SubmissionCodeAuthorizationConfig
@@ -12,7 +13,6 @@ import com.forsetijudge.core.port.input.usecase.attachment.SignedDownloadAttachm
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,7 +40,7 @@ class SignedDownloadAttachmentService(
      */
     @Transactional(readOnly = true)
     override fun execute(command: SignedDownloadAttachmentUseCase.Command): SignedDownloadAttachmentResponseDTO {
-        val contextMemberId = ExecutionContext.getMemberIdNullable()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberIdNullable()
 
         logger.info("Downloading attachment with id: ${command.attachmentId}")
 

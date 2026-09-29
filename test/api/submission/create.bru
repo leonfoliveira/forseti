@@ -1,0 +1,26 @@
+meta {
+  name: create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/v1/contests/{{contest_id}}/submissions
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "problemId": "{{problem_id}}",
+    "language": "PYTHON_312",
+    "code": {
+      "id": "{{code_id}}"
+    }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

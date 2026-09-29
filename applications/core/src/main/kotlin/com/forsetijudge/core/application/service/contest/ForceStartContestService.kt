@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
@@ -11,7 +12,6 @@ import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsR
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
@@ -33,7 +33,7 @@ class ForceStartContestService(
      */
     @Transactional
     override fun execute(command: ForceStartContestUseCase.Command): ContestWithMembersAndProblemsResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Force starting contest with id: ${command.contestId} by member with id: $contextMemberId")
 

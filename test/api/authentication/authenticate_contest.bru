@@ -1,0 +1,26 @@
+meta {
+  name: authenticate_contest
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{api_url}}/v1/contests/{{contest_id}}:sign-in
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "password": "forsetijudge"
+  }
+}
+
+vars:pre-request {
+  contest_id: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

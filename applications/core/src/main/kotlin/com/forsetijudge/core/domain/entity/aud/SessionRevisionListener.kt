@@ -1,7 +1,9 @@
 package com.forsetijudge.core.domain.entity.aud
 
-import com.forsetijudge.core.util.ExecutionContext
+import com.forsetijudge.core.domain.model.SessionAuthentication
 import org.hibernate.envers.RevisionListener
+import org.slf4j.MDC
+import org.springframework.security.core.context.SecurityContextHolder
 
 class SessionRevisionListener : RevisionListener {
     /**
@@ -12,10 +14,10 @@ class SessionRevisionListener : RevisionListener {
     override fun newRevision(revisionEntity: Any) {
         val sessionRevisionEntity = revisionEntity as SessionRevisionEntity
 
-        val context = ExecutionContext.get()
+        val authentication = SecurityContextHolder.getContext().authentication as? SessionAuthentication
 
-        sessionRevisionEntity.sessionId = context.session?.id
-        sessionRevisionEntity.ip = context.ip
-        sessionRevisionEntity.traceId = context.traceId
+        sessionRevisionEntity.sessionId = authentication?.session?.id
+        sessionRevisionEntity.ip = authentication?.ip
+        sessionRevisionEntity.traceId = MDC.get("traceId")
     }
 }

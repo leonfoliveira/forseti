@@ -10,7 +10,7 @@ class CsrfCookieBuilder(
     private val cookieBuilder: CookieBuilder,
 ) {
     companion object {
-        private const val CSRF_COOKIE_NAME = "csrf_token"
+        const val CSRF_COOKIE_NAME = "csrf_token"
     }
 
     /**

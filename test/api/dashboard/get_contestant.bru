@@ -1,0 +1,16 @@
+meta {
+  name: get_contestant
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/v1/contests/{{contest_id}}/dashboard/contestant
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

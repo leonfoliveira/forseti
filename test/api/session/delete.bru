@@ -1,0 +1,15 @@
+meta {
+  name: delete
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{api_url}}/v1/sessions/me
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

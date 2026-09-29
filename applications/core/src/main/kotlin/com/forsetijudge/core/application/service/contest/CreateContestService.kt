@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
@@ -12,7 +13,6 @@ import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.input.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
@@ -38,7 +38,7 @@ class CreateContestService(
     override fun execute(
         @Valid command: CreateContestUseCase.Command,
     ): ContestResponseBodyDTO {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Creating contest with slug: ${command.slug}")
 

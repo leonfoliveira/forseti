@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswe
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -29,6 +30,7 @@ class SubmissionController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/submissions")
+    @PreAuthorize("hasRole('CONTESTANT')")
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateSubmissionRequestBodyDTO,
@@ -47,6 +49,7 @@ class SubmissionController(
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:resubmit")
+    @PreAuthorize("hasRole('ROOT', 'ADMIN', 'JUDGE')")
     fun resubmit(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
@@ -63,6 +66,7 @@ class SubmissionController(
     }
 
     @PutMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
+    @PreAuthorize("hasRole('ROOT', 'ADMIN', 'JUDGE')")
     fun updateAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,

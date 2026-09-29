@@ -1,0 +1,26 @@
+meta {
+  name: authenticate_root
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/v1/root:sign-in
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "password": "forsetijudge"
+  }
+}
+
+vars:post-response {
+  csrf_token: res.headers["set-cookie"][1].match(/csrf_token=(.+?)(;|$)/)[1]
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

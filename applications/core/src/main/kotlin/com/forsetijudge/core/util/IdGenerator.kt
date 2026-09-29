@@ -11,13 +11,4 @@ object IdGenerator {
      * Generates a UUIDv7, which is a time-ordered UUID that includes a timestamp and random components.
      */
     fun getUUID(): UUID = UuidCreator.getTimeOrderedEpoch()
-
-    /**
-     * Generates a valid OpenTelemetry trace ID (32-character hexadecimal string / 128 bits)
-     */
-    fun getTraceId(): String {
-        val bytes = ByteArray(16)
-        random.nextBytes(bytes)
-        return bytes.joinToString("") { "%02x".format(it) }
-    }
 }

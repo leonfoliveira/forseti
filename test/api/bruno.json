@@ -1,0 +1,12 @@
+{
+  "version": "1",
+  "name": "forseti",
+  "type": "collection",
+  "ignore": ["node_modules", ".git"],
+  "scripts": {
+    "filesystemAccess": {
+      "allow": true
+    },
+    "moduleWhitelist": ["fs", "path", "form-data"]
+  }
+}

@@ -1,0 +1,39 @@
+meta {
+  name: create
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{api_url}}/v1/contests
+  body: json
+  auth: inherit
+}
+
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
+body:json {
+    {
+      "slug": "{{$randomWord}}",
+      "title": "{{$randomWords}}",
+      "languages": [
+        "CPP_17",
+        "JAVA_21",
+        "PYTHON_312",
+        "NODE_22"
+      ],
+      "startAt": "{{$isoTimestamp}}",
+      "endAt": "{{$isoTimestamp}}"
+    }
+}
+
+vars:post-response {
+  ~contest_id: 
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.service.contest
 
+import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -8,7 +9,6 @@ import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.input.usecase.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.util.ExecutionContext
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -27,7 +27,7 @@ class FindAllContestService(
      */
     @Transactional(readOnly = true)
     override fun execute(): List<ContestResponseBodyDTO> {
-        val contextMemberId = ExecutionContext.getMemberId()
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Finding all contests")
 

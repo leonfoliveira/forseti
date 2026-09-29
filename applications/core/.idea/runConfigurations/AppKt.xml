@@ -1,0 +1,34 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AppKt" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <option name="ACTIVE_PROFILES" value="development" />
+    <option name="ENABLE_JMX_AUTH" value="true" />
+    <envs>
+      <env name="OTEL_TRACES_EXPORTER" value="none" />
+      <env name="OTEL_METRICS_EXPORTER" value="none" />
+      <env name="OTEL_LOGS_EXPORTER" value="none" />
+    </envs>
+    <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+    <module name="core.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.forsetijudge.core.AppKt" />
+    <option name="VM_PARAMETERS" value="-javaagent:$PROJECT_DIR$/opentelemetry-javaagent.jar" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.forsetijudge.core.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <extension name="net.ashald.envfile">
+      <option name="IS_ENABLED" value="false" />
+      <option name="IS_SUBST" value="false" />
+      <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+      <option name="IS_IGNORE_MISSING_FILES" value="false" />
+      <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+      <ENTRIES>
+        <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+      </ENTRIES>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

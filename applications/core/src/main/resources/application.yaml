@@ -24,6 +24,8 @@ spring:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-forseti-judge-submission-queue}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-forseti-core-submission-failed-queue}
         submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-forseti-core-submission-judged-queue}
+      secretsmanager:
+        endpoint: ${AWS_SECRETSMANAGER_ENDPOINT:http://localhost:4566}
 
   # PostgreSQL database configuration
   datasource:

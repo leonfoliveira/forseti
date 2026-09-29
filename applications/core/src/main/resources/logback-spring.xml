@@ -7,7 +7,11 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.mdc.v1_0.OpenTelemetryAppender">
         <appender-ref ref="CONSOLE"/>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="OTEL"/>
     </root>
 </configuration>

@@ -1,0 +1,22 @@
+meta {
+  name: update_answer
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{api_url}}/v1/contests/{{contest_id}}/submissions/{{submission_id}}:update-answer
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "answer": "ACCEPTED"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

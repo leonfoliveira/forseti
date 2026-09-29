@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.springBootStarter)
     implementation(libs.springBootStarterDataJpa)
     implementation(libs.springBootStarterDataRedis)
+    implementation(libs.springBootStarterSecurity)
     implementation(libs.springBootStarterValidation)
     implementation(libs.springBootStarterWeb)
     implementation(libs.springBootStarterWebsocket)

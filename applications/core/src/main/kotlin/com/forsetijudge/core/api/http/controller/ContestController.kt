@@ -15,6 +15,7 @@ import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -51,6 +52,7 @@ class ContestController(
     }
 
     @GetMapping("/contests")
+    @PreAuthorize("hasRole('ROOT')")
     fun findAll(): ResponseEntity<List<ContestResponseBodyDTO>> {
         logger.info("[GET] /v1/contests")
         val contests = findAllContestUseCase.execute()
@@ -58,6 +60,7 @@ class ContestController(
     }
 
     @PostMapping("/contests")
+    @PreAuthorize("hasRole('ROOT')")
     fun create(
         @RequestBody body: CreateContestRequestBodyDTO,
     ): ResponseEntity<ContestResponseBodyDTO> {
@@ -76,6 +79,7 @@ class ContestController(
     }
 
     @PutMapping("/contests/{contestId}")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun updateContest(
         @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestRequestBodyDTO,
@@ -135,6 +139,7 @@ class ContestController(
     }
 
     @PutMapping("/contests/{contestId}:force-start")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun forceStart(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
@@ -147,6 +152,7 @@ class ContestController(
     }
 
     @PutMapping("/contests/{contestId}:force-end")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun forceEnd(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
@@ -159,6 +165,7 @@ class ContestController(
     }
 
     @DeleteMapping("/contests/{contestId}")
+    @PreAuthorize("hasRole('ROOT')")
     fun delete(
         @PathVariable contestId: UUID,
     ): ResponseEntity<Void> {
