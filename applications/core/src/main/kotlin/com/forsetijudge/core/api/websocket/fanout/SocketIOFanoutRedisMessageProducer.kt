@@ -1,17 +1,19 @@
 package com.forsetijudge.core.api.websocket.fanout
 
-import com.forsetijudge.core.infrastructure.redis.RedisPubSubConfig
-import org.springframework.data.redis.core.StringRedisTemplate
+import com.forsetijudge.core.infrastructure.redis.SocketIORedisCacheStore
+import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
-import tools.jackson.databind.ObjectMapper
 
 @Component
 class SocketIOFanoutRedisMessageProducer(
-    private val redisTemplate: StringRedisTemplate,
-    private val objectMapper: ObjectMapper,
+    private val socketIORedisCacheStore: SocketIORedisCacheStore,
 ) {
+    private val logger = SafeLogger(this::class)
+
     fun produce(payload: SocketIOFanoutMessage) {
-        val message = objectMapper.writeValueAsString(payload)
-        redisTemplate.convertAndSend(RedisPubSubConfig.WEBSOCKET_FANOUT_TOPIC, message)
+        logger.info("Producing message for room: ${payload.room}, event: ${payload.eventName}")
+
+        socketIORedisCacheStore.pubFanout(payload)
+        socketIORedisCacheStore.cache(payload)
     }
 }

@@ -10,25 +10,17 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter
 
 @Configuration
 class RedisPubSubConfig {
-    companion object {
-        const val WEBSOCKET_FANOUT_TOPIC = "websocket_fanout_topic"
-    }
-
-    @Bean("websocket_fanout_topic")
-    fun websocketFanoutTopic(): ChannelTopic = ChannelTopic(WEBSOCKET_FANOUT_TOPIC)
-
     @Bean
     fun redisContainer(
         connectionFactory: RedisConnectionFactory,
         socketIOFanoutRedisMessageListener: SocketIOFanoutRedisMessageListener,
-        websocketFanoutTopic: ChannelTopic,
     ): RedisMessageListenerContainer {
         val container = RedisMessageListenerContainer()
         container.setConnectionFactory(connectionFactory)
 
         container.addMessageListener(
             MessageListenerAdapter(socketIOFanoutRedisMessageListener),
-            websocketFanoutTopic,
+            ChannelTopic(SocketIORedisCacheStore.FANOUT_TOPIC),
         )
 
         return container

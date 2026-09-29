@@ -53,6 +53,7 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:forsetijudge}
+      socket_io_ttl_seconds: ${REDIS_SOCKET_IO_TTL_SECONDS:600}
 
 # Actuator configuration
 management:
