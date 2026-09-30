@@ -31,6 +31,7 @@ class SubmissionCreatedEventListener(
                 submissionId = submission.id,
                 language = submission.language,
                 codeId = submission.code.id,
+                codeFilename = submission.code.filename,
                 timeLimitMs = submission.problem.timeLimitMs,
                 memoryLimitMb = submission.problem.memoryLimitMb,
                 testCasesId = submission.problem.testCases.id,

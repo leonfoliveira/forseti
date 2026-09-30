@@ -18,6 +18,7 @@ interface SubmissionQueueProducer {
      * @param submissionId The ID of the submission.
      * @param language The programming language used for the submission.
      * @param codeId The ID of the code attachment.
+     * @param codeFilename The filename of the code attachment.
      * @param timeLimitMs The time limit for the submission in milliseconds.
      * @param memoryLimitMb The memory limit for the submission in megabytes.
      * @param testCasesId The ID of the test cases attachment.
@@ -27,6 +28,7 @@ interface SubmissionQueueProducer {
         val submissionId: UUID,
         val language: Submission.Language,
         val codeId: UUID,
+        val codeFilename: String,
         val timeLimitMs: Int,
         val memoryLimitMb: Int,
         val testCasesId: UUID,

@@ -1,0 +1,12 @@
+# Environment
+.idea/
+venv/
+.env
+
+# Cache
+**/__pycache__/
+.pytest_cache/
+
+# Coverage reports
+.coverage
+htmlcov/
