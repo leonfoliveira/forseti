@@ -13,6 +13,12 @@ class SubmissionFailedSQSConsumer(
 ) {
     private val logger = SafeLogger(this::class)
 
+    /**
+     * Listens for messages from the submission failed SQS queue and processes them.
+     * This queue is the DLQ for the submission queue, and messages in this queue indicate that a submission has failed to be processed.
+     *
+     * @param body The body of the message received from the SQS queue.
+     */
     @SqsListener($$"${spring.cloud.aws.sqs.submission-failed-queue}")
     fun listen(body: Body) {
         logger.info("Received submission failed message for submissionId = ${body.submissionId}")

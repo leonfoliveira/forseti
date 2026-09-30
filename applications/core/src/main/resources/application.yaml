@@ -22,7 +22,7 @@ spring:
         business-events-topic: ${AWS_SNS_BUSINESS_EVENTS_TOPIC:dev-forseti-core-business-events-topic}
       sqs:
         endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
-        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-forseti-judge-submission-queue}
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-forseti-autojudge-submission-queue}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-forseti-core-submission-failed-queue}
         submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-forseti-core-submission-judged-queue}
       secretsmanager:

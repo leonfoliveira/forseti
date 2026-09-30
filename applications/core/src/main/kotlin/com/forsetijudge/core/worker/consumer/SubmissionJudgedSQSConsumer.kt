@@ -14,6 +14,12 @@ class SubmissionJudgedSQSConsumer(
 ) {
     private val logger = SafeLogger(this::class)
 
+    /**
+     * Listens for messages from the submission judged SQS queue and processes them.
+     * This queue receives messages from the auto-judge service indicating that a submission has been judged.
+     *
+     * @param body The body of the message received from the SQS queue, containing the submission ID and the judged answer.
+     */
     @SqsListener($$"${spring.cloud.aws.sqs.submission-judged-queue}")
     fun listen(body: Body) {
         logger.info("Received submission judged message for submissionId = ${body.submissionId}")

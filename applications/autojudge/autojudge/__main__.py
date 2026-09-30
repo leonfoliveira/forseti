@@ -3,9 +3,9 @@ import signal
 import threading
 import time
 
-from judge.api import start_flask_app
-from judge.config.env import env
-from judge.worker import Worker
+from autojudge.api import start_flask_app
+from autojudge.config.env import env
+from autojudge.worker import Worker
 
 
 logging.basicConfig(

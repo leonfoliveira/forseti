@@ -1,10 +1,10 @@
 import logging
 import json
 
-from judge.config.env import env
-from judge.config.aws_config import sqs_client
-from judge.judge import Judge
-from judge.schema.submission_schema import SubmissionSchema
+from autojudge.config.env import env
+from autojudge.config.aws_config import sqs_client
+from autojudge.judge import Judge
+from autojudge.schema.submission_schema import SubmissionSchema
 
 logging.getLogger("werkzeug").setLevel(logging.WARNING)
 

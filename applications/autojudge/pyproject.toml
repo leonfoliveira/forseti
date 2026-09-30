@@ -2,9 +2,9 @@
 addopts = "--cov=autoscaler --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
-source = ["judge"]
+source = ["autojudge"]
 omit = [
-    "judge/__main__.py",
+    "autojudge/__main__.py",
 ]
 
 [tool.coverage.report]

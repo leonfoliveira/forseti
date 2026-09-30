@@ -7,12 +7,12 @@ import time
 
 from docker.types import Ulimit
 
-from judge.config.docker_config import docker_client
-from judge.config.env import env
-from judge.schema.submission_schema import SubmissionSchema
-from judge.sandbox.language_config import LANGUAGE_CONFIGS
-from judge.sandbox.models import IsolateMeta, RunResult
-from judge.util.parse_util import _to_int_or_none, _to_float_or_none
+from autojudge.config.docker_config import docker_client
+from autojudge.config.env import env
+from autojudge.schema.submission_schema import SubmissionSchema
+from autojudge.sandbox.language_config import LANGUAGE_CONFIGS
+from autojudge.sandbox.models import IsolateMeta, RunResult
+from autojudge.util.parse_util import _to_int_or_none, _to_float_or_none
 
 logger = logging.getLogger(__name__)
 

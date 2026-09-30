@@ -8,10 +8,10 @@ import tempfile
 from pydantic import BaseModel
 
 
-from judge.config.aws_config import sqs_client, s3_client
-from judge.config.env import env
-from judge.sandbox.docker_sandbox_container import DockerSandboxContainer, RunResult
-from judge.schema.submission_schema import SubmissionSchema
+from autojudge.config.aws_config import sqs_client, s3_client
+from autojudge.config.env import env
+from autojudge.sandbox.docker_sandbox_container import DockerSandboxContainer, RunResult
+from autojudge.schema.submission_schema import SubmissionSchema
 
 logger = logging.getLogger(__name__)
 

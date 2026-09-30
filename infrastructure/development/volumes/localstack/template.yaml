@@ -32,47 +32,7 @@ Resources:
     Properties:
       QueueName: dev-forseti-core-submission-judged-queue
 
-  JudgeSubmissionQueue:
+  AutoJudgeSubmissionQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: dev-forseti-judge-submission-queue
-
-  # --- SQS Policies ---
-  CoreSubmissionFailedQueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      Queues:
-        - !Ref CoreSubmissionFailedQueue
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "sqs:*"
-            Resource: !GetAtt CoreSubmissionFailedQueue.Arn
-
-  CoreSubmissionJudgedQueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      Queues:
-        - !Ref CoreSubmissionJudgedQueue
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "sqs:*"
-            Resource: !GetAtt CoreSubmissionJudgedQueue.Arn
-
-  JudgeSubmissionQueuePolicy:
-    Type: AWS::SQS::QueuePolicy
-    Properties:
-      Queues:
-        - !Ref JudgeSubmissionQueue
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal: "*"
-            Action: "sqs:*"
-            Resource: !GetAtt JudgeSubmissionQueue.Arn
+      QueueName: dev-forseti-autojudge-submission-queue

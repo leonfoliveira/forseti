@@ -9,5 +9,5 @@ else
     echo "WARNING: Docker socket not found at /var/run/docker.sock"
 fi
 
-echo "Starting judge worker..."
-exec python -m judge
+echo "Starting autojudge worker..."
+exec python -m autojudge
