@@ -1,0 +1,87 @@
+import { SocketIOWebSocketClient } from "@/infrastructure/socketio/SocketIOWebSocketClient";
+import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { AxiosAttachmentRepository } from "@/infrastructure/axios/repository/AxiosAttachmentRepository";
+import { AxiosAuthenticationRepository } from "@/infrastructure/axios/repository/AxiosAuthenticationRepository";
+
+import { env } from "./env";
+import { AxiosContestRepository } from "@/infrastructure/axios/repository/AxiosContestRepository";
+import { AxiosDashboardRepository } from "@/infrastructure/axios/repository/AxiosDashboardRepository";
+import { AxiosSessionRepository } from "@/infrastructure/axios/repository/AxiosSessionRepository";
+import { LocalStorageRepositoryAdapter } from "@/infrastructure/localstorage/LocalStorageRepositoryAdapter";
+import { AxiosSubmissionRepository } from "@/infrastructure/axios/repository/AxiosSubmissionRepository";
+import { AttachmentService } from "@/application/service/AttachmentService";
+import { AuthenticationService } from "@/application/service/AuthenticationService";
+import { ContestService } from "@/application/service/ContestService";
+import { DashboardService } from "@/application/service/DashboardService";
+import { SessionService } from "@/application/service/SessionService";
+import { LocalStorageService } from "@/application/service/LocalStorageService";
+import { SubmissionService } from "@/application/service/SubmissionService";
+import { AttachmentReader } from "@/port/input/usecase/attachment/AttachmentReader";
+import { AttachmentWritter } from "@/port/input/usecase/attachment/AttachmentWritter";
+import { LocalStorageWritter } from "@/port/input/usecase/localstorage/LocalStorageWritter";
+import { AuthenticationWritter } from "@/port/input/usecase/authentication/AuthenticationWritter";
+import { ContestReader } from "@/port/input/usecase/contest/ContestReader";
+import { ContestWritter } from "@/port/input/usecase/contest/ContestWritter";
+import { DashboardReader } from "@/port/input/usecase/dashboard/DashboardReader";
+import { SessionReader } from "@/port/input/usecase/session/SessionReader";
+import { SessionWritter } from "@/port/input/usecase/session/SessionWritter";
+import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
+import { SubmissionWritter } from "@/port/input/usecase/submission/SubmissionWritter";
+import { WebSocketClient } from "@/port/output/websocket/WebSocketClient";
+
+const webSocketClient = new SocketIOWebSocketClient(env.wsUrl);
+
+// Repositories
+const axiosClient = new AxiosClient(env.httpUrl);
+
+const attachmentRepository = new AxiosAttachmentRepository(axiosClient);
+const authenticationRepository = new AxiosAuthenticationRepository(axiosClient);
+const contestRepository = new AxiosContestRepository(axiosClient);
+const dashboardRepository = new AxiosDashboardRepository(axiosClient);
+const sessionRepository = new AxiosSessionRepository(axiosClient);
+const localStorageRepository = new LocalStorageRepositoryAdapter();
+const submissionRepository = new AxiosSubmissionRepository(axiosClient);
+
+// Services
+const attachmentService = new AttachmentService(attachmentRepository);
+const authenticationService = new AuthenticationService(
+  authenticationRepository,
+);
+const contestService = new ContestService(contestRepository, attachmentService);
+const dashboardService = new DashboardService(dashboardRepository);
+const sessionService = new SessionService(sessionRepository);
+const localStorageService = new LocalStorageService(localStorageRepository);
+const submissionService = new SubmissionService(
+  submissionRepository,
+  attachmentService,
+);
+
+const composition: {
+  webSocketClient: WebSocketClient;
+  attachmentReader: AttachmentReader;
+  attachmentWritter: AttachmentWritter;
+  authenticationWritter: AuthenticationWritter;
+  contestReader: ContestReader;
+  contestWritter: ContestWritter;
+  dashboardReader: DashboardReader;
+  sessionReader: SessionReader;
+  sessionWritter: SessionWritter;
+  localStorageReader: LocalStorageReader;
+  localStorageWritter: LocalStorageWritter;
+  submissionWritter: SubmissionWritter;
+} = {
+  webSocketClient: webSocketClient,
+  attachmentReader: attachmentService,
+  attachmentWritter: attachmentService,
+  authenticationWritter: authenticationService,
+  contestReader: contestService,
+  contestWritter: contestService,
+  dashboardReader: dashboardService,
+  sessionReader: sessionService,
+  sessionWritter: sessionService,
+  localStorageReader: localStorageService,
+  localStorageWritter: localStorageService,
+  submissionWritter: submissionService,
+};
+
+export { composition };

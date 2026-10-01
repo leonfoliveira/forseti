@@ -8,7 +8,7 @@ import { ServerException } from "@/domain/exception/ServerException";
 import { ServiceUnavailableException } from "@/domain/exception/ServiceUnavailableException";
 import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
 
-export abstract class AxiosClient {
+export class AxiosClient {
   static readonly CSRF_COOKIE_NAME = "csrf_token";
   static readonly CSRF_HEADER_NAME = "x-csrf-token";
 
