@@ -1,6 +1,8 @@
 package com.forsetijudge.core.api.http.middleware
 
+import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
+import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.SessionAuthentication
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import com.forsetijudge.core.util.SafeLogger
@@ -8,6 +10,7 @@ import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import java.util.UUID
+import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
@@ -24,6 +27,8 @@ import org.springframework.web.util.WebUtils
 @Component
 class AuthenticationFilter(
     private val findSessionByIdUseCase: FindSessionByIdUseCase,
+    private val sessionCookieBuilder: SessionCookieBuilder,
+    private val csrfCookieBuilder: CsrfCookieBuilder,
 ) : OncePerRequestFilter() {
     val safeLogger = SafeLogger(this::class)
 
@@ -41,10 +46,16 @@ class AuthenticationFilter(
             if (sessionId != null) {
                 safeLogger.info("Found session cookie with ID: $sessionId, attempting to resolve session.")
 
+                val sessionUuid =
+                    try {
+                        UUID.fromString(sessionId)
+                    } catch (e: IllegalArgumentException) {
+                        throw UnauthorizedException("Invalid session ID format: $sessionId")
+                    }
                 val session =
                     findSessionByIdUseCase.execute(
                         FindSessionByIdUseCase.Command(
-                            sessionId = UUID.fromString(sessionId),
+                            sessionId = sessionUuid,
                         ),
                     )
 
@@ -61,6 +72,12 @@ class AuthenticationFilter(
             }
 
             filterChain.doFilter(request, response)
+        } catch (ex: UnauthorizedException) {
+            val sessionCookie = sessionCookieBuilder.buildCleanCookie()
+            val csrfCookie = csrfCookieBuilder.buildCleanCookie()
+            response.addHeader(HttpHeaders.SET_COOKIE, sessionCookie)
+            response.addHeader(HttpHeaders.SET_COOKIE, csrfCookie)
+            throw ex
         } finally {
             SecurityContextHolder.clearContext()
         }
