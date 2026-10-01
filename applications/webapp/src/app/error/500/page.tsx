@@ -1,0 +1,46 @@
+"use client";
+
+import { RefreshCwIcon } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+
+import { Button } from "@/app/_lib/component/shadcn/button";
+
+function Error500Content() {
+  const searchParams = useSearchParams();
+  const previousPath = searchParams.get("from");
+
+  function handleRetry() {
+    if (previousPath) {
+      window.location.href = previousPath;
+    }
+  }
+
+  return (
+    <div className="flex h-screen flex-col items-center justify-center">
+      <h1 className="font-mono text-8xl font-bold" data-testid="code">
+        500
+      </h1>
+      <h2 className="text-md mt-5" data-testid="description">
+        An unexpected error has occurred on the server.
+      </h2>
+      {previousPath && (
+        <Button className="mt-10" onClick={handleRetry} data-testid="reload">
+          <RefreshCwIcon />
+          Try again
+        </Button>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Displays a 500 Internal Server Error page.
+ */
+export default function Error500Page() {
+  return (
+    <Suspense>
+      <Error500Content />
+    </Suspense>
+  );
+}
