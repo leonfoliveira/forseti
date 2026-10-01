@@ -56,7 +56,7 @@ const submissionService = new SubmissionService(
   attachmentService,
 );
 
-const composition: {
+const Composition: {
   webSocketClient: WebSocketClient;
   attachmentReader: AttachmentReader;
   attachmentWritter: AttachmentWritter;
@@ -84,4 +84,4 @@ const composition: {
   submissionWritter: submissionService,
 };
 
-export { composition };
+export { Composition };

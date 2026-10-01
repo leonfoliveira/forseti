@@ -9,14 +9,5 @@ export type ContestResponseDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
-  autoFreezeAt?: string;
-  settings: {
-    isAutoJudgeEnabled: boolean;
-    isClarificationEnabled: boolean;
-    isSubmissionPrintTicketEnabled: boolean;
-    isTechnicalSupportTicketEnabled: boolean;
-    isNonTechnicalSupportTicketEnabled: boolean;
-    isGuestEnabled: boolean;
-  };
   version: number;
 };
