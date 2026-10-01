@@ -1,18 +1,14 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-
-import { WaitPage } from "@/app/[slug]/(dashboard)/_common/wait-page";
+import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
-import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/admin-dashboard-provider";
-import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/contestant-dashboard-provider";
-import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/guest-dashboard-provider";
-import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/judge-dashboard-provider";
-import { StaffDashboardProvider } from "@/app/_lib/provider/dashboard/staff-dashboard-provider";
-import { useAppSelector } from "@/app/_store/store";
-import { routes } from "@/config/routes";
-import { ContestStatus } from "@/core/domain/enumerate/ContestStatus";
-import { MemberType } from "@/core/domain/enumerate/MemberType";
+import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashboardProvider";
+import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/ContestantDashboardProvider";
+import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/GuestDashboardProvider";
+import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/JudgeDashboardProvider";
+import { useAppSelector } from "@/app/_store/Store";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**
  * Main dashboard provider that selects the appropriate dashboard provider
@@ -20,23 +16,15 @@ import { MemberType } from "@/core/domain/enumerate/MemberType";
  */
 export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const session = useAppSelector((state) => state.session);
-  const contestSlug = useAppSelector((state) => state.contest.slug);
-  const isGuestEnabled = useAppSelector(
-    (state) => state.contest.settings.isGuestEnabled,
-  );
   const contestStatus = useContestStatusWatcher();
-  const router = useRouter();
 
   switch (session?.member?.type) {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminDashboardProvider>{children}</AdminDashboardProvider>;
-    case MemberType.STAFF:
-      return <StaffDashboardProvider>{children}</StaffDashboardProvider>;
     case MemberType.JUDGE:
       return <JudgeDashboardProvider>{children}</JudgeDashboardProvider>;
     case MemberType.CONTESTANT:
-    case MemberType.UNOFFICIAL_CONTESTANT:
       if (contestStatus === ContestStatus.NOT_STARTED) {
         return <WaitPage />;
       }
@@ -44,9 +32,6 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         <ContestantDashboardProvider>{children}</ContestantDashboardProvider>
       );
     default:
-      if (!isGuestEnabled) {
-        router.replace(routes.CONTEST_SIGN_IN(contestSlug));
-      }
       if (contestStatus === ContestStatus.NOT_STARTED) {
         return <WaitPage />;
       }

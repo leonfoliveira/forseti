@@ -8,15 +8,6 @@ export type UpdateContestRequestDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
-  autoFreezeAt?: string;
-  settings: {
-    isAutoJudgeEnabled: boolean;
-    isClarificationEnabled: boolean;
-    isSubmissionPrintTicketEnabled: boolean;
-    isTechnicalSupportTicketEnabled: boolean;
-    isNonTechnicalSupportTicketEnabled: boolean;
-    isGuestEnabled: boolean;
-  };
   members: {
     id?: string;
     type: MemberType;
