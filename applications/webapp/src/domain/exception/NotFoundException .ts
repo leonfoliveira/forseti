@@ -1,0 +1,8 @@
+import { BusinessException } from "@/domain/exception/BusinessException";
+
+export class NotFoundException extends BusinessException {
+  constructor(message: string) {
+    super(message);
+    this.name = "NotFoundException";
+  }
+}
