@@ -1,27 +1,33 @@
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
+import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
-export interface SubmissionRepository {
+export type CreateSubmissionInputDTO = {
+  problemId: string;
+  language: SubmissionLanguage;
+  code: File;
+};
+
+export interface SubmissionWritter {
   /**
-   * Create a submission for a specific contest.
+   * Create a submission for a contest.
    *
    * @param contestId ID of the contest
-   * @param request Submission creation request data
-   * @returns The created submission
+   * @param inputDTO Data for creating the submission
+   * @return The created submission
    */
   create(
     contestId: string,
-    request: CreateSubmissionRequestDTO,
+    inputDTO: CreateSubmissionInputDTO,
   ): Promise<SubmissionWithCodeResponseDTO>;
 
   /**
-   * Update the answer of a submission for a specific contest.
+   * Update the answer for a submission.
    *
    * @param contestId ID of the contest
    * @param submissionId ID of the submission
-   * @param answer New answer for the submission
-   * @returns The updated submission with code
+   * @param answer The new answer for the submission
+   * @return The updated submission with code
    */
   updateAnswer(
     contestId: string,
@@ -30,11 +36,11 @@ export interface SubmissionRepository {
   ): Promise<SubmissionWithCodeResponseDTO>;
 
   /**
-   * Resubmit a submission for a specific contest.
+   * Resubmit a submission for re-evaluation.
    *
    * @param contestId ID of the contest
-   * @param submissionId ID of the submission
-   * @returns The resubmitted submission with code
+   * @param submissionId ID of the submission to resubmit
+   * @return The submission with code after resubmitting
    */
   resubmit(
     contestId: string,
