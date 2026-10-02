@@ -5,14 +5,13 @@ import com.forsetijudge.core.application.helper.session.SessionDeleter
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.domain.model.Session
+import com.forsetijudge.core.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.authentication.SignInUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.vault.Vault
-import com.forsetijudge.core.test.factory.MockEntityFactory
-import com.forsetijudge.core.test.factory.MockModelFactory
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows

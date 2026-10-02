@@ -3,8 +3,8 @@ package com.forsetijudge.core.application.helper.attachment
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertSame

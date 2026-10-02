@@ -4,10 +4,10 @@ import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows

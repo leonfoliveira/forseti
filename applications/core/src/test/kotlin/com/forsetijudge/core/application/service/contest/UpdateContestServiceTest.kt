@@ -2,25 +2,25 @@ package com.forsetijudge.core.application.service.contest
 
 import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
+import com.forsetijudge.core.application.helper.problem.TestCasesValidator
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
-import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
-import com.forsetijudge.core.application.helper.problem.TestCasesValidator
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -87,14 +87,15 @@ class UpdateContestServiceTest {
                 languages = listOf(Submission.Language.CPP_17),
                 startAt = contest.startAt,
                 endAt = contest.endAt,
-                members = listOf(
-                    UpdateContestUseCase.Command.Member(
-                        type = Member.Type.ROOT,
-                        name = "Root",
-                        login = "root2",
-                        password = "pw",
+                members =
+                    listOf(
+                        UpdateContestUseCase.Command.Member(
+                            type = Member.Type.ROOT,
+                            name = "Root",
+                            login = "root2",
+                            password = "pw",
+                        ),
                     ),
-                ),
                 problems = emptyList(),
             )
         assertThrows<ForbiddenException> { service.execute(command) }

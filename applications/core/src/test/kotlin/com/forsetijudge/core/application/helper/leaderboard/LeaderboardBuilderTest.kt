@@ -3,11 +3,11 @@ package com.forsetijudge.core.application.helper.leaderboard
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
+import com.forsetijudge.core.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
-import com.forsetijudge.core.test.factory.MockModelFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -77,7 +77,13 @@ class LeaderboardBuilderTest {
         assertEquals(listOf("First", "Second", "No score"), result.rows.map(Leaderboard.Row::memberName))
         assertEquals(listOf(2, 1, 0), result.rows.map(Leaderboard.Row::score))
         assertEquals(45, result.rows.first().penalty)
-        assertEquals(listOf('A', 'B'), result.rows.first().cells.map(Leaderboard.Cell::problemLetter))
+        assertEquals(
+            listOf('A', 'B'),
+            result.rows
+                .first()
+                .cells
+                .map(Leaderboard.Cell::problemLetter),
+        )
         verify(submissions).findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
             contestId = eq(contest.id),
             status = eq(Submission.Status.JUDGED),

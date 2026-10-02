@@ -2,21 +2,21 @@ package com.forsetijudge.core.application.service.dashboard
 
 import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
-import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
-import com.forsetijudge.core.test.factory.MockModelFactory
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
-import org.mockito.kotlin.never
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -50,7 +50,7 @@ class BuildContestantDashboardServiceTest {
 
     @Test
     fun `rejects contestants before contest starts`() {
-        val contest = MockEntityFactory.contest(startAt = java.time.OffsetDateTime.now().plusHours(1))
+        val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
         whenever(contests.findById(contest.id)).thenReturn(contest)

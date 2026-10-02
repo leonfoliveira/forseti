@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.helper.problem
 
 import com.forsetijudge.core.domain.exception.BusinessException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock

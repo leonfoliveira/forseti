@@ -5,12 +5,12 @@ import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProd
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,7 +27,9 @@ import org.mockito.kotlin.whenever
 
 class ApiSubmissionUpdatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
-    private val cellBuilder = com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder()
+    private val cellBuilder =
+        com.forsetijudge.core.application.helper.leaderboard
+            .LeaderboardCellBuilder()
     private val producer = mock<SocketIOFanoutRedisMessageProducer>()
     private val cache = mock<LeaderboardCacheStore>()
     private val listener = ApiSubmissionUpdatedEventListener(submissions, cellBuilder, producer, cache)

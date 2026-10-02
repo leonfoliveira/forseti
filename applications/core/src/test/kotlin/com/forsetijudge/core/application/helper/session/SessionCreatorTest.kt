@@ -1,8 +1,8 @@
 package com.forsetijudge.core.application.helper.session
 
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.cache.SessionCache
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals

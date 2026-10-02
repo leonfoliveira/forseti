@@ -65,6 +65,7 @@ springCloudAwsStarterSQS = { module = "io.awspring.cloud:spring-cloud-aws-starte
 testcontainersLocalstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
+testcontainersRedis = { module = "com.redis:testcontainers-redis", version = "2.2.4" }
 uuidCreator = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuidCreator" }
 
 [plugins]

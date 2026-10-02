@@ -6,13 +6,12 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

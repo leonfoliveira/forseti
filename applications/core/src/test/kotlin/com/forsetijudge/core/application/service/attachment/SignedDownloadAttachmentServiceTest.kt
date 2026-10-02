@@ -4,14 +4,14 @@ import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.attachment.SignedDownloadAttachmentUseCase
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock

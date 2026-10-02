@@ -5,12 +5,13 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.attachment.SignedUploadAttachmentUseCase
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -33,7 +34,7 @@ class SignedUploadAttachmentServiceTest {
 
     @Test
     fun `creates attachment and returns signed upload url`() {
-        val contest = MockEntityFactory.contest(startAt = java.time.OffsetDateTime.now().plusHours(1))
+        val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
         whenever(contests.findById(contest.id)).thenReturn(contest)
@@ -56,7 +57,7 @@ class SignedUploadAttachmentServiceTest {
 
     @Test
     fun `rejects unauthorized context and absent contest`() {
-        val contest = MockEntityFactory.contest(startAt = java.time.OffsetDateTime.now().plusHours(1))
+        val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
         whenever(contests.findById(contest.id)).thenReturn(contest)

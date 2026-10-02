@@ -1,9 +1,9 @@
 package com.forsetijudge.core.application.service.session
 
 import com.forsetijudge.core.domain.exception.UnauthorizedException
-import com.forsetijudge.core.port.output.cache.SessionCache
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
-import com.forsetijudge.core.test.factory.MockModelFactory
+import com.forsetijudge.core.port.output.cache.SessionCache
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows

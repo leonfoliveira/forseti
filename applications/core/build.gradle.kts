@@ -56,6 +56,7 @@ dependencies {
     testImplementation(libs.testcontainersLocalstack)
     testImplementation(libs.testcontainersJunitJupiter)
     testImplementation(libs.testcontainersPostgresql)
+    testImplementation(libs.testcontainersRedis)
 
     developmentOnly(libs.springBootDevTools)
 }

@@ -2,9 +2,9 @@ package com.forsetijudge.core.application.listener
 
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import com.forsetijudge.core.test.factory.MockEntityFactory
 import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

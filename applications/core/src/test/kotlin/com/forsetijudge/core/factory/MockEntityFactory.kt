@@ -1,4 +1,4 @@
-package com.forsetijudge.core.test.factory
+package com.forsetijudge.core.factory
 
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest

@@ -1,6 +1,6 @@
 package com.forsetijudge.core.api.util
 
-import com.forsetijudge.core.test.factory.MockModelFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -37,7 +37,13 @@ class CsrfCookieBuilderTest {
         whenever(cookieBuilder.clean(CsrfCookieBuilder.CSRF_COOKIE_NAME)).thenReturn(responseCookieBuilder)
         whenever(responseCookieBuilder.httpOnly(false)).thenReturn(responseCookieBuilder)
         whenever(responseCookieBuilder.build())
-            .thenReturn(ResponseCookie.from("csrf_token", "").maxAge(0).httpOnly(false).build())
+            .thenReturn(
+                ResponseCookie
+                    .from("csrf_token", "")
+                    .maxAge(0)
+                    .httpOnly(false)
+                    .build(),
+            )
 
         val result = CsrfCookieBuilder(cookieBuilder).buildCleanCookie()
 

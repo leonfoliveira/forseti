@@ -2,8 +2,8 @@ package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.SessionAuthentication
-import com.forsetijudge.core.test.factory.MockEntityFactory
-import com.forsetijudge.core.test.factory.MockModelFactory
+import com.forsetijudge.core.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import java.util.UUID
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

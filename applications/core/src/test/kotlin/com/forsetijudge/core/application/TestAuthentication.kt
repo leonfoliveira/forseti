@@ -2,7 +2,7 @@ package com.forsetijudge.core.application
 
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.SessionAuthentication
-import com.forsetijudge.core.test.factory.MockModelFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import org.springframework.security.core.context.SecurityContextHolder
 
 object TestAuthentication {

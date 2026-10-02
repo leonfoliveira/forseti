@@ -1,4 +1,4 @@
-package com.forsetijudge.core.test.factory
+package com.forsetijudge.core.factory
 
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.Leaderboard

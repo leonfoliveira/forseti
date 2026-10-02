@@ -2,11 +2,9 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
-import com.forsetijudge.core.domain.model.Session
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.authentication.SignInUseCase
-import com.forsetijudge.core.test.factory.MockModelFactory
 import java.util.UUID
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -32,14 +30,20 @@ class AuthenticationControllerTest {
         whenever(sessionCookies.buildCookie(session)).thenReturn("session_id=session-cookie")
         whenever(csrfCookies.buildCookie(session)).thenReturn("csrf_token=csrf-cookie")
 
-        mvc.perform(
-            post("/v1/root:sign-in")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"password":"root-secret"}"""),
-        )
-            .andExpect(status().isOk)
+        mvc
+            .perform(
+                post("/v1/root:sign-in")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"password":"root-secret"}"""),
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(session.id.toString()))
-            .andExpect(header().stringValues(HttpHeaders.SET_COOKIE, "session_id=session-cookie", "csrf_token=csrf-cookie"))
+            .andExpect(
+                header().stringValues(
+                    HttpHeaders.SET_COOKIE,
+                    "session_id=session-cookie",
+                    "csrf_token=csrf-cookie",
+                ),
+            )
 
         verify(signIn).execute(
             SignInUseCase.Command(
@@ -58,12 +62,12 @@ class AuthenticationControllerTest {
         whenever(sessionCookies.buildCookie(session)).thenReturn("session_id=session-cookie")
         whenever(csrfCookies.buildCookie(session)).thenReturn("csrf_token=csrf-cookie")
 
-        mvc.perform(
-            post("/v1/contests/$contestId:sign-in")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"login":"team-a","password":"secret"}"""),
-        )
-            .andExpect(status().isOk)
+        mvc
+            .perform(
+                post("/v1/contests/$contestId:sign-in")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content("""{"login":"team-a","password":"secret"}"""),
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$.contestId").value(contestId.toString()))
 
         verify(signIn).execute(SignInUseCase.Command(contestId, "team-a", "secret"))

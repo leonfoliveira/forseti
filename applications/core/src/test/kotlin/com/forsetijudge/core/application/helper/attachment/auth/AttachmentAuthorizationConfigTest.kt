@@ -4,7 +4,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.test.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -149,31 +149,55 @@ class AttachmentAuthorizationConfigTest {
     private class RecordingAuthorizationConfig : AttachmentAuthorizationConfig() {
         val calls = mutableListOf<String>()
 
-        override fun authorizeAdminUpload(contest: Contest, member: Member) {
+        override fun authorizeAdminUpload(
+            contest: Contest,
+            member: Member,
+        ) {
             calls += "admin-upload"
         }
 
-        override fun authorizeJudgeUpload(contest: Contest, member: Member) {
+        override fun authorizeJudgeUpload(
+            contest: Contest,
+            member: Member,
+        ) {
             calls += "judge-upload"
         }
 
-        override fun authorizeContestantUpload(contest: Contest, member: Member) {
+        override fun authorizeContestantUpload(
+            contest: Contest,
+            member: Member,
+        ) {
             calls += "contestant-upload"
         }
 
-        override fun authorizeAdminDownload(contest: Contest, member: Member, attachment: Attachment) {
+        override fun authorizeAdminDownload(
+            contest: Contest,
+            member: Member,
+            attachment: Attachment,
+        ) {
             calls += "admin-download"
         }
 
-        override fun authorizeJudgeDownload(contest: Contest, member: Member, attachment: Attachment) {
+        override fun authorizeJudgeDownload(
+            contest: Contest,
+            member: Member,
+            attachment: Attachment,
+        ) {
             calls += "judge-download"
         }
 
-        override fun authorizeContestantDownload(contest: Contest, member: Member, attachment: Attachment) {
+        override fun authorizeContestantDownload(
+            contest: Contest,
+            member: Member,
+            attachment: Attachment,
+        ) {
             calls += "contestant-download"
         }
 
-        override fun authorizeGuestDownload(contest: Contest, attachment: Attachment) {
+        override fun authorizeGuestDownload(
+            contest: Contest,
+            attachment: Attachment,
+        ) {
             calls += "guest-download"
         }
     }

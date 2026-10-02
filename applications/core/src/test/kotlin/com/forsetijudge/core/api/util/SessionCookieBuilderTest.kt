@@ -1,8 +1,7 @@
 package com.forsetijudge.core.api.util
 
-import com.forsetijudge.core.test.factory.MockModelFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import java.time.OffsetDateTime
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock

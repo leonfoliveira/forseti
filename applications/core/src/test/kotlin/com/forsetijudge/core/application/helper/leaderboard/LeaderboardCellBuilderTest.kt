@@ -1,7 +1,7 @@
 package com.forsetijudge.core.application.helper.leaderboard
 
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.test.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
