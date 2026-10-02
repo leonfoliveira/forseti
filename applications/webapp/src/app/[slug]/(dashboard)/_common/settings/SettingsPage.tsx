@@ -104,7 +104,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
         );
         dispatch(AdminDashboardSlice.actions.set(dashboard));
 
-        toast.success("");
+        toast.success("Settings saved successfully.");
         setIsConfirmDialogOpen(false);
       }
       updateContestState.finish("Settings saved successfully.");

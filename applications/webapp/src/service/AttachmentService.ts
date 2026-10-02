@@ -18,7 +18,7 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
   ): Promise<AttachmentResponseDTO> {
     const { attachment, uploadUrl } =
       await this.attachmentRepository.getUploadSignedUrl(contestId, {
-        fileName: file.name,
+        filename: file.name,
         context,
         contentType: file.type,
       });

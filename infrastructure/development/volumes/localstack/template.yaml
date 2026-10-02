@@ -7,6 +7,21 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: dev-forseti-core-bucket
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
 
   # --- S3 Policies ---
   CoreS3BucketPolicy:
