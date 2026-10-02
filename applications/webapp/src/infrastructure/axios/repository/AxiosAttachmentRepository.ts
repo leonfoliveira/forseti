@@ -1,6 +1,8 @@
-import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
+import { GetUploadSignedUrlRequest } from "@/port/dto/request/GetUploadSignedUrlRequest";
 import { AttachmentRepository } from "@/port/output/repository/AttachmentRepository";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
+import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
+import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
@@ -9,48 +11,29 @@ export class AxiosAttachmentRepository implements AttachmentRepository {
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
-  async upload(
+  async getUploadSignedUrl(
     contestId: string,
-    context: AttachmentContext,
-    file: File,
-  ): Promise<AttachmentResponseDTO> {
-    const formData = new FormData();
-    formData.append("context", context);
-    formData.append("file", file);
-
-    const response = await this.axiosClient.post<AttachmentResponseDTO>(
-      this.basePath(contestId),
-      {
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
+    requestDTO: GetUploadSignedUrlRequest,
+  ): Promise<SignedUploadAttachmentResponseDTO> {
+    const response =
+      await this.axiosClient.post<SignedUploadAttachmentResponseDTO>(
+        this.basePath(contestId),
+        {
+          data: requestDTO,
         },
-      },
-    );
+      );
     return response.data;
   }
 
-  async download(
+  async getDownloadSignedUrl(
     contestId: string,
     attachment: AttachmentResponseDTO,
-  ): Promise<File> {
-    const response = await this.axiosClient.get<Blob>(
-      `${this.basePath(contestId)}/${attachment.id}`,
-      {
-        responseType: "blob",
-      },
-    );
+  ): Promise<SignedDownloadAttachmentResponseDTO> {
+    const response =
+      await this.axiosClient.get<SignedDownloadAttachmentResponseDTO>(
+        `${this.basePath(contestId)}/${attachment.id}`,
+      );
 
-    return new File(
-      [response.data],
-      response.headers["content-disposition"]?.match(
-        /filename="?([^"]+)"?/,
-      )?.[1] || "download",
-      {
-        type: !!response.headers["content-type"]
-          ? String(response.headers["content-type"])
-          : "application/octet-stream",
-      },
-    );
+    return response.data;
   }
 }

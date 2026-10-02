@@ -3,26 +3,39 @@ import { AttachmentRepository } from "@/port/output/repository/AttachmentReposit
 import { AttachmentReader } from "@/port/input/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/port/input/usecase/attachment/AttachmentWritter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
+import { BucketRepository } from "@/port/output/bucket/BucketRepository";
 
 export class AttachmentService implements AttachmentReader, AttachmentWritter {
-  constructor(private attachmentRepository: AttachmentRepository) {}
+  constructor(
+    private attachmentRepository: AttachmentRepository,
+    private bucketRepository: BucketRepository,
+  ) {}
 
   async upload(
     contestId: string,
     context: AttachmentContext,
     file: File,
   ): Promise<AttachmentResponseDTO> {
-    return this.attachmentRepository.upload(contestId, context, file);
+    const { attachment, uploadUrl } =
+      await this.attachmentRepository.getUploadSignedUrl(contestId, {
+        fileName: file.name,
+        context,
+        contentType: file.type,
+      });
+    await this.bucketRepository.upload(uploadUrl, file);
+    return attachment;
   }
 
   async download(
     contestId: string,
     attachment: AttachmentResponseDTO,
   ): Promise<File> {
-    const file = await this.attachmentRepository.download(
-      contestId,
-      attachment,
-    );
+    const { downloadUrl } =
+      await this.attachmentRepository.getDownloadSignedUrl(
+        contestId,
+        attachment,
+      );
+    const file = await this.bucketRepository.download(downloadUrl, attachment);
 
     const url = URL.createObjectURL(file);
     const a = document.createElement("a");
@@ -40,10 +53,12 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
     contestId: string,
     attachment: AttachmentResponseDTO,
   ): Promise<void> {
-    const file = await this.attachmentRepository.download(
-      contestId,
-      attachment,
-    );
+    const { downloadUrl } =
+      await this.attachmentRepository.getDownloadSignedUrl(
+        contestId,
+        attachment,
+      );
+    const file = await this.bucketRepository.download(downloadUrl, attachment);
 
     const url = URL.createObjectURL(file);
     const iframe = document.createElement("iframe");

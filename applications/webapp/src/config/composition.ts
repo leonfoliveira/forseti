@@ -28,6 +28,7 @@ import { SessionWritter } from "@/port/input/usecase/session/SessionWritter";
 import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
 import { SubmissionWritter } from "@/port/input/usecase/submission/SubmissionWritter";
 import { WebSocketClient } from "@/port/output/websocket/WebSocketClient";
+import { S3BucketRepository } from "@/infrastructure/axios/bucket/S3BucketRepository";
 
 const webSocketClient = new SocketIOWebSocketClient(env.wsUrl);
 
@@ -41,9 +42,13 @@ const dashboardRepository = new AxiosDashboardRepository(axiosClient);
 const sessionRepository = new AxiosSessionRepository(axiosClient);
 const localStorageRepository = new LocalStorageRepositoryAdapter();
 const submissionRepository = new AxiosSubmissionRepository(axiosClient);
+const bucketRepository = new S3BucketRepository();
 
 // Services
-const attachmentService = new AttachmentService(attachmentRepository);
+const attachmentService = new AttachmentService(
+  attachmentRepository,
+  bucketRepository,
+);
 const authenticationService = new AuthenticationService(
   authenticationRepository,
 );

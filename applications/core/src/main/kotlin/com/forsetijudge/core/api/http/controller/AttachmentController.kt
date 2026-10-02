@@ -25,7 +25,7 @@ class AttachmentController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/attachments")
-    fun upload(
+    fun getUploadSignedUrl(
         @PathVariable contestId: UUID,
         @RequestBody body: SignedUploadAttachmentRequestDTO,
     ): ResponseEntity<SignedUploadAttachmentResponseDTO> {
@@ -43,7 +43,7 @@ class AttachmentController(
     }
 
     @GetMapping("/contests/{contestId}/attachments/{attachmentId}")
-    fun download(
+    fun getDownloadSignedUrl(
         @PathVariable contestId: UUID,
         @PathVariable attachmentId: UUID,
     ): ResponseEntity<SignedDownloadAttachmentResponseDTO> {

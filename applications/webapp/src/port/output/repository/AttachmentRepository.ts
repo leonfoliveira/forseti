@@ -1,27 +1,30 @@
-import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
+import { GetUploadSignedUrlRequest } from "@/port/dto/request/GetUploadSignedUrlRequest";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
+import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
+import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 
 export interface AttachmentRepository {
   /**
-   * Upload an attachment for a specific contest.
+   * Get a signed URL for uploading an attachment.
    *
    * @param contestId ID of the contest
-   * @param context Context of the attachment
-   * @param file The file to be uploaded
-   * @returns The uploaded attachment data
+   * @param requestDTO The request DTO containing fileName, context, and contentType
+   * @returns The signed URL and attachment data for uploading the attachment
    */
-  upload(
+  getUploadSignedUrl(
     contestId: string,
-    context: AttachmentContext,
-    file: File,
-  ): Promise<AttachmentResponseDTO>;
+    requestDTO: GetUploadSignedUrlRequest,
+  ): Promise<SignedUploadAttachmentResponseDTO>;
 
   /**
-   * Download an attachment for a specific contest.
+   * Get a signed URL for downloading an attachment.
    *
    * @param contestId ID of the contest
    * @param attachment The attachment to be downloaded
-   * @returns The downloaded file
+   * @returns The signed URL and attachment data for downloading the attachment
    */
-  download(contestId: string, attachment: AttachmentResponseDTO): Promise<File>;
+  getDownloadSignedUrl(
+    contestId: string,
+    attachment: AttachmentResponseDTO,
+  ): Promise<SignedDownloadAttachmentResponseDTO>;
 }
