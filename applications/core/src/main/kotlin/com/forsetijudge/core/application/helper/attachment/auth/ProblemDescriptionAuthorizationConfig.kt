@@ -49,7 +49,7 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig() {
         member: Member,
         attachment: Attachment,
     ) {
-        ContestAuthorizer(contest)
+        ContestAuthorizer(contest, member)
             .requireMemberToBelong()
             .requireContestStarted()
             .throwIfErrors()

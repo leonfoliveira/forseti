@@ -5,15 +5,14 @@ hibernateEnvers = "7.4.10.Final"
 hypersistenceUtils = "3.15.3"
 jacksonDatatypeJsr310 = "3.0.0-rc2"
 jacksonModuleKotlin = "3.2.3"
-kotest = "6.2.5"
-kotestExtensionsSpring = "1.3.0"
+junitJupiter = "6.1.3"
 kotlin = "2.4.20"
 kover = "0.9.1"
 ktlint = "14.0.1"
 kotlinxDatetime = "0.8.0"
 kotlinxSerializationJson = "1.11.0"
 kotlinxCoroutines = "1.10.2"
-mockk = "1.14.11"
+mockitoKotlin = "6.4.0"
 nettySocketio = "2.0.14"
 opencsv = "5.12.0"
 opentelemetry = "1.66.0"
@@ -22,7 +21,6 @@ postgresql = "42.7.13"
 prometheusMetrics = "1.4.3"
 snakeyaml = "2.7"
 springBoot = "4.1.1"
-springmockk = "5.0.1"
 testcontainers = "1.21.4"
 uuidCreator = "6.1.1"
 
@@ -34,16 +32,14 @@ hibernateEnvers = { module = "org.hibernate.orm:hibernate-envers", version.ref =
 hypersistenceUtilsHibernate70 = { module = "io.hypersistence:hypersistence-utils-hibernate-70", version.ref = "hypersistenceUtils" }
 jacksonDatatypeJsr310 = { module = 'tools.jackson.datatype:jackson-datatype-jsr310', version.ref = "jacksonDatatypeJsr310" }
 jacksonModuleKotlin = { module = 'tools.jackson.module:jackson-module-kotlin', version.ref = "jacksonModuleKotlin" }
-kotestAssertionsCore = { module = 'io.kotest:kotest-assertions-core', version.ref = "kotest" }
-kotestRunnerJunit5 = { module = 'io.kotest:kotest-runner-junit5', version.ref = "kotest" }
-kotestExtensionsSpring = { module = 'io.kotest.extensions:kotest-extensions-spring', version.ref = "kotestExtensionsSpring" }
+junitJupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiter" }
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlinReflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = "kotlin" }
 kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 nettySocketio = { module = "com.corundumstudio.socketio:netty-socketio", version.ref = "nettySocketio" }
+mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 opentelemetryApi = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
 opentelemetryInstrumentationLogbackMdc = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0", version.ref = "opentelemetryInstrumentationLogbackMdc" }
@@ -66,7 +62,6 @@ springBootTestcontainers = { module = "org.springframework.boot:spring-boot-test
 springCloudAwsStarterS3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "springBoot" }
 springCloudAwsStarterSecretsManager = { module = "io.awspring.cloud:spring-cloud-aws-starter-secrets-manager", version.ref = "springBoot" }
 springCloudAwsStarterSQS = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "springBoot" }
-springmockk = { module = "com.ninja-squad:springmockk", version.ref = "springmockk" }
 testcontainersLocalstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
