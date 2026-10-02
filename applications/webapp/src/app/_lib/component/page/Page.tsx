@@ -1,5 +1,4 @@
 "use client";
-import { Message } from "@/i18n/message";
 
 type Props = {
   title: string;

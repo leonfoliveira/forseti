@@ -1,4 +1,4 @@
-import { AttachmentService } from "@/application/service/AttachmentService";
+import { AttachmentService } from "@/service/AttachmentService";
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/port/output/repository/SubmissionRepository";

@@ -1,4 +1,4 @@
-import { AttachmentService } from "@/application/service/AttachmentService";
+import { AttachmentService } from "@/service/AttachmentService";
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { ContestRepository } from "@/port/output/repository/ContestRepository";
 import { ContestReader } from "@/port/input/usecase/contest/ContestReader";

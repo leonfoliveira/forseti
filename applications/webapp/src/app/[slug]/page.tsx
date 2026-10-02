@@ -1,15 +1,21 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { routes } from "@/config/routes";
 
 /**
  * Redirect to the contest leaderboard page.
  */
-export default async function ContestPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  return redirect(routes.CONTEST_LEADERBOARD(slug));
+export default function ContestPage() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const slug = pathname.split("/")[1];
+    router.replace(routes.CONTEST_LEADERBOARD(slug));
+  }, [pathname, router]);
+
+  return null;
 }

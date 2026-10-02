@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/settings-form";
+import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**

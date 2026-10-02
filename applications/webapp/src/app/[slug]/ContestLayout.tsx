@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useParams } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import React, { useEffect } from "react";
 
 import { Footer } from "@/app/_lib/component/layout/Footer";
@@ -26,7 +26,8 @@ export default function ContestLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { slug } = useParams() as { slug: string };
+  // useParams() would return the build-time placeholder in a static export
+  const slug = usePathname().split("/")[1];
   const errorHandler = useErrorHandlerRoot(slug);
   const initState = useLoadableStateRoot<{
     session: SessionResponseDTO | null;
