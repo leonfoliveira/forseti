@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Authorizes whether the client behind a websocket connection is allowed to join a given room.
@@ -48,6 +49,7 @@ class SocketIORoomAuthorizationFilter(
      * @param client The client requesting to join the room.
      * @param roomName The name of the room being joined.
      */
+    @Transactional(readOnly = true)
     fun authorize(
         client: SocketIOClient,
         roomName: String,
@@ -167,7 +169,7 @@ class SocketIORoomAuthorizationFilter(
 
         return try {
             val session = findSessionByIdUseCase.execute(FindSessionByIdUseCase.Command(sessionId = sessionId))
-            memberRepository.findById(session.memberId)
+            memberRepository.findById(session.member.id)
         } catch (exception: Exception) {
             logger.info("Could not resolve session from websocket handshake: ${exception.message}")
             null

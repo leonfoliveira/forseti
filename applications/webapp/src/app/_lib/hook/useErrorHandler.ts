@@ -19,8 +19,7 @@ export function useErrorHandlerRoot(slug: string) {
   const pathname = usePathname();
 
   async function handleUnauthorized() {
-    // TODO: clean cookie
-    window.location.href = `${routes.CONTEST_SIGN_IN(slug)}?expired=true`;
+    router.push(`${routes.CONTEST_SIGN_IN(slug)}?expired=true`);
   }
 
   async function handle(

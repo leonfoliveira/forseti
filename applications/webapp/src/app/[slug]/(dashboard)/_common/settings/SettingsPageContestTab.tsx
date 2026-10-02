@@ -141,7 +141,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
               </FieldDescription>
               {languageError && <FieldError>{languageError}</FieldError>}
             </div>
-            <div className="mt-2 grid grid-cols-3 gap-2">
+            <div className="mt-2 grid grid-cols-4 gap-2">
               {languageGroups.map((group) => (
                 <div key={group}>
                   {Object.keys(SubmissionLanguage)

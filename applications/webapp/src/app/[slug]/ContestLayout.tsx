@@ -15,6 +15,7 @@ import { routes } from "@/config/routes";
 import { NotFoundException } from "@/domain/exception/NotFoundException";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
+import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
 
 /**
  * Layout component for contest pages.
@@ -26,8 +27,8 @@ export default function ContestLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // useParams() would return the build-time placeholder in a static export
-  const slug = usePathname().split("/")[1];
+  const pathname = usePathname();
+  const slug = pathname.split("/")[1];
   const errorHandler = useErrorHandlerRoot(slug);
   const initState = useLoadableStateRoot<{
     session: SessionResponseDTO | null;
@@ -36,7 +37,6 @@ export default function ContestLayout({
 
   useEffect(() => {
     async function fetchData() {
-      console.debug("Fetching session and contest data for slug:", slug);
       initState.start();
 
       try {
@@ -46,12 +46,14 @@ export default function ContestLayout({
         ]);
 
         initState.finish({ session, contest });
-        console.debug("Fetched session and contest data:", {
-          session,
-          contest,
-        });
       } catch (error) {
         await initState.fail(error, {
+          [UnauthorizedException.name]: () => {
+            const signInPath = `/${slug}/sign-in`;
+            if (!pathname.startsWith(signInPath)) {
+              redirect(signInPath);
+            }
+          },
           [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
         });
       }
@@ -68,14 +70,14 @@ export default function ContestLayout({
     return <ErrorPage />;
   }
 
-  const memberContestId = initState.data?.session?.member?.contestId;
-  const doesMemberBelongToContest =
-    !memberContestId || memberContestId === initState.data?.contest?.id;
+  const sessionContestId = initState.data?.session?.contestId;
+  const doesSessionBelongToContest =
+    !sessionContestId || sessionContestId === initState.data?.contest?.id;
 
   return (
     <StoreProvider
       preloadedState={{
-        session: doesMemberBelongToContest
+        session: doesSessionBelongToContest
           ? initState.data?.session
           : undefined,
         contest: initState.data?.contest,

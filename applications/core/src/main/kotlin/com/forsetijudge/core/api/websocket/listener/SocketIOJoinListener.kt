@@ -32,6 +32,10 @@ class SocketIOJoinListener(
             logger.info("Client ${client.sessionId} was denied access to room $roomName: ${exception.message}")
             client.sendEvent("joinError", exception.message)
             return
+        } catch (exception: Exception) {
+            logger.error("Unexpected error while authorizing client ${client.sessionId} to join room $roomName", exception)
+            client.sendEvent("joinError", "Could not join room")
+            return
         }
 
         logger.info("Client ${client.sessionId} joined room $roomName")

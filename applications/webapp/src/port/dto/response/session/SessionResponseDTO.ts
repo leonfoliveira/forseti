@@ -1,10 +1,15 @@
-import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 export type SessionResponseDTO = {
   id: string;
   createdAt: string;
   updatedAt: string;
-  member: MemberResponseDTO;
+  contestId: string;
+  member: {
+    id: string;
+    name: string;
+    type: MemberType;
+  };
   expiresAt: string;
   version: number;
 };

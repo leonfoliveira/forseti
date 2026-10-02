@@ -6,9 +6,14 @@ import java.util.UUID
 
 data class Session(
     val id: UUID,
-    val memberId: UUID,
-    val memberType: Member.Type,
-    val memberName: String,
+    val contestId: UUID?,
+    val member: Member,
     val csrfToken: UUID,
     val expiresAt: OffsetDateTime,
-)
+) {
+    data class Member(
+        val id: UUID,
+        val type: Member.Type,
+        val name: String,
+    )
+}

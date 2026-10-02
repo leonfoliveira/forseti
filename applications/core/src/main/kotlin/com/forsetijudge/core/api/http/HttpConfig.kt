@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -59,7 +60,7 @@ class HttpConfig(
     override fun addCorsMappings(registry: CorsRegistry) {
         registry
             .addMapping("/**")
-            .allowedOrigins(allowedOrigins)
+            .allowedOrigins(*allowedOrigins.split(",").map { it.trim() }.toTypedArray())
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .exposedHeaders(HttpHeaders.CONTENT_DISPOSITION)
             .allowCredentials(true)
@@ -68,6 +69,7 @@ class HttpConfig(
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain? {
         http
+            .cors { }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .csrf { csrf ->
                 csrf
@@ -76,11 +78,13 @@ class HttpConfig(
                     .ignoringRequestMatchers(*SIGN_IN_ROUTES)
             }.authorizeHttpRequests { auth ->
                 auth
+                    .requestMatchers(HttpMethod.OPTIONS, "/**")
+                    .permitAll()
                     .requestMatchers(
                         *SIGN_IN_ROUTES,
-                        "/contests/slug/*",
-                        "/contests/*/attachments/*",
-                        "/contests/*/dashboard/guest",
+                        "/v1/contests/slug/*",
+                        "/v1/contests/*/attachments/*",
+                        "/v1/contests/*/dashboard/guest",
                     ).permitAll()
                     .anyRequest()
                     .authenticated()

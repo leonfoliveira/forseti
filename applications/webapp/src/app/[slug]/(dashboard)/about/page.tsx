@@ -24,7 +24,7 @@ export default function DashboardAboutPage() {
             </h1>
             <Separator className="my-6" />
             <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-[repeat(3,1fr)] gap-6 text-center">
+              <div className="grid grid-cols-[repeat(2,1fr)] gap-6 text-center">
                 <section>
                   <p className="mb-2 font-medium">Start At</p>
                   <p className="text-sm" data-testid="start-at">

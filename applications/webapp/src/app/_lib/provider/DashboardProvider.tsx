@@ -18,7 +18,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
   const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
 
-  switch (session?.member?.type) {
+  switch (session?.member.type) {
     case MemberType.ROOT:
     case MemberType.ADMIN:
       return <AdminDashboardProvider>{children}</AdminDashboardProvider>;

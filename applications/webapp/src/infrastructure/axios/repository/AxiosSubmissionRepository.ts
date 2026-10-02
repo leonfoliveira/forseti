@@ -42,7 +42,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     submissionId: string,
   ): Promise<SubmissionWithCodeResponseDTO> {
     const response = await this.axiosClient.put<SubmissionWithCodeResponseDTO>(
-      `${this.basePath(contestId)}/${submissionId}:rerun`,
+      `${this.basePath(contestId)}/${submissionId}:resubmit`,
     );
     return response.data;
   }

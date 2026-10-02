@@ -41,20 +41,10 @@ export class SocketIOWebSocketClient implements WebSocketClient {
       this.client.on("connect", () => {
         if (this.hasConnectedBefore) {
           console.debug("Reconnected to Socket.IO server");
-          this.client?.emit("authenticate");
-        } else {
-          console.debug("Connected to Socket.IO server");
-          this.client?.emit("authenticate");
-        }
-      });
-
-      this.client.on("ready", () => {
-        console.debug("Socket.IO server is ready");
-
-        if (this.hasConnectedBefore) {
           this.rejoinRooms();
           onReconnect?.();
         } else {
+          console.debug("Connected to Socket.IO server");
           this.hasConnectedBefore = true;
         }
         resolve();

@@ -65,7 +65,7 @@ class SignInService(
         }
 
         sessionDeleter.deleteByMember(member)
-        val session = sessionCreator.create(member)
+        val session = sessionCreator.create(command.contestId, member)
 
         logger.info("Finished authenticating member with session id = ${session.id}")
         return session

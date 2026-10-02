@@ -38,7 +38,7 @@ export function Header() {
     window.location.href = routes.CONTEST_SIGN_IN(contest.slug);
   }
 
-  const isAuthorized = !!session?.member;
+  const isAuthorized = !!session;
   const isSignInPage = pathname === routes.CONTEST_SIGN_IN(contest.slug);
   const memberType = isAuthorized
     ? {
@@ -174,7 +174,7 @@ export function Header() {
                 className="text-muted-foreground text-end text-xs font-bold"
                 data-testid="member-type"
               >
-                {memberType}
+                {session.member.type}
               </p>
             </div>
             <Tooltip>

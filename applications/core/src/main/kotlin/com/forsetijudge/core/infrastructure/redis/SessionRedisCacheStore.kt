@@ -28,7 +28,7 @@ class SessionRedisCacheStore(
      */
     override fun cache(session: Session) {
         val key = "${STORE_KEY}:${session.id}"
-        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
         val ttl = Duration.between(OffsetDateTime.now(), session.expiresAt)
         logger.info("Caching session with key $key")
 
@@ -58,7 +58,7 @@ class SessionRedisCacheStore(
 
     override fun evict(session: Session) {
         val key = "${STORE_KEY}:${session.id}"
-        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
         logger.info("Evicting session with key $key and member key $memberKey")
 
         redisTemplate.delete(key)
@@ -88,7 +88,7 @@ class SessionRedisCacheStore(
      */
     private fun clean(session: Session) {
         val key = "${STORE_KEY}:${session.id}"
-        val memberKey = "${MEMBER_STORE_KEY}:${session.memberId}"
+        val memberKey = "${MEMBER_STORE_KEY}:${session.member.id}"
         val ttl = Duration.between(OffsetDateTime.now(), session.expiresAt)
         logger.info("Setting expiration for session key $key and member key $memberKey to $ttl")
 

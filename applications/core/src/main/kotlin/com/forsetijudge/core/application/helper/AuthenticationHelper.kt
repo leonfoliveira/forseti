@@ -21,7 +21,7 @@ object AuthenticationHelper {
         return authentication.session
     }
 
-    fun getCurrentMemberId(): UUID = getCurrentSession().memberId
+    fun getCurrentMemberId(): UUID = getCurrentSession().member.id
 
-    fun getCurrentMemberIdNullable(): UUID? = getCurrentSessionNullable()?.memberId
+    fun getCurrentMemberIdNullable(): UUID? = getCurrentSessionNullable()?.member?.id
 }

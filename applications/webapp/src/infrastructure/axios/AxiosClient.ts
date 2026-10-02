@@ -116,6 +116,8 @@ export class AxiosClient {
 
       return response;
     } catch (error) {
+      console.debug("Error occurred during request:", error);
+
       if (error instanceof AxiosError) {
         const response = error.response;
 
