@@ -29,6 +29,7 @@ import {
 import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { Button } from "@/app/_lib/component/shadcn/button";
 
 type Props = {
   contest: ContestWithMembersAndProblemsDTO;
@@ -170,6 +171,23 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
       </FieldSet>
 
       <Separator className="my-5" />
+
+      <div
+        className="flex flex-col gap-3"
+        data-testid="contest-management-actions"
+      >
+        <Button
+          type="button"
+          variant="secondary"
+          data-testid="force-toggle-button"
+          onClick={forceConfirmationDialog.open}
+          disabled={isDisabled || forceState.isLoading}
+        >
+          {contestStatus === ContestStatus.NOT_STARTED
+            ? "Force Start"
+            : "Force End"}
+        </Button>
+      </div>
 
       <ConfirmationDialog
         isOpen={forceConfirmationDialog.isOpen}
