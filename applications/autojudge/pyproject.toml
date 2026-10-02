@@ -1,5 +1,8 @@
 [tool.pytest.ini_options]
-addopts = "--cov=autoscaler --cov-report=term-missing --cov-report=html"
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["integration: tests that require Docker"]
+addopts = "--cov=autojudge --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
 source = ["autojudge"]
