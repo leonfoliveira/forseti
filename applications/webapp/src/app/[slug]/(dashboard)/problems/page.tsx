@@ -4,7 +4,7 @@ import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProble
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
 import { GuestProblemsPage } from "@/app/[slug]/(dashboard)/problems/GuestProblemsPage";
 import { JudgeProblemsPage } from "@/app/[slug]/(dashboard)/problems/JudgeProblemsPage";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 export default function DashboardProblemsPage() {

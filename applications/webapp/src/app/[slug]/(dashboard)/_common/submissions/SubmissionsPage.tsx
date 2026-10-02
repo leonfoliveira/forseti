@@ -25,7 +25,7 @@ import {
 } from "@/app/_lib/component/shadcn/table";
 import { Toggle } from "@/app/_lib/component/shadcn/toggle";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";

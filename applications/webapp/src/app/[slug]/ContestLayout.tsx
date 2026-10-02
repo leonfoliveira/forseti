@@ -9,7 +9,7 @@ import { ErrorPage } from "@/app/_lib/component/page/ErrorPage";
 import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
 import { useErrorHandlerRoot } from "@/app/_lib/hook/useErrorHandler";
 import { useLoadableStateRoot } from "@/app/_lib/hook/useLoadableState";
-import { StoreProvider } from "@/app/_store/StoreProvider";
+import { StoreProvider } from "@/app/_lib/store/StoreProvider";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { NotFoundException } from "@/domain/exception/NotFoundException";

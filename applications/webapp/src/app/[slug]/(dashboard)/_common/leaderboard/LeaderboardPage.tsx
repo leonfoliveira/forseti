@@ -16,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";

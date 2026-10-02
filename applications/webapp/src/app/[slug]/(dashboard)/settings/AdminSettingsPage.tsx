@@ -1,7 +1,7 @@
 "use client";
 
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPage";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 
 /**
  * Displays the admin settings page for a contest.

@@ -17,9 +17,9 @@ import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher
 import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { ContestSlice } from "@/app/_store/slice/ContestSlice";
-import { AdminDashboardSlice } from "@/app/_store/slice/dashboard/AdminDashboardSlice";
-import { useAppDispatch } from "@/app/_store/Store";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
+import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
+import { useAppDispatch } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import {

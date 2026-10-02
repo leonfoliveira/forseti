@@ -1,6 +1,6 @@
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
-import { ContestantDashboardSlice } from "@/app/_store/slice/dashboard/ContestantDashboardSlice";
-import { useAppDispatch, useAppSelector } from "@/app/_store/Store";
+import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
+import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export function ContestantSubmissionsPage() {

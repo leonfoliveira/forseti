@@ -1,6 +1,6 @@
 import { Balloon } from "@/app/_lib/component/display/Balloon";
-import { BalloonSlice } from "@/app/_store/slice/BalloonSlice";
-import { useAppDispatch, useAppSelector } from "@/app/_store/Store";
+import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
+import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 
 export function BalloonProvider() {
   const balloons = useAppSelector((state) => state.balloon);

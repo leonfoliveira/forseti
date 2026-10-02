@@ -4,7 +4,7 @@ import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/Admin
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/ContestantLeaderboardPage";
 import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/GuestLeaderboardPage";
 import { JudgeLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/JudgeLeaderboardPage";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 export default function DashboardLeaderboardPage() {

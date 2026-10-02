@@ -1,8 +1,8 @@
-import { AdminDashboardSlice } from "@/app/_store/slice/dashboard/AdminDashboardSlice";
-import { ContestantDashboardSlice } from "@/app/_store/slice/dashboard/ContestantDashboardSlice";
-import { GuestDashboardSlice } from "@/app/_store/slice/dashboard/GuestDashboardSlice";
-import { JudgeDashboardSlice } from "@/app/_store/slice/dashboard/JudgeDashboardSlice";
-import { useAppDispatch } from "@/app/_store/Store";
+import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
+import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
+import { GuestDashboardSlice } from "@/app/_lib/store/slice/dashboard/GuestDashboardSlice";
+import { JudgeDashboardSlice } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
+import { useAppDispatch } from "@/app/_lib/store/Store";
 
 /**
  * Hook for resetting all dashboard slices to their initial state.

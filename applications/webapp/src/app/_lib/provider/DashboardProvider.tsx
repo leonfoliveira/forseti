@@ -6,7 +6,7 @@ import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashb
 import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/ContestantDashboardProvider";
 import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/GuestDashboardProvider";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/JudgeDashboardProvider";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
 

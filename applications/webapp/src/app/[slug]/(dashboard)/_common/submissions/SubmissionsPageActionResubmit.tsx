@@ -5,7 +5,7 @@ import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { BalloonProvider } from "@/app/_lib/provider/BalloonProvider";
 import { DashboardProvider } from "@/app/_lib/provider/DashboardProvider";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/domain/enumerate/MemberType";
 

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Provider } from "react-redux";
 
-import { makeStore, RootState } from "@/app/_store/Store";
+import { makeStore, RootState } from "@/app/_lib/store/Store";
 
 /**
  * Provides the Redux store to the React component tree.

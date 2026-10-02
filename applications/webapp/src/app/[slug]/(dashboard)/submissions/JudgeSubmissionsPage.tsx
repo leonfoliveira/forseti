@@ -1,8 +1,8 @@
 import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
-import { JudgeDashboardSlice } from "@/app/_store/slice/dashboard/JudgeDashboardSlice";
-import { useAppDispatch, useAppSelector } from "@/app/_store/Store";
+import { JudgeDashboardSlice } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
+import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export function JudgeSubmissionsPage() {

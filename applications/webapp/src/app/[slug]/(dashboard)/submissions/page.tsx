@@ -4,7 +4,7 @@ import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/Admin
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
 import { GuestSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/GuestSubmissionsPage";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 export default function DashboardSubmissionsPage() {

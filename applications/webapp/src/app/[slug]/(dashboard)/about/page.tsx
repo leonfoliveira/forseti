@@ -5,7 +5,7 @@ import { Page } from "@/app/_lib/component/page/Page";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 export default function DashboardAboutPage() {

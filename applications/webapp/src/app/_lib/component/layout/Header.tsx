@@ -15,7 +15,7 @@ import {
 } from "@/app/_lib/component/shadcn/tooltip";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";

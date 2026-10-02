@@ -24,7 +24,7 @@ import {
 } from "@/app/_lib/component/shadcn/table";
 import { useErrorHandler } from "@/app/_lib/hook/useErrorHandler";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";

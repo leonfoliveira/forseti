@@ -4,7 +4,7 @@ import { ClockAlertIcon } from "lucide-react";
 import { useEffect } from "react";
 
 import { Page } from "@/app/_lib/component/page/Page";
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 
 /**
  * A page displayed when the contest has not started yet.

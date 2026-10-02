@@ -1,28 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { EntityUtil } from "@/app/_store/util/EntityUtil";
-import { LeaderboardMerger } from "@/app/_store/util/LeaderboardMerger";
+import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
+import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
+import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
-export type ContestantDashboardState = ContestantDashboardResponseDTO;
+export type GuestDashboardState = GuestDashboardResponseDTO;
 
 /**
- * Redux slice for the contestant dashboard data.
+ * Redux slice for the guest dashboard data.
  */
-export const ContestantDashboardSlice = createSlice({
-  name: "contestantDashboard",
-  initialState: {} as unknown as ContestantDashboardState,
+export const GuestDashboardSlice = createSlice({
+  name: "guestDashboard",
+  initialState: {
+    listenerStatus: ListenerStatus.DISCONNECTED,
+  } as unknown as GuestDashboardState,
   reducers: {
-    set(state, action: { payload: ContestantDashboardResponseDTO }) {
+    set(state, action: { payload: GuestDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
     reset() {
-      return {} as unknown as ContestantDashboardState;
+      return {} as unknown as GuestDashboardState;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
@@ -42,15 +43,6 @@ export const ContestantDashboardSlice = createSlice({
     mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,
-        action.payload,
-      );
-    },
-    mergeMemberSubmission(
-      state,
-      action: { payload: SubmissionWithCodeResponseDTO },
-    ) {
-      state.memberSubmissions = EntityUtil.merge(
-        state.memberSubmissions,
         action.payload,
       );
     },

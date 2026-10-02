@@ -1,6 +1,6 @@
 import { usePathname, useRouter } from "next/navigation";
 
-import { useAppSelector } from "@/app/_store/Store";
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { routes } from "@/config/routes";
 import { ForbiddenException } from "@/domain/exception/ForbiddenException";
 import { ServiceUnavailableException } from "@/domain/exception/ServiceUnavailableException";

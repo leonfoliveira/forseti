@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { EntityUtil } from "@/app/_store/util/EntityUtil";
-import { LeaderboardMerger } from "@/app/_store/util/LeaderboardMerger";
+import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
+import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
