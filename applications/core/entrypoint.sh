@@ -2,7 +2,6 @@
 
 set -e
 
-# Load secrets into environment variables
 SECRET_FILES=(
     "AWS_ACCESS_KEY_FILE"
     "AWS_SECRET_KEY_FILE"

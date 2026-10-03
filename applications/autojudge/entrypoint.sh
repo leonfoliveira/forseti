@@ -2,7 +2,6 @@
 
 set -e
 
-# Check Docker socket availability
 if [ -S "/var/run/docker.sock" ]; then
     echo "Docker socket is available"
 else
