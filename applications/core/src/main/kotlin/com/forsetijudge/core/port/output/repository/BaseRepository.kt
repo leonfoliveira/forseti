@@ -1,8 +1,8 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.BaseEntity
-import java.util.UUID
 import org.springframework.data.repository.Repository
+import java.util.UUID
 
 /**
  * Base JPA repository interface for all entities extending BaseEntity

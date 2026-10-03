@@ -2,11 +2,11 @@ package com.forsetijudge.core.application.helper.leaderboard
 
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.factory.MockEntityFactory
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.time.OffsetDateTime
 
 class LeaderboardCellBuilderTest {
     private val builder = LeaderboardCellBuilder()

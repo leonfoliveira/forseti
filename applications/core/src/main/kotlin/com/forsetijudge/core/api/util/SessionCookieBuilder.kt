@@ -1,9 +1,9 @@
 package com.forsetijudge.core.api.util
 
 import com.forsetijudge.core.domain.model.Session
+import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.OffsetDateTime
-import org.springframework.stereotype.Service
 
 @Service
 class SessionCookieBuilder(

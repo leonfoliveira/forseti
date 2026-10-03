@@ -1,11 +1,11 @@
 package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.event.ContestEvent
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.context.ApplicationEventPublisher
+import java.util.UUID
 
 class BusinessEventPublisherTest {
     @Test

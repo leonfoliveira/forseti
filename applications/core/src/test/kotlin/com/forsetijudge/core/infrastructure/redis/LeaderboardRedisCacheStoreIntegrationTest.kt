@@ -2,10 +2,10 @@ package com.forsetijudge.core.infrastructure.redis
 
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.testcontainer.TestContainerRedis
-import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.util.UUID
 
 class LeaderboardRedisCacheStoreIntegrationTest : TestContainerRedis() {
     private val store = LeaderboardRedisCacheStore(redisTemplate, objectMapper)

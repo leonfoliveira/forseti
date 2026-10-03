@@ -4,8 +4,8 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.input.usecase.submission.JudgeSubmissionUseCase
 import com.forsetijudge.core.util.SafeLogger
 import io.awspring.cloud.sqs.annotation.SqsListener
-import java.util.UUID
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 @Suppress("unused")

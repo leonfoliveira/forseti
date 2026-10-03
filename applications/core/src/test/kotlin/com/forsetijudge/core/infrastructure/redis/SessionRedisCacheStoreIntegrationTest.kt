@@ -2,13 +2,13 @@ package com.forsetijudge.core.infrastructure.redis
 
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.testcontainer.TestContainerRedis
-import java.time.Duration
-import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import java.time.Duration
+import java.util.UUID
 
 class SessionRedisCacheStoreIntegrationTest : TestContainerRedis() {
     private val store = SessionRedisCacheStore(redisTemplate, objectMapper)

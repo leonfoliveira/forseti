@@ -4,11 +4,11 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.InternalServerException
 import com.forsetijudge.core.factory.MockEntityFactory
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import java.time.OffsetDateTime
 
 class ContestAuthorizerTest {
     @Test

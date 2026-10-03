@@ -10,9 +10,9 @@ import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
-import java.util.UUID
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 /**
  * Authorizes whether the client behind a websocket connection is allowed to join a given room.

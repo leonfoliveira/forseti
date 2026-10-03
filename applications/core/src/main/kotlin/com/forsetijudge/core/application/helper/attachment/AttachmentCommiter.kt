@@ -5,8 +5,8 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.util.SafeLogger
-import java.util.UUID
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 class AttachmentCommiter(

@@ -1,12 +1,12 @@
 package com.forsetijudge.core.api.util
 
 import com.forsetijudge.core.factory.MockModelFactory
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.springframework.http.ResponseCookie
+import java.time.OffsetDateTime
 
 class SessionCookieBuilderTest {
     @Test

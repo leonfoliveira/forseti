@@ -1,9 +1,9 @@
 package com.forsetijudge.core.domain.model
 
-import java.util.UUID
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import java.util.UUID
 
 class SessionAuthentication(
     val session: Session,

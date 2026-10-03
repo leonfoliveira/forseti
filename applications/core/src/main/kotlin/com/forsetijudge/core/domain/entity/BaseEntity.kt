@@ -5,11 +5,11 @@ import jakarta.persistence.Column
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
 import jakarta.persistence.Version
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.hibernate.envers.Audited
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @MappedSuperclass
 @Audited(withModifiedFlag = true)

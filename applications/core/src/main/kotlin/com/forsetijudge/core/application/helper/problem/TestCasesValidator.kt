@@ -5,9 +5,9 @@ import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.util.SafeLogger
 import com.opencsv.CSVReader
+import org.springframework.stereotype.Component
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
-import org.springframework.stereotype.Component
 
 @Component
 class TestCasesValidator(

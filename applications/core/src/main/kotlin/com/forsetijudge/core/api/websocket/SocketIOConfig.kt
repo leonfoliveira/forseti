@@ -27,9 +27,10 @@ class SocketIOConfig(
 
         config.port = port
         config.origin = allowedOrigins
-        config.socketConfig = SocketConfig().apply {
-            isReuseAddress = true
-        }
+        config.socketConfig =
+            SocketConfig().apply {
+                isReuseAddress = true
+            }
 
         server = SocketIOServer(config)
 

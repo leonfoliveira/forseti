@@ -6,8 +6,8 @@ import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.util.SafeLogger
-import java.time.Duration
 import org.springframework.stereotype.Service
+import java.time.Duration
 
 @Service
 class LeaderboardCellBuilder {

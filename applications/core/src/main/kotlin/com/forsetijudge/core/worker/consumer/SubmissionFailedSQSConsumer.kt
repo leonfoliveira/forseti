@@ -3,8 +3,8 @@ package com.forsetijudge.core.worker.consumer
 import com.forsetijudge.core.port.input.usecase.submission.FailSubmissionUseCase
 import com.forsetijudge.core.util.SafeLogger
 import io.awspring.cloud.sqs.annotation.SqsListener
-import java.util.UUID
 import org.springframework.stereotype.Component
+import java.util.UUID
 
 @Component
 @Suppress("unused")

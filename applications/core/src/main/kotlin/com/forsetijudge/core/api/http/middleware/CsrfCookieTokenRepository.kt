@@ -3,12 +3,12 @@ package com.forsetijudge.core.api.http.middleware
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.UUID
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.security.web.csrf.CsrfTokenRepository
 import org.springframework.security.web.csrf.DefaultCsrfToken
 import org.springframework.stereotype.Component
 import org.springframework.web.util.WebUtils
+import java.util.UUID
 
 /**
  * Reads the CSRF token from the "csrf_token" cookie written by the authentication controllers

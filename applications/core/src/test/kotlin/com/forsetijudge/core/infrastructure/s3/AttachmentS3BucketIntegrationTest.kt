@@ -2,14 +2,14 @@ package com.forsetijudge.core.infrastructure.s3
 
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.testcontainer.TestContainerLocalStack
-import java.net.URI
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 class AttachmentS3BucketIntegrationTest : TestContainerLocalStack() {
     private val bucketName = "test-bucket"

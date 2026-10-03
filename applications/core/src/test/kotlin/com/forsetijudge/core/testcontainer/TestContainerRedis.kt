@@ -2,7 +2,6 @@ package com.forsetijudge.core.testcontainer
 
 import com.forsetijudge.core.config.JacksonConfig
 import com.redis.testcontainers.RedisContainer
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
@@ -12,6 +11,7 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.module.SimpleModule
 import tools.jackson.module.kotlin.KotlinModule
+import java.time.OffsetDateTime
 
 /**
  * Base class for tests that run against a real Redis started by Testcontainers.

@@ -10,8 +10,6 @@ import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -25,6 +23,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.util.UUID
 
 class ContestControllerTest {
     private val findBySlug = mock<FindContestBySlugUseCase>()
@@ -47,12 +47,14 @@ class ContestControllerTest {
         whenever(findBySlug.execute(any())).thenReturn(response)
         whenever(findAll.execute()).thenReturn(listOf(response))
 
-        mvc.perform(get("/v1/contests/slug/spring-cup"))
+        mvc
+            .perform(get("/v1/contests/slug/spring-cup"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.slug").value("sample-contest"))
         verify(findBySlug).execute(FindContestBySlugUseCase.Command("spring-cup"))
 
-        mvc.perform(get("/v1/contests"))
+        mvc
+            .perform(get("/v1/contests"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$[0].id").value(contestId.toString()))
         verify(findAll).execute()
@@ -64,14 +66,14 @@ class ContestControllerTest {
         val endAt = timestamp.plusHours(3)
         whenever(create.execute(any())).thenReturn(MockMvcTestSupport.contestResponse(contestId))
 
-        mvc.perform(
-            post("/v1/contests")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """{"slug":"spring-cup","title":"Spring Cup","languages":["CPP_17"],"startAt":"$startAt","endAt":"$endAt"}""",
-                ),
-        )
-            .andExpect(status().isOk)
+        mvc
+            .perform(
+                post("/v1/contests")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """{"slug":"spring-cup","title":"Spring Cup","languages":["CPP_17"],"startAt":"$startAt","endAt":"$endAt"}""",
+                    ),
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(contestId.toString()))
 
         verify(create).execute(
@@ -94,24 +96,24 @@ class ContestControllerTest {
         val endAt = timestamp.plusHours(3)
         whenever(update.execute(any())).thenReturn(MockMvcTestSupport.contestWithDetailsResponse(contestId))
 
-        mvc.perform(
-            put("/v1/contests/$contestId")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                      "slug":"spring-cup",
-                      "title":"Spring Cup",
-                      "languages":["CPP_17"],
-                      "startAt":"$startAt",
-                      "endAt":"$endAt",
-                      "members":[{"id":"$memberId","type":"ADMIN","name":"Coach","login":"coach","password":"pw"}],
-                      "problems":[{"letter":"A","color":"#123456","title":"Warmup","description":{"id":"$descriptionId"},"timeLimit":1000,"memoryLimit":256,"testCases":{"id":"$testCasesId"}}]
-                    }
-                    """.trimIndent(),
-                ),
-        )
-            .andExpect(status().isOk)
+        mvc
+            .perform(
+                put("/v1/contests/$contestId")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(
+                        """
+                        {
+                          "slug":"spring-cup",
+                          "title":"Spring Cup",
+                          "languages":["CPP_17"],
+                          "startAt":"$startAt",
+                          "endAt":"$endAt",
+                          "members":[{"id":"$memberId","type":"ADMIN","name":"Coach","login":"coach","password":"pw"}],
+                          "problems":[{"letter":"A","color":"#123456","title":"Warmup","description":{"id":"$descriptionId"},"timeLimit":1000,"memoryLimit":256,"testCases":{"id":"$testCasesId"}}]
+                        }
+                        """.trimIndent(),
+                    ),
+            ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(contestId.toString()))
 
         verify(update).execute(
@@ -155,19 +157,22 @@ class ContestControllerTest {
         whenever(forceStart.execute(any())).thenReturn(response)
         whenever(forceEnd.execute(any())).thenReturn(response)
 
-        mvc.perform(put("/v1/contests/$contestId:force-start"))
+        mvc
+            .perform(put("/v1/contests/$contestId:force-start"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(contestId.toString()))
         verify(forceStart).execute(ForceStartContestUseCase.Command(contestId))
 
-        mvc.perform(put("/v1/contests/$contestId:force-end"))
+        mvc
+            .perform(put("/v1/contests/$contestId:force-end"))
             .andExpect(status().isOk)
         verify(forceEnd).execute(ForceEndContestUseCase.Command(contestId))
     }
 
     @Test
     fun `deletes contest and returns no content`() {
-        mvc.perform(delete("/v1/contests/$contestId"))
+        mvc
+            .perform(delete("/v1/contests/$contestId"))
             .andExpect(status().isNoContent)
             .andExpect(content().string(""))
 

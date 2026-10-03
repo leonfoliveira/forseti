@@ -4,7 +4,6 @@ import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.authentication.SignInUseCase
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -16,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 class AuthenticationControllerTest {
     private val signIn = mock<SignInUseCase>()

@@ -4,7 +4,6 @@ import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import com.forsetijudge.core.port.output.cache.SessionCache
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -12,6 +11,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class FindSessionByIdServiceTest {
     private val cache = mock<SessionCache>()

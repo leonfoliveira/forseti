@@ -4,7 +4,6 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUse
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -13,6 +12,7 @@ import org.mockito.kotlin.whenever
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 class DashboardControllerTest {
     private val admin = mock<BuildAdminDashboardUseCase>()
@@ -29,22 +29,26 @@ class DashboardControllerTest {
         whenever(guest.execute(any())).thenReturn(MockMvcTestSupport.guestDashboardResponse(contestId))
         whenever(judge.execute(any())).thenReturn(MockMvcTestSupport.judgeDashboardResponse(contestId))
 
-        mvc.perform(get("/v1/contests/$contestId/dashboard/admin"))
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/admin"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
         verify(admin).execute(BuildAdminDashboardUseCase.Command(contestId))
 
-        mvc.perform(get("/v1/contests/$contestId/dashboard/contestant"))
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/contestant"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
         verify(contestant).execute(BuildContestantDashboardUseCase.Command(contestId))
 
-        mvc.perform(get("/v1/contests/$contestId/dashboard/guest"))
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/guest"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
         verify(guest).execute(BuildGuestDashboardUseCase.Command(contestId))
 
-        mvc.perform(get("/v1/contests/$contestId/dashboard/judge"))
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/judge"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
         verify(judge).execute(BuildJudgeDashboardUseCase.Command(contestId))

@@ -3,8 +3,8 @@ package com.forsetijudge.core.application.helper
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.domain.model.SessionAuthentication
-import java.util.UUID
 import org.springframework.security.core.context.SecurityContextHolder
+import java.util.UUID
 
 object AuthenticationHelper {
     fun getCurrentSession(): Session {
