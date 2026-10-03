@@ -2,6 +2,7 @@ package com.forsetijudge.core.util
 
 import io.prometheus.metrics.core.metrics.Info
 
+@SkipCoverage
 object Metrics {
     val INFO: Info =
         Info

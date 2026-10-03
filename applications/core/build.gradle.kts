@@ -49,14 +49,20 @@ dependencies {
     implementation(libs.springCloudAwsStarterSQS)
     implementation(libs.uuidCreator)
 
-    testImplementation(libs.junitJupiterApi)
+    testFixturesApi(libs.junitJupiterApi)
+    testFixturesApi(libs.testcontainersLocalstack)
+    testFixturesApi(libs.testcontainersRedis)
+    testFixturesImplementation(libs.jacksonModuleKotlin)
+    testFixturesImplementation(libs.springBootStarterDataRedis)
+    testFixturesImplementation(libs.springCloudAwsStarterS3)
+    testFixturesImplementation(libs.springCloudAwsStarterSecretsManager)
+    testFixturesImplementation(libs.springCloudAwsStarterSQS)
+
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
-    testImplementation(libs.testcontainersLocalstack)
     testImplementation(libs.testcontainersJunitJupiter)
     testImplementation(libs.testcontainersPostgresql)
-    testImplementation(libs.testcontainersRedis)
 
     developmentOnly(libs.springBootDevTools)
 }
@@ -102,13 +108,13 @@ kover {
             excludes {
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
-                    "com.forsetijudge.core.config.SkipCoverage",
+                    "com.forsetijudge.core.util.SkipCoverage",
                 )
             }
         }
         verify {
             rule("Minimum Line Coverage") {
-                minBound(80)
+                minBound(90)
             }
         }
     }
