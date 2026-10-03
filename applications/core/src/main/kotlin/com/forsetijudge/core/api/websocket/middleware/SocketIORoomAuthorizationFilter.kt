@@ -189,7 +189,7 @@ class SocketIORoomAuthorizationFilter(
 
         return try {
             UUID.fromString(rawSessionId)
-        } catch (exception: IllegalArgumentException) {
+        } catch (_: IllegalArgumentException) {
             null
         }
     }

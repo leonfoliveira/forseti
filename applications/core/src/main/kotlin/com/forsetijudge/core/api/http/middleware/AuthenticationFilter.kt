@@ -49,7 +49,7 @@ class AuthenticationFilter(
                 val sessionUuid =
                     try {
                         UUID.fromString(sessionId)
-                    } catch (e: IllegalArgumentException) {
+                    } catch (_: IllegalArgumentException) {
                         throw UnauthorizedException("Invalid session ID format: $sessionId")
                     }
                 val session =

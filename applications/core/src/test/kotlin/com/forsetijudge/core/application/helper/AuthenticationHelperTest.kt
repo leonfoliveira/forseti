@@ -38,10 +38,10 @@ class AuthenticationHelperTest {
         val session = MockModelFactory.session(member = sessionMember)
         SecurityContextHolder.getContext().authentication = SessionAuthentication(session, "127.0.0.1")
 
-        assertSame(session, AuthenticationHelper.getCurrentSession())
-        assertSame(session, AuthenticationHelper.getCurrentSessionNullable())
-        assertEquals(member.id, AuthenticationHelper.getCurrentMemberId())
-        assertEquals(member.id, AuthenticationHelper.getCurrentMemberIdNullable())
+        assertSame(AuthenticationHelper.getCurrentSession(), session)
+        assertSame(AuthenticationHelper.getCurrentSessionNullable(), session)
+        assertEquals(AuthenticationHelper.getCurrentMemberId(), member.id)
+        assertEquals(AuthenticationHelper.getCurrentMemberIdNullable(), member.id)
     }
 
     @Test
