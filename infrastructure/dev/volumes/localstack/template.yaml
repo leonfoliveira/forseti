@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Forseti Infrastructure setup for local development using LocalStack
+
+Resources:
+  # --- S3 ---
+  CoreS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dev-forseti-core-bucket
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
+
+  # --- S3 Policies ---
+  CoreS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CoreS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "s3:*"
+            Resource: !Sub "${CoreS3Bucket.Arn}/*"
+
+  # --- SQS ---
+  CoreSubmissionFailedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-forseti-core-submission-failed-queue
+
+  CoreSubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-forseti-core-submission-judged-queue
+
+  AutoJudgeSubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-forseti-autojudge-submission-queue
