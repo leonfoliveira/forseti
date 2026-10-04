@@ -1,0 +1,60 @@
+name: Check Webapp
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-webapp:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: applications/webapp
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            webapp:
+              - 'applications/webapp/**'
+              - '.github/workflows/check-webapp.yaml'
+
+      - name: Setup Node.js
+        if: steps.changes.outputs.webapp == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: applications/webapp/package-lock.json
+
+      - name: Install
+        if: steps.changes.outputs.webapp == 'true'
+        run: npm ci
+
+      - name: Run checks
+        if: steps.changes.outputs.webapp == 'true'
+        run: |
+          # Run lint, i18n checks, and tests
+          npm run lint
+          npm run i18n:check
+          npm run i18n:verify
+          npm run test:coverage
+
+      - name: Build
+        if: steps.changes.outputs.webapp == 'true'
+        run: npm run build
+
+      - name: Report status
+        run: |
+          if [[ "${{ steps.changes.outputs.webapp }}" == "true" ]]; then
+            echo "Webapp checks completed successfully"
+          else
+            echo "No webapp changes detected, skipping checks"
+          fi

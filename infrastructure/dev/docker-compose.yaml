@@ -22,6 +22,8 @@ services:
     ports:
       - 4566:4566
       - 4510-4559:4510-4559
+    profiles:
+      - infra
     networks:
       - dev-forseti-network
     volumes:
@@ -47,6 +49,8 @@ services:
       - dev-forseti-network
     ports:
       - 5432:5432
+    profiles:
+      - infra
     volumes:
       - dev-postgres_data:/var/lib/postgresql/data
 
@@ -64,6 +68,150 @@ services:
       - dev-forseti-network
     ports:
       - 6379:6379
+    profiles:
+      - infra
+
+  migration:
+    container_name: dev-forseti-migration
+    entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/forseti
+      FLYWAY_USER: forseti
+      FLYWAY_PASSWORD: forsetijudge
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: flyway/flyway:11.9.2-alpine
+    networks:
+      - dev-forseti-network
+    profiles:
+      - core
+    volumes:
+      - ../../applications/core/src/main/resources/migration:/flyway/sql
+
+  core:
+    build:
+      context: ../../applications/core
+      dockerfile: Dockerfile
+    container_name: dev-forseti-core
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    environment:
+      VERSION: latest
+      AWS_REGION: us-east-1
+      AWS_ACCESS_KEY_ID: forsetijudge
+      AWS_SECRET_ACCESS_KEY: forsetijudge
+      AWS_S3_ENDPOINT: http://localhost:4566
+      AWS_S3_BUCKET: dev-forseti-core-bucket
+      AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS: 3600
+      AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS: 3600
+      AWS_SQS_ENDPOINT: http://localhost:4566
+      AWS_SQS_SUBMISSION_QUEUE: dev-forseti-autojudge-submission-queue
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: dev-forseti-core-submission-failed-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-forseti-core-submission-judged-queue
+      AWS_SECRETSMANAGER_ENDPOINT: http://localhost:4566
+      DB_URL:jdbc: postgresql://localhost:5432/forseti
+      DB_USER: forseti
+      DB_PASSWORD: forsetijudge
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: forsetijudge
+      REDIS_SOCKET_IO_TTL_SECONDS: 600
+      WEBAPP_PUBLIC_URL: http://localhost:3000
+      SECURE_COOKIES: false
+      SESSION_EXPIRATION_SECONDS: 86400
+      SESSION_ROOT_EXPIRATION_SECONDS: 86400
+      API_PORT: 8080
+      WS_PORT: 8081
+    healthcheck:
+      test:
+        ["CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: forseti-core:latest
+    networks:
+      - dev-forseti-network
+    ports:
+      - 8080:8080
+      - 8081:8081
+    profiles:
+      - core
+
+  autojudge:
+    build:
+      context: ../../applications/autojudge
+      dockerfile: Dockerfile
+    container_name: dev-forseti-autojudge
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    environment:
+      VERSION: latest
+      AWS_REGION: us-east-1
+      AWS_ENDPOINT_URL: http://localhost:4566
+      AWS_ACCESS_KEY_ID: forsetijudge
+      AWS_SECRET_ACCESS_KEY: forsetijudge
+      AWS_S3_BUCKET: dev-forseti-core-bucket
+      AWS_SQS_SUBMISSION_QUEUE: dev-forseti-autojudge-submission-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-forseti-core-submission-judged-queue
+      PORT: 8082
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: forseti-autojudge:latest
+    networks:
+      - dev-forseti-network
+    ports:
+      - 8082:8082
+    profiles:
+      - autojudge
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+
+  webapp:
+    container_name: dev-forseti-webapp
+    build:
+      context: ../../applications/webapp
+      dockerfile: Dockerfile
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      VERSION: latest
+      HTTP_URL: http://localhost:8080
+      WS_URL: ws://localhost:8081
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost"]
+      timeout: 5s
+      interval: 15s
+      retries: 5
+      start_period: 5s
+    image: forseti-webapp:latest
+    networks:
+      - dev-forseti-network
+    ports:
+      - 3000:80
+    profiles:
+      - webapp
 
 networks:
   dev-forseti-network:

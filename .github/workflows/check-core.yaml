@@ -1,0 +1,69 @@
+name: Check Core
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-core:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: applications/core
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            core:
+              - 'applications/core/**'
+              - '.github/workflows/check-core.yaml'
+
+      - name: Set up JDK 21
+        if: steps.changes.outputs.core == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      - name: Cache Gradle
+        if: steps.changes.outputs.core == 'true'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('applications/core/**/*.gradle*', 'applications/core/gradle.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        if: steps.changes.outputs.core == 'true'
+        run: chmod +x ./gradlew
+
+      - name: Run checks and builds in parallel
+        if: steps.changes.outputs.core == 'true'
+        run: |
+          # Run linting, testing, and builds in parallel
+          ./gradlew ktlintCheck &
+          ./gradlew test &
+          ./gradlew :core:build -x check
+
+          # Wait for all tasks to complete
+          wait
+
+      - name: Report status
+        run: |
+          if [[ "${{ steps.changes.outputs.core }}" == "true" ]]; then
+            echo "Core checks completed successfully"
+          else
+            echo "No core changes detected, skipping checks"
+          fi

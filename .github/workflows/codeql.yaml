@@ -1,0 +1,109 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 12 * * 1"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  detect:
+    name: Determine Strategy
+    runs-on: ubuntu-latest
+    outputs:
+      languages: ${{ steps.set-matrix.outputs.languages }}
+      run_any: ${{ steps.set-matrix.outputs.run_any }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            webapp: 'applications/webapp/**'
+            core: 'applications/core/**'
+            autojudge: 'applications/autojudge/**'
+            workflow: '.github/workflows/codeql.yaml'
+
+      - name: Generate Matrix
+        id: set-matrix
+        run: |
+          LANGS=[]
+          # If workflow changes or it's a schedule, run everything
+          if [[ "${{ steps.filter.outputs.workflow }}" == "true" || "${{ github.event_name }}" == "schedule" ]]; then
+            LANGS='["javascript-typescript", "java-kotlin", "python"]'
+          else
+            if [[ "${{ steps.filter.outputs.webapp }}" == "true" ]]; then LANGS=$(echo $LANGS | jq -c '. += ["javascript-typescript"]'); fi
+            if [[ "${{ steps.filter.outputs.core }}" == "true" ]]; then LANGS=$(echo $LANGS | jq -c '. += ["java-kotlin"]'); fi
+            if [[ "${{ steps.filter.outputs.autojudge }}" == "true" ]]; then LANGS=$(echo $LANGS | jq -c '. += ["python"]'); fi
+          fi
+
+          echo "languages=$LANGS" >> $GITHUB_OUTPUT
+
+          # Detect if the list is empty to prevent errors in the next job
+          if [[ "$LANGS" == "[]" ]]; then
+            echo "run_any=false" >> $GITHUB_OUTPUT
+          else
+            echo "run_any=true" >> $GITHUB_OUTPUT
+          fi
+
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    needs: detect
+    if: needs.detect.outputs.run_any == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJson(needs.detect.outputs.languages) }}
+        include:
+          - language: java-kotlin
+            build-mode: manual
+          - language: javascript-typescript
+            build-mode: none
+          - language: python
+            build-mode: none
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      # --- Java/Kotlin Specific Build ---
+      - name: Setup Java & Build
+        if: matrix.language == 'java-kotlin'
+        working-directory: applications/core
+        run: |
+          sudo apt-get update && sudo apt-get install -y openjdk-21-jdk
+          chmod +x ./gradlew
+          ./gradlew clean compileJava compileKotlin
+
+      # --- Python Specific Dependencies ---
+      - name: Setup Python Dependencies
+        if: matrix.language == 'python'
+        run: |
+          if [ -f applications/autojudge/requirements.txt ]; then pip install -r applications/autojudge/requirements.txt; fi
+
+      # --- JS/TS Specific Dependencies ---
+      - name: Setup Node Dependencies
+        if: matrix.language == 'javascript-typescript'
+        run: cd applications/webapp && npm ci
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"

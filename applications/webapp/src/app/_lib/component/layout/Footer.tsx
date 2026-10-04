@@ -7,7 +7,10 @@ import { env } from "@/config/env";
 export function Footer() {
   return (
     <footer className="bg-card border-divider border-t py-1 text-center text-xs text-neutral-400">
-      <p data-testid="footer-text">{`Forseti ${env.version}`}</p>
+      <p
+        data-testid="footer-text"
+        suppressHydrationWarning
+      >{`Forseti ${env.version}`}</p>
     </footer>
   );
 }

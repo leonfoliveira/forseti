@@ -14,12 +14,9 @@ spring:
       s3:
         endpoint: ${AWS_S3_ENDPOINT:http://localhost:4566}
         bucket: ${AWS_S3_BUCKET:dev-forseti-core-bucket}
-        path-style-access-enabled: ${AWS_S3_PATH_STYLE_ACCESS_ENABLED:true}
+        path-style-access-enabled: true
         signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
         signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
-      sns:
-        endpoint: ${AWS_SNS_ENDPOINT:http://localhost:4566}
-        business-events-topic: ${AWS_SNS_BUSINESS_EVENTS_TOPIC:dev-forseti-core-business-events-topic}
       sqs:
         endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-forseti-autojudge-submission-queue}
@@ -65,7 +62,7 @@ management:
 # Security configuration
 security:
   cookie:
-    domain: ${WEBAPP_PUBLIC_URL:*}
+    domain: ${WEBAPP_PUBLIC_URL:http://localhost:3000}
     secure: ${SECURE_COOKIES:false}
   session:
     expiration:

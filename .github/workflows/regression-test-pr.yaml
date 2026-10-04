@@ -1,0 +1,97 @@
+name: Regression Test - PR
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  regression-test:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/regression')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if comment author has write access
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: collaborator } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.payload.comment.user.login
+            });
+
+            const hasWriteAccess = ['admin', 'write'].includes(collaborator.permission);
+
+            if (!hasWriteAccess) {
+              core.setFailed('Only collaborators with write access can trigger regression tests');
+            }
+
+      - name: React to comment with thumbs up
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: '+1'
+            });
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { data: pullRequest } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            core.setOutput('sha', pullRequest.head.sha);
+            core.setOutput('ref', pullRequest.head.ref);
+            core.setOutput('repo', pullRequest.head.repo.full_name);
+
+      - name: Checkout PR code
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.pr.outputs.repo }}
+          ref: ${{ steps.pr.outputs.sha }}
+
+      - name: Build test composition
+        run: |
+          docker compose -f deployment/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp build --progress=plain --pull
+          cd applications/autojudge/image/sandboxes
+          docker buildx build -t forseti-sb-base:latest -f base.Dockerfile .
+          docker buildx build -t forseti-sb-python312:latest -f python312.Dockerfile .
+
+      - name: Start test composition
+        run: |
+          docker compose -f deployment/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp up -d --wait
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: test/regression/package.json
+
+      - name: Install regression test dependencies
+        run: |
+          cd test/regression
+          npm ci
+
+      - name: Install Playwright browsers
+        run: |
+          cd test/regression
+          npx playwright install --with-deps
+
+      - name: Run regression tests
+        run: |
+          cd test/regression
+          npm run test

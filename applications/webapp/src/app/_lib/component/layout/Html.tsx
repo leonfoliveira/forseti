@@ -20,6 +20,9 @@ const roboto = Roboto({
 export function Html({ children }: { children: React.ReactNode }) {
   return (
     <html>
+      <head>
+        <script src="/config.js" />
+      </head>
       <body className={clsx(roboto.className, "bg-card")}>
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>

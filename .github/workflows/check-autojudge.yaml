@@ -1,0 +1,57 @@
+name: Check Autojudge
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-autojudge:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: applications/autojudge
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            autojudge:
+              - 'applications/autojudge/**'
+              - '.github/workflows/check-autojudge.yaml'
+
+      - name: Set up Python 3.12
+        if: steps.changes.outputs.autojudge == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: applications/autojudge/requirements.txt
+
+      - name: Install dependencies
+        if: steps.changes.outputs.autojudge == 'true'
+        run: pip install -r applications/autojudge/requirements.txt
+
+      - name: Run checks in parallel
+        if: steps.changes.outputs.autojudge == 'true'
+        run: |
+          # Run lint and test in parallel
+          make lint &
+          make test &
+
+          # Wait for all tasks to complete
+          wait
+
+      - name: Report status
+        run: |
+          if [[ "${{ steps.changes.outputs.autojudge }}" == "true" ]]; then
+            echo "Autojudge checks completed successfully"
+          else
+            echo "No autojudge changes detected, skipping checks"
+          fi
