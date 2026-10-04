@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import { GuestProblemsPage } from "@/app/[slug]/(dashboard)/problems/GuestProblemsPage";
 import { renderWithProviders } from "@/test/render-with-providers";

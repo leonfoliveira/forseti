@@ -52,9 +52,10 @@ class AuthenticationFilterTest {
     @Test
     fun `authenticates using resolved session and forwarded ip`() {
         val session = MockModelFactory.session()
-        val request = requestWithSessionId(session.id.toString()).apply {
-            addHeader("X-Forwarded-For", "203.0.113.10")
-        }
+        val request =
+            requestWithSessionId(session.id.toString()).apply {
+                addHeader("X-Forwarded-For", "203.0.113.10")
+            }
         var authentication: SessionAuthentication? = null
 
         whenever(findSession.execute(FindSessionByIdUseCase.Command(session.id))).thenReturn(session)
@@ -75,9 +76,10 @@ class AuthenticationFilterTest {
     @Test
     fun `uses remote address when forwarded ip header is absent`() {
         val session = MockModelFactory.session()
-        val request = requestWithSessionId(session.id.toString()).apply {
-            remoteAddr = "192.0.2.15"
-        }
+        val request =
+            requestWithSessionId(session.id.toString()).apply {
+                remoteAddr = "192.0.2.15"
+            }
         var authentication: SessionAuthentication? = null
         whenever(findSession.execute(FindSessionByIdUseCase.Command(session.id))).thenReturn(session)
 

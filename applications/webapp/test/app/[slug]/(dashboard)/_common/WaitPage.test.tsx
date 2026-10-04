@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
@@ -9,7 +9,9 @@ describe("WaitPage", () => {
     await renderWithProviders(<WaitPage />, {
       contest: MockContestResponseDTO({ startAt: "2099-01-01T00:00:00Z" }),
     });
-    expect(screen.getByTestId("wait-page")).toHaveTextContent("contest has not started yet");
+    expect(screen.getByTestId("wait-page")).toHaveTextContent(
+      "contest has not started yet",
+    );
     expect(screen.getByText(/automatically reload/)).toBeInTheDocument();
   });
 });

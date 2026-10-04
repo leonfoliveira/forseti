@@ -3,8 +3,8 @@ import logging
 from flask import Flask, Response, jsonify
 from prometheus_client import REGISTRY, generate_latest
 
-from autojudge.config.env import env
 from autojudge.config.aws_config import s3_client, sqs_client
+from autojudge.config.env import env
 
 app = Flask(__name__)
 

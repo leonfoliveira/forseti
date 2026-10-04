@@ -5,10 +5,10 @@ import json
 import logging
 import os
 import tempfile
+
 from pydantic import BaseModel
 
-
-from autojudge.config.aws_config import sqs_client, s3_client
+from autojudge.config.aws_config import s3_client, sqs_client
 from autojudge.config.env import env
 from autojudge.sandbox.docker_sandbox_container import DockerSandboxContainer, RunResult
 from autojudge.schema.submission_schema import SubmissionSchema
@@ -56,13 +56,15 @@ class Judge:
 
         logger.info(f"Submission {submission.submission_id} judged as {answer}")
 
-        logger.info(f"Publishing result")
+        logger.info("Publishing result")
         sqs_client.send_message(
             QueueUrl=env.aws.sqs.submission_judged_queue,
-            MessageBody=json.dumps({
-                "submissionId": submission.submission_id,
-                "answer": answer,
-            }),
+            MessageBody=json.dumps(
+                {
+                    "submissionId": submission.submission_id,
+                    "answer": answer,
+                }
+            ),
         )
 
     def _run(
@@ -89,13 +91,14 @@ class Judge:
                 result = container.run(stdin)
                 answer = self._evaluate(result, expected_stdout)
                 logger.info(
-                    f"Test case {idx} produced answer {answer} with result {result}")
+                    f"Test case {idx} produced answer {answer} with result {result}"
+                )
 
                 if answer != JudgeResult.Answer.ACCEPTED:
                     logger.info(f"Test case {idx} failed with answer {answer}")
                     return answer
 
-            logger.info(f"All test cases passed")
+            logger.info("All test cases passed")
             return JudgeResult.Answer.ACCEPTED
         finally:
             container.kill()

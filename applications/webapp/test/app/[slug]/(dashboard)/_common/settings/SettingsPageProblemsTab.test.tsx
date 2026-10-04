@@ -1,7 +1,10 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
-import { SettingsForm, SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageProblemsTab";
 import { MockContestWithMembersAndProblemsDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -10,12 +13,16 @@ jest.mock("@/app/_lib/component/form/ControlledField", () => ({
   ControlledField: ({ name }: { name: string }) => <input data-testid={name} />,
 }));
 jest.mock("@/app/_lib/component/shadcn/field", () => ({
-  FieldSet: ({ children }: { children: React.ReactNode }) => <fieldset>{children}</fieldset>,
+  FieldSet: ({ children }: { children: React.ReactNode }) => (
+    <fieldset>{children}</fieldset>
+  ),
 }));
 
 function Harness() {
   const contest = MockContestWithMembersAndProblemsDTO();
-  const form = useForm<SettingsFormType>({ defaultValues: SettingsForm.fromResponseDTO(contest) });
+  const form = useForm<SettingsFormType>({
+    defaultValues: SettingsForm.fromResponseDTO(contest),
+  });
   return <SettingsPageProblemsTab contest={contest} form={form} />;
 }
 

@@ -1,8 +1,8 @@
-import logging
 import json
+import logging
 
-from autojudge.config.env import env
 from autojudge.config.aws_config import sqs_client
+from autojudge.config.env import env
 from autojudge.judge import Judge
 from autojudge.schema.submission_schema import SubmissionSchema
 
@@ -30,7 +30,7 @@ class Worker:
             QueueUrl=env.aws.sqs.submission_queue,
             MaxNumberOfMessages=10,
             WaitTimeSeconds=20,
-            VisibilityTimeout=60
+            VisibilityTimeout=60,
         )
         messages = response.get("Messages", [])
 
@@ -45,6 +45,5 @@ class Worker:
 
     def _delete_message(self, receipt_handle):
         sqs_client.delete_message(
-            QueueUrl=env.aws.sqs.submission_queue,
-            ReceiptHandle=receipt_handle
+            QueueUrl=env.aws.sqs.submission_queue, ReceiptHandle=receipt_handle
         )

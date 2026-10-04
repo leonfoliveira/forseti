@@ -21,6 +21,7 @@ export function Html({ children }: { children: React.ReactNode }) {
   return (
     <html>
       <head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script src="/config.js" />
       </head>
       <body className={clsx(roboto.className, "bg-card")}>

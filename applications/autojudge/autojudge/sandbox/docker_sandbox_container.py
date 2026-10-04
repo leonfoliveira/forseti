@@ -9,10 +9,10 @@ from docker.types import Ulimit
 
 from autojudge.config.docker_config import docker_client
 from autojudge.config.env import env
-from autojudge.schema.submission_schema import SubmissionSchema
 from autojudge.sandbox.language_config import LANGUAGE_CONFIGS
 from autojudge.sandbox.models import IsolateMeta, RunResult
-from autojudge.util.parse_util import _to_int_or_none, _to_float_or_none
+from autojudge.schema.submission_schema import SubmissionSchema
+from autojudge.util.parse_util import _to_float_or_none, _to_int_or_none
 
 logger = logging.getLogger(__name__)
 
@@ -65,13 +65,15 @@ class DockerSandboxContainer:
         )
 
         logger.info(
-            f"Container created for submission: {self.submission.submission_id}")
+            f"Container created for submission: {self.submission.submission_id}"
+        )
 
     def start(self):
         """Start the Docker container and initialize the isolate environment."""
 
         logger.info(
-            f"Starting container for submission: {self.submission.submission_id}")
+            f"Starting container for submission: {self.submission.submission_id}"
+        )
 
         self.container.start()
         self.container.exec_run(cmd=["isolate", "--init"])
@@ -82,7 +84,8 @@ class DockerSandboxContainer:
         )
 
         logger.info(
-            f"Container started for submission: {self.submission.submission_id}")
+            f"Container started for submission: {self.submission.submission_id}"
+        )
 
     def compile(self):
         """Compile the submission when its language requires it."""
@@ -101,7 +104,8 @@ class DockerSandboxContainer:
         logger.info(f"Compiling submission: {self.submission.submission_id}")
         self._exec(cmd=compile_command)
         logger.info(
-            f"Compilation finished for submission: {self.submission.submission_id}")
+            f"Compilation finished for submission: {self.submission.submission_id}"
+        )
 
     def run(self, stdin: str) -> RunResult:
         """Run the submission with the provided input and return its result."""
@@ -173,13 +177,10 @@ class DockerSandboxContainer:
         """Copy a file or directory from the host to the Docker container."""
 
         stream = io.BytesIO()
-        with tarfile.open(fileobj=stream, mode='w') as tar:
+        with tarfile.open(fileobj=stream, mode="w") as tar:
             tar.add(src_path, arcname=filename)
         stream.seek(0)
-        self.container.put_archive(
-            path=dest_path,
-            data=stream.read()
-        )
+        self.container.put_archive(path=dest_path, data=stream.read())
 
     def _exec(self, cmd: list[str], stdin: str | None = None) -> str:
         """Execute a container command and return its standard output."""
@@ -225,7 +226,7 @@ class DockerSandboxContainer:
         offset = 0
         while offset + 8 <= len(raw_output):
             stream_type = raw_output[offset]
-            size = int.from_bytes(raw_output[offset + 4:offset + 8], "big")
+            size = int.from_bytes(raw_output[offset + 4 : offset + 8], "big")
             start = offset + 8
             end = start + size
             payload = raw_output[start:end]

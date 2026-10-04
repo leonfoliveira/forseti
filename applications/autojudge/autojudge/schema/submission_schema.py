@@ -23,4 +23,6 @@ class SubmissionSchema(BaseModel):
     """The memory limit for the problem in megabytes."""
 
     test_cases_id: str = Field(alias="testCasesId")
-    """The unique identifiers for the test cases attachment associated with the problem."""
+    """
+    The unique identifiers for the test cases attachment associated with the problem.
+    """

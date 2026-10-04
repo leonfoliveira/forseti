@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { forbidden } from "next/navigation";
 
 import DashboardSettingsPage from "@/app/[slug]/(dashboard)/settings/page";
@@ -11,13 +11,18 @@ jest.mock("@/app/[slug]/(dashboard)/settings/AdminSettingsPage", () => ({
 }));
 
 describe("DashboardSettingsPage", () => {
-  it.each([MemberType.ROOT, MemberType.ADMIN])("allows %s to view settings", async (type) => {
-    await renderWithProviders(<DashboardSettingsPage />, {
-      session: MockSessionResponseDTO({ member: { id: "member-1", name: "Admin", type } }),
-    });
-    expect(screen.getByTestId("admin-settings")).toBeInTheDocument();
-    expect(forbidden).not.toHaveBeenCalled();
-  });
+  it.each([MemberType.ROOT, MemberType.ADMIN])(
+    "allows %s to view settings",
+    async (type) => {
+      await renderWithProviders(<DashboardSettingsPage />, {
+        session: MockSessionResponseDTO({
+          member: { id: "member-1", name: "Admin", type },
+        }),
+      });
+      expect(screen.getByTestId("admin-settings")).toBeInTheDocument();
+      expect(forbidden).not.toHaveBeenCalled();
+    },
+  );
 
   it("forbids guests and non-admin members", async () => {
     await renderWithProviders(<DashboardSettingsPage />, { session: null });

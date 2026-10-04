@@ -1,11 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProblemsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
-  ProblemsPage: ({ problems, canDownloadTestCases }: { problems: unknown[]; canDownloadTestCases?: boolean }) => (
+  ProblemsPage: ({
+    problems,
+    canDownloadTestCases,
+  }: {
+    problems: unknown[];
+    canDownloadTestCases?: boolean;
+  }) => (
     <div data-testid="problem-props">{`${problems.length}:${Boolean(canDownloadTestCases)}`}</div>
   ),
 }));

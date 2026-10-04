@@ -1,11 +1,20 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
-import { MockContestantDashboardResponseDTO, MockSessionResponseDTO } from "@/test/mock/response/MockDTOs";
+import {
+  MockContestantDashboardResponseDTO,
+  MockSessionResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
-  ProblemsPage: ({ problems, leaderboardRow }: { problems: unknown[]; leaderboardRow?: { memberId: string } }) => (
+  ProblemsPage: ({
+    problems,
+    leaderboardRow,
+  }: {
+    problems: unknown[];
+    leaderboardRow?: { memberId: string };
+  }) => (
     <div data-testid="problem-props">{`${problems.length}:${leaderboardRow?.memberId ?? "none"}`}</div>
   ),
 }));

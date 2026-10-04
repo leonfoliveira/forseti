@@ -22,7 +22,8 @@ class S3Config(Settings):
 class SQSConfig(Settings):
     submission_queue: str = Field(validation_alias="AWS_SQS_SUBMISSION_QUEUE")
     submission_judged_queue: str = Field(
-        validation_alias="AWS_SQS_SUBMISSION_JUDGED_QUEUE")
+        validation_alias="AWS_SQS_SUBMISSION_JUDGED_QUEUE"
+    )
 
 
 class AWSConfig(Settings):

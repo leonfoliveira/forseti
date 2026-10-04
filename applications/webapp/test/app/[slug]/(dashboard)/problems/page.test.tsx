@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 
 import DashboardProblemsPage from "@/app/[slug]/(dashboard)/problems/page";
 import { MemberType } from "@/domain/enumerate/MemberType";
@@ -26,7 +26,9 @@ describe("DashboardProblemsPage", () => {
     [MemberType.CONTESTANT, "contestant"],
   ])("selects the role-specific view for %s", async (type, expected) => {
     await renderWithProviders(<DashboardProblemsPage />, {
-      session: MockSessionResponseDTO({ member: { id: "member-1", name: "Member", type } }),
+      session: MockSessionResponseDTO({
+        member: { id: "member-1", name: "Member", type },
+      }),
     });
     expect(screen.getByTestId("role-page")).toHaveTextContent(expected);
   });
