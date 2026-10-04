@@ -104,7 +104,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
                 <ControlledField
                   form={form}
                   name={`problems.${index}.timeLimit`}
-                  label="Time Limit"
+                  label="Time Limit (ms)"
                   field={
                     <Input
                       type="number"
@@ -118,7 +118,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
                 <ControlledField
                   form={form}
                   name={`problems.${index}.memoryLimit`}
-                  label="Memory Limit"
+                  label="Memory Limit (MB)"
                   field={
                     <Input
                       type="number"
@@ -133,7 +133,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
                   <ControlledField
                     form={form}
                     name={`problems.${index}.newDescription`}
-                    label="Description"
+                    label="Description (PDF)"
                     field={
                       <Input
                         type="file"
@@ -165,7 +165,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
                   <ControlledField
                     form={form}
                     name={`problems.${index}.newTestCases`}
-                    label="Test Cases"
+                    label="Test Cases (CSV)"
                     field={
                       <Input
                         type="file"

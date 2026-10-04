@@ -51,28 +51,28 @@ export class Actor {
   async navigateToLeaderboard(contest: Contest) {
     await this.navigate(contest, "leaderboard");
     const { ActorOnLeaderboardPage } =
-      await import("@/test/actor/ActorOnLeaderboardPage");
+      require("@/test/actor/ActorOnLeaderboardPage") as typeof import("@/test/actor/ActorOnLeaderboardPage");
     return new ActorOnLeaderboardPage(this.page, this.member);
   }
 
   async navigateToProblems(contest: Contest) {
     await this.navigate(contest, "problems");
     const { ActorOnProblemsPage } =
-      await import("@/test/actor/ActorOnProblemsPage");
+      require("@/test/actor/ActorOnProblemsPage") as typeof import("@/test/actor/ActorOnProblemsPage");
     return new ActorOnProblemsPage(this.page, this.member);
   }
 
   async navigateToSubmissions(contest: Contest) {
     await this.navigate(contest, "submissions");
     const { ActorOnSubmissionsPage } =
-      await import("@/test/actor/ActorOnSubmissionsPage");
+      require("@/test/actor/ActorOnSubmissionsPage") as typeof import("@/test/actor/ActorOnSubmissionsPage");
     return new ActorOnSubmissionsPage(this.page, this.member);
   }
 
   async navigateToSettings(contest: Contest) {
     await this.navigate(contest, "settings");
     const { ActorOnSettingsPage } =
-      await import("@/test/actor/ActorOnSettingsPage");
+      require("@/test/actor/ActorOnSettingsPage") as typeof import("@/test/actor/ActorOnSettingsPage");
     return new ActorOnSettingsPage(this.page, this.member);
   }
 

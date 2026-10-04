@@ -16,7 +16,7 @@ export class ApiAdapter {
     try {
       const session = await this.getSession();
       const response = await axios.post(
-        `${config.API_URL}/v1/root/contests`,
+        `${config.API_URL}/v1/contests`,
         {
           slug: contest.slug,
           title: contest.title,

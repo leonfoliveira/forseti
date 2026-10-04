@@ -2,7 +2,7 @@ package com.forsetijudge.core.api.http
 
 import com.forsetijudge.core.api.http.dto.response.ErrorResponseBodyDTO
 import com.forsetijudge.core.api.http.middleware.AuthenticationFilter
-import com.forsetijudge.core.api.http.middleware.CsrfCookieTokenRepository
+import com.forsetijudge.core.api.http.middleware.SessionCsrfTokenRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -29,7 +29,7 @@ class HttpConfig(
     @Value($$"${server.cors.allowed-origins}")
     private val allowedOrigins: String,
     private val authenticationFilter: AuthenticationFilter,
-    private val csrfCookieTokenRepository: CsrfCookieTokenRepository,
+    private val sessionCsrfTokenRepository: SessionCsrfTokenRepository,
     private val objectMapper: ObjectMapper,
 ) : WebMvcConfigurer {
     companion object {
@@ -73,7 +73,7 @@ class HttpConfig(
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .csrf { csrf ->
                 csrf
-                    .csrfTokenRepository(csrfCookieTokenRepository)
+                    .csrfTokenRepository(sessionCsrfTokenRepository)
                     .csrfTokenRequestHandler(CsrfTokenRequestAttributeHandler())
                     .ignoringRequestMatchers(*SIGN_IN_ROUTES)
             }.authorizeHttpRequests { auth ->

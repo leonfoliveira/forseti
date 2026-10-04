@@ -175,7 +175,6 @@ test("Default contest behaviour", async ({ page }) => {
     await contestantActonOnSubmissions.navigateToLeaderboard(contest);
   await contestantActonOnLeaderboard.checkLeaderboard(leaderboard);
   await contestantActonOnLeaderboard.signOut(contest);
-  await contestantActor.signOut(contest);
 
   // Step 6: Sign in as judge, check submissions, judge a submission, resubmit a submission
   await judgeActor.signIn(contest);
