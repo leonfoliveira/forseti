@@ -59,3 +59,15 @@ def python_sandbox_image():
         docker.from_env().images.get(image)
     except (ImageNotFound, DockerException):
         pytest.skip(f"Sandbox image {image} not built (see image/build.sh)")
+
+
+@pytest.fixture
+def require_sandbox_image():
+    def check(language):
+        image = f"{LANGUAGE_CONFIGS[language].image}:latest"
+        try:
+            docker.from_env().images.get(image)
+        except (ImageNotFound, DockerException):
+            pytest.skip(f"Sandbox image {image} not built (see image/build.sh)")
+
+    return check

@@ -40,8 +40,13 @@ class Worker:
             self._delete_message(message["ReceiptHandle"])
 
     def _handle_body(self, body):
-        submission = SubmissionSchema(**body)
-        self.judge.judge(submission)
+        try:
+            logging.info(f"Handling body: {body}")
+            submission = SubmissionSchema(**body)
+            self.judge.judge(submission)
+        except Exception as e:
+            logging.error(f"Failed to handle body: {e}")
+            return
 
     def _delete_message(self, receipt_handle):
         sqs_client.delete_message(

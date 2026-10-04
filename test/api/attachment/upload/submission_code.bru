@@ -11,7 +11,21 @@ put {
 }
 
 body:file {
-  file: @file(\\wsl.localhost\Ubuntu\home\leonfoliveira\forseti\test\files\submission_code.py)
+  file: @file(\\wsl.localhost\Ubuntu\home\leonfoliveira\forseti\test\files\accepted.js) @contentType(text/javascript; charset=utf-8)
+}
+
+script:pre-request {
+  const fs = require("fs")
+  const path = require("path")
+  
+  const filepath = bru.getVar("attachment_filepath")
+  const fileBuffer = fs.readFileSync(filepath)
+  
+  req.setBody(fileBuffer)
+  
+  req.setHeader("Content-Type", "text/plain")
+  req.setHeader("Content-Length", fileBuffer.length)
+  
 }
 
 settings {
