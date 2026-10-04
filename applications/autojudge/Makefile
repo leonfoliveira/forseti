@@ -14,5 +14,6 @@ format:
 	black autojudge
 	flake8 autojudge
 
+.PHONY: test
 test:
 	python3 -m pytest

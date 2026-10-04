@@ -36,17 +36,17 @@ class Worker:
 
         logging.info(f"Received {len(messages)} messages from SQS")
         for message in messages:
-            self._handle_body(json.loads(message["Body"]))
-            self._delete_message(message["ReceiptHandle"])
+            try:
+                body = json.loads(message["Body"])
+                logging.info(f"Handling body: {body}")
+                self._handle_body(body)
+                self._delete_message(message["ReceiptHandle"])
+            except Exception as e:
+                logging.error(f"Failed to process message: {e}")
 
     def _handle_body(self, body):
-        try:
-            logging.info(f"Handling body: {body}")
-            submission = SubmissionSchema(**body)
-            self.judge.judge(submission)
-        except Exception as e:
-            logging.error(f"Failed to handle body: {e}")
-            return
+        submission = SubmissionSchema(**body)
+        self.judge.judge(submission)
 
     def _delete_message(self, receipt_handle):
         sqs_client.delete_message(

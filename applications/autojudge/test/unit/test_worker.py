@@ -57,8 +57,7 @@ def test_failed_judge_does_not_delete_message(worker, sqs):
         "Messages": [{"Body": json.dumps(BODY), "ReceiptHandle": "rh"}]
     }
 
-    with pytest.raises(RuntimeError):
-        worker._receive_messages()
+    worker._receive_messages()
 
     sqs.delete_message.assert_not_called()
 
