@@ -1,0 +1,114 @@
+name: Build and Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: build-and-release
+  cancel-in-progress: false
+
+jobs:
+  check-regression-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check regression test status
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const tagName = context.ref.replace('refs/tags/', '');
+
+            const tagResponse = await github.rest.git.getRef({
+              owner,
+              repo,
+              ref: `tags/${tagName}`
+            });
+            const commitSha = tagResponse.data.object.sha;
+
+            const runsResponse = await github.rest.actions.listWorkflowRuns({
+              owner,
+              repo,
+              workflow_id: 'regression-test-branch.yaml',
+              head_sha: commitSha,
+              status: 'completed'
+            });
+
+            const successfulRuns = runsResponse.data.workflow_runs.filter(
+              run => run.conclusion === 'success'
+            );
+
+            if (successfulRuns.length === 0) {
+              const mainBranchRuns = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id: 'regression-test-branch.yaml',
+                branch: 'main',
+                status: 'completed',
+                per_page: 10
+              });
+              
+              const recentSuccessfulRun = mainBranchRuns.data.workflow_runs.find(
+                run => run.conclusion === 'success'
+              );
+              
+              if (!recentSuccessfulRun) {
+                throw new Error('No successful regression test runs found for this release. Please ensure regression tests have passed before creating a release.');
+              }
+              
+              console.log(`Found successful regression test run on main branch: ${recentSuccessfulRun.html_url}`);
+            } else {
+              console.log(`Found successful regression test run for commit ${commitSha}: ${successfulRuns[0].html_url}`);
+            }
+
+  build-and-release:
+    needs: check-regression-tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deployment/production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get tag name
+        id: vars
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Set version environment variable
+        run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install MkDocs and dependencies
+        run: pip install mkdocs mkdocs-material
+
+      - name: Build MkDocs site
+        working-directory: docs
+        run: VERSION=${{ steps.vars.outputs.tag }} mkdocs build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/site
+
+  deploy-pages:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
