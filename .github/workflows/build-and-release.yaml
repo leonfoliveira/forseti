@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: deployment/production
+        working-directory: infrastructure/production
 
     steps:
       - name: Checkout repository
