@@ -4,7 +4,7 @@ WORKDIR /app
 
 RUN apk add --no-cache curl
 
-COPY ./autoscaler autoscaler
+COPY ./autojudge autojudge
 COPY requirements.txt .
 COPY entrypoint.sh entrypoint.sh
 
