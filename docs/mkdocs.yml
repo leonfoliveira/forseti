@@ -3,7 +3,8 @@ repo_url: https://github.com/leonfoliveira/forseti
 edit_uri: /leonfoliveira/forseti/edit/main/docs/docs
 nav:
   - Home: index.md
-  - Architecture: architecture.md
+  - Architecture Overview: architecture.md
+  - Database Overview: database.md
 theme: readthedocs
 extra:
   version: !ENV [VERSION, "latest"]

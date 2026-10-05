@@ -30,9 +30,9 @@ class Attachment(
      * The member who uploaded this attachment.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "member_id")
     @Audited(withModifiedFlag = false)
-    val member: Member,
+    val member: Member?,
     /**
      * Original filename of the attachment. This is important for compiling Java code.
      */

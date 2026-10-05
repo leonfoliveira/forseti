@@ -54,7 +54,7 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig() {
         ContestAuthorizer(contest, member)
             .requireContestStarted()
             .throwIfErrors()
-        if (attachment.member.id != member.id) {
+        if (attachment.member?.id != member.id) {
             throw ForbiddenException("Contestants can only download their own submission code attachments")
         }
     }
