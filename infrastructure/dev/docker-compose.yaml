@@ -95,11 +95,9 @@ services:
       dockerfile: Dockerfile
     container_name: dev-forseti-core
     depends_on:
+      localstack:
+        condition: service_healthy
       postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
@@ -152,11 +150,9 @@ services:
       dockerfile: Dockerfile
     container_name: dev-forseti-autojudge
     depends_on:
+      localstack:
+        condition: service_healthy
       postgres:
-        condition: service_healthy
-      minio:
-        condition: service_healthy
-      rabbitmq:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
@@ -193,7 +189,7 @@ services:
       context: ../../applications/webapp
       dockerfile: Dockerfile
     depends_on:
-      api:
+      core:
         condition: service_healthy
     environment:
       VERSION: latest
