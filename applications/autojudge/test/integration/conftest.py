@@ -68,6 +68,6 @@ def require_sandbox_image():
         try:
             docker.from_env().images.get(image)
         except (ImageNotFound, DockerException):
-            pytest.skip(f"Sandbox image {image} not built (see image/build.sh)")
+            pytest.skip(f"Sandbox image {image} not built (see sandboxes/build.sh)")
 
     return check

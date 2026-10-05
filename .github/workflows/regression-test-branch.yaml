@@ -18,14 +18,16 @@ jobs:
 
       - name: Build test composition
         run: |
-          docker compose -f infrastructure/dev/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp build --progress=plain --pull
-          cd applications/autojudge/image
+          docker compose -f infrastructure/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp build --progress=plain --pull
+          cd applications/autojudge/sandboxes
           docker buildx build -t forseti-sb-base:latest -f base.Dockerfile .
           docker buildx build -t forseti-sb-python312:latest -f python312.Dockerfile .
 
       - name: Start test composition
+        env:
+          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
         run: |
-          docker compose -f infrastructure/dev/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp up -d --wait
+          docker compose -f infrastructure/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp up -d --wait
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
