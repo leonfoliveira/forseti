@@ -35,4 +35,5 @@ Forseti is designed for educational institutions, organizations, and contest hos
 
 ## Next Steps
 
-- **[Architecture](architecture.md)**: Understand the overall system architecture
+- **[Architecture Overview](architecture.md)**: Understand the overall system architecture
+- **[Database Overview](database.md)**: Learn about the database schema and structure.
