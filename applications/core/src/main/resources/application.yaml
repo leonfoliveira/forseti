@@ -11,19 +11,17 @@ spring:
       credentials:
         access-key: ${AWS_ACCESS_KEY_ID:forsetijudge}
         secret-key: ${AWS_SECRET_ACCESS_KEY:forsetijudge}
+      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
       s3:
-        endpoint: ${AWS_S3_ENDPOINT:http://localhost:4566}
+        public-endpoint: ${AWS_S3_PUBLIC_ENDPOINT:http://localhost:4566}
         bucket: ${AWS_S3_BUCKET:dev-forseti-core-bucket}
         path-style-access-enabled: true
         signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
         signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
       sqs:
-        endpoint: ${AWS_SQS_ENDPOINT:http://localhost:4566}
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-forseti-autojudge-submission-queue}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-forseti-core-submission-failed-queue}
         submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-forseti-core-submission-judged-queue}
-      secretsmanager:
-        endpoint: ${AWS_SECRETSMANAGER_ENDPOINT:http://localhost:4566}
 
   # PostgreSQL database configuration
   datasource:

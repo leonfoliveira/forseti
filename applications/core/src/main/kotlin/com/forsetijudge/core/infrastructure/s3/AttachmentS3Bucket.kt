@@ -3,6 +3,7 @@ package com.forsetijudge.core.infrastructure.s3
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.util.SafeLogger
+import java.time.Duration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.core.sync.RequestBody
@@ -12,12 +13,15 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
-import java.time.Duration
 
 @Component
 class AttachmentS3Bucket(
     private val s3PreSigner: S3Presigner,
     private val s3Client: S3Client,
+    @Value($$"${spring.cloud.aws.endpoint}")
+    private val endpoint: String,
+    @Value($$"${spring.cloud.aws.s3.public-endpoint}")
+    private val publicEndpoint: String,
     @Value($$"${spring.cloud.aws.s3.bucket}")
     private val bucketName: String,
     @Value($$"${spring.cloud.aws.s3.signed-download-url-expiration-seconds}")
@@ -49,7 +53,8 @@ class AttachmentS3Bucket(
                 .getObjectRequest(objectRequest)
                 .build()
 
-        return s3PreSigner.presignGetObject(presignRequest).url().toString()
+        val url = s3PreSigner.presignGetObject(presignRequest).url().toString()
+        return getPublicUrl(url)
     }
 
     override fun getUploadUrl(attachment: Attachment): String {
@@ -71,7 +76,8 @@ class AttachmentS3Bucket(
                 .putObjectRequest(objectRequest)
                 .build()
 
-        return s3PreSigner.presignPutObject(presignRequest).url().toString()
+        val url = s3PreSigner.presignPutObject(presignRequest).url().toString()
+        return getPublicUrl(url)
     }
 
     override fun download(attachment: Attachment): ByteArray {
@@ -105,4 +111,6 @@ class AttachmentS3Bucket(
 
         s3Client.putObject(objectRequest, RequestBody.fromBytes(data))
     }
+
+    private fun getPublicUrl(url: String): String = url.replace(endpoint, publicEndpoint)
 }

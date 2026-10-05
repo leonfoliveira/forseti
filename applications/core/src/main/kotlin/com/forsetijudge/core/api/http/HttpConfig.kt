@@ -81,6 +81,8 @@ class HttpConfig(
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()
                     .requestMatchers(
+                        "/actuator/**",
+                        "/metrics/**",
                         *SIGN_IN_ROUTES,
                         "/v1/contests/slug/*",
                         "/v1/contests/*/attachments/*",
