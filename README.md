@@ -7,9 +7,7 @@
 
 A comprehensive, production-ready platform for running secure and scalable competitive programming contests in AWS.
 
-<video src="./.github/demo.webm" controls width="100%">
-    Your browser must support the WebM video format to view this demonstration.
-</video>
+🎬 **[Demonstration](./.github/demo.webm)**
 
 ## Documentation
 
