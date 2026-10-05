@@ -169,7 +169,7 @@ services:
       AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-forseti-core-submission-judged-queue
       PORT: 8082
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8082/actuator/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/health"]
       timeout: 5s
       interval: 15s
       retries: 5
