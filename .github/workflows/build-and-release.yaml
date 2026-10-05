@@ -69,9 +69,6 @@ jobs:
   build-and-release:
     needs: check-regression-tests
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: infrastructure/prod
 
     steps:
       - name: Checkout repository
