@@ -16,6 +16,16 @@ Please refer to the full documentation for detailed information about the platfo
 
 📚 **[View Full Documentation](https://leonfoliveira.github.io/forseti/)**
 
+## Next Steps
+
+The following features are planned for future releases:
+
+- Announcements feature for contest updates and notifications.
+- Clarifications feature for participants to ask questions and receive answers during contests.
+- Ticketing system for managing participant support and print requests.
+- Leaderboard freezing feature to lock the leaderboard at specific times during contests.
+- Better auditing for judging processes.
+
 ## Contributions
 
 Community contributions are highly welcome! Feel free to open issues and submit **Pull Requests (PRs)** to help improve the platform.
