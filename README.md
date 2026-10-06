@@ -1,3 +1,4 @@
+
 # Forseti Judge Platform
 
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC_BY--NC_4.0-blue?style=for-the-badge)](https://creativecommons.org/licenses/by-nc/4.0/deed.en)
@@ -7,7 +8,7 @@
 
 A comprehensive, production-ready platform for running secure and scalable competitive programming contests in AWS.
 
-🎬 **[Demonstration](./.github/demo.webm)**
+[demo.webm](https://github.com/user-attachments/assets/06540f8e-3426-4ebd-b963-ec6cbb068d4f)
 
 ## Documentation
 
