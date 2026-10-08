@@ -1,0 +1,1274 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Forseti System
+
+Parameters:
+  Env:
+    Type: String
+    Description: The environment for the Forseti system (e.g., production, staging)
+    Default: production
+    AllowedValues: [production, staging]
+
+  DomainName:
+    Type: String
+    Description: The domain name for the Forseti system (e.g., example.com)
+    Default: forsetijudge.com
+
+  HostedZoneId:
+    Type: String
+    Description: The ID of the Route 53 hosted zone for the Forseti system's domain name
+
+  CloudFrontPriceClass:
+    Type: String
+    Description: The price class for the CloudFront distribution
+    Default: PriceClass_100
+    AllowedValues: [PriceClass_100, PriceClass_200, PriceClass_All]
+
+  CoreImageUri:
+    Type: String
+    Description: The URI of the Core Docker image for the Forseti system
+
+  AutoJudgeImageUri:
+    Type: String
+    Description: The URI of the AutoJudge Docker image for the Forseti system
+
+  CoreCpu:
+    Type: Number
+    Description: The number of CPU units to allocate to the Core container for the Forseti system
+    Default: 1024
+
+  CoreMemory:
+    Type: Number
+    Description: The amount of memory (in MiB) to allocate to the Core container for the Forseti system
+    Default: 2048
+
+  AutoJudgeCpu:
+    Type: Number
+    Description: The number of CPU units to allocate to the AutoJudge container for the Forseti system
+    Default: 1024
+
+  AutoJudgeMemory:
+    Type: Number
+    Description: The amount of memory (in MiB) to allocate to the AutoJudge container for the Forseti system
+    Default: 2048
+
+  AutoJudgeHostInstanceType:
+    Type: String
+    Description: The instance type for the AutoJudge host
+    Default: t3.small
+
+  AutoJudgeHostDiskSizeGiB:
+    Type: Number
+    Description: The disk size (in GiB) for the AutoJudge host
+    Default: 100
+
+  AutoJudgeBacklogPerTask:
+    Type: Number
+    Default: 10
+    Description: Target number of visible SQS messages per running autojudge ECS task.
+
+  DBMasterUsername:
+    Type: String
+    Default: postgres
+    AllowedPattern: "^[a-zA-Z][a-zA-Z0-9_]*$"
+
+  AuroraInstanceClass:
+    Type: String
+    Default: db.t4g.medium
+
+  RedisNodeType:
+    Type: String
+    Default: cache.t4g.micro
+
+  CloudFrontPrefixListId:
+    Type: String
+    Description: AWS-managed CloudFront origin-facing prefix list ID for this region.
+
+Resources:
+  # ==========================================
+  # VPC & Internet Gateway
+  # ==========================================
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  # ==========================================
+  # Subnets
+  # ==========================================
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: true
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select [0, !GetAZs ""]
+      MapPublicIpOnLaunch: false
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: !Select [1, !GetAZs ""]
+      MapPublicIpOnLaunch: false
+
+  # ==========================================
+  # Public Route Table & Associations
+  # ==========================================
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${Env}-public-rt
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  # ==========================================
+  # S3 Buckets
+  # ==========================================
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub ${Env}-webapp-bucket-${AWS::Region}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToStandardIAAfter30Days
+            Status: Enabled
+            Transitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 30
+            NoncurrentVersionTransitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 30
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+
+  CoreBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Sub ${Env}-core-bucket-${AWS::Region}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: TransitionToStandardIAAfter30Days
+            Status: Enabled
+            Transitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 30
+            NoncurrentVersionTransitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 30
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+
+  WebAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebAppBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontOACRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub ${WebAppBucket.Arn}/*
+            Condition:
+              StringEquals:
+                AWS:SourceAccount: !Ref AWS::AccountId
+              StringLike:
+                AWS:SourceArn: !Sub arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/*
+
+  # ==========================================
+  # Security Groups
+  # ==========================================
+  ALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB accepts HTTP traffic from CloudFront origin-facing servers.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          SourcePrefixListId: !Ref CloudFrontPrefixListId
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  CoreTaskSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Forseti core ECS task security group.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          SourceSecurityGroupId: !GetAtt ALBSecurityGroup.GroupId
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  AutoJudgeTaskSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Forseti autojudge ECS task security group.
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  CoreDbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Aurora PostgreSQL access from Forseti core ECS tasks only.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !GetAtt CoreTaskSecurityGroup.GroupId
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  CoreCacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Redis access from Forseti core ECS tasks only.
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !GetAtt CoreTaskSecurityGroup.GroupId
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  AutoJudgeInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ECS EC2 capacity instances for autojudge.
+      VpcId: !Ref VPC
+      SecurityGroupIngress: []
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+
+  # ==========================================
+  # Secrets
+  # ==========================================
+  CoreDBPasswordSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub ${Env}-core-db-password-secret
+      Description: Database password for Forseti core database.
+      GenerateSecretString:
+        GenerateStringKey: core_db_password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  CoreCachePasswordSecret:
+    Type: AWS::SecretsManager::Secret
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Name: !Sub ${Env}-core-cache-password-secret
+      Description: !Sub ${Env} Core Cache Redis password
+      GenerateSecretString:
+        GenerateStringKey: redis_password
+        PasswordLength: 32
+        ExcludePunctuation: true
+
+  # ==========================================
+  # IAM Roles
+  # ==========================================
+  CoreExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Env}-core-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: ReadCoreSecrets
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref CoreDBPasswordSecret
+                  - !Ref CoreCachePasswordSecret
+
+  CoreTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Env}-core-task-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: CoreS3AndSqsAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CoreBucketReadWrite
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:AbortMultipartUpload
+                Resource: !Sub ${CoreBucket.Arn}/*
+              - Sid: CoreBucketList
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt CoreBucket.Arn
+              - Sid: PublishSubmission
+                Effect: Allow
+                Action: sqs:SendMessage
+                Resource: !GetAtt SubmissionQueue.Arn
+              - Sid: ConsumeSubmissionJudged
+                Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt SubmissionJudgedQueue.Arn
+              - Sid: ConsumeSubmissionFailed
+                Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt SubmissionFailedQueue.Arn
+        - PolicyName: ReadCoreSecrets
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref CoreDBPasswordSecret
+                  - !Ref CoreCachePasswordSecret
+
+  AutoJudgeExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Env}-autojudge-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  AutoJudgeTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Env}-autojudge-task-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: AutoJudgeS3AndSqsAccess
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ReadCoreBucket
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                Resource: !Sub ${CoreBucket.Arn}/*
+              - Sid: ListCoreBucket
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt CoreBucket.Arn
+              - Sid: ConsumeSubmissions
+                Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource: !GetAtt SubmissionQueue.Arn
+              - Sid: PublishJudgeResults
+                Effect: Allow
+                Action: sqs:SendMessage
+                Resource: !GetAtt SubmissionJudgedQueue.Arn
+
+  AutoJudgeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${Env}-autojudge-instance-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+
+  AutoJudgeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: !Sub ${Env}-autojudge-instance-profile
+      Roles:
+        - !Ref AutoJudgeInstanceRole
+
+  # ==========================================
+  # SQS
+  # ==========================================
+  SubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-submission-queue
+      VisibilityTimeout: 900
+      ReceiveMessageWaitTimeSeconds: 20
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedQueue.Arn
+        maxReceiveCount: 3
+
+  SubmissionFailedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-submission-failed-queue
+      VisibilityTimeout: 900
+      ReceiveMessageWaitTimeSeconds: 20
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedQueueDlq.Arn
+        maxReceiveCount: 3
+
+  SubmissionFailedQueueDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-submission-failed-queue-dlq
+      MessageRetentionPeriod: 86400
+      SqsManagedSseEnabled: true
+
+  SubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-submission-judged-queue
+      VisibilityTimeout: 900
+      ReceiveMessageWaitTimeSeconds: 20
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionJudgedQueueDlq.Arn
+        maxReceiveCount: 3
+
+  SubmissionJudgedQueueDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-submission-judged-queue-dlq
+      MessageRetentionPeriod: 86400
+      SqsManagedSseEnabled: true
+
+  # ==========================================
+  # ECS Cluster
+  # ==========================================
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub ${Env}-cluster
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enhanced
+      CapacityProviders:
+        - !Ref AutoJudgeCapacityProvider
+        - FARGATE
+
+  # ==========================================
+  # Application Load Balancer for Core
+  # ==========================================
+  CoreLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub ${Env}-core-alb
+      Scheme: internal
+      Type: application
+      IpAddressType: ipv4
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: "3600"
+      SecurityGroups:
+        - !GetAtt ALBSecurityGroup.GroupId
+      Subnets:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  CoreTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub ${Env}-core-tg
+      TargetType: ip
+      Protocol: HTTP
+      Port: 8080
+      VpcId: !Ref VPC
+      HealthCheckEnabled: true
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /actuator/health
+      HealthCheckPort: traffic-port
+      HealthCheckIntervalSeconds: 15
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 3
+      Matcher:
+        HttpCode: 200-399
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: "true"
+        - Key: stickiness.type
+          Value: lb_cookie
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: "86400"
+
+  CoreListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref CoreLoadBalancer
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref CoreTargetGroup
+
+  # ==========================================
+  # Aurora PostgreSQL
+  # ==========================================
+  CoreDbSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: !Sub ${Env} Aurora PostgreSQL subnet group
+      DBSubnetGroupName: !Sub ${Env}-core-db-subnet
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  CoreDb:
+    Type: AWS::RDS::DBCluster
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      DBClusterIdentifier: !Sub ${Env}-core-db
+      Engine: aurora-postgresql
+      DatabaseName: forseti
+      Port: 5432
+      MasterUsername: !Ref DBMasterUsername
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${CoreDBPasswordSecret}:SecretString:root_password}}"
+      DBSubnetGroupName: !Ref CoreDbSubnetGroup
+      VpcSecurityGroupIds:
+        - !GetAtt CoreDbSecurityGroup.GroupId
+      StorageEncrypted: true
+      BackupRetentionPeriod: 7
+      CopyTagsToSnapshot: true
+      PreferredBackupWindow: 03:00-03:30
+      PreferredMaintenanceWindow: sun:04:00-sun:04:30
+      EnableCloudwatchLogsExports:
+        - postgresql
+
+  CoreDbInstance1:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub ${Env}-core-db-a
+      DBClusterIdentifier: !Ref CoreDb
+      Engine: aurora-postgresql
+      DBInstanceClass: !Ref AuroraInstanceClass
+      PubliclyAccessible: false
+      AutoMinorVersionUpgrade: true
+      EnablePerformanceInsights: true
+      AvailabilityZone: !Select [0, !GetAZs ""]
+
+  CoreDbInstance2:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Sub ${Env}-core-db-b
+      DBClusterIdentifier: !Ref CoreDb
+      Engine: aurora-postgresql
+      DBInstanceClass: !Ref AuroraInstanceClass
+      PubliclyAccessible: false
+      AutoMinorVersionUpgrade: true
+      EnablePerformanceInsights: true
+      AvailabilityZone: !Select [1, !GetAZs ""]
+
+  # ==========================================
+  # ElastiCache Redis OSS
+  # ==========================================
+  CoreCacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: !Sub ${Env} Redis subnet group
+      CacheSubnetGroupName: !Sub ${Env}-core-cache-subnet
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+
+  CoreCache:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: !Sub ${Env}-core-cache
+      ReplicationGroupDescription: !Sub ${Env} Forseti core Redis cache
+      Engine: redis
+      CacheNodeType: !Ref RedisNodeType
+      NumCacheClusters: 2
+      MultiAZEnabled: true
+      AutomaticFailoverEnabled: true
+      TransitEncryptionEnabled: true
+      CacheSubnetGroupName: !Ref CoreCacheSubnetGroup
+      SecurityGroupIds:
+        - !GetAtt CoreCacheSecurityGroup.GroupId
+      Port: 6379
+      AtRestEncryptionEnabled: true
+      AuthToken: !Sub "{{resolve:secretsmanager:${CoreCachePasswordSecret}:SecretString:root_password}}"
+
+  # ==========================================
+  # ECS Fargate Core
+  # ==========================================
+  CoreLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /ecs/${Env}-core
+      RetentionInDays: 14
+
+  CoreTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub ${Env}-core
+      Cpu: !Ref CoreCpu
+      Memory: !Ref CoreMemory
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !GetAtt CoreExecutionRole.Arn
+      TaskRoleArn: !GetAtt CoreTaskRole.Arn
+      ContainerDefinitions:
+        - Name: core
+          Image: !Ref CoreImageUri
+          Essential: true
+          PortMappings:
+            - ContainerPort: 8080
+              Protocol: tcp
+            - ContainerPort: 8081
+              Protocol: tcp
+          Environment:
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_PUBLIC_ENDPOINT
+              Value: !Sub "https://s3.${AWS::Region}.amazonaws.com"
+            - Name: AWS_S3_BUCKET
+              Value: !Ref CoreBucket
+            - Name: AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_SQS_SUBMISSION_QUEUE
+              Value: !Ref SubmissionQueue
+            - Name: AWS_SQS_SUBMISSION_FAILED_QUEUE
+              Value: !Ref SubmissionFailedQueue
+            - Name: AWS_SQS_JUDGE_QUEUE
+              Value: !Ref SubmissionJudgedQueue
+            - Name: DB_URL
+              Value: !Sub jdbc:postgresql://${CoreDb.Endpoint.Address}:5432/forseti
+            - Name: DB_USER
+              Value: !Ref DBMasterUsername
+            - Name: REDIS_HOST
+              Value: !GetAtt CoreCache.PrimaryEndPoint.Address
+            - Name: REDIS_PORT
+              Value: !GetAtt CoreCache.PrimaryEndPoint.Port
+            - Name: REDIS_SOCKET_IO_TTL_SECONDS
+              Value: "600"
+            - Name: OTEL_TRACES_EXPORTER
+              Value: none
+            - Name: OTEL_METRICS_EXPORTER
+              Value: none
+            - Name: OTEL_LOGS_EXPORTER
+              Value: none
+            - Name: DOMAIN
+              Value: !Ref DomainName
+            - Name: ALLOWED_ORIGINS
+              Value: !Sub "https://${DomainName}"
+            - Name: SECURE_COOKIES
+              Value: "true"
+            - Name: SESSION_EXPIRATION_SECONDS
+              Value: "21600"
+            - Name: SESSION_ROOT_EXPIRATION_SECONDS
+              Value: "900"
+            - Name: API_PORT
+              Value: "8080"
+            - Name: WS_PORT
+              Value: "8081"
+          Secrets:
+            - Name: DB_PASSWORD
+              ValueFrom: !Sub "${CoreDBPasswordSecret}:root_password::"
+            - Name: REDIS_PASSWORD
+              ValueFrom: !Sub "${CoreCachePasswordSecret}:root_password::"
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref CoreLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: core
+
+  CoreService:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - CoreListener
+    Properties:
+      ServiceName: !Sub ${Env}-core
+      Cluster: !Ref ECSCluster
+      LaunchType: FARGATE
+      DesiredCount: 2
+      PlatformVersion: LATEST
+      EnableECSManagedTags: true
+      PropagateTags: SERVICE
+      HealthCheckGracePeriodSeconds: 60
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 100
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !GetAtt CoreTaskSecurityGroup.GroupId
+          Subnets:
+            - !Ref PrivateSubnet1
+            - !Ref PrivateSubnet2
+      LoadBalancers:
+        - ContainerName: core
+          ContainerPort: 8080
+          TargetGroupArn: !Ref CoreTargetGroup
+      TaskDefinition: !Ref CoreTaskDefinition
+      AvailabilityZoneRebalancing: ENABLED
+
+  # ==========================================
+  # ECS EC2 Capacity for AutoJudge
+  # ==========================================
+  AutoJudgeLogGroup:
+    Type: AWS::Logs::LogGroup
+    DeletionPolicy: Retain
+    Properties:
+      LogGroupName: !Sub /ecs/${Env}-autojudge
+      RetentionInDays: 14
+
+  AutoJudgeLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub ${Env}-autojudge-lt
+      LaunchTemplateData:
+        ImageId: "{{resolve:ssm:/aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id}}"
+        InstanceType: !Ref AutoJudgeHostInstanceType
+        IamInstanceProfile:
+          Name: !Ref AutoJudgeInstanceProfile
+        SecurityGroupIds:
+          - !GetAtt AutoJudgeInstanceSecurityGroup.GroupId
+        MetadataOptions:
+          HttpEndpoint: enabled
+          HttpTokens: required
+          HttpPutResponseHopLimit: 2
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: !Ref AutoJudgeHostDiskSizeGiB
+              VolumeType: gp3
+              Encrypted: true
+              DeleteOnTermination: true
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            set -eux
+            cat > /etc/ecs/ecs.config <<EOF
+            ECS_CLUSTER=${Env}-cluster
+            ECS_CONTAINER_INSTANCE_TAGS={"Environment":"${Env}","Service":"autojudge"}
+            ECS_ENABLE_CONTAINER_METADATA=true
+            EOF
+
+  AutoJudgeAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      AutoScalingGroupName: !Sub ${Env}-autojudge-asg
+      MinSize: "1"
+      DesiredCapacity: "1"
+      MaxSize: "3"
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+      LaunchTemplate:
+        LaunchTemplateId: !Ref AutoJudgeLaunchTemplate
+        Version: !GetAtt AutoJudgeLaunchTemplate.LatestVersionNumber
+
+  AutoJudgeCapacityProvider:
+    Type: AWS::ECS::CapacityProvider
+    Properties:
+      Name: !Sub ${Env}-autojudge-cp
+      AutoScalingGroupProvider:
+        AutoScalingGroupArn: !Ref AutoJudgeAutoScalingGroup
+        ManagedScaling:
+          Status: ENABLED
+          TargetCapacity: 80
+          MinimumScalingStepSize: 1
+          MaximumScalingStepSize: 2
+          InstanceWarmupPeriod: 300
+        ManagedTerminationProtection: ENABLED
+        ManagedDraining: ENABLED
+
+  AutoJudgeTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub ${Env}-autojudge
+      Cpu: !Ref AutoJudgeCpu
+      Memory: !Ref AutoJudgeMemory
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - EC2
+      ExecutionRoleArn: !GetAtt AutoJudgeExecutionRole.Arn
+      TaskRoleArn: !GetAtt AutoJudgeTaskRole.Arn
+      Volumes:
+        - Name: docker-socket
+          Host:
+            SourcePath: /var/run/docker.sock
+      ContainerDefinitions:
+        - Name: autojudge
+          Image: !Ref AutoJudgeImageUri
+          Essential: true
+          User: "0"
+          MountPoints:
+            - SourceVolume: docker-socket
+              ContainerPath: /var/run/docker.sock
+              ReadOnly: false
+          Environment:
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_BUCKET
+              Value: !Ref CoreBucket
+            - Name: AWS_SQS_SUBMISSION_QUEUE
+              Value: !Ref SubmissionQueue
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
+              Value: !Ref SubmissionJudgedQueue
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref AutoJudgeLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: autojudge
+
+  AutoJudgeService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub ${Env}-autojudge
+      Cluster: !Ref ECSCluster
+      DesiredCount: 1
+      CapacityProviderStrategy:
+        - CapacityProvider: !Ref AutoJudgeCapacityProvider
+          Weight: 1
+      EnableECSManagedTags: true
+      PropagateTags: SERVICE
+      DeploymentConfiguration:
+        MaximumPercent: 200
+        MinimumHealthyPercent: 50
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !GetAtt AutoJudgeTaskSecurityGroup.GroupId
+          Subnets:
+            - !Ref PrivateSubnet1
+            - !Ref PrivateSubnet2
+      TaskDefinition: !Ref AutoJudgeTaskDefinition
+      AvailabilityZoneRebalancing: ENABLED
+      PlacementStrategies:
+        - Type: spread
+          Field: attribute:ecs.availability-zone
+
+  # ==========================================
+  # AutoJudge service autoscaling
+  # ==========================================
+  AutoJudgeScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    DependsOn:
+      - AutoJudgeService
+    Properties:
+      MinCapacity: 1
+      MaxCapacity: 3
+      ResourceId: !Sub service/${Env}-cluster/${Env}-autojudge
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+
+  AutoJudgeQueueScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: !Sub ${Env}-autojudge-queue-scaling
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref AutoJudgeScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: !Ref AutoJudgeBacklogPerTask
+        ScaleOutCooldown: 30
+        ScaleInCooldown: 120
+        DisableScaleIn: false
+        CustomizedMetricSpecification:
+          Metrics:
+            - Id: queue_depth
+              MetricStat:
+                Metric:
+                  Namespace: AWS/SQS
+                  MetricName: ApproximateNumberOfMessagesVisible
+                  Dimensions:
+                    - Name: QueueName
+                      Value: !GetAtt SubmissionQueue.QueueName
+                Stat: Sum
+              ReturnData: false
+            - Id: running_tasks
+              MetricStat:
+                Metric:
+                  Namespace: ECS/ContainerInsights
+                  MetricName: RunningTaskCount
+                  Dimensions:
+                    - Name: ClusterName
+                      Value: !Ref ECSCluster
+                    - Name: ServiceName
+                      Value: !Sub ${Env}-autojudge
+                Stat: Average
+              ReturnData: false
+            - Id: backlog_per_task
+              Expression: queue_depth / running_tasks
+              Label: Backlog per running task
+              ReturnData: true
+
+  # ==========================================
+  # Certificate and DNS Records
+  # ==========================================
+  ViewerCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      SubjectAlternativeNames:
+        - !Sub api.${DomainName}
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref DomainName
+          HostedZoneId: !Ref HostedZoneId
+        - DomainName: !Sub api.${DomainName}
+          HostedZoneId: !Ref HostedZoneId
+
+  DnsRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Comment: !Sub ${Env} Forseti public DNS records.
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !Ref DomainName
+            EvaluateTargetHealth: false
+
+        - Name: !Ref DomainName
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !Ref DomainName
+            EvaluateTargetHealth: false
+
+        - Name: !Sub api.${DomainName}
+          Type: A
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !Sub api.${DomainName}
+            EvaluateTargetHealth: false
+
+        - Name: !Sub api.${DomainName}
+          Type: AAAA
+          AliasTarget:
+            HostedZoneId: Z2FDTNDATAQYW2
+            DNSName: !Sub api.${DomainName}
+            EvaluateTargetHealth: false
+
+  # ==========================================
+  # CloudFront Distributions
+  # ==========================================
+  WebAppOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub ${Env}-webapp-oac
+        Description: CloudFront OAC for the private Forseti WebApp S3 bucket.
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CoreVpcOrigin:
+    Type: AWS::CloudFront::VpcOrigin
+    Properties:
+      VpcOriginEndpointConfig:
+        Name: !Sub ${Env}-core-vpc-origin
+        Arn: !Ref CoreLoadBalancer
+        HTTPPort: 80
+        OriginProtocolPolicy: http-only
+        IpAddressType: ipv4
+      Tags:
+        - Key: Environment
+          Value: !Ref Env
+        - Key: Project
+          Value: Forseti
+        - Key: Service
+          Value: core
+
+  WebAppRewriteFunction:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub ${Env}-webapp-rewrite
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Rewrite Forseti static and dynamic routes to S3 objects.
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+            var request = event.request;
+            var uri = request.uri;
+
+            if (uri === '/') {
+                request.uri = '/index.html';
+                return request;
+            }
+
+            if (uri.indexOf('/_next/') === 0) {
+                return request;
+            }
+
+            if (uri === '/error' || uri === '/error/') {
+                request.uri = '/error/index.html';
+                return request;
+            }
+
+            if (uri.indexOf('/error/') === 0) {
+                var errorPath = uri;
+                if (errorPath.length > 1 && errorPath.charAt(errorPath.length - 1) === '/') {
+                    errorPath = errorPath.slice(0, -1);
+                }
+
+                if (!/\.[^/]+$/.test(errorPath)) {
+                    request.uri = errorPath + '.html';
+                } else {
+                    request.uri = errorPath;
+                }
+                return request;
+            }
+
+            if (/\.[^/]+$/.test(uri)) {
+                return request;
+            }
+
+            var path = uri;
+            if (path.length > 1 && path.charAt(path.length - 1) === '/') {
+                path = path.slice(0, -1);
+            }
+
+            var parts = path.split('/').filter(function (part) {
+                return part.length > 0;
+            });
+
+            if (parts.length >= 2) {
+                var subpath = parts.slice(1).join('/');
+                request.uri = '/_/' + subpath + '.html';
+            } else if (parts.length === 1) {
+                request.uri = '/' + parts[0] + '.html';
+            }
+
+            return request;
+        }
+
+  WebAppDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: !Sub ${Env} Forseti static web application.
+        Aliases:
+          - !Ref DomainName
+        Enabled: true
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: !Ref CloudFrontPriceClass
+        DefaultRootObject: index.html
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ViewerCertificate
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+        Origins:
+          - Id: WebAppS3Origin
+            DomainName: !Ref DomainName
+            OriginAccessControlId: !Ref WebAppOriginAccessControl
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          TargetOriginId: WebAppS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt WebAppRewriteFunction.FunctionMetadata.FunctionARN
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ErrorCachingMinTTL: 0
+            ResponseCode: 403
+            ResponsePagePath: /error/403/index.html
+          - ErrorCode: 404
+            ErrorCachingMinTTL: 0
+            ResponseCode: 404
+            ResponsePagePath: /error/404/index.html
+          - ErrorCode: 500
+            ErrorCachingMinTTL: 0
+            ResponseCode: 500
+            ResponsePagePath: /error/500/index.html
+          - ErrorCode: 503
+            ErrorCachingMinTTL: 0
+            ResponseCode: 503
+            ResponsePagePath: /error/503/index.html
+
+  ApiDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: !Sub ${Env} Forseti Core API.
+        Aliases:
+          - !Ref DomainName
+        Enabled: true
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: !Ref CloudFrontPriceClass
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ViewerCertificate
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+        Origins:
+          - Id: CoreVpcOrigin
+            DomainName: !Ref DomainName
+            VpcOriginConfig:
+              VpcOriginId: !Ref CoreVpcOrigin
+              OriginReadTimeout: 60
+              OriginKeepaliveTimeout: 60
+        DefaultCacheBehavior:
+          TargetOriginId: CoreVpcOrigin
+          ViewerProtocolPolicy: redirect-to-https
+          Compress: true
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
+          CachedMethods:
+            - GET
+            - HEAD
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          OriginRequestPolicyId: 216adef6-5c7f-47e4-b989-5492eafa07d3
