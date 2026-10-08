@@ -108,12 +108,12 @@ services:
       AWS_SECRET_ACCESS_KEY: forsetijudge
       AWS_ENDPOINT: http://localstack:4566
       AWS_S3_PUBLIC_ENDPOINT: http://localhost:4566
-      AWS_S3_BUCKET: dev-forseti-core-bucket
+      AWS_S3_BUCKET: dev-core-bucket
       AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS: 3600
       AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS: 3600
-      AWS_SQS_SUBMISSION_QUEUE: dev-forseti-autojudge-submission-queue
-      AWS_SQS_SUBMISSION_FAILED_QUEUE: dev-forseti-core-submission-failed-queue
-      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-forseti-core-submission-judged-queue
+      AWS_SQS_SUBMISSION_QUEUE: dev-submission-queue
+      AWS_SQS_SUBMISSION_FAILED_QUEUE: dev-submission-failed-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
       DB_PASSWORD: forsetijudge
@@ -124,7 +124,8 @@ services:
       OTEL_TRACES_EXPORTER: none
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
-      WEBAPP_PUBLIC_URL: http://localhost:3000
+      COOKIE_DOMAIN: "*"
+      ALLOWED_ORIGINS: http://localhost:3000
       SECURE_COOKIES: false
       SESSION_EXPIRATION_SECONDS: 86400
       SESSION_ROOT_EXPIRATION_SECONDS: 86400
@@ -164,9 +165,9 @@ services:
       AWS_ENDPOINT_URL: http://localstack:4566
       AWS_ACCESS_KEY_ID: forsetijudge
       AWS_SECRET_ACCESS_KEY: forsetijudge
-      AWS_S3_BUCKET: dev-forseti-core-bucket
-      AWS_SQS_SUBMISSION_QUEUE: dev-forseti-autojudge-submission-queue
-      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-forseti-core-submission-judged-queue
+      AWS_S3_BUCKET: dev-core-bucket
+      AWS_SQS_SUBMISSION_QUEUE: dev-submission-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
       PORT: 8082
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8082/health"]

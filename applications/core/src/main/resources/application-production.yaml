@@ -1,0 +1,60 @@
+spring:
+  # AWS configuration
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:us-east-1}
+      s3:
+        public-endpoint: ${AWS_S3_PUBLIC_ENDPOINT}
+        bucket: ${AWS_CORE_BUCKET:prod-core-bucket}
+        path-style-access-enabled: true
+        signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
+        signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
+      sqs:
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:prod-submission-queue}
+        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:prod-submission-failed-queue}
+        submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:prod-submission-judged-queue}
+
+  # PostgreSQL database configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        ddl-auto: validate
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
+
+  # Redis configuration
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+      socket_io_ttl_seconds: ${REDIS_SOCKET_IO_TTL_SECONDS:600}
+
+# Security configuration
+security:
+  cookie:
+    domain: ${DOMAIN:forsetijudge.com}
+    secure: true
+  session:
+    expiration:
+      default_seconds: ${SESSION_EXPIRATION_SECONDS:21600}
+      root_seconds: ${SESSION_ROOT_EXPIRATION_SECONDS:900}
+
+# API server configuration
+server:
+  cors:
+    allowed-origins: ${DOMAIN:forsetijudge.com}
+  port: ${API_PORT:8080}
+  ws-port: ${WS_PORT:8081}

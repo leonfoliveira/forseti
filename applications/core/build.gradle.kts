@@ -76,7 +76,7 @@ buildscript {
 
 val yaml = Yaml()
 val activeProfile = System.getenv("SPRING_PROFILES_ACTIVE") ?: "development"
-val configFile = File("$rootDir/src/main/resources/application.yaml")
+val configFile = File("$rootDir/src/main/resources/application-$activeProfile.yaml")
 val config: Map<String, Any> = yaml.load(configFile.inputStream())
 
 @Suppress("UNCHECKED_CAST")

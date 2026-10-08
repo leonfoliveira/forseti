@@ -1,0 +1,64 @@
+spring:
+  # AWS configuration
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:us-east-1}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:forsetijudge}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:forsetijudge}
+      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+      s3:
+        public-endpoint: ${AWS_S3_PUBLIC_ENDPOINT:http://localhost:4566}
+        bucket: ${AWS_S3_BUCKET:dev-core-bucket}
+        path-style-access-enabled: true
+        signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
+        signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
+      sqs:
+        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-submission-queue}
+        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-submission-failed-queue}
+        submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-submission-judged-queue}
+
+  # PostgreSQL database configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/forseti}
+    username: ${DB_USER:forseti}
+    password: ${DB_PASSWORD:forsetijudge}
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        ddl-auto: validate
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
+
+  # Redis configuration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:forsetijudge}
+      socket_io_ttl_seconds: ${REDIS_SOCKET_IO_TTL_SECONDS:600}
+
+# Security configuration
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN:*}
+    secure: ${SECURE_COOKIES:false}
+  session:
+    expiration:
+      default_seconds: ${SESSION_EXPIRATION_SECONDS:86400}
+      root_seconds: ${SESSION_ROOT_EXPIRATION_SECONDS:86400}
+
+# API server configuration
+server:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
+  port: ${API_PORT:8080}
+  ws-port: ${WS_PORT:8081}
