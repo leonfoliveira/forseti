@@ -728,6 +728,7 @@ Resources:
   # ==========================================
   CoreLogGroup:
     Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /ecs/${Env}-core
@@ -848,6 +849,7 @@ Resources:
   # ==========================================
   AutoJudgeLogGroup:
     Type: AWS::Logs::LogGroup
+    UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
     Properties:
       LogGroupName: !Sub /ecs/${Env}-autojudge

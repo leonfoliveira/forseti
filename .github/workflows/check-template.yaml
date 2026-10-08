@@ -1,0 +1,42 @@
+name: Check Template
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check-template:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infrastructure/production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            template:
+              - 'infrastructure/production/**'
+              - '.github/workflows/check-template.yaml'
+
+      - name: Set up Python 3.12
+        if: steps.changes.outputs.template == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install cfn-lint
+        if: steps.changes.outputs.template == 'true'
+        run: pip install cfn-lint
+
+      - name: Lint CloudFormation templates
+        if: steps.changes.outputs.template == 'true'
+        run: cfn-lint template.yaml
