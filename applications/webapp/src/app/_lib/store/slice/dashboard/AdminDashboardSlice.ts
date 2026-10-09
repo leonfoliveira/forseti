@@ -7,7 +7,7 @@ import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/Co
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 export type AdminDashboardState = AdminDashboardResponseDTO;
 
@@ -39,7 +39,10 @@ export const AdminDashboardSlice = createSlice({
         action.payload,
       );
     },
-    mergeSubmission(state, action: { payload: SubmissionWithCodeResponseDTO }) {
+    mergeSubmission(
+      state,
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
+    ) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
     },
   },

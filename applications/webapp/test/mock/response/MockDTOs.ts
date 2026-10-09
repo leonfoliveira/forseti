@@ -16,6 +16,7 @@ import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDa
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
@@ -24,6 +25,7 @@ import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseD
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
@@ -138,6 +140,34 @@ export const MockSubmissionWithCodeResponseDTO = (
   ...overrides,
 });
 
+export const MockSubmissionWithCodeAndExecutionResponseDTO = (
+  overrides: Partial<SubmissionWithCodeAndExecutionsResponseDTO> = {},
+): SubmissionWithCodeAndExecutionsResponseDTO => ({
+  ...MockSubmissionWithCodeResponseDTO(),
+  executions: [MockExecutionResponseDTO({ id: "execution-1" })],
+  ...overrides,
+});
+
+export const MockExecutionResponseDTO = (
+  overrides: Partial<ExecutionResponseDTO> = {},
+): ExecutionResponseDTO => ({
+  id: "execution-1",
+  createdAt,
+  updatedAt: createdAt,
+  answer: SubmissionAnswer.ACCEPTED,
+  totalTestCases: 10,
+  approvedTestCases: 10,
+  maxCpuTimeMs: 1000,
+  maxClockTimeMs: 1000,
+  maxPeakMemoryKb: 1024,
+  details: MockAttachmentResponseDTO({
+    id: "details-1",
+    filename: "details.log",
+  }),
+  version: 1,
+  ...overrides,
+});
+
 export const MockLeaderboardCellResponseDTO = (
   overrides: Partial<LeaderboardCellResponseDTO> = {},
 ): LeaderboardCellResponseDTO => ({
@@ -214,7 +244,7 @@ export const MockAdminDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   ...overrides,
 });
 
@@ -248,7 +278,7 @@ export const MockJudgeDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberResponseDTO({ type: MemberType.JUDGE })],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   ...overrides,
 });
 

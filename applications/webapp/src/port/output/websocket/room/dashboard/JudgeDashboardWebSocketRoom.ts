@@ -1,11 +1,15 @@
 import { WebSocketRoom } from "@/port/output/websocket/WebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 export type JudgeDashboardWebSocketRoomCallbacks = {
   LEADERBOARD_UPDATED: (leaderboardCell: LeaderboardCellResponseDTO) => void;
-  SUBMISSION_CREATED: (submission: SubmissionWithCodeResponseDTO) => void;
-  SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
+  SUBMISSION_CREATED: (
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) => void;
+  SUBMISSION_UPDATED: (
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) => void;
 };
 
 export class JudgeDashboardWebSocketRoom extends WebSocketRoom<JudgeDashboardWebSocketRoomCallbacks> {

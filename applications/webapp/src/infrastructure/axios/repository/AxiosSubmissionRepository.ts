@@ -3,6 +3,7 @@ import { SubmissionRepository } from "@/port/output/repository/SubmissionReposit
 import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 export class AxiosSubmissionRepository implements SubmissionRepository {
   private basePath = (contestId: string) =>
@@ -27,23 +28,25 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
-  ): Promise<SubmissionWithCodeResponseDTO> {
-    const response = await this.axiosClient.put<SubmissionWithCodeResponseDTO>(
-      `${this.basePath(contestId)}/${submissionId}:update-answer`,
-      {
-        data: { answer },
-      },
-    );
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
+    const response =
+      await this.axiosClient.put<SubmissionWithCodeAndExecutionsResponseDTO>(
+        `${this.basePath(contestId)}/${submissionId}:update-answer`,
+        {
+          data: { answer },
+        },
+      );
     return response.data;
   }
 
   async resubmit(
     contestId: string,
     submissionId: string,
-  ): Promise<SubmissionWithCodeResponseDTO> {
-    const response = await this.axiosClient.put<SubmissionWithCodeResponseDTO>(
-      `${this.basePath(contestId)}/${submissionId}:resubmit`,
-    );
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
+    const response =
+      await this.axiosClient.put<SubmissionWithCodeAndExecutionsResponseDTO>(
+        `${this.basePath(contestId)}/${submissionId}:resubmit`,
+      );
     return response.data;
   }
 }

@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.attachment
 
 import com.forsetijudge.core.application.helper.AuthenticationHelper
+import com.forsetijudge.core.application.helper.attachment.auth.ExecutionDetailsAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemDescriptionAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemTestCasesAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.SubmissionCodeAuthorizationConfig
@@ -30,6 +31,7 @@ class SignedDownloadAttachmentService(
             Attachment.Context.PROBLEM_DESCRIPTION to ProblemDescriptionAuthorizationConfig(),
             Attachment.Context.PROBLEM_TEST_CASES to ProblemTestCasesAuthorizationConfig(),
             Attachment.Context.SUBMISSION_CODE to SubmissionCodeAuthorizationConfig(),
+            Attachment.Context.EXECUTION_DETAILS to ExecutionDetailsAuthorizationConfig(),
         )
 
     /**

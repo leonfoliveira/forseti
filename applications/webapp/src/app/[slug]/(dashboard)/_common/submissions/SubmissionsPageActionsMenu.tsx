@@ -12,15 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionExecutions";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 type Props = {
-  submission: SubmissionWithCodeResponseDTO;
+  submission:
+    SubmissionWithCodeResponseDTO | SubmissionWithCodeAndExecutionsResponseDTO;
   canViewExecutions?: boolean;
 } & (
   | {
       canEdit: true;
-      onEdit: (submission: SubmissionWithCodeResponseDTO) => void;
+      onEdit: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
     }
   | {
       canEdit?: false;
@@ -43,7 +46,7 @@ export function SubmissionsPageActionsMenu({
     items.push(
       <SubmissionsPageActionDownload
         key="download"
-        submission={submission}
+        submission={submission as SubmissionWithCodeResponseDTO}
         onClose={close}
       />,
     );
@@ -54,16 +57,16 @@ export function SubmissionsPageActionsMenu({
       items.push(
         <SubmissionsPageActionResubmit
           key="rerun"
-          submission={submission as SubmissionWithCodeResponseDTO}
+          submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
           onClose={close}
-          onRerun={onEdit!}
+          onResubmit={onEdit!}
         />,
       );
     }
     items.push(
       <SubmissionsPageActionJudge
         key="judge"
-        submission={submission as SubmissionWithCodeResponseDTO}
+        submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
         onClose={close}
         onJudge={onEdit!}
       />,
@@ -99,14 +102,27 @@ export function SubmissionsPageActionsMenu({
             {canEdit && (
               <>
                 {submission.status != SubmissionStatus.JUDGING && (
-                  <SubmissionsPageActionResubmit
-                    submission={submission as SubmissionWithCodeResponseDTO}
+                  <SubmissionsPageActionExecutions
+                    executions={
+                      (submission as SubmissionWithCodeAndExecutionsResponseDTO)
+                        .executions
+                    }
                     onClose={close}
-                    onRerun={onEdit}
+                  />
+                )}
+                {submission.status != SubmissionStatus.JUDGING && (
+                  <SubmissionsPageActionResubmit
+                    submission={
+                      submission as SubmissionWithCodeAndExecutionsResponseDTO
+                    }
+                    onClose={close}
+                    onResubmit={onEdit}
                   />
                 )}
                 <SubmissionsPageActionJudge
-                  submission={submission as SubmissionWithCodeResponseDTO}
+                  submission={
+                    submission as SubmissionWithCodeAndExecutionsResponseDTO
+                  }
                   onClose={close}
                   onJudge={onEdit}
                 />

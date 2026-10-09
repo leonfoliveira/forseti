@@ -32,7 +32,7 @@ class Attachment(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     @Audited(withModifiedFlag = false)
-    val member: Member?,
+    val member: Member? = null,
     /**
      * Original filename of the attachment. This is important for compiling Java code.
      */
@@ -62,5 +62,6 @@ class Attachment(
         PROBLEM_DESCRIPTION,
         PROBLEM_TEST_CASES,
         SUBMISSION_CODE,
+        EXECUTION_DETAILS,
     }
 }

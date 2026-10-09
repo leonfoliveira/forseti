@@ -55,7 +55,7 @@ jobs:
           # Run linting, testing, and builds in parallel
           ./gradlew ktlintCheck &
           ./gradlew test &
-          ./gradlew :core:build -x check
+          ./gradlew build -x check
 
           # Wait for all tasks to complete
           wait

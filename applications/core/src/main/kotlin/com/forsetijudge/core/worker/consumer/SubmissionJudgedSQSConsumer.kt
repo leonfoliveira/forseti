@@ -18,7 +18,7 @@ class SubmissionJudgedSQSConsumer(
      * Listens for messages from the submission judged SQS queue and processes them.
      * This queue receives messages from the auto-judge service indicating that a submission has been judged.
      *
-     * @param body The body of the message received from the SQS queue, containing the submission ID and the judged answer.
+     * @param body The body of the message received from the SQS queue, containing the submission ID, the judged answer, and execution details.
      */
     @SqsListener($$"${spring.cloud.aws.sqs.submission-judged-queue}")
     fun listen(body: Body) {
@@ -28,6 +28,12 @@ class SubmissionJudgedSQSConsumer(
             JudgeSubmissionUseCase.Command(
                 submissionId = body.submissionId,
                 answer = body.answer,
+                totalTestCases = body.totalTestCases,
+                approvedTestCases = body.approvedTestCases,
+                maxCpuTimeMs = body.maxCpuTimeMs,
+                maxClockTimeMs = body.maxClockTimeMs,
+                maxPeakMemoryKb = body.maxPeakMemoryKb,
+                detailsId = body.detailsId,
             ),
         )
     }
@@ -35,5 +41,11 @@ class SubmissionJudgedSQSConsumer(
     data class Body(
         val submissionId: UUID,
         val answer: Submission.Answer,
+        val totalTestCases: Int,
+        val approvedTestCases: Int,
+        val maxCpuTimeMs: Long?,
+        val maxClockTimeMs: Long?,
+        val maxPeakMemoryKb: Long?,
+        val detailsId: UUID?,
     )
 }

@@ -13,7 +13,7 @@ import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { JudgeDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/JudgeDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 /**
  * Provider component for fetching judge dashboard data and setting up broadcast listeners.
@@ -96,7 +96,9 @@ export function JudgeDashboardProvider({
     dispatch(JudgeDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
-  function receiveSubmission(submission: SubmissionWithCodeResponseDTO) {
+  function receiveSubmission(
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) {
     console.debug("Received submission:", submission);
     dispatch(JudgeDashboardSlice.actions.mergeSubmission(submission));
 

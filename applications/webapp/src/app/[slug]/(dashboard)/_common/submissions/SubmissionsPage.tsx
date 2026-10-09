@@ -31,57 +31,13 @@ import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseD
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
-
-// const messages = defineMessages({
-//   pageTitle: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.page-title",
-//     defaultMessage: "Forseti - Submissions",
-//   },
-//   pageDescription: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.page-description",
-//     defaultMessage: "View all submissions made during the contest.",
-//   },
-//   onlyMineLabel: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.only-mine-label",
-//     defaultMessage: "Only mine",
-//   },
-//   headerTimestamp: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-timestamp",
-//     defaultMessage: "Timestamp",
-//   },
-//   headerContestant: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-contestant",
-//     defaultMessage: "Contestant",
-//   },
-//   headerProblem: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-problem",
-//     defaultMessage: "Problem",
-//   },
-//   headerLanguage: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-language",
-//     defaultMessage: "Language",
-//   },
-//   headerStatus: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-status",
-//     defaultMessage: "Status",
-//   },
-//   headerAnswer: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.header-answer",
-//     defaultMessage: "Answer",
-//   },
-//   newLabel: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.new-label",
-//     defaultMessage: "New Submission",
-//   },
-//   guidanceText: {
-//     id: "app.[slug].(dashboard)._common.submissions.submissions-page.guidance-text",
-//     defaultMessage:
-//       "View all contest submissions here. Submissions are judged automatically and results appear in real-time. You can see the status (judging/judged/failed) and answer (accepted/wrong answer/compilation error/runtime error/time limit exceeded/memory limit exceeded) for each submission.",
-//   },
-// });
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 type Props = {
-  submissions: SubmissionResponseDTO[] | SubmissionWithCodeResponseDTO[];
+  submissions:
+    | SubmissionResponseDTO[]
+    | SubmissionWithCodeResponseDTO[]
+    | SubmissionWithCodeAndExecutionsResponseDTO[];
   memberSubmissions?: SubmissionWithCodeResponseDTO[];
   problems: ProblemResponseDTO[];
   canViewExecutions?: boolean;
@@ -98,11 +54,15 @@ type Props = {
   (
     | {
         canEdit: true;
-        onEdit: (submission: SubmissionWithCodeResponseDTO) => void;
+        onEdit: (
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
+        ) => void;
       }
     | {
         canEdit?: false;
-        onEdit?: (submission: SubmissionWithCodeResponseDTO) => void;
+        onEdit?: (
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
+        ) => void;
       }
   );
 
@@ -239,7 +199,9 @@ export function SubmissionsPage({
                       <TableCell data-testid="submission-actions">
                         <SubmissionsPageActionsMenu
                           submission={
-                            submission as SubmissionWithCodeResponseDTO
+                            submission as
+                              | SubmissionWithCodeResponseDTO
+                              | SubmissionWithCodeAndExecutionsResponseDTO
                           }
                           canViewExecutions={canViewExecutions}
                           canEdit={canEdit}

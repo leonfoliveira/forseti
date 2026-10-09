@@ -1,5 +1,6 @@
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export interface SubmissionRepository {
@@ -27,7 +28,7 @@ export interface SubmissionRepository {
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
-  ): Promise<SubmissionWithCodeResponseDTO>;
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO>;
 
   /**
    * Resubmit a submission for a specific contest.
@@ -39,5 +40,5 @@ export interface SubmissionRepository {
   resubmit(
     contestId: string,
     submissionId: string,
-  ): Promise<SubmissionWithCodeResponseDTO>;
+  ): Promise<SubmissionWithCodeAndExecutionsResponseDTO>;
 }

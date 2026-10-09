@@ -148,6 +148,7 @@ internal object MockMvcTestSupport {
             status = Submission.Status.JUDGED,
             answer = Submission.Answer.ACCEPTED,
             code = common.third,
+            executions = emptyList(),
             version = 1,
         )
     }

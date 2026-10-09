@@ -122,8 +122,7 @@ def test_judge_publishes_expected_answer(
     }
 
     Judge().judge(SubmissionSchema(**body))
+    result = receive_one(sqs, JUDGED_QUEUE)
 
-    assert receive_one(sqs, JUDGED_QUEUE) == {
-        "submissionId": submission_id,
-        "answer": expected,
-    }
+    assert result["submissionId"] == submission_id
+    assert result["answer"] == expected

@@ -6,14 +6,14 @@ import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
+import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { AdminDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/AdminDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 /**
  * Provider component for fetching admin dashboard data and setting up broadcast listeners.
@@ -96,7 +96,9 @@ export function AdminDashboardProvider({
     dispatch(AdminDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
-  function receiveSubmission(submission: SubmissionWithCodeResponseDTO) {
+  function receiveSubmission(
+    submission: SubmissionWithCodeAndExecutionsResponseDTO,
+  ) {
     console.debug("Received submission:", submission);
     dispatch(AdminDashboardSlice.actions.mergeSubmission(submission));
 

@@ -2,7 +2,7 @@ import boto3
 import docker
 import pytest
 from docker.errors import DockerException, ImageNotFound
-from testcontainers.localstack import LocalStackContainer
+from testcontainers.community.localstack import LocalStackContainer
 
 from autojudge.sandbox.language_config import LANGUAGE_CONFIGS, SubmissionLanguage
 

@@ -3,7 +3,6 @@ package com.forsetijudge.core.infrastructure.s3
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.util.SafeLogger
-import java.time.Duration
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.core.sync.RequestBody
@@ -13,6 +12,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest
+import java.time.Duration
 
 @Component
 class AttachmentS3Bucket(
