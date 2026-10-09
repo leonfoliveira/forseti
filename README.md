@@ -24,7 +24,6 @@ The following features are planned for future releases:
 - Clarifications feature for participants to ask questions and receive answers during contests.
 - Ticketing system for managing participant support and print requests.
 - Leaderboard freezing feature to lock the leaderboard at specific times during contests.
-- Better auditing for judging processes.
 - IP restriction by contest or participant for enhanced security.
 
 ## Contributions
