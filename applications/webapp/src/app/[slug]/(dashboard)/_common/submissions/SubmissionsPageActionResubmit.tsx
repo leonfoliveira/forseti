@@ -8,12 +8,12 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 type Props = {
-  submission: SubmissionWithCodeAndExecutionResponseDTO;
+  submission: SubmissionWithCodeAndExecutionsResponseDTO;
   onClose: () => void;
-  onResubmit: (submission: SubmissionWithCodeAndExecutionResponseDTO) => void;
+  onResubmit: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
 };
 
 export function SubmissionsPageActionResubmit({

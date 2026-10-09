@@ -25,7 +25,7 @@ import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseD
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
-import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
@@ -141,8 +141,8 @@ export const MockSubmissionWithCodeResponseDTO = (
 });
 
 export const MockSubmissionWithCodeAndExecutionResponseDTO = (
-  overrides: Partial<SubmissionWithCodeAndExecutionResponseDTO> = {},
-): SubmissionWithCodeAndExecutionResponseDTO => ({
+  overrides: Partial<SubmissionWithCodeAndExecutionsResponseDTO> = {},
+): SubmissionWithCodeAndExecutionsResponseDTO => ({
   ...MockSubmissionWithCodeResponseDTO(),
   executions: [MockExecutionResponseDTO({ id: "execution-1" })],
   ...overrides,
@@ -244,7 +244,7 @@ export const MockAdminDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   ...overrides,
 });
 
@@ -278,7 +278,7 @@ export const MockJudgeDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberResponseDTO({ type: MemberType.JUDGE })],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   ...overrides,
 });
 

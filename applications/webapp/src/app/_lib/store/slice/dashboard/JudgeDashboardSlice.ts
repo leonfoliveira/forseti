@@ -6,7 +6,7 @@ import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO;
 
@@ -37,7 +37,10 @@ export const JudgeDashboardSlice = createSlice({
     setLeaderboardIsFrozen(state, action: { payload: boolean }) {
       state.leaderboard.isFrozen = action.payload;
     },
-    mergeSubmission(state, action: { payload: SubmissionWithCodeResponseDTO }) {
+    mergeSubmission(
+      state,
+      action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
+    ) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
     },
   },

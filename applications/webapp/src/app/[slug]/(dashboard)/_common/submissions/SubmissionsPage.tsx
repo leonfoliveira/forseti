@@ -31,13 +31,13 @@ import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseD
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
-import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
 type Props = {
   submissions:
     | SubmissionResponseDTO[]
     | SubmissionWithCodeResponseDTO[]
-    | SubmissionWithCodeAndExecutionResponseDTO[];
+    | SubmissionWithCodeAndExecutionsResponseDTO[];
   memberSubmissions?: SubmissionWithCodeResponseDTO[];
   problems: ProblemResponseDTO[];
   canViewExecutions?: boolean;
@@ -54,12 +54,14 @@ type Props = {
   (
     | {
         canEdit: true;
-        onEdit: (submission: SubmissionWithCodeAndExecutionResponseDTO) => void;
+        onEdit: (
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
+        ) => void;
       }
     | {
         canEdit?: false;
         onEdit?: (
-          submission: SubmissionWithCodeAndExecutionResponseDTO,
+          submission: SubmissionWithCodeAndExecutionsResponseDTO,
         ) => void;
       }
   );
@@ -199,7 +201,7 @@ export function SubmissionsPage({
                           submission={
                             submission as
                               | SubmissionWithCodeResponseDTO
-                              | SubmissionWithCodeAndExecutionResponseDTO
+                              | SubmissionWithCodeAndExecutionsResponseDTO
                           }
                           canViewExecutions={canViewExecutions}
                           canEdit={canEdit}

@@ -12,10 +12,10 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.hibernate.annotations.SQLRestriction
 import org.hibernate.envers.Audited
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Entity
 @Table(name = "submission")

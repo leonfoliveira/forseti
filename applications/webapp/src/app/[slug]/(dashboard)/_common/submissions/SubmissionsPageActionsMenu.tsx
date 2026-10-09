@@ -12,18 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionExecutions";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 type Props = {
   submission:
-    SubmissionWithCodeResponseDTO | SubmissionWithCodeAndExecutionResponseDTO;
+    SubmissionWithCodeResponseDTO | SubmissionWithCodeAndExecutionsResponseDTO;
   canViewExecutions?: boolean;
 } & (
   | {
       canEdit: true;
-      onEdit: (submission: SubmissionWithCodeAndExecutionResponseDTO) => void;
+      onEdit: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
     }
   | {
       canEdit?: false;
@@ -57,7 +57,7 @@ export function SubmissionsPageActionsMenu({
       items.push(
         <SubmissionsPageActionResubmit
           key="rerun"
-          submission={submission as SubmissionWithCodeAndExecutionResponseDTO}
+          submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
           onClose={close}
           onResubmit={onEdit!}
         />,
@@ -66,7 +66,7 @@ export function SubmissionsPageActionsMenu({
     items.push(
       <SubmissionsPageActionJudge
         key="judge"
-        submission={submission as SubmissionWithCodeAndExecutionResponseDTO}
+        submission={submission as SubmissionWithCodeAndExecutionsResponseDTO}
         onClose={close}
         onJudge={onEdit!}
       />,
@@ -104,7 +104,7 @@ export function SubmissionsPageActionsMenu({
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionExecutions
                     executions={
-                      (submission as SubmissionWithCodeAndExecutionResponseDTO)
+                      (submission as SubmissionWithCodeAndExecutionsResponseDTO)
                         .executions
                     }
                     onClose={close}
@@ -113,7 +113,7 @@ export function SubmissionsPageActionsMenu({
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionResubmit
                     submission={
-                      submission as SubmissionWithCodeAndExecutionResponseDTO
+                      submission as SubmissionWithCodeAndExecutionsResponseDTO
                     }
                     onClose={close}
                     onResubmit={onEdit}
@@ -121,7 +121,7 @@ export function SubmissionsPageActionsMenu({
                 )}
                 <SubmissionsPageActionJudge
                   submission={
-                    submission as SubmissionWithCodeAndExecutionResponseDTO
+                    submission as SubmissionWithCodeAndExecutionsResponseDTO
                   }
                   onClose={close}
                   onJudge={onEdit}

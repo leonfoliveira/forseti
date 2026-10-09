@@ -21,13 +21,13 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
+import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 type Props = {
-  submission: SubmissionWithCodeAndExecutionResponseDTO;
+  submission: SubmissionWithCodeAndExecutionsResponseDTO;
   onClose: () => void;
-  onJudge: (submission: SubmissionWithCodeAndExecutionResponseDTO) => void;
+  onJudge: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
 };
 
 export function SubmissionsPageActionJudge({
