@@ -2,12 +2,12 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
 
 export type JudgeDashboardResponseDTO = {
   contest: ContestResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   members: MemberResponseDTO[];
   problems: ProblemWithTestCasesResponseDTO[];
-  submissions: SubmissionWithCodeResponseDTO[];
+  submissions: SubmissionWithCodeAndExecutionResponseDTO[];
 };

@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionJudge";
-import { MockSubmissionWithCodeResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MockSubmissionWithCodeAndExecutionResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
@@ -22,7 +22,7 @@ describe("SubmissionsPageActionJudge", () => {
   it("opens the confirmation when selecting Judge", async () => {
     await renderWithProviders(
       <SubmissionsPageActionJudge
-        submission={MockSubmissionWithCodeResponseDTO()}
+        submission={MockSubmissionWithCodeAndExecutionResponseDTO()}
         onClose={jest.fn()}
         onJudge={jest.fn()}
       />,

@@ -7,6 +7,7 @@ import {
   SubmissionWritter,
 } from "@/port/input/usecase/submission/SubmissionWritter";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
 
 export class SubmissionService implements SubmissionWritter {
   constructor(
@@ -33,7 +34,7 @@ export class SubmissionService implements SubmissionWritter {
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
-  ): Promise<SubmissionWithCodeResponseDTO> {
+  ): Promise<SubmissionWithCodeAndExecutionResponseDTO> {
     return await this.submissionRepository.updateAnswer(
       contestId,
       submissionId,
@@ -44,7 +45,7 @@ export class SubmissionService implements SubmissionWritter {
   async resubmit(
     contestId: string,
     submissionId: string,
-  ): Promise<SubmissionWithCodeResponseDTO> {
+  ): Promise<SubmissionWithCodeAndExecutionResponseDTO> {
     return await this.submissionRepository.resubmit(contestId, submissionId);
   }
 }

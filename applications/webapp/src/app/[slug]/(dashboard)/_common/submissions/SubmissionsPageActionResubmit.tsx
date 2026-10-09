@@ -8,18 +8,18 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
 
 type Props = {
-  submission: SubmissionWithCodeResponseDTO;
+  submission: SubmissionWithCodeAndExecutionResponseDTO;
   onClose: () => void;
-  onRerun: (submission: SubmissionWithCodeResponseDTO) => void;
+  onResubmit: (submission: SubmissionWithCodeAndExecutionResponseDTO) => void;
 };
 
 export function SubmissionsPageActionResubmit({
   submission,
   onClose,
-  onRerun,
+  onResubmit,
 }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const resubmitState = useLoadableState();
@@ -34,7 +34,7 @@ export function SubmissionsPageActionResubmit({
       await Composition.submissionWritter.resubmit(contestId, submissionId);
 
       toast.success("Submission resubmitted successfully");
-      onRerun({
+      onResubmit({
         ...submission,
         status: SubmissionStatus.JUDGING,
         answer: undefined,

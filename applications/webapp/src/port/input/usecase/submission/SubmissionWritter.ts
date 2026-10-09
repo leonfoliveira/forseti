@@ -1,5 +1,6 @@
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
+import { SubmissionWithCodeAndExecutionResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export type CreateSubmissionInputDTO = {
@@ -33,7 +34,7 @@ export interface SubmissionWritter {
     contestId: string,
     submissionId: string,
     answer: SubmissionAnswer,
-  ): Promise<SubmissionWithCodeResponseDTO>;
+  ): Promise<SubmissionWithCodeAndExecutionResponseDTO>;
 
   /**
    * Resubmit a submission for re-evaluation.
@@ -45,5 +46,5 @@ export interface SubmissionWritter {
   resubmit(
     contestId: string,
     submissionId: string,
-  ): Promise<SubmissionWithCodeResponseDTO>;
+  ): Promise<SubmissionWithCodeAndExecutionResponseDTO>;
 }
