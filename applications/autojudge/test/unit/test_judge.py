@@ -1,5 +1,5 @@
 import json
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -86,9 +86,9 @@ def test_run_stops_on_first_failure(submission, container):
 def test_run_compilation_error(submission, container):
     container.compile.side_effect = Exception("bad")
 
-    answer = Judge()._run(submission, "code", [("a", "1")])
+    result = Judge()._run(submission, "code", [("a", "1")])
 
-    assert answer == Answer.COMPILATION_ERROR
+    assert result.answer == Answer.COMPILATION_ERROR
     container.run.assert_not_called()
     container.kill.assert_called_once()
 
@@ -102,7 +102,15 @@ def test_judge_downloads_runs_and_publishes(submission):
 
     with patch("autojudge.judge.s3_client") as s3, patch(
         "autojudge.judge.sqs_client"
-    ) as sqs, patch.object(judge, "_run", return_value=Answer.ACCEPTED) as run:
+    ) as sqs, patch.object(judge, "_run", return_value=JudgeResult.Final(
+        answer=Answer.ACCEPTED,
+        total_test_cases=1,
+        approved_test_cases=1,
+        max_cpu_time_ms=1,
+        max_clock_time_ms=1,
+        max_peak_memory_kb=1,
+        details_id=None,
+    )) as run:
         s3.download_file.side_effect = download
         judge.judge(submission)
 
@@ -113,7 +121,14 @@ def test_judge_downloads_runs_and_publishes(submission):
     assert run.call_args.args[2] == [("in", "out")]
     sent = sqs.send_message.call_args.kwargs
     assert sent["QueueUrl"] == "test-submission-judged-queue"
+    body = json.loads(sent["MessageBody"])
     assert json.loads(sent["MessageBody"]) == {
         "submissionId": "sub-1",
         "answer": Answer.ACCEPTED,
+        "totalTestCases": 1,
+        "approvedTestCases": 1,
+        "maxCpuTimeMs": 1,
+        "maxClockTimeMs": 1,
+        "maxPeakMemoryKb": 1,
+        "detailsId": None,
     }
