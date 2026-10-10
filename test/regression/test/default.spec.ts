@@ -11,6 +11,7 @@ import {
   SubmissionLanguage,
   SubmissionStatus,
 } from "@/test/entity/Submission";
+import { Announcement } from "@/test/entity/Announcement";
 
 /**
  * This test covers the default behaviour of a contest
@@ -126,6 +127,11 @@ test("Default contest behaviour", async ({ page }) => {
     answer: SubmissionAnswer.ACCEPTED,
   };
 
+  const announcement: Announcement = {
+    member: adminMember,
+    text: "New announcement",
+  };
+
   // Step 1: Use CLI to create a contest
   await rootActor.createContest(contest);
 
@@ -146,10 +152,14 @@ test("Default contest behaviour", async ({ page }) => {
   await contestantActor.checkWaitPage();
   await contestantActor.signOut(contest);
 
-  // Step 4: Sign in as admin,  add a problem, and start the contest
+  // Step 4: Sign in as admin, create and announcement, add a problem, and start the contest
   await adminActor.signIn(contest);
   await adminActor.checkHeader(contest);
-  const adminActorOnSettings = await adminActor.navigateToSettings(contest);
+  const adminActorOnAnnouncements =
+    await adminActor.navigateToAnnouncements(contest);
+  await adminActorOnAnnouncements.createAnnouncement(announcement);
+  const adminActorOnSettings =
+    await adminActorOnAnnouncements.navigateToSettings(contest);
   await adminActorOnSettings.openTab("problems");
   await adminActorOnSettings.fillProblemForm(problem);
   await adminActorOnSettings.openTab("contest");
@@ -158,7 +168,7 @@ test("Default contest behaviour", async ({ page }) => {
   contest.status = ContestStatus.IN_PROGRESS;
   await adminActor.signOut(contest);
 
-  // Step 5: Sign in as contestant, check problems, create submissions,check leaderboard
+  // Step 5: Sign in as contestant, check problems, create submissions, check announcements, check leaderboard
   await contestantActor.signIn(contest);
   await contestantActor.checkHeader(contest);
   const contestantActonOnProblems =
@@ -174,7 +184,10 @@ test("Default contest behaviour", async ({ page }) => {
   const contestantActonOnLeaderboard =
     await contestantActonOnSubmissions.navigateToLeaderboard(contest);
   await contestantActonOnLeaderboard.checkLeaderboard(leaderboard);
-  await contestantActonOnLeaderboard.signOut(contest);
+  const contestantActonOnAnnouncements =
+    await contestantActonOnLeaderboard.navigateToAnnouncements(contest);
+  await contestantActonOnAnnouncements.checkAnnouncements([announcement]);
+  await contestantActonOnAnnouncements.signOut(contest);
 
   // Step 6: Sign in as judge, check submissions, judge a submission, resubmit a submission
   await judgeActor.signIn(contest);

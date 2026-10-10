@@ -78,6 +78,7 @@ internal object MockMvcTestSupport {
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
+            announcements = emptyList(),
         )
 
     fun contestantDashboardResponse(id: UUID = UUID.randomUUID()) =
@@ -88,6 +89,7 @@ internal object MockMvcTestSupport {
             problems = emptyList(),
             submissions = emptyList(),
             memberSubmissions = emptyList(),
+            announcements = emptyList(),
         )
 
     fun guestDashboardResponse(id: UUID = UUID.randomUUID()) =
@@ -97,6 +99,7 @@ internal object MockMvcTestSupport {
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
+            announcements = emptyList(),
         )
 
     fun judgeDashboardResponse(id: UUID = UUID.randomUUID()) =
@@ -106,6 +109,7 @@ internal object MockMvcTestSupport {
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
+            announcements = emptyList(),
         )
 
     fun submissionResponse(

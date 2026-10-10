@@ -36,6 +36,10 @@ export default function DashboardLayout({
       title: "Submissions",
       path: routes.CONTEST_SUBMISSIONS(slug),
     },
+    {
+      title: "Announcements",
+      path: routes.CONTEST_ANNOUNCEMENTS(slug),
+    },
   ];
 
   if (

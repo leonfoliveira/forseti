@@ -1,0 +1,23 @@
+meta {
+  name: create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/v1/contests/{{contest_id}}/announcements
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "text": "Announcement text"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

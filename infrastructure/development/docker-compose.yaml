@@ -102,6 +102,7 @@ services:
       migration:
         condition: service_completed_successfully
     environment:
+      SPRING_PROFILES_ACTIVE: development
       VERSION: latest
       AWS_REGION: us-east-1
       AWS_ACCESS_KEY_ID: forsetijudge
@@ -125,8 +126,8 @@ services:
       OTEL_METRICS_EXPORTER: none
       OTEL_LOGS_EXPORTER: none
       COOKIE_DOMAIN: "*"
+      COOKIE_SECURE: false
       ALLOWED_ORIGINS: http://localhost:3000
-      SECURE_COOKIES: false
       SESSION_EXPIRATION_SECONDS: 86400
       SESSION_ROOT_EXPIRATION_SECONDS: 86400
       API_PORT: 8080

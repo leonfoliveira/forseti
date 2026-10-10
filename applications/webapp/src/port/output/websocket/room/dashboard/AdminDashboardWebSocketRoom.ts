@@ -1,6 +1,7 @@
 import { WebSocketRoom } from "@/port/output/websocket/WebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export type AdminDashboardWebSocketRoomCallbacks = {
   LEADERBOARD_UPDATED: (leaderboardCell: LeaderboardCellResponseDTO) => void;
@@ -10,6 +11,7 @@ export type AdminDashboardWebSocketRoomCallbacks = {
   SUBMISSION_UPDATED: (
     submission: SubmissionWithCodeAndExecutionsResponseDTO,
   ) => void;
+  ANNOUNCEMENT_CREATED: (announcement: AnnouncementResponseDTO) => void;
 };
 
 export class AdminDashboardWebSocketRoom extends WebSocketRoom<AdminDashboardWebSocketRoomCallbacks> {

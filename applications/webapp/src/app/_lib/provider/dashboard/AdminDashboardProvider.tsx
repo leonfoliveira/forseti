@@ -14,6 +14,7 @@ import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { AdminDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/AdminDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 /**
  * Provider component for fetching admin dashboard data and setting up broadcast listeners.
@@ -49,6 +50,7 @@ export function AdminDashboardProvider({
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
+            ANNOUNCEMENT_CREATED: receiveAnnouncement,
           }),
         );
 
@@ -104,6 +106,15 @@ export function AdminDashboardProvider({
 
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error("New failed submission");
+    }
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
+    dispatch(AdminDashboardSlice.actions.mergeAnnouncement(announcement));
+
+    if (announcement.member.id !== session?.member.id) {
+      toast.warning(`New announcement: ${announcement.text}`);
     }
   }
 

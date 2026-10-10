@@ -1,6 +1,8 @@
 package com.forsetijudge.core.port.dto.response.dashboard
 
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
@@ -21,6 +23,7 @@ data class ContestantDashboardResponseBodyDTO(
     val problems: List<ProblemResponseBodyDTO>,
     val submissions: List<SubmissionResponseBodyDTO>,
     val memberSubmissions: List<SubmissionWithCodeResponseBodyDTO>,
+    val announcements: List<AnnouncementResponseBodyDTO>,
 )
 
 fun ContestantDashboard.toResponseBodyDTO(): ContestantDashboardResponseBodyDTO =
@@ -31,4 +34,5 @@ fun ContestantDashboard.toResponseBodyDTO(): ContestantDashboardResponseBodyDTO 
         problems = problems.map { it.toResponseBodyDTO() },
         submissions = submissions.map { it.toResponseBodyDTO() },
         memberSubmissions = memberSubmissions.map { it.toWithCodeResponseBodyDTO() },
+        announcements = announcements.map { it.toResponseBodyDTO() },
     )

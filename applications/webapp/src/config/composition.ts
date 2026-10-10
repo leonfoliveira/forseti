@@ -4,11 +4,13 @@ import { AxiosAttachmentRepository } from "@/infrastructure/axios/repository/Axi
 import { AxiosAuthenticationRepository } from "@/infrastructure/axios/repository/AxiosAuthenticationRepository";
 
 import { env } from "./env";
+import { AxiosAnnouncementRepository } from "@/infrastructure/axios/repository/AxiosAnnouncementRepository";
 import { AxiosContestRepository } from "@/infrastructure/axios/repository/AxiosContestRepository";
 import { AxiosDashboardRepository } from "@/infrastructure/axios/repository/AxiosDashboardRepository";
 import { AxiosSessionRepository } from "@/infrastructure/axios/repository/AxiosSessionRepository";
 import { LocalStorageRepositoryAdapter } from "@/infrastructure/localstorage/LocalStorageRepositoryAdapter";
 import { AxiosSubmissionRepository } from "@/infrastructure/axios/repository/AxiosSubmissionRepository";
+import { AnnouncementService } from "@/service/AnnouncementService";
 import { AttachmentService } from "@/service/AttachmentService";
 import { AuthenticationService } from "@/service/AuthenticationService";
 import { ContestService } from "@/service/ContestService";
@@ -16,6 +18,7 @@ import { DashboardService } from "@/service/DashboardService";
 import { SessionService } from "@/service/SessionService";
 import { LocalStorageService } from "@/service/LocalStorageService";
 import { SubmissionService } from "@/service/SubmissionService";
+import { AnnouncementWritter } from "@/port/input/usecase/announcement/AnnouncementWritter";
 import { AttachmentReader } from "@/port/input/usecase/attachment/AttachmentReader";
 import { AttachmentWritter } from "@/port/input/usecase/attachment/AttachmentWritter";
 import { LocalStorageWritter } from "@/port/input/usecase/localstorage/LocalStorageWritter";
@@ -35,6 +38,7 @@ const webSocketClient = new SocketIOWebSocketClient(env.wsUrl);
 // Repositories
 const axiosClient = new AxiosClient(env.httpUrl);
 
+const announcementRepository = new AxiosAnnouncementRepository(axiosClient);
 const attachmentRepository = new AxiosAttachmentRepository(axiosClient);
 const authenticationRepository = new AxiosAuthenticationRepository(axiosClient);
 const contestRepository = new AxiosContestRepository(axiosClient);
@@ -60,6 +64,7 @@ const submissionService = new SubmissionService(
   submissionRepository,
   attachmentService,
 );
+const announcementService = new AnnouncementService(announcementRepository);
 
 const Composition: {
   webSocketClient: WebSocketClient;
@@ -74,6 +79,7 @@ const Composition: {
   localStorageReader: LocalStorageReader;
   localStorageWritter: LocalStorageWritter;
   submissionWritter: SubmissionWritter;
+  announcementWritter: AnnouncementWritter;
 } = {
   webSocketClient: webSocketClient,
   attachmentReader: attachmentService,
@@ -87,6 +93,7 @@ const Composition: {
   localStorageReader: localStorageService,
   localStorageWritter: localStorageService,
   submissionWritter: submissionService,
+  announcementWritter: announcementService,
 };
 
 export { Composition };

@@ -14,6 +14,7 @@ import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { JudgeDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/JudgeDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 /**
  * Provider component for fetching judge dashboard data and setting up broadcast listeners.
@@ -49,6 +50,7 @@ export function JudgeDashboardProvider({
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
+            ANNOUNCEMENT_CREATED: receiveAnnouncement,
           }),
         );
 
@@ -104,6 +106,15 @@ export function JudgeDashboardProvider({
 
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error("New failed submission");
+    }
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
+    dispatch(JudgeDashboardSlice.actions.mergeAnnouncement(announcement));
+
+    if (announcement.member.id !== session?.member.id) {
+      toast.warning(`New announcement: ${announcement.text}`);
     }
   }
 

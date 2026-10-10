@@ -76,7 +76,9 @@ jest.mock("@/app/_lib/component/shadcn/badge", () => ({
   Badge: ({ children, ...props }: any) => <span {...props}>{children}</span>,
 }));
 jest.mock("@/app/_lib/component/shadcn/button", () => ({
-  Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  Button: ({ children, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
 }));
 jest.mock("@/app/_lib/component/shadcn/spinner", () => ({
   Spinner: (props: any) => <span {...props} />,
@@ -88,14 +90,22 @@ jest.mock("@/app/_lib/component/shadcn/tooltip", () => ({
   TooltipContent: ({ children }: any) => <span>{children}</span>,
 }));
 jest.mock("@/app/_lib/component/shadcn/alert-dialog", () => ({
-  AlertDialog: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  AlertDialog: ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  ),
   AlertDialogCancel: (props: any) => <button {...props} />,
   AlertDialogContent: ({ children }: any) => <div>{children}</div>,
-  AlertDialogDescription: ({ children, ...props }: any) => <p {...props}>{children}</p>,
+  AlertDialogDescription: ({ children, ...props }: any) => (
+    <p {...props}>{children}</p>
+  ),
   AlertDialogFooter: ({ children }: any) => <div>{children}</div>,
   AlertDialogHeader: ({ children }: any) => <div>{children}</div>,
-  AlertDialogMedia: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  AlertDialogTitle: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
+  AlertDialogMedia: ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  ),
+  AlertDialogTitle: ({ children, ...props }: any) => (
+    <h2 {...props}>{children}</h2>
+  ),
 }));
 jest.mock("@/app/_lib/component/shadcn/checkbox", () => ({
   Checkbox: (props: any) => <input type="checkbox" {...props} />,
@@ -105,11 +115,26 @@ jest.mock("@/app/_lib/component/shadcn/field", () => ({
   FieldContent: ({ children }: any) => <div>{children}</div>,
   FieldDescription: ({ children }: any) => <p>{children}</p>,
   FieldError: ({ children }: any) => <p role="alert">{children}</p>,
-  FieldLabel: ({ children, ...props }: any) => <label {...props}>{children}</label>,
+  FieldLabel: ({ children, ...props }: any) => (
+    <label {...props}>{children}</label>
+  ),
+  FieldSet: ({ children, ...props }: any) => (
+    <fieldset {...props}>{children}</fieldset>
+  ),
 }));
 jest.mock("@/app/_lib/component/shadcn/input", () => ({
   Input: (props: any) => <input {...props} />,
 }));
 jest.mock("@/app/_lib/component/shadcn/switch", () => ({
   Switch: (props: any) => <input type="checkbox" {...props} />,
+}));
+jest.mock("@/config/composition");
+const toast = {
+  info: jest.fn(),
+  success: jest.fn(),
+  warning: jest.fn(),
+  error: jest.fn(),
+};
+jest.mock("@/app/_lib/hook/useToast", () => ({
+  useToast: () => toast,
 }));

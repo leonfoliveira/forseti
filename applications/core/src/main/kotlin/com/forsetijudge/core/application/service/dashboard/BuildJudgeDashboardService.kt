@@ -60,6 +60,7 @@ class BuildJudgeDashboardService(
                 members = contest.members,
                 problems = contest.problems,
                 submissions = submissions,
+                announcements = contest.announcements,
             )
 
         return dashboard.toResponseBodyDTO()

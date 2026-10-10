@@ -63,6 +63,7 @@ class BuildContestantDashboardService(
                 problems = contest.problems,
                 submissions = submissions,
                 memberSubmissions = memberSubmissions,
+                announcements = contest.announcements,
             )
 
         return dashboard.toResponseBodyDTO()

@@ -11,11 +11,12 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "submission")
@@ -68,12 +69,12 @@ class Submission(
     @Audited(withModifiedFlag = false)
     val code: Attachment,
     /**
-     * The auto-judge executions associated with this submission.
+     * The list of executions associated with this submission.
      */
-    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
-    @JoinColumn(name = "submission_id")
     @Audited(withModifiedFlag = false)
-    val executions: List<Execution> = emptyList(),
+    @OneToMany(mappedBy = "submission", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("createdAt ASC")
+    val executions: List<Execution> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     val contest get() = problem.contest
 
