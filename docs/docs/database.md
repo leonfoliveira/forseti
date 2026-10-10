@@ -92,6 +92,17 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `max_peak_memory_kb`: The maximum peak memory used by the execution in kilobytes.
 - `details_id`: The UUIDv7 of the details attachment associated with the execution.
 
+### announcements
+
+- `id`: A unique UUIDv7 identifying the announcement.
+- `created_at`: The timestamp when the announcement was created.
+- `updated_at`: The timestamp when the announcement was last updated.
+- `deleted_at`: The timestamp when the announcement was deleted, if applicable.
+- `version`: The version number of the announcement record, used for optimistic locking.
+- `contest_id`: The UUIDv7 of the contest the announcement is associated with.
+- `member_id`: The UUIDv7 of the member who created the announcement.
+- `text`: The text content of the announcement.
+
 ## Audit Tables
 
 Every table in the database has a corresponding audit table that tracks changes to the records over time. The audit tables have the same columns as the original tables, with additional columns for the revision number (`rev`), the type of revision (`revtype`) and flags (`*_mod`) indicating whether a particular column was modified in that revision (only applicable to updatable columns).
