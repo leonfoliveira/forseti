@@ -1,3 +1,4 @@
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
@@ -10,4 +11,5 @@ export type GuestDashboardResponseDTO = {
   members: MemberResponseDTO[];
   problems: ProblemResponseDTO[];
   submissions: SubmissionResponseDTO[];
+  announcements: AnnouncementResponseDTO[];
 };

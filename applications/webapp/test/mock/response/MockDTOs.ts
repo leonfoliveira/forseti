@@ -4,9 +4,11 @@ import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { AuthenticateRequestDTO } from "@/port/dto/request/AuthenticateRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/port/dto/request/CreateAnnouncementRequestDTO";
 import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
 import { GetUploadSignedUrlRequest } from "@/port/dto/request/GetUploadSignedUrlRequest";
 import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
@@ -211,6 +213,19 @@ export const MockLeaderboardResponseDTO = (
   ...overrides,
 });
 
+export const MockAnnouncementResponseDTO = (
+  overrides: Partial<AnnouncementResponseDTO> = {},
+): AnnouncementResponseDTO => ({
+  id: "announcement-1",
+  createdAt,
+  updatedAt: createdAt,
+  contest: MockContestResponseDTO(),
+  member: MockMemberResponseDTO(),
+  text: "This is an announcement.",
+  version: 1,
+  ...overrides,
+});
+
 export const MockContestWithMembersAndProblemsDTO = (
   overrides: Partial<ContestWithMembersAndProblemsDTO> = {},
 ): ContestWithMembersAndProblemsDTO => ({
@@ -245,6 +260,7 @@ export const MockAdminDashboardResponseDTO = (
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
+  announcements: [MockAnnouncementResponseDTO()],
   ...overrides,
 });
 
@@ -257,6 +273,7 @@ export const MockContestantDashboardResponseDTO = (
   problems: [MockProblemResponseDTO()],
   submissions: [MockSubmissionResponseDTO()],
   memberSubmissions: [MockSubmissionWithCodeResponseDTO()],
+  announcements: [MockAnnouncementResponseDTO()],
   ...overrides,
 });
 
@@ -268,6 +285,7 @@ export const MockGuestDashboardResponseDTO = (
   members: [MockMemberResponseDTO()],
   problems: [MockProblemResponseDTO()],
   submissions: [MockSubmissionResponseDTO()],
+  announcements: [MockAnnouncementResponseDTO()],
   ...overrides,
 });
 
@@ -279,6 +297,7 @@ export const MockJudgeDashboardResponseDTO = (
   members: [MockMemberResponseDTO({ type: MemberType.JUDGE })],
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
+  announcements: [MockAnnouncementResponseDTO()],
   ...overrides,
 });
 
@@ -287,6 +306,13 @@ export const MockAuthenticateRequestDTO = (
 ): AuthenticateRequestDTO => ({
   login: "ada",
   password: "secret",
+  ...overrides,
+});
+
+export const MockCreateAnnouncementRequestDTO = (
+  overrides: Partial<CreateAnnouncementRequestDTO> = {},
+): CreateAnnouncementRequestDTO => ({
+  text: "New Announcement",
   ...overrides,
 });
 
