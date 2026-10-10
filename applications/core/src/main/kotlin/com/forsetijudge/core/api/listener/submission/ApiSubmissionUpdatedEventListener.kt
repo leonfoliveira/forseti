@@ -1,4 +1,4 @@
-package com.forsetijudge.core.api.listener
+package com.forsetijudge.core.api.listener.submission
 
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
 import com.forsetijudge.core.api.websocket.room.SocketIOAdminDashboardRoom

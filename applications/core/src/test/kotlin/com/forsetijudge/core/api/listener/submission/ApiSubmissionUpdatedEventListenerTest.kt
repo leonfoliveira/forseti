@@ -1,16 +1,20 @@
-package com.forsetijudge.core.api.listener
+package com.forsetijudge.core.api.listener.submission
 
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
+import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,16 +24,14 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
-import java.util.UUID
 
 class ApiSubmissionUpdatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
     private val cellBuilder =
-        com.forsetijudge.core.application.helper.leaderboard
-            .LeaderboardCellBuilder()
+        LeaderboardCellBuilder()
     private val producer = mock<SocketIOFanoutRedisMessageProducer>()
     private val cache = mock<LeaderboardCacheStore>()
     private val listener = ApiSubmissionUpdatedEventListener(submissions, cellBuilder, producer, cache)
@@ -60,7 +62,7 @@ class ApiSubmissionUpdatedEventListenerTest {
         listener.handle(SubmissionEvent.Updated(submission.id))
 
         val messages = argumentCaptor<SocketIOFanoutMessage>()
-        verify(producer, org.mockito.kotlin.times(9)).produce(messages.capture())
+        verify(producer, times(9)).produce(messages.capture())
         val expectedRooms =
             listOf(
                 "/contests/${contest.id}/dashboard/admin",
@@ -94,7 +96,7 @@ class ApiSubmissionUpdatedEventListenerTest {
         assertTrue(messages.allValues[4].data is SubmissionResponseBodyDTO)
         assertTrue(messages.allValues.drop(5).all { it.data is LeaderboardCellResponseBodyDTO })
 
-        val cellCaptor = argumentCaptor<com.forsetijudge.core.domain.model.Leaderboard.Cell>()
+        val cellCaptor = argumentCaptor<Leaderboard.Cell>()
         verify(cache).cacheCell(eq(contest.id), cellCaptor.capture())
         assertEquals(member.id, cellCaptor.firstValue.memberId)
         assertEquals(problem.id, cellCaptor.firstValue.problemId)
