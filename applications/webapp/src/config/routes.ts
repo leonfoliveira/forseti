@@ -4,6 +4,7 @@ export const routes = {
   CONTEST_LEADERBOARD: (slug: string) => `/${slug}/leaderboard`,
   CONTEST_PROBLEMS: (slug: string) => `/${slug}/problems`,
   CONTEST_SUBMISSIONS: (slug: string) => `/${slug}/submissions`,
+  CONTEST_ANNOUNCEMENTS: (slug: string) => `/${slug}/announcements`,
   CONTEST_SETTINGS: (slug: string) => `/${slug}/settings`,
   CONTEST_ABOUT: (slug: string) => `/${slug}/about`,
   FORBIDDEN: `/error/403`,
