@@ -9,7 +9,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class AnnouncementResponseDTO(
+data class AnnouncementResponseBodyDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
@@ -19,8 +19,8 @@ data class AnnouncementResponseDTO(
     val version: Long,
 ) : Serializable
 
-fun Announcement.toResponseBodyDTO(): AnnouncementResponseDTO =
-    AnnouncementResponseDTO(
+fun Announcement.toResponseBodyDTO(): AnnouncementResponseBodyDTO =
+    AnnouncementResponseBodyDTO(
         id = id,
         createdAt = createdAt,
         updatedAt = updatedAt,

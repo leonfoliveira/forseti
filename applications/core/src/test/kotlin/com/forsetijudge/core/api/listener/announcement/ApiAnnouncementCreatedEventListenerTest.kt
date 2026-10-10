@@ -5,7 +5,7 @@ import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProd
 import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
-import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import com.forsetijudge.core.port.output.repository.AnnouncementRepository
 import com.forsetijudge.core.util.IdGenerator
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -45,10 +45,10 @@ class ApiAnnouncementCreatedEventListenerTest {
             messages.allValues.map(SocketIOFanoutMessage::room),
         )
         assertEquals(List(4) { "ANNOUNCEMENT_CREATED" }, messages.allValues.map(SocketIOFanoutMessage::eventName))
-        assertTrue(messages.allValues[0].data is AnnouncementResponseDTO)
-        assertTrue(messages.allValues[1].data is AnnouncementResponseDTO)
-        assertTrue(messages.allValues[2].data is AnnouncementResponseDTO)
-        assertTrue(messages.allValues[3].data is AnnouncementResponseDTO)
+        assertTrue(messages.allValues[0].data is AnnouncementResponseBodyDTO)
+        assertTrue(messages.allValues[1].data is AnnouncementResponseBodyDTO)
+        assertTrue(messages.allValues[2].data is AnnouncementResponseBodyDTO)
+        assertTrue(messages.allValues[3].data is AnnouncementResponseBodyDTO)
     }
 
     @Test

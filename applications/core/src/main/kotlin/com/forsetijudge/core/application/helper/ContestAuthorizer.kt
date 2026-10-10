@@ -62,7 +62,12 @@ class ContestAuthorizer(
         return this
     }
 
-    fun requireContestActive(): ContestAuthorizer = requireContestStarted().requireContestNotEnded()
+    fun requireContestActive(): ContestAuthorizer {
+        if (!contest.isActive()) {
+            return append("Contest is not active")
+        }
+        return this
+    }
 
     fun requireMemberToBelong(): ContestAuthorizer {
         if (member == null) {

@@ -72,7 +72,7 @@ class CreateSubmissionService(
                 context = Attachment.Context.SUBMISSION_CODE,
             )
 
-        if (contest.languages.none { it == command.language }) {
+        if (!contest.hasLanguage(command.language)) {
             throw ForbiddenException("Language ${command.language} is not allowed for this contest")
         }
 

@@ -10,10 +10,10 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "contest")
@@ -65,6 +65,13 @@ class Contest(
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("letter ASC")
     var problems: List<Problem> = mutableListOf(),
+    /**
+     * Announcements related to the contest, which can be used to communicate important information to participants.
+     */
+    @Audited(withModifiedFlag = false)
+    @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @OrderBy("createdAt ASC")
+    var announcements: List<Announcement> = mutableListOf(),
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     fun hasLanguage(language: Submission.Language): Boolean = languages.contains(language)
 

@@ -7,7 +7,7 @@ import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
 import com.forsetijudge.core.port.input.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.port.output.repository.AnnouncementRepository
@@ -38,7 +38,7 @@ class CreateAnnouncementService(
     @Transactional
     override fun execute(
         @Valid command: CreateAnnouncementUseCase.Command,
-    ): AnnouncementResponseDTO {
+    ): AnnouncementResponseBodyDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Creating new announcement for contest with id: ${command.contestId} by member with id: $contextMemberId")
