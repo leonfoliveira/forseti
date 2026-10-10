@@ -69,6 +69,13 @@ export class Actor {
     return new ActorOnSubmissionsPage(this.page, this.member);
   }
 
+  async navigateToAnnouncements(contest: Contest) {
+    await this.navigate(contest, "announcements");
+    const { ActorOnAnnouncementsPage } =
+      require("@/test/actor/ActorOnAnnouncementsPage") as typeof import("@/test/actor/ActorOnAnnouncementsPage");
+    return new ActorOnAnnouncementsPage(this.page, this.member);
+  }
+
   async navigateToSettings(contest: Contest) {
     await this.navigate(contest, "settings");
     const { ActorOnSettingsPage } =
