@@ -97,3 +97,20 @@ jobs:
         run: |
           cd test/regression
           npm run test
+
+      - name: Comment on PR with results
+        if: always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const jobStatus = '${{ job.status }}';
+            const commentBody = jobStatus === 'success' 
+              ? '✅ Regression tests passed!'
+              : '❌ Regression tests failed. Please check the workflow logs for details.';
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: commentBody
+            });
