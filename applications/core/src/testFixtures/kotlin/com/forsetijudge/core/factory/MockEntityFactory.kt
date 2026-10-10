@@ -1,5 +1,6 @@
 package com.forsetijudge.core.factory
 
+import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
@@ -91,5 +92,17 @@ object MockEntityFactory {
         status = status,
         answer = answer,
         code = attachment(contest = problem.contest, member = member, context = Attachment.Context.SUBMISSION_CODE),
+    )
+
+    fun announcement(
+        id: UUID = UUID.randomUUID(),
+        contest: Contest = contest(),
+        member: Member = member(contest = contest),
+        text: String = "Sample announcement",
+    ) = Announcement(
+        id = id,
+        contest = contest,
+        member = member,
+        text = text,
     )
 }
