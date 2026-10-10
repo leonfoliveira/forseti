@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.announcement
 
-import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
@@ -15,7 +15,7 @@ interface CreateAnnouncementUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): Announcement
+    ): AnnouncementResponseDTO
 
     /**
      * Command object for creating a new announcement.

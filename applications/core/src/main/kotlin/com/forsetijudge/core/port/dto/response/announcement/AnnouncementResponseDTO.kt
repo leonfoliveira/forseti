@@ -7,9 +7,10 @@ import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseBodyDTO
 import java.io.Serializable
 import java.time.OffsetDateTime
+import java.util.UUID
 
 data class AnnouncementResponseDTO(
-    val id: String,
+    val id: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
     val contest: ContestResponseBodyDTO,
@@ -20,7 +21,7 @@ data class AnnouncementResponseDTO(
 
 fun Announcement.toResponseBodyDTO(): AnnouncementResponseDTO =
     AnnouncementResponseDTO(
-        id = id.toString(),
+        id = id,
         createdAt = createdAt,
         updatedAt = updatedAt,
         contest = contest.toResponseBodyDTO(),
