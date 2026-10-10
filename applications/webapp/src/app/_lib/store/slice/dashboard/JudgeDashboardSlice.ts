@@ -7,6 +7,7 @@ import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDa
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO;
 
@@ -42,6 +43,12 @@ export const JudgeDashboardSlice = createSlice({
       action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
     ) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
+    },
+    mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
+      state.announcements = EntityUtil.merge(
+        state.announcements,
+        action.payload,
+      );
     },
   },
 });

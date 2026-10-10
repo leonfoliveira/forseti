@@ -7,6 +7,7 @@ import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDa
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export type GuestDashboardState = GuestDashboardResponseDTO;
 
@@ -43,6 +44,12 @@ export const GuestDashboardSlice = createSlice({
     mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,
+        action.payload,
+      );
+    },
+    mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
+      state.announcements = EntityUtil.merge(
+        state.announcements,
         action.payload,
       );
     },

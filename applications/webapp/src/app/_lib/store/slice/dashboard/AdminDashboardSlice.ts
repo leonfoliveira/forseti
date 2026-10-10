@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
 import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
@@ -44,6 +45,12 @@ export const AdminDashboardSlice = createSlice({
       action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },
     ) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
+    },
+    mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
+      state.announcements = EntityUtil.merge(
+        state.announcements,
+        action.payload,
+      );
     },
   },
 });

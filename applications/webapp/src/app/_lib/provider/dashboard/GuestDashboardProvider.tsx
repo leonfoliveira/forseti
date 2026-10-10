@@ -14,6 +14,7 @@ import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { GuestDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/GuestDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 /**
  * Provider component for fetching guest dashboard data and setting up broadcast listeners.
@@ -49,6 +50,7 @@ export function GuestDashboardProvider({
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
+            ANNOUNCEMENT_CREATED: receiveAnnouncement,
           }),
         );
 
@@ -102,6 +104,15 @@ export function GuestDashboardProvider({
 
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error("New failed submission");
+    }
+  }
+
+  function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
+    console.debug("Received announcement:", announcement);
+    dispatch(GuestDashboardSlice.actions.mergeAnnouncement(announcement));
+
+    if (announcement.member.id !== session?.member.id) {
+      toast.warning(`New announcement: ${announcement.text}`);
     }
   }
 
