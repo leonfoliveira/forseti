@@ -50,7 +50,7 @@ spring:
 security:
   cookie:
     domain: ${COOKIE_DOMAIN:*}
-    secure: ${SECURE_COOKIES:false}
+    secure: ${COOKIE_SECURE:false}
   session:
     expiration:
       default_seconds: ${SESSION_EXPIRATION_SECONDS:86400}

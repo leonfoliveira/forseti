@@ -791,7 +791,7 @@ Resources:
               Value: !Ref DomainName
             - Name: ALLOWED_ORIGINS
               Value: !Sub "https://${DomainName}"
-            - Name: SECURE_COOKIES
+            - Name: COOKIE_SECURE
               Value: "true"
             - Name: SESSION_EXPIRATION_SECONDS
               Value: "21600"
