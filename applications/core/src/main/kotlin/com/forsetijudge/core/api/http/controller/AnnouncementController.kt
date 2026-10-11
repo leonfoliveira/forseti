@@ -4,6 +4,7 @@ import com.forsetijudge.core.api.http.dto.request.announcement.CreateAnnouncemen
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
 import com.forsetijudge.core.port.input.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,13 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
 @Suppress("unused")
 class AnnouncementController(
-    private val announcementUseCase: CreateAnnouncementUseCase,
+    private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
