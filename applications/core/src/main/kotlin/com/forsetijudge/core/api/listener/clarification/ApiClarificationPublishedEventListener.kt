@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
@@ -21,6 +22,7 @@ class ApiClarificationPublishedEventListener(
     private val logger = SafeLogger(this::class)
 
     @TransactionalEventListener
+    @Transactional(readOnly = true)
     fun handle(event: ClarificationEvent.Published) {
         logger.info("Handling clarification published event for clarification with id: ${event.clarificationId}")
 
