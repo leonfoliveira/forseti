@@ -75,5 +75,10 @@ class Clarification(
          */
         @Column("answer_text", nullable = false)
         val text: String,
+        /**
+         * The time when the answer was created.
+         */
+        @Column("answer_created_at", nullable = false)
+        val createdAt: OffsetDateTime = OffsetDateTime.now(),
     )
 }

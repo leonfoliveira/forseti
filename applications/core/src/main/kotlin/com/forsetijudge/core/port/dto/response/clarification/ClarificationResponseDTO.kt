@@ -25,6 +25,7 @@ data class ClarificationResponseDTO(
     data class Answer(
         val member: MemberResponseDTO,
         val text: String,
+        val createdAt: OffsetDateTime,
     )
 }
 
@@ -37,7 +38,7 @@ fun Clarification.toResponseDTO(): ClarificationResponseDTO =
         problem = problem?.toResponseDTO(),
         member = member.toResponseDTO(),
         text = text,
-        answer = answer?.let { ClarificationResponseDTO.Answer(it.member.toResponseDTO(), it.text) },
+        answer = answer?.let { ClarificationResponseDTO.Answer(it.member.toResponseDTO(), it.text, it.createdAt) },
         isPublic = isPublic,
         version = version,
     )

@@ -249,6 +249,7 @@ export const MockClarificationResponseDTO = (
   answer: {
     member: MockMemberResponseDTO(),
     text: "The meaning of life is 42.",
+    createdAt,
   },
   isPublic: false,
   version: 1,
@@ -281,6 +282,7 @@ export const MockAdminDashboardResponseDTO = (
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -294,6 +296,7 @@ export const MockContestantDashboardResponseDTO = (
   submissions: [MockSubmissionResponseDTO()],
   memberSubmissions: [MockSubmissionWithCodeResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -306,6 +309,7 @@ export const MockGuestDashboardResponseDTO = (
   problems: [MockProblemResponseDTO()],
   submissions: [MockSubmissionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -318,6 +322,7 @@ export const MockJudgeDashboardResponseDTO = (
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 

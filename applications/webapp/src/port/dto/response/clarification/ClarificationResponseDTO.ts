@@ -13,6 +13,7 @@ export type ClarificationResponseDTO = {
   answer?: {
     member: MemberResponseDTO;
     text: string;
+    createdAt: string;
   };
   isPublic: boolean;
   version: number;
