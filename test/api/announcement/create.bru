@@ -10,6 +10,10 @@ post {
   auth: inherit
 }
 
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
 body:json {
   {
     "text": "Announcement text"

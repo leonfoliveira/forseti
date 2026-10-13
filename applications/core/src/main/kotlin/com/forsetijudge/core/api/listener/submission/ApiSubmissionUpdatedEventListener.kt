@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
 
@@ -28,7 +29,7 @@ class ApiSubmissionUpdatedEventListener(
     private val logger = SafeLogger(this::class)
 
     @TransactionalEventListener
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     fun handle(event: SubmissionEvent.Updated) {
         logger.info("Handling submission updated event for submission with id: ${event.submissionId}")
 
