@@ -15,6 +15,7 @@ import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { AdminDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/AdminDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 /**
  * Provider component for fetching admin dashboard data and setting up broadcast listeners.
@@ -51,6 +52,9 @@ export function AdminDashboardProvider({
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_CREATED: receiveClarificationCreated,
+            CLARIFICATION_ANSWERED: receiveClarificationAnswered,
+            CLARIFICATION_PUBLISHED: receiveClarificationPublished,
           }),
         );
 
@@ -116,6 +120,29 @@ export function AdminDashboardProvider({
     if (announcement.member.id !== session?.member.id) {
       toast.warning(`New announcement: ${announcement.text}`);
     }
+  }
+
+  function receiveClarificationCreated(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification created:", clarification);
+    dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
+    toast.info(`New clarification created`);
+  }
+
+  function receiveClarificationAnswered(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification answered:", clarification);
+    dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
+  }
+
+  function receiveClarificationPublished(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification published:", clarification);
+    dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
+    toast.info(`A clarification has been published`);
   }
 
   if (state.isLoading) {
