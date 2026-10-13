@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
@@ -49,6 +50,12 @@ export const AdminDashboardSlice = createSlice({
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
       state.announcements = EntityUtil.merge(
         state.announcements,
+        action.payload,
+      );
+    },
+    mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
+      state.clarifications = EntityUtil.merge(
+        state.clarifications,
         action.payload,
       );
     },
