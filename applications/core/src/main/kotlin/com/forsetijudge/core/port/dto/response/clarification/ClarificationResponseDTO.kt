@@ -5,6 +5,8 @@ import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseDTO
+import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
+import com.forsetijudge.core.port.dto.response.problem.toResponseDTO
 import java.time.OffsetDateTime
 import java.util.UUID
 
@@ -13,6 +15,7 @@ data class ClarificationResponseDTO(
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
     val contest: ContestResponseDTO,
+    val problem: ProblemResponseDTO?,
     val member: MemberResponseDTO,
     val text: String,
     val answer: Answer?,
@@ -31,6 +34,7 @@ fun Clarification.toResponseDTO(): ClarificationResponseDTO =
         createdAt = createdAt,
         updatedAt = updatedAt,
         contest = contest.toResponseDTO(),
+        problem = problem?.toResponseDTO(),
         member = member.toResponseDTO(),
         text = text,
         answer = answer?.let { ClarificationResponseDTO.Answer(it.member.toResponseDTO(), it.text) },
