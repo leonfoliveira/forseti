@@ -2,9 +2,11 @@ package com.forsetijudge.core.api.websocket.room
 
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
 import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
 import java.util.UUID
@@ -40,5 +42,12 @@ class SocketIOContestantDashboardRoom(
             room = name,
             eventName = "ANNOUNCEMENT_CREATED",
             data = announcement.toResponseBodyDTO(),
+        )
+
+    fun buildClarificationPublishedEvent(clarification: Clarification) =
+        SocketIOFanoutMessage(
+            room = name,
+            eventName = "CLARIFICATION_PUBLISHED",
+            data = clarification.toResponseDTO(),
         )
 }

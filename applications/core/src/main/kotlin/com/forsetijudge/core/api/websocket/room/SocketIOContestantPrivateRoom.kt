@@ -1,9 +1,9 @@
 package com.forsetijudge.core.api.websocket.room
 
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
-import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
 import java.util.UUID
 
@@ -20,10 +20,17 @@ class SocketIOContestantPrivateRoom(
             data = submission.toWithCodeAndExecutionResponseBodyDTO(),
         )
 
-    fun buildAnnouncementCreatedEvent(announcement: Announcement) =
+    fun buildClarificationCreatedEvent(clarification: Clarification) =
         SocketIOFanoutMessage(
             room = name,
-            eventName = "ANNOUNCEMENT_CREATED",
-            data = announcement.toResponseBodyDTO(),
+            eventName = "CLARIFICATION_CREATED",
+            data = clarification.toResponseDTO(),
+        )
+
+    fun buildClarificationAnsweredEvent(clarification: Clarification) =
+        SocketIOFanoutMessage(
+            room = name,
+            eventName = "CLARIFICATION_ANSWERED",
+            data = clarification.toResponseDTO(),
         )
 }
