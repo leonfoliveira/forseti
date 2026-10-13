@@ -12,6 +12,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
@@ -232,6 +233,25 @@ export const MockContestWithMembersAndProblemsDTO = (
   ...MockContestResponseDTO(),
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],
+  ...overrides,
+});
+
+export const MockClarificationResponseDTO = (
+  overrides: Partial<ClarificationResponseDTO> = {},
+): ClarificationResponseDTO => ({
+  id: "clarification-1",
+  createdAt,
+  updatedAt: createdAt,
+  contest: MockContestResponseDTO(),
+  problem: MockProblemResponseDTO(),
+  member: MockMemberResponseDTO(),
+  text: "What is the meaning of life?",
+  answer: {
+    member: MockMemberResponseDTO(),
+    text: "The meaning of life is 42.",
+  },
+  isPublic: false,
+  version: 1,
   ...overrides,
 });
 
