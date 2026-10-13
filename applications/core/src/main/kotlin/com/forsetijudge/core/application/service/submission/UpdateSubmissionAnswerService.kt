@@ -7,8 +7,8 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
 import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -31,7 +31,7 @@ class UpdateSubmissionAnswerService(
      * @return The updated submission with its code result.
      */
     @Transactional
-    override fun execute(command: UpdateSubmissionAnswerUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
+    override fun execute(command: UpdateSubmissionAnswerUseCase.Command): SubmissionWithCodeAndExecutionsResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info(
@@ -57,6 +57,6 @@ class UpdateSubmissionAnswerService(
         businessEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
         logger.info("Submission answer updated successfully")
-        return submission.toWithCodeAndExecutionResponseBodyDTO()
+        return submission.toWithCodeAndExecutionResponseDTO()
     }
 }

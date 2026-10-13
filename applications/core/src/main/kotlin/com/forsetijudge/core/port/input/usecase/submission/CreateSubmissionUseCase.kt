@@ -2,7 +2,7 @@ package com.forsetijudge.core.port.input.usecase.submission
 
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
 import jakarta.validation.Valid
 import java.util.UUID
 
@@ -15,7 +15,7 @@ interface CreateSubmissionUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): SubmissionWithCodeResponseBodyDTO
+    ): SubmissionWithCodeResponseDTO
 
     /**
      * Command for creating a new submission.

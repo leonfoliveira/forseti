@@ -6,8 +6,8 @@ import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.dashboard.JudgeDashboard
-import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -33,7 +33,7 @@ class BuildJudgeDashboardService(
      * @return An JudgeDashboardResultDTO containing the aggregated data for the judge dashboard.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildJudgeDashboardUseCase.Command): JudgeDashboardResponseBodyDTO {
+    override fun execute(command: BuildJudgeDashboardUseCase.Command): JudgeDashboardResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Building guest dashboard")
@@ -63,6 +63,6 @@ class BuildJudgeDashboardService(
                 announcements = contest.announcements,
             )
 
-        return dashboard.toResponseBodyDTO()
+        return dashboard.toResponseDTO()
     }
 }

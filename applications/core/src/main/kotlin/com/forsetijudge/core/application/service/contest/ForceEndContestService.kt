@@ -6,15 +6,15 @@ import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 
 @Service
 class ForceEndContestService(
@@ -31,7 +31,7 @@ class ForceEndContestService(
      * @return The updated Contest object after being forced to end.
      */
     @Transactional
-    override fun execute(command: ForceEndContestUseCase.Command): ContestWithMembersAndProblemsResponseBodyDTO {
+    override fun execute(command: ForceEndContestUseCase.Command): ContestWithMembersAndProblemsResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Force ending contest with id: ${command.contestId} by member with id: $contextMemberId")
@@ -54,6 +54,6 @@ class ForceEndContestService(
         businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest force ended successfully")
-        return contest.toWithMembersAndProblemsResponseBodyDTO()
+        return contest.toWithMembersAndProblemsResponseDTO()
     }
 }

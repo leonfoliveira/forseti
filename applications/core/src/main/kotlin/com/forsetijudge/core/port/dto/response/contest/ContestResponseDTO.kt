@@ -6,7 +6,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class ContestResponseBodyDTO(
+data class ContestResponseDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
@@ -18,8 +18,8 @@ data class ContestResponseBodyDTO(
     val version: Long,
 ) : Serializable
 
-fun Contest.toResponseBodyDTO(): ContestResponseBodyDTO =
-    ContestResponseBodyDTO(
+fun Contest.toResponseDTO(): ContestResponseDTO =
+    ContestResponseDTO(
         id = this.id,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,

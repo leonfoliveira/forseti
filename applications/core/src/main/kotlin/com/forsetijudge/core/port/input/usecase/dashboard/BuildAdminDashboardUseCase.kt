@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.dashboard
 
-import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
 import java.util.UUID
 
 interface BuildAdminDashboardUseCase {
@@ -11,7 +11,7 @@ interface BuildAdminDashboardUseCase {
      *
      * @return An AdminDashboardResultDTO containing the aggregated data for the admin dashboard.
      */
-    fun execute(command: Command): AdminDashboardResponseBodyDTO
+    fun execute(command: Command): AdminDashboardResponseDTO
 
     /**
      * Command for building the admin dashboard.

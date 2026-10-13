@@ -9,7 +9,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.attachment.SignedDownloadAttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.attachment.toDownloadSignedResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.toDownloadSignedResponseDTO
 import com.forsetijudge.core.port.input.usecase.attachment.SignedDownloadAttachmentUseCase
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
@@ -62,6 +62,6 @@ class SignedDownloadAttachmentService(
         val downloadUrl = attachmentBucket.getDownloadUrl(attachment)
 
         logger.info("Generated signed download URL successfully")
-        return attachment.toDownloadSignedResponseBodyDTO(downloadUrl)
+        return attachment.toDownloadSignedResponseDTO(downloadUrl)
     }
 }

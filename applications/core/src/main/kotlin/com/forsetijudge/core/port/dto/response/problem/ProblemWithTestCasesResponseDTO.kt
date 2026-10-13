@@ -2,11 +2,11 @@ package com.forsetijudge.core.port.dto.response.problem
 
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseDTO
 import java.io.Serializable
 import java.util.UUID
 
-data class ProblemWithTestCasesResponseBodyDTO(
+data class ProblemWithTestCasesResponseDTO(
     val id: UUID,
     val createdAt: String,
     val updatedAt: String,
@@ -20,17 +20,17 @@ data class ProblemWithTestCasesResponseBodyDTO(
     val version: Long,
 ) : Serializable
 
-fun Problem.toWithTestCasesResponseBodyDTO(): ProblemWithTestCasesResponseBodyDTO =
-    ProblemWithTestCasesResponseBodyDTO(
+fun Problem.toWithTestCasesResponseDTO(): ProblemWithTestCasesResponseDTO =
+    ProblemWithTestCasesResponseDTO(
         id = id,
         createdAt = createdAt.toString(),
         updatedAt = updatedAt.toString(),
         letter = letter,
         color = color,
         title = title,
-        description = description.toResponseBodyDTO(),
+        description = description.toResponseDTO(),
         timeLimit = timeLimitMs,
         memoryLimit = memoryLimitMb,
-        testCases = testCases.toResponseBodyDTO(),
+        testCases = testCases.toResponseDTO(),
         version = version,
     )

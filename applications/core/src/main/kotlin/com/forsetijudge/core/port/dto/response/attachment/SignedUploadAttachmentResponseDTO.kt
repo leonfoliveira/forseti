@@ -8,8 +8,8 @@ data class SignedUploadAttachmentResponseDTO(
     val uploadUrl: String,
 ) : Serializable
 
-fun Attachment.toUploadSignedResponseBodyDTO(uploadUrl: String): SignedUploadAttachmentResponseDTO =
+fun Attachment.toUploadSignedResponseDTO(uploadUrl: String): SignedUploadAttachmentResponseDTO =
     SignedUploadAttachmentResponseDTO(
-        attachment = this.toResponseBodyDTO(),
+        attachment = this.toResponseDTO(),
         uploadUrl = uploadUrl,
     )

@@ -5,8 +5,8 @@ import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.leaderboard.BuildLeaderboardCellUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -33,7 +33,7 @@ class BuildLeaderboardCellService(
      * @return A pair containing the built leaderboard cell and the ID of the member for whom the cell was built.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildLeaderboardCellUseCase.Command): LeaderboardCellResponseBodyDTO {
+    override fun execute(command: BuildLeaderboardCellUseCase.Command): LeaderboardCellResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info(
@@ -75,6 +75,6 @@ class BuildLeaderboardCellService(
             )
 
         logger.info("Leaderboard cell built successfully")
-        return cell.toResponseBodyDTO()
+        return cell.toResponseDTO()
     }
 }

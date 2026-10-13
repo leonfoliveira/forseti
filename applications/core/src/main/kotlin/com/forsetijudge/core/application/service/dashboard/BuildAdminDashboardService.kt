@@ -6,8 +6,8 @@ import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.dashboard.AdminDashboard
-import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -33,7 +33,7 @@ class BuildAdminDashboardService(
      * @return An AdminDashboardResultDTO containing the aggregated data for the admin dashboard.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildAdminDashboardUseCase.Command): AdminDashboardResponseBodyDTO {
+    override fun execute(command: BuildAdminDashboardUseCase.Command): AdminDashboardResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Building admin dashboard")
@@ -63,6 +63,6 @@ class BuildAdminDashboardService(
                 announcements = contest.announcements,
             )
 
-        return dashboard.toResponseBodyDTO()
+        return dashboard.toResponseDTO()
     }
 }

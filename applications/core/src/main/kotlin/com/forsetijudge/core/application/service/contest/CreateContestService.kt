@@ -8,8 +8,8 @@ import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -37,7 +37,7 @@ class CreateContestService(
     @Transactional
     override fun execute(
         @Valid command: CreateContestUseCase.Command,
-    ): ContestResponseBodyDTO {
+    ): ContestResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Creating contest with slug: ${command.slug}")
@@ -66,6 +66,6 @@ class CreateContestService(
         businessEventPublisher.publish(ContestEvent.Created(contest.id))
 
         logger.info("Contest created successfully with id = ${contest.id}")
-        return contest.toResponseBodyDTO()
+        return contest.toResponseDTO()
     }
 }

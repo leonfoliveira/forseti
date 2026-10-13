@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.contest
 
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 
 interface FindContestBySlugUseCase {
     /**
@@ -9,7 +9,7 @@ interface FindContestBySlugUseCase {
      * @param command The command containing the slug of the contest to find.
      * @return The contest with the specified slug.
      */
-    fun execute(command: Command): ContestResponseBodyDTO
+    fun execute(command: Command): ContestResponseDTO
 
     /**
      * Command for finding a contest by its slug.

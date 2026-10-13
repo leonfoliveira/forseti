@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.leaderboard
 
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseDTO
 import java.util.UUID
 
 interface BuildLeaderboardCellUseCase {
@@ -10,7 +10,7 @@ interface BuildLeaderboardCellUseCase {
      * @param command The command containing the member and problem to build the cell for.
      * @return A pair containing the built leaderboard cell and the ID of the member for whom the cell was built.
      */
-    fun execute(command: Command): LeaderboardCellResponseBodyDTO
+    fun execute(command: Command): LeaderboardCellResponseDTO
 
     /**
      * Command for building a leaderboard cell.

@@ -6,7 +6,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class LeaderboardResponseBodyDTO(
+data class LeaderboardResponseDTO(
     val contestId: UUID,
     val rows: List<Row>,
 ) : Serializable {
@@ -28,12 +28,12 @@ data class LeaderboardResponseBodyDTO(
     )
 }
 
-fun Leaderboard.toResponseBodyDTO(): LeaderboardResponseBodyDTO =
-    LeaderboardResponseBodyDTO(
+fun Leaderboard.toResponseDTO(): LeaderboardResponseDTO =
+    LeaderboardResponseDTO(
         contestId = this.contestId,
         rows =
             this.rows.map { row ->
-                LeaderboardResponseBodyDTO.Row(
+                LeaderboardResponseDTO.Row(
                     memberId = row.memberId,
                     memberName = row.memberName,
                     memberType = row.memberType,
@@ -41,7 +41,7 @@ fun Leaderboard.toResponseBodyDTO(): LeaderboardResponseBodyDTO =
                     penalty = row.penalty,
                     cells =
                         row.cells.map { cell ->
-                            LeaderboardResponseBodyDTO.Cell(
+                            LeaderboardResponseDTO.Cell(
                                 problemId = cell.problemId,
                                 isAccepted = cell.isAccepted,
                                 acceptedAt = cell.acceptedAt,

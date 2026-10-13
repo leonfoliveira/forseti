@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.leaderboard
 
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
 import java.util.UUID
 
 interface BuildLeaderboardUseCase {
@@ -9,7 +9,7 @@ interface BuildLeaderboardUseCase {
      *
      * @return The result of building the leaderboard.
      */
-    fun execute(command: Command): LeaderboardResponseBodyDTO
+    fun execute(command: Command): LeaderboardResponseDTO
 
     /**
      * Command class for building the leaderboard.

@@ -10,7 +10,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.attachment.SignedUploadAttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.attachment.toUploadSignedResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.toUploadSignedResponseDTO
 import com.forsetijudge.core.port.input.usecase.attachment.SignedUploadAttachmentUseCase
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
@@ -84,6 +84,6 @@ class SignedUploadAttachmentService(
         val uploadUrl = attachmentBucket.getUploadUrl(attachment)
 
         logger.info("Attachment created successfully with id = ${attachment.id}")
-        return attachment.toUploadSignedResponseBodyDTO(uploadUrl)
+        return attachment.toUploadSignedResponseDTO(uploadUrl)
     }
 }

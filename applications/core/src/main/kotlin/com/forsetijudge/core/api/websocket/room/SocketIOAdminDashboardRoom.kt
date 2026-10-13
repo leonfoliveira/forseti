@@ -5,10 +5,10 @@ import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
 import java.util.UUID
 
 class SocketIOAdminDashboardRoom(
@@ -20,28 +20,28 @@ class SocketIOAdminDashboardRoom(
         SocketIOFanoutMessage(
             room = name,
             eventName = "LEADERBOARD_UPDATED",
-            data = leaderboardCell.toResponseBodyDTO(),
+            data = leaderboardCell.toResponseDTO(),
         )
 
     fun buildSubmissionCreatedEvent(submission: Submission) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "SUBMISSION_CREATED",
-            data = submission.toWithCodeAndExecutionResponseBodyDTO(),
+            data = submission.toWithCodeAndExecutionResponseDTO(),
         )
 
     fun buildSubmissionUpdatedEvent(submission: Submission) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "SUBMISSION_UPDATED",
-            data = submission.toWithCodeAndExecutionResponseBodyDTO(),
+            data = submission.toWithCodeAndExecutionResponseDTO(),
         )
 
     fun buildAnnouncementCreatedEvent(announcement: Announcement) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "ANNOUNCEMENT_CREATED",
-            data = announcement.toResponseBodyDTO(),
+            data = announcement.toResponseDTO(),
         )
 
     fun buildClarificationCreatedEvent(clarification: Clarification) =

@@ -3,7 +3,7 @@ package com.forsetijudge.core.port.dto.response.execution
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.attachment.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.attachment.toResponseDTO
 import java.io.Serializable
 import java.time.OffsetDateTime
 
@@ -21,7 +21,7 @@ data class ExecutionResponseDTO(
     val version: Long,
 ) : Serializable
 
-fun Execution.toResponseBodyDTO(): ExecutionResponseDTO =
+fun Execution.toResponseDTO(): ExecutionResponseDTO =
     ExecutionResponseDTO(
         id = id.toString(),
         createdAt = createdAt,
@@ -32,6 +32,6 @@ fun Execution.toResponseBodyDTO(): ExecutionResponseDTO =
         maxCpuTime = maxCpuTimeMs,
         maxClockTime = maxClockTimeMs,
         maxPeakMemory = maxPeakMemoryKb,
-        details = details?.toResponseBodyDTO(),
+        details = details?.toResponseDTO(),
         version = version,
     )

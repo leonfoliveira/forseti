@@ -5,7 +5,7 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class LeaderboardCellResponseBodyDTO(
+data class LeaderboardCellResponseDTO(
     val memberId: UUID,
     val problemId: UUID,
     val isAccepted: Boolean,
@@ -14,8 +14,8 @@ data class LeaderboardCellResponseBodyDTO(
     val penalty: Int,
 ) : Serializable
 
-fun Leaderboard.Cell.toResponseBodyDTO(): LeaderboardCellResponseBodyDTO =
-    LeaderboardCellResponseBodyDTO(
+fun Leaderboard.Cell.toResponseDTO(): LeaderboardCellResponseDTO =
+    LeaderboardCellResponseDTO(
         memberId = memberId,
         problemId = problemId,
         isAccepted = isAccepted,

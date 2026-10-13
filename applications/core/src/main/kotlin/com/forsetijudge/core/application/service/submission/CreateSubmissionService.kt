@@ -10,8 +10,8 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.input.usecase.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -44,7 +44,7 @@ class CreateSubmissionService(
     @Transactional
     override fun execute(
         @Valid command: CreateSubmissionUseCase.Command,
-    ): SubmissionWithCodeResponseBodyDTO {
+    ): SubmissionWithCodeResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Creating submission for member with id: $contextMemberId and problem with id: ${command.problemId}")
@@ -88,6 +88,6 @@ class CreateSubmissionService(
         businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
 
         logger.info("Submission created successfully with id = ${submission.id}")
-        return submission.toWithCodeResponseBodyDTO()
+        return submission.toWithCodeResponseDTO()
     }
 }

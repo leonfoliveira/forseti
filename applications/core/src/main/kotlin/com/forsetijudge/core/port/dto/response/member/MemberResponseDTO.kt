@@ -5,23 +5,23 @@ import java.io.Serializable
 import java.time.OffsetDateTime
 import java.util.UUID
 
-data class MemberWithLoginResponseBodyDTO(
+data class MemberResponseDTO(
     val id: UUID,
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
+    val contestId: UUID?,
     val type: Member.Type,
     val name: String,
-    val login: String,
     val version: Long,
 ) : Serializable
 
-fun Member.toWithLoginResponseBodyDTO(): MemberWithLoginResponseBodyDTO =
-    MemberWithLoginResponseBodyDTO(
+fun Member.toResponseDTO(): MemberResponseDTO =
+    MemberResponseDTO(
         id = id,
         createdAt = createdAt,
         updatedAt = updatedAt,
+        contestId = contest?.id,
         type = type,
         name = name,
-        login = login,
         version = version,
     )

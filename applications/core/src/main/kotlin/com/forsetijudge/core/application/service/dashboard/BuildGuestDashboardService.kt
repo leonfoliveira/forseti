@@ -4,8 +4,8 @@ import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -29,7 +29,7 @@ class BuildGuestDashboardService(
      * @return An GuestDashboardResultDTO containing the aggregated data for the guest dashboard.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildGuestDashboardUseCase.Command): GuestDashboardResponseBodyDTO {
+    override fun execute(command: BuildGuestDashboardUseCase.Command): GuestDashboardResponseDTO {
         logger.info("Building guest dashboard")
 
         val contest =
@@ -53,6 +53,6 @@ class BuildGuestDashboardService(
                 announcements = contest.announcements,
             )
 
-        return dashboard.toResponseBodyDTO()
+        return dashboard.toResponseDTO()
     }
 }
