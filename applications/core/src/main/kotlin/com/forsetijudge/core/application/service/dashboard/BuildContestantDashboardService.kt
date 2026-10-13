@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
+import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -21,6 +22,7 @@ class BuildContestantDashboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
+    private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildContestantDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -54,6 +56,8 @@ class BuildContestantDashboardService(
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions = submissionRepository.findAllByContestId(contest.id)
         val memberSubmissions = submissionRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
+        val clarifications =
+            clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contextMemberId)
 
         val dashboard =
             ContestantDashboard(
@@ -64,6 +68,7 @@ class BuildContestantDashboardService(
                 submissions = submissions,
                 memberSubmissions = memberSubmissions,
                 announcements = contest.announcements,
+                clarifications = clarifications,
             )
 
         return dashboard.toResponseDTO()

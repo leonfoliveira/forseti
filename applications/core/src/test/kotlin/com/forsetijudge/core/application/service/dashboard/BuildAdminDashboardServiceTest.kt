@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
+import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -22,11 +23,19 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class BuildAdminDashboardServiceTest {
-    private val contests = mock<ContestRepository>()
-    private val members = mock<MemberRepository>()
-    private val submissions = mock<SubmissionRepository>()
+    private val contestRepository = mock<ContestRepository>()
+    private val memberRepository = mock<MemberRepository>()
+    private val submissionRepository = mock<SubmissionRepository>()
+    private val clarificationRepository = mock<ClarificationRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
-    private val service = BuildAdminDashboardService(contests, members, submissions, leaderboardBuilder)
+    private val service =
+        BuildAdminDashboardService(
+            contestRepository,
+            memberRepository,
+            submissionRepository,
+            clarificationRepository,
+            leaderboardBuilder,
+        )
 
     @AfterEach
     fun clearAuthentication() = TestAuthentication.clear()
@@ -36,16 +45,17 @@ class BuildAdminDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         TestAuthentication.setMember(root)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
-        whenever(members.findByIdAndContestIdOrContestIsNull(root.id, contest.id)).thenReturn(root)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(root.id, contest.id)).thenReturn(root)
         whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
-        whenever(submissions.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(clarificationRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
         val result = service.execute(BuildAdminDashboardUseCase.Command(contest.id))
 
         assertEquals(contest.id, result.contest.id)
         verify(leaderboardBuilder).build(contest)
-        verify(submissions).findAllByContestId(contest.id)
+        verify(submissionRepository).findAllByContestId(contest.id)
     }
 
     @Test
@@ -53,14 +63,14 @@ class BuildAdminDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
-        whenever(members.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildAdminDashboardUseCase.Command(contest.id))
         }
         verify(leaderboardBuilder, never()).build(any())
 
-        whenever(contests.findById(contest.id)).thenReturn(null)
+        whenever(contestRepository.findById(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {
             service.execute(BuildAdminDashboardUseCase.Command(contest.id))
         }

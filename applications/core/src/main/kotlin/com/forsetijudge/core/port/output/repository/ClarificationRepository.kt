@@ -14,6 +14,9 @@ interface ClarificationRepository : BaseRepository<Clarification> {
         contestId: UUID,
     ): Clarification?
 
+    @Query("SELECT c FROM Clarification c WHERE c.contestId = ?1 AND deletedAt IS NULL")
+    fun findAllByContestId(contestId: UUID): List<Clarification>
+
     @Query("SELECT c FROM Clarification c WHERE c.contestId = ?1 AND (c.memberId = ?2 OR c.isPublic) AND deletedAt IS NULL")
     fun findAllByContestIdAndMemberIdOrIsPublic(
         contestId: UUID,

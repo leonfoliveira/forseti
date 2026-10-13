@@ -3,6 +3,8 @@ package com.forsetijudge.core.port.dto.response.dashboard
 import com.forsetijudge.core.domain.model.dashboard.ContestantDashboard
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
 import com.forsetijudge.core.port.dto.response.announcement.toResponseDTO
+import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
@@ -24,6 +26,7 @@ data class ContestantDashboardResponseDTO(
     val submissions: List<SubmissionResponseDTO>,
     val memberSubmissions: List<SubmissionWithCodeResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
+    val clarifications: List<ClarificationResponseDTO>,
 )
 
 fun ContestantDashboard.toResponseDTO(): ContestantDashboardResponseDTO =
@@ -35,4 +38,5 @@ fun ContestantDashboard.toResponseDTO(): ContestantDashboardResponseDTO =
         submissions = submissions.map { it.toResponseDTO() },
         memberSubmissions = memberSubmissions.map { it.toWithCodeResponseDTO() },
         announcements = announcements.map { it.toResponseDTO() },
+        clarifications = clarifications.map { it.toResponseDTO() },
     )

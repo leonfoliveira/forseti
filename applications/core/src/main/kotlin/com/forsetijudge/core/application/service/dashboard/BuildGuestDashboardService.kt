@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
+import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional
 class BuildGuestDashboardService(
     private val contestRepository: ContestRepository,
     private val submissionRepository: SubmissionRepository,
+    private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildGuestDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -42,6 +44,7 @@ class BuildGuestDashboardService(
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions = submissionRepository.findAllByContestId(contest.id)
+        val clarifications = clarificationRepository.findAllByContestIdAndIsPublic(contest.id)
 
         val dashboard =
             GuestDashboard(
@@ -51,6 +54,7 @@ class BuildGuestDashboardService(
                 problems = contest.problems,
                 submissions = submissions,
                 announcements = contest.announcements,
+                clarifications = clarifications,
             )
 
         return dashboard.toResponseDTO()

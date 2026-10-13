@@ -9,6 +9,7 @@ import com.forsetijudge.core.domain.model.dashboard.AdminDashboard
 import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
+import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -21,6 +22,7 @@ class BuildAdminDashboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
+    private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildAdminDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -52,6 +54,7 @@ class BuildAdminDashboardService(
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions = submissionRepository.findAllByContestId(contest.id)
+        val clarifications = clarificationRepository.findAllByContestId(contest.id)
 
         val dashboard =
             AdminDashboard(
@@ -61,6 +64,7 @@ class BuildAdminDashboardService(
                 problems = contest.problems,
                 submissions = submissions,
                 announcements = contest.announcements,
+                clarifications = clarifications,
             )
 
         return dashboard.toResponseDTO()
