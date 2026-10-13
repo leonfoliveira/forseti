@@ -112,6 +112,27 @@ class PublishClarificationServiceTest {
     }
 
     @Test
+    fun `throws ForbiddenException when clarification has not been answered yet`() {
+        val unansweredClarification = MockEntityFactory.clarification(answer = null)
+        TestAuthentication.setMember(member)
+        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(member)
+        whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, command.contestId)).thenReturn(
+            unansweredClarification,
+        )
+
+        val exception =
+            assertThrows<ForbiddenException> {
+                service.execute(command)
+            }
+
+        assertEquals(
+            "Cannot publish clarification with id: ${unansweredClarification.id} because it has not been answered yet",
+            exception.message,
+        )
+    }
+
+    @Test
     fun `saves clarification and publishes event when member is ROOT or ADMIN`() {
         TestAuthentication.setMember(member)
         whenever(contestRepository.findById(command.contestId)).thenReturn(contest)

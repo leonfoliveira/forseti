@@ -5,6 +5,7 @@ import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ClarificationEvent
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
@@ -53,6 +54,10 @@ class PublishClarificationService(
             .requireMemberToBelong()
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
             .throwIfErrors()
+
+        if (clarification.answer == null) {
+            throw ForbiddenException("Cannot publish clarification with id: ${clarification.id} because it has not been answered yet")
+        }
 
         clarification.isPublic = true
         clarificationRepository.save(clarification)
