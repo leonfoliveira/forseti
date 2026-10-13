@@ -4,9 +4,15 @@ import com.forsetijudge.core.domain.entity.Clarification
 import java.util.UUID
 import org.springframework.data.jpa.repository.Query
 
-interface ClarificationRepository {
+interface ClarificationRepository : BaseRepository<Clarification> {
     @Query("SELECT c FROM Clarification c WHERE c.id = ?1 AND deletedAt IS NULL")
     fun findById(id: UUID): Clarification?
+
+    @Query("SELECT c FROM Clarification c WHERE c.id = ?1 AND c.contestId = ?2 AND deletedAt IS NULL")
+    fun findByIdAndContestId(
+        id: UUID,
+        contestId: UUID,
+    ): Clarification?
 
     @Query("SELECT c FROM Clarification c WHERE c.contestId = ?1 AND (c.memberId = ?2 OR c.isPublic) AND deletedAt IS NULL")
     fun findAllByContestIdAndMemberIdOrIsPublic(

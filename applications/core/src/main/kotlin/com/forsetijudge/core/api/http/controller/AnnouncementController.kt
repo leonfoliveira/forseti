@@ -29,7 +29,7 @@ class AnnouncementController(
     ): ResponseEntity<AnnouncementResponseBodyDTO> {
         logger.info("[POST] /v1/contests/$contestId/announcements")
         val announcement =
-            announcementUseCase.execute(
+            createAnnouncementUseCase.execute(
                 CreateAnnouncementUseCase.Command(
                     contestId = contestId,
                     text = body.text,

@@ -113,8 +113,11 @@ object MockEntityFactory {
         problem: Problem? = null,
         questionMember: Member = member(contest = contest),
         questionText: String = "Sample clarification",
-        answerMember: Member = member(contest = contest),
-        answerText: String = "Sample answer",
+        answer: Clarification.Answer? =
+            Clarification.Answer(
+                member = member(contest = contest, type = Member.Type.ADMIN),
+                text = "Sample answer",
+            ),
         isPublic: Boolean = false,
     ) = Clarification(
         id = id,
@@ -122,11 +125,7 @@ object MockEntityFactory {
         problem = problem,
         member = questionMember,
         text = questionText,
-        answer =
-            Clarification.Answer(
-                member = answerMember,
-                text = answerText,
-            ),
+        answer = answer,
         isPublic = isPublic,
     )
 }

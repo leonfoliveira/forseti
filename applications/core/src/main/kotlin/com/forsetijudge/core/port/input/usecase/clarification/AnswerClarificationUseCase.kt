@@ -20,10 +20,12 @@ interface AnswerClarificationUseCase {
     /**
      * Command class representing the input data required to answer a clarification.
      *
+     * @property contestId The unique identifier of the contest to which the clarification belongs.
      * @property clarificationId The unique identifier of the clarification being answered.
      * @property answer The text of the answer being provided for the clarification.
      */
     data class Command(
+        val contestId: UUID,
         val clarificationId: UUID,
         @field:NotBlank(message = "'text' must not be blank")
         @field:Size(max = 500, message = "'text' must be at most 500 characters long")

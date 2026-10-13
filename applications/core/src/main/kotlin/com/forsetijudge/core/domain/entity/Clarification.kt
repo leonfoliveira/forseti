@@ -55,12 +55,12 @@ class Clarification(
      * The answer to this clarification, if any.
      */
     @Embedded
-    val answer: Answer? = null,
+    var answer: Answer? = null,
     /**
      * Whether this clarification is public or not.
      */
     @Column("is_public", nullable = false)
-    val isPublic: Boolean = false,
+    var isPublic: Boolean = false,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
     @Embeddable
     data class Answer(
