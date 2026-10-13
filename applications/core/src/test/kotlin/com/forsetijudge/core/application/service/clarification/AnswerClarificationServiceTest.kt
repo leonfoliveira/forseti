@@ -34,7 +34,7 @@ class AnswerClarificationServiceTest {
         AnswerClarificationUseCase.Command(
             contestId = IdGenerator.getUUID(),
             clarificationId = IdGenerator.getUUID(),
-            answer = "This is the answer to the clarification.",
+            text = "This is the answer to the clarification.",
         )
     val member = MockEntityFactory.member()
 
@@ -154,7 +154,7 @@ class AnswerClarificationServiceTest {
 
         service.execute(command)
 
-        assertEquals(command.answer, clarification.answer?.text)
+        assertEquals(command.text, clarification.answer?.text)
         verify(businessEventPublisher).publish(
             check { event ->
                 assertEquals(ClarificationEvent.Answered(clarification.id), event)

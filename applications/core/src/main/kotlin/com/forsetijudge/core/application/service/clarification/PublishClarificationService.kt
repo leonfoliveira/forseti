@@ -51,7 +51,7 @@ class PublishClarificationService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
+            .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
             .throwIfErrors()
 
         clarification.isPublic = true

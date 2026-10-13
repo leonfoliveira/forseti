@@ -60,7 +60,7 @@ class AnswerClarificationService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
+            .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
             .throwIfErrors()
 
         if (clarification.answer != null) {
@@ -70,7 +70,7 @@ class AnswerClarificationService(
         clarification.answer =
             Clarification.Answer(
                 member = member,
-                text = command.answer,
+                text = command.text,
             )
         clarificationRepository.save(clarification)
         businessEventPublisher.publish(ClarificationEvent.Answered(clarification.id))
