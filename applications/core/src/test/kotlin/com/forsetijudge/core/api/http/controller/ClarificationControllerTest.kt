@@ -11,6 +11,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -59,7 +60,7 @@ class ClarificationControllerTest {
 
         mvc
             .perform(
-                post("/v1/contests/${contest.id}/clarifications/${clarification.id}/answer")
+                patch("/v1/contests/${contest.id}/clarifications/${clarification.id}/answer")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"text":"Test answer"}"""),
             ).andExpect(status().isOk)
@@ -82,7 +83,7 @@ class ClarificationControllerTest {
 
         mvc
             .perform(
-                post("/v1/contests/${contest.id}/clarifications/${clarification.id}/publish")
+                patch("/v1/contests/${contest.id}/clarifications/${clarification.id}/publish")
                     .contentType(MediaType.APPLICATION_JSON),
             ).andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(clarification.id.toString()))

@@ -10,6 +10,7 @@ import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -44,7 +45,7 @@ class ClarificationController(
         return ResponseEntity.ok(clarification)
     }
 
-    @PostMapping("/contests/{contestId}/clarifications/{clarificationId}/answer")
+    @PatchMapping("/contests/{contestId}/clarifications/{clarificationId}/answer")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
     fun answer(
         @PathVariable contestId: UUID,
@@ -63,7 +64,7 @@ class ClarificationController(
         return ResponseEntity.ok(clarification)
     }
 
-    @PostMapping("/contests/{contestId}/clarifications/{clarificationId}/publish")
+    @PatchMapping("/contests/{contestId}/clarifications/{clarificationId}/publish")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
     fun publish(
         @PathVariable contestId: UUID,

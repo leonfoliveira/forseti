@@ -10,6 +10,8 @@ import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -18,13 +20,12 @@ import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.OffsetDateTime
-import java.util.UUID
 
 class ContestControllerTest {
     private val findBySlug = mock<FindContestBySlugUseCase>()
@@ -158,13 +159,13 @@ class ContestControllerTest {
         whenever(forceEnd.execute(any())).thenReturn(response)
 
         mvc
-            .perform(put("/v1/contests/$contestId:force-start"))
+            .perform(patch("/v1/contests/$contestId:force-start"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(contestId.toString()))
         verify(forceStart).execute(ForceStartContestUseCase.Command(contestId))
 
         mvc
-            .perform(put("/v1/contests/$contestId:force-end"))
+            .perform(patch("/v1/contests/$contestId:force-end"))
             .andExpect(status().isOk)
         verify(forceEnd).execute(ForceEndContestUseCase.Command(contestId))
     }
