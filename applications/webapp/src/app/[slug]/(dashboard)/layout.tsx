@@ -40,6 +40,10 @@ export default function DashboardLayout({
       title: "Announcements",
       path: routes.CONTEST_ANNOUNCEMENTS(slug),
     },
+    {
+      title: "Clarifications",
+      path: routes.CONTEST_CLARIFICATIONS(slug),
+    },
   ];
 
   if (
