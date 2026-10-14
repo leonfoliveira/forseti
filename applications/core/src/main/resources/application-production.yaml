@@ -40,7 +40,7 @@ spring:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
-      socket_io_ttl_seconds: ${REDIS_SOCKET_IO_TTL_SECONDS:600}
+      sse_ttl_seconds: ${SSE_TTL_SECONDS:600}
 
 # Security configuration
 security:
