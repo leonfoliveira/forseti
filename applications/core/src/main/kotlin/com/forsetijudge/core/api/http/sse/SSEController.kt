@@ -12,7 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 @RestController
 @RequestMapping("/v1")
 @Suppress("unused")
-class SSEController {
+class SSEController(
+    private val sseAuthorizer: SSEAuthorizer,
+) {
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/sse/contests/{contestId}/dashboard/admin")
@@ -21,6 +23,7 @@ class SSEController {
         @PathVariable contestId: UUID,
     ): SseEmitter {
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/admin")
+        sseAuthorizer.authorizeToAdminDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         SSEHelper.subscribe(SSERoomBuilder.buildAdminDashboardRoom(contestId), emitter)
         return emitter
@@ -32,6 +35,7 @@ class SSEController {
         @PathVariable contestId: UUID,
     ): SseEmitter {
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/contestant")
+        sseAuthorizer.authorizeToContestantDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         SSEHelper.subscribe(SSERoomBuilder.buildContestantDashboardRoom(contestId), emitter)
         return emitter
@@ -43,6 +47,7 @@ class SSEController {
         @PathVariable contestId: UUID,
     ): SseEmitter {
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/judge")
+        sseAuthorizer.authorizeToJudgeDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         SSEHelper.subscribe(SSERoomBuilder.buildJudgeDashboardRoom(contestId), emitter)
         return emitter
@@ -63,6 +68,7 @@ class SSEController {
         @PathVariable memberId: UUID,
     ): SseEmitter {
         logger.info("[GET] /v1/sse/members/$memberId")
+        sseAuthorizer.authorizeToMemberPrivateRoom(memberId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         SSEHelper.subscribe(SSERoomBuilder.buildMemberPrivateRoom(memberId), emitter)
         return emitter
