@@ -6,29 +6,19 @@ import com.corundumstudio.socketio.listener.DataListener
 import com.forsetijudge.core.infrastructure.redis.SocketIORedisCacheStore
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
-import tools.jackson.databind.ObjectMapper
 import java.time.OffsetDateTime
 
 @Component
 class SocketIOSyncListener(
     private val socketIORedisCacheStore: SocketIORedisCacheStore,
-    private val objectMapper: ObjectMapper,
-) : DataListener<String> {
+) : DataListener<SocketIOSyncListenerPayload> {
     private val logger = SafeLogger(this::class)
 
     override fun onData(
         client: SocketIOClient,
-        data: String,
+        payload: SocketIOSyncListenerPayload,
         ackSender: AckRequest,
     ) {
-        val payload =
-            try {
-                objectMapper.readValue(data, SocketIOSyncListenerPayload::class.java)
-            } catch (_: Exception) {
-                logger.warn("Failed to parse sync request payload")
-                return client.sendEvent("error", "Invalid payload")
-            }
-
         logger.info("Received sync request from client ${client.sessionId} for room ${payload.room} since ${payload.timestamp}")
 
         if (!client.allRooms.contains(payload.room)) {

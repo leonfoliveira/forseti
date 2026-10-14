@@ -4,8 +4,8 @@ import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.leaderboard.BuildLeaderboardUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -27,7 +27,7 @@ class BuildLeaderboardService(
      * @return The result of building the leaderboard.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildLeaderboardUseCase.Command): LeaderboardResponseBodyDTO {
+    override fun execute(command: BuildLeaderboardUseCase.Command): LeaderboardResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Building leaderboard for contest with id: ${command.contestId}")
@@ -46,6 +46,6 @@ class BuildLeaderboardService(
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
 
-        return leaderboard.toResponseBodyDTO()
+        return leaderboard.toResponseDTO()
     }
 }

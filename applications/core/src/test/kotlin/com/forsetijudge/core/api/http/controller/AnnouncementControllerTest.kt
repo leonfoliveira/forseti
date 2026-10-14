@@ -1,7 +1,7 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.factory.MockEntityFactory
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.util.IdGenerator
 import org.junit.jupiter.api.Test
@@ -25,7 +25,7 @@ class AnnouncementControllerTest {
         val member = MockEntityFactory.member(contest = contest)
         val announcement = MockEntityFactory.announcement(contest = contest, member = member)
         whenever(createAnnouncementUseCase.execute(any())).thenReturn(
-            announcement.toResponseBodyDTO(),
+            announcement.toResponseDTO(),
         )
 
         mvc

@@ -30,7 +30,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     answer: SubmissionAnswer,
   ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
     const response =
-      await this.axiosClient.put<SubmissionWithCodeAndExecutionsResponseDTO>(
+      await this.axiosClient.patch<SubmissionWithCodeAndExecutionsResponseDTO>(
         `${this.basePath(contestId)}/${submissionId}:update-answer`,
         {
           data: { answer },
@@ -44,7 +44,7 @@ export class AxiosSubmissionRepository implements SubmissionRepository {
     submissionId: string,
   ): Promise<SubmissionWithCodeAndExecutionsResponseDTO> {
     const response =
-      await this.axiosClient.put<SubmissionWithCodeAndExecutionsResponseDTO>(
+      await this.axiosClient.patch<SubmissionWithCodeAndExecutionsResponseDTO>(
         `${this.basePath(contestId)}/${submissionId}:resubmit`,
       );
     return response.data;

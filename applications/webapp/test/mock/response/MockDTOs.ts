@@ -12,6 +12,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
@@ -235,6 +236,26 @@ export const MockContestWithMembersAndProblemsDTO = (
   ...overrides,
 });
 
+export const MockClarificationResponseDTO = (
+  overrides: Partial<ClarificationResponseDTO> = {},
+): ClarificationResponseDTO => ({
+  id: "clarification-1",
+  createdAt,
+  updatedAt: createdAt,
+  contest: MockContestResponseDTO(),
+  problem: MockProblemResponseDTO(),
+  member: MockMemberResponseDTO(),
+  text: "What is the meaning of life?",
+  answer: {
+    member: MockMemberResponseDTO(),
+    text: "The meaning of life is 42.",
+    createdAt,
+  },
+  isPublic: false,
+  version: 1,
+  ...overrides,
+});
+
 export const MockSessionResponseDTO = (
   overrides: Partial<SessionResponseDTO> = {},
 ): SessionResponseDTO => ({
@@ -261,6 +282,7 @@ export const MockAdminDashboardResponseDTO = (
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -274,6 +296,7 @@ export const MockContestantDashboardResponseDTO = (
   submissions: [MockSubmissionResponseDTO()],
   memberSubmissions: [MockSubmissionWithCodeResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -286,6 +309,7 @@ export const MockGuestDashboardResponseDTO = (
   problems: [MockProblemResponseDTO()],
   submissions: [MockSubmissionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 
@@ -298,6 +322,7 @@ export const MockJudgeDashboardResponseDTO = (
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
   ...overrides,
 });
 

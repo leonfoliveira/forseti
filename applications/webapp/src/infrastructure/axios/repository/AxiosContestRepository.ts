@@ -34,7 +34,7 @@ export class AxiosContestRepository implements ContestRepository {
     contestId: string,
   ): Promise<ContestWithMembersAndProblemsDTO> {
     const response =
-      await this.axiosClient.put<ContestWithMembersAndProblemsDTO>(
+      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
         `${this.basePath}/${contestId}:force-start`,
       );
     return response.data;
@@ -42,7 +42,7 @@ export class AxiosContestRepository implements ContestRepository {
 
   async forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
     const response =
-      await this.axiosClient.put<ContestWithMembersAndProblemsDTO>(
+      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
         `${this.basePath}/${contestId}:force-end`,
       );
     return response.data;

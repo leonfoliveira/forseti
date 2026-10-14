@@ -2,12 +2,14 @@ import { WebSocketRoom } from "@/port/output/websocket/WebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 export type ContestantDashboardWebSocketRoomCallbacks = {
   LEADERBOARD_UPDATED: (leaderboardCell: LeaderboardCellResponseDTO) => void;
   SUBMISSION_CREATED: (submission: SubmissionResponseDTO) => void;
   SUBMISSION_UPDATED: (submission: SubmissionResponseDTO) => void;
   ANNOUNCEMENT_CREATED: (announcement: AnnouncementResponseDTO) => void;
+  CLARIFICATION_PUBLISHED: (clarification: ClarificationResponseDTO) => void;
 };
 
 export class ContestantDashboardWebSocketRoom extends WebSocketRoom<ContestantDashboardWebSocketRoomCallbacks> {

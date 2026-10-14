@@ -7,8 +7,8 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
 import com.forsetijudge.core.port.input.usecase.submission.ResubmitSubmissionUseCase
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -31,7 +31,7 @@ class ResubmitSubmissionService(
      * @return The result of the resubmission operation, including the submission details and code.
      */
     @Transactional
-    override fun execute(command: ResubmitSubmissionUseCase.Command): SubmissionWithCodeAndExecutionsResponseBodyDTO {
+    override fun execute(command: ResubmitSubmissionUseCase.Command): SubmissionWithCodeAndExecutionsResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Resetting submission with id: ${command.submissionId}")
@@ -55,6 +55,6 @@ class ResubmitSubmissionService(
         businessEventPublisher.publish(SubmissionEvent.Resubmitted(submission.id))
 
         logger.info("Submission reset successfully")
-        return submission.toWithCodeAndExecutionResponseBodyDTO()
+        return submission.toWithCodeAndExecutionResponseDTO()
     }
 }

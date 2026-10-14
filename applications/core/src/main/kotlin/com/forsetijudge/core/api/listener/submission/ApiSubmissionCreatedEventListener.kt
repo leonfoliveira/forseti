@@ -10,6 +10,8 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
@@ -21,6 +23,7 @@ class ApiSubmissionCreatedEventListener(
     private val logger = SafeLogger(this::class)
 
     @TransactionalEventListener
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     fun handle(event: SubmissionEvent.Created) {
         logger.info("Handling submission created event for submission with id: ${event.submissionId}")
 

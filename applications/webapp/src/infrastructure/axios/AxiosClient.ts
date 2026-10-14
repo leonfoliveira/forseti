@@ -66,6 +66,23 @@ export class AxiosClient {
   }
 
   /**
+   * Makes an HTTP PATCH request.
+   *
+   * @param path resource path
+   * @param requestConfig Axios request configuration.
+   * @returns Axios response.
+   */
+  async patch<TBody>(
+    path: string,
+    requestConfig: AxiosRequestConfig = {},
+  ): Promise<AxiosResponse<TBody>> {
+    return this._request(path, {
+      method: "PATCH",
+      ...requestConfig,
+    });
+  }
+
+  /**
    * Makes an HTTP DELETE request.
    *
    * @param path resource path

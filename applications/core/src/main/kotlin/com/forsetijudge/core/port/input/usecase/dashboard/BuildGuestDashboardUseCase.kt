@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.dashboard
 
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import java.util.UUID
 
 interface BuildGuestDashboardUseCase {
@@ -11,7 +11,7 @@ interface BuildGuestDashboardUseCase {
      *
      * @return An GuestDashboardResultDTO containing the aggregated data for the guest dashboard.
      */
-    fun execute(command: Command): GuestDashboardResponseBodyDTO
+    fun execute(command: Command): GuestDashboardResponseDTO
 
     /**
      * Command for building the guest dashboard.

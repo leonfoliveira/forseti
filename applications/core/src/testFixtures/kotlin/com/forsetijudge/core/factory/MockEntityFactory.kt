@@ -2,6 +2,7 @@ package com.forsetijudge.core.factory
 
 import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
@@ -104,5 +105,27 @@ object MockEntityFactory {
         contest = contest,
         member = member,
         text = text,
+    )
+
+    fun clarification(
+        id: UUID = UUID.randomUUID(),
+        contest: Contest = contest(),
+        problem: Problem? = null,
+        questionMember: Member = member(contest = contest),
+        questionText: String = "Sample clarification",
+        answer: Clarification.Answer? =
+            Clarification.Answer(
+                member = member(contest = contest, type = Member.Type.ADMIN),
+                text = "Sample answer",
+            ),
+        isPublic: Boolean = false,
+    ) = Clarification(
+        id = id,
+        contest = contest,
+        problem = problem,
+        member = questionMember,
+        text = questionText,
+        answer = answer,
+        isPublic = isPublic,
     )
 }

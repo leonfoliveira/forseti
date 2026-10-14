@@ -3,8 +3,8 @@ package com.forsetijudge.core.api.http.controller
 import com.forsetijudge.core.api.http.dto.request.contest.CreateContestRequestBodyDTO
 import com.forsetijudge.core.api.http.dto.request.contest.UpdateContestRequestBodyDTO
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindAllContestUseCase
@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -42,7 +43,7 @@ class ContestController(
     @GetMapping("/contests/slug/{slug}")
     fun findBySlug(
         @PathVariable slug: String,
-    ): ResponseEntity<ContestResponseBodyDTO> {
+    ): ResponseEntity<ContestResponseDTO> {
         logger.info("[GET] /v1/contests/slug/$slug")
         val contest =
             findContestBySlugUseCase.execute(
@@ -53,7 +54,7 @@ class ContestController(
 
     @GetMapping("/contests")
     @PreAuthorize("hasRole('ROOT')")
-    fun findAll(): ResponseEntity<List<ContestResponseBodyDTO>> {
+    fun findAll(): ResponseEntity<List<ContestResponseDTO>> {
         logger.info("[GET] /v1/contests")
         val contests = findAllContestUseCase.execute()
         return ResponseEntity.ok(contests)
@@ -63,7 +64,7 @@ class ContestController(
     @PreAuthorize("hasRole('ROOT')")
     fun create(
         @RequestBody body: CreateContestRequestBodyDTO,
-    ): ResponseEntity<ContestResponseBodyDTO> {
+    ): ResponseEntity<ContestResponseDTO> {
         logger.info("[POST] /v1/contests")
         val contest =
             createContestUseCase.execute(
@@ -83,7 +84,7 @@ class ContestController(
     fun updateContest(
         @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestRequestBodyDTO,
-    ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId")
         val contest =
             updateContestUseCase.execute(
@@ -128,11 +129,11 @@ class ContestController(
         return ResponseEntity.ok(contest)
     }
 
-    @PutMapping("/contests/{contestId}:force-start")
+    @PatchMapping("/contests/{contestId}:force-start")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun forceStart(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-start")
         val contest =
             forceStartContestUseCase.execute(
@@ -141,11 +142,11 @@ class ContestController(
         return ResponseEntity.ok(contest)
     }
 
-    @PutMapping("/contests/{contestId}:force-end")
+    @PatchMapping("/contests/{contestId}:force-end")
     @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
     fun forceEnd(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<ContestWithMembersAndProblemsResponseBodyDTO> {
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
         logger.info("[PUT] /v1/contests/$contestId:force-end")
         val contest =
             forceEndContestUseCase.execute(

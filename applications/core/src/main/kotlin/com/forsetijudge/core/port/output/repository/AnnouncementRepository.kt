@@ -10,7 +10,4 @@ import java.util.UUID
 interface AnnouncementRepository : BaseRepository<Announcement> {
     @Query("SELECT a FROM Announcement a WHERE a.id = ?1 AND deletedAt IS NULL")
     fun findById(id: UUID): Announcement?
-
-    @Query("SELECT a FROM Announcement a WHERE a.contest.id = ?1 AND deletedAt IS NULL")
-    fun findAllByContestId(contestId: UUID): List<Announcement>
 }

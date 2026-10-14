@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.submission
 
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import java.util.UUID
 
 interface ResubmitSubmissionUseCase {
@@ -10,7 +10,7 @@ interface ResubmitSubmissionUseCase {
      * @param command The command containing the submission ID to be rerun.
      * @return The result of the resubmission operation, including the submission details and code.
      */
-    fun execute(command: Command): SubmissionWithCodeAndExecutionsResponseBodyDTO
+    fun execute(command: Command): SubmissionWithCodeAndExecutionsResponseDTO
 
     /**
      * Command for submitting a submission.

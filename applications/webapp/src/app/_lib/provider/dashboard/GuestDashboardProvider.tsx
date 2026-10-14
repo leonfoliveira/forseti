@@ -15,6 +15,7 @@ import { GuestDashboardWebSocketRoom } from "@/port/output/websocket/room/dashbo
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 /**
  * Provider component for fetching guest dashboard data and setting up broadcast listeners.
@@ -51,6 +52,7 @@ export function GuestDashboardProvider({
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_PUBLISHED: receiveClarificationPublished,
           }),
         );
 
@@ -114,6 +116,14 @@ export function GuestDashboardProvider({
     if (announcement.member.id !== session?.member.id) {
       toast.warning(`New announcement: ${announcement.text}`);
     }
+  }
+
+  function receiveClarificationPublished(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification published:", clarification);
+    dispatch(GuestDashboardSlice.actions.mergeClarification(clarification));
+    toast.info(`A clarification has been published`);
   }
 
   if (state.isLoading) {

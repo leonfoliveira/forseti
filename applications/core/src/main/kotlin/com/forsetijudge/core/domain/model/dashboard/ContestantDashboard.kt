@@ -1,6 +1,7 @@
 package com.forsetijudge.core.domain.model.dashboard
 
 import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Problem
@@ -17,6 +18,7 @@ import com.forsetijudge.core.domain.model.Leaderboard
  * @property submissions The list of submissions in the contest.
  * @property memberSubmissions The list of submissions made by the currently logged-in member in the contest.
  * @property announcements The list of announcements related to the contest.
+ * @property clarifications The list of clarifications related to the contest.
  */
 data class ContestantDashboard(
     val contest: Contest,
@@ -26,4 +28,5 @@ data class ContestantDashboard(
     val submissions: List<Submission>,
     val memberSubmissions: List<Submission>,
     val announcements: List<Announcement>,
+    val clarifications: List<Clarification>,
 )

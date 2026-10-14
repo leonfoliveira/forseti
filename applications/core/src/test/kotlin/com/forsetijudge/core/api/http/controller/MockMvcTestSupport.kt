@@ -4,17 +4,17 @@ import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.member.MemberResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.problem.ProblemResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
+import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
+import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -44,7 +44,7 @@ internal object MockMvcTestSupport {
             .build()
 
     fun contestResponse(id: UUID = UUID.randomUUID()) =
-        ContestResponseBodyDTO(
+        ContestResponseDTO(
             id = id,
             createdAt = timestamp,
             updatedAt = timestamp,
@@ -57,7 +57,7 @@ internal object MockMvcTestSupport {
         )
 
     fun contestWithDetailsResponse(id: UUID = UUID.randomUUID()) =
-        ContestWithMembersAndProblemsResponseBodyDTO(
+        ContestWithMembersAndProblemsResponseDTO(
             id = id,
             createdAt = timestamp,
             updatedAt = timestamp,
@@ -72,17 +72,18 @@ internal object MockMvcTestSupport {
         )
 
     fun adminDashboardResponse(id: UUID = UUID.randomUUID()) =
-        AdminDashboardResponseBodyDTO(
+        AdminDashboardResponseDTO(
             contest = contestWithDetailsResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
             announcements = emptyList(),
+            clarifications = emptyList(),
         )
 
     fun contestantDashboardResponse(id: UUID = UUID.randomUUID()) =
-        ContestantDashboardResponseBodyDTO(
+        ContestantDashboardResponseDTO(
             contest = contestResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),
@@ -90,26 +91,29 @@ internal object MockMvcTestSupport {
             submissions = emptyList(),
             memberSubmissions = emptyList(),
             announcements = emptyList(),
+            clarifications = emptyList(),
         )
 
     fun guestDashboardResponse(id: UUID = UUID.randomUUID()) =
-        GuestDashboardResponseBodyDTO(
+        GuestDashboardResponseDTO(
             contest = contestResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
             announcements = emptyList(),
+            clarifications = emptyList(),
         )
 
     fun judgeDashboardResponse(id: UUID = UUID.randomUUID()) =
-        JudgeDashboardResponseBodyDTO(
+        JudgeDashboardResponseDTO(
             contest = contestResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),
             problems = emptyList(),
             submissions = emptyList(),
             announcements = emptyList(),
+            clarifications = emptyList(),
         )
 
     fun submissionResponse(
@@ -118,9 +122,9 @@ internal object MockMvcTestSupport {
         memberId: UUID = UUID.randomUUID(),
         problemId: UUID = UUID.randomUUID(),
         codeId: UUID = UUID.randomUUID(),
-    ): SubmissionWithCodeResponseBodyDTO {
+    ): SubmissionWithCodeResponseDTO {
         val common = submissionFields(contestId, memberId, problemId, codeId)
-        return SubmissionWithCodeResponseBodyDTO(
+        return SubmissionWithCodeResponseDTO(
             id = id,
             createdAt = timestamp,
             updatedAt = timestamp,
@@ -140,9 +144,9 @@ internal object MockMvcTestSupport {
         memberId: UUID = UUID.randomUUID(),
         problemId: UUID = UUID.randomUUID(),
         codeId: UUID = UUID.randomUUID(),
-    ): SubmissionWithCodeAndExecutionsResponseBodyDTO {
+    ): SubmissionWithCodeAndExecutionsResponseDTO {
         val common = submissionFields(contestId, memberId, problemId, codeId)
-        return SubmissionWithCodeAndExecutionsResponseBodyDTO(
+        return SubmissionWithCodeAndExecutionsResponseDTO(
             id = id,
             createdAt = timestamp,
             updatedAt = timestamp,
@@ -162,7 +166,7 @@ internal object MockMvcTestSupport {
         memberId: UUID,
         problemId: UUID,
         codeId: UUID,
-    ): Triple<MemberResponseBodyDTO, ProblemResponseBodyDTO, AttachmentResponseDTO> {
+    ): Triple<MemberResponseDTO, ProblemResponseDTO, AttachmentResponseDTO> {
         val attachment =
             AttachmentResponseDTO(
                 id = codeId,
@@ -174,7 +178,7 @@ internal object MockMvcTestSupport {
                 version = 1,
             )
         return Triple(
-            MemberResponseBodyDTO(
+            MemberResponseDTO(
                 id = memberId,
                 createdAt = timestamp,
                 updatedAt = timestamp,
@@ -183,7 +187,7 @@ internal object MockMvcTestSupport {
                 name = "Sample member",
                 version = 1,
             ),
-            ProblemResponseBodyDTO(
+            ProblemResponseDTO(
                 id = problemId,
                 createdAt = timestamp,
                 updatedAt = timestamp,
@@ -199,7 +203,7 @@ internal object MockMvcTestSupport {
         )
     }
 
-    private fun leaderboardResponse(contestId: UUID) = LeaderboardResponseBodyDTO(contestId, emptyList())
+    private fun leaderboardResponse(contestId: UUID) = LeaderboardResponseDTO(contestId, emptyList())
 
     private val timestamp = OffsetDateTime.parse("2026-10-02T12:00:00Z")
 }

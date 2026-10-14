@@ -23,7 +23,7 @@ describe("AxiosSubmissionRepository", () => {
 
   it("updates the answer for a submission", async () => {
     const submission = MockSubmissionWithCodeResponseDTO();
-    const client = { put: jest.fn().mockResolvedValue({ data: submission }) };
+    const client = { patch: jest.fn().mockResolvedValue({ data: submission }) };
     const repository = new AxiosSubmissionRepository(client as never);
 
     await expect(
@@ -33,7 +33,7 @@ describe("AxiosSubmissionRepository", () => {
         SubmissionAnswer.ACCEPTED,
       ),
     ).resolves.toBe(submission);
-    expect(client.put).toHaveBeenCalledWith(
+    expect(client.patch).toHaveBeenCalledWith(
       "/v1/contests/contest-42/submissions/submission-9:update-answer",
       { data: { answer: SubmissionAnswer.ACCEPTED } },
     );
@@ -41,13 +41,13 @@ describe("AxiosSubmissionRepository", () => {
 
   it("resubmits an existing submission", async () => {
     const submission = MockSubmissionWithCodeResponseDTO();
-    const client = { put: jest.fn().mockResolvedValue({ data: submission }) };
+    const client = { patch: jest.fn().mockResolvedValue({ data: submission }) };
     const repository = new AxiosSubmissionRepository(client as never);
 
     await expect(
       repository.resubmit("contest-42", "submission-9"),
     ).resolves.toBe(submission);
-    expect(client.put).toHaveBeenCalledWith(
+    expect(client.patch).toHaveBeenCalledWith(
       "/v1/contests/contest-42/submissions/submission-9:resubmit",
     );
   });

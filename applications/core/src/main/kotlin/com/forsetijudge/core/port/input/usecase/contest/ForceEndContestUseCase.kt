@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.contest
 
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import java.util.UUID
 
 interface ForceEndContestUseCase {
@@ -10,7 +10,7 @@ interface ForceEndContestUseCase {
      * @param command The command containing the contest ID to force end.
      * @return The updated Contest object after being forced to end.
      */
-    fun execute(command: Command): ContestWithMembersAndProblemsResponseBodyDTO
+    fun execute(command: Command): ContestWithMembersAndProblemsResponseDTO
 
     /**
      * Command for forcing the end of a contest.

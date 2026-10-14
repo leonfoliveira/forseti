@@ -1,8 +1,10 @@
 import { WebSocketRoom } from "@/port/output/websocket/WebSocketRoom";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 export type ContestantPrivateWebSocketRoomCallbacks = {
   SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
+  CLARIFICATION_ANSWERED: (clarification: ClarificationResponseDTO) => void;
 };
 
 export class ContestantPrivateWebSocketRoom extends WebSocketRoom<ContestantPrivateWebSocketRoomCallbacks> {

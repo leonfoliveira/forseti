@@ -9,6 +9,7 @@ import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/Leaderbo
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 export type ContestantDashboardState = ContestantDashboardResponseDTO;
 
@@ -58,6 +59,12 @@ export const ContestantDashboardSlice = createSlice({
     mergeAnnouncement(state, action: { payload: AnnouncementResponseDTO }) {
       state.announcements = EntityUtil.merge(
         state.announcements,
+        action.payload,
+      );
+    },
+    mergeClarification(state, action: { payload: ClarificationResponseDTO }) {
+      state.clarifications = EntityUtil.merge(
+        state.clarifications,
         action.payload,
       );
     },

@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
+import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -21,11 +22,19 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class BuildJudgeDashboardServiceTest {
-    private val contests = mock<ContestRepository>()
-    private val members = mock<MemberRepository>()
-    private val submissions = mock<SubmissionRepository>()
+    private val contestRepository = mock<ContestRepository>()
+    private val memberRepository = mock<MemberRepository>()
+    private val submissionRepository = mock<SubmissionRepository>()
+    private val clarificationRepository = mock<ClarificationRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
-    private val service = BuildJudgeDashboardService(contests, members, submissions, leaderboardBuilder)
+    private val service =
+        BuildJudgeDashboardService(
+            contestRepository,
+            memberRepository,
+            submissionRepository,
+            clarificationRepository,
+            leaderboardBuilder,
+        )
 
     @AfterEach
     fun clearAuthentication() = TestAuthentication.clear()
@@ -35,13 +44,14 @@ class BuildJudgeDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val judge = MockEntityFactory.member(contest = contest, type = Member.Type.JUDGE)
         TestAuthentication.setMember(judge)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
-        whenever(members.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
         whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
-        whenever(submissions.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(clarificationRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
         assertEquals(contest.id, service.execute(BuildJudgeDashboardUseCase.Command(contest.id)).contest.id)
-        verify(submissions).findAllByContestId(contest.id)
+        verify(submissionRepository).findAllByContestId(contest.id)
     }
 
     @Test
@@ -49,8 +59,8 @@ class BuildJudgeDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
-        whenever(members.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
 
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildJudgeDashboardUseCase.Command(contest.id))

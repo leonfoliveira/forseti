@@ -11,8 +11,8 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.UUID
@@ -69,7 +69,7 @@ class SubmissionControllerTest {
         )
 
         mvc
-            .perform(put("/v1/contests/$contestId/submissions/$submissionId:resubmit"))
+            .perform(patch("/v1/contests/$contestId/submissions/$submissionId:resubmit"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(submissionId.toString()))
 
@@ -87,7 +87,7 @@ class SubmissionControllerTest {
 
         mvc
             .perform(
-                put("/v1/contests/$contestId/submissions/$submissionId:update-answer")
+                patch("/v1/contests/$contestId/submissions/$submissionId:update-answer")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"answer":"ACCEPTED"}"""),
             ).andExpect(status().isOk)

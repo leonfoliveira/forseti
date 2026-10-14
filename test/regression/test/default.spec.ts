@@ -12,6 +12,7 @@ import {
   SubmissionStatus,
 } from "@/test/entity/Submission";
 import { Announcement } from "@/test/entity/Announcement";
+import { Clarification } from "@/test/entity/Clarification";
 
 /**
  * This test covers the default behaviour of a contest
@@ -132,6 +133,12 @@ test("Default contest behaviour", async ({ page }) => {
     text: "New announcement",
   };
 
+  const clarification: Clarification = {
+    member: contestantMember,
+    problem: problem,
+    text: "New clarification",
+  };
+
   // Step 1: Use CLI to create a contest
   await rootActor.createContest(contest);
 
@@ -168,7 +175,7 @@ test("Default contest behaviour", async ({ page }) => {
   contest.status = ContestStatus.IN_PROGRESS;
   await adminActor.signOut(contest);
 
-  // Step 5: Sign in as contestant, check problems, create submissions, check announcements, check leaderboard
+  // Step 5: Sign in as contestant, check problems, create submissions, create clarification, check announcements, check leaderboard
   await contestantActor.signIn(contest);
   await contestantActor.checkHeader(contest);
   const contestantActonOnProblems =
@@ -181,15 +188,18 @@ test("Default contest behaviour", async ({ page }) => {
   await contestantActonOnSubmissions.createSubmission(meSubmission);
   await contestantActonOnSubmissions.createSubmission(waSubmission);
   await contestantActonOnSubmissions.createSubmission(acSubmission);
+  const contestantActonOnClarificationsPage =
+    await contestantActonOnSubmissions.navigateToClarificationsPage(contest);
+  await contestantActonOnClarificationsPage.createClarification(clarification);
   const contestantActonOnLeaderboard =
-    await contestantActonOnSubmissions.navigateToLeaderboard(contest);
+    await contestantActonOnClarificationsPage.navigateToLeaderboard(contest);
   await contestantActonOnLeaderboard.checkLeaderboard(leaderboard);
   const contestantActonOnAnnouncements =
     await contestantActonOnLeaderboard.navigateToAnnouncements(contest);
   await contestantActonOnAnnouncements.checkAnnouncements([announcement]);
   await contestantActonOnAnnouncements.signOut(contest);
 
-  // Step 6: Sign in as judge, check submissions, judge a submission, resubmit a submission
+  // Step 6: Sign in as judge, check submissions, judge a submission, resubmit a submission, answer a clarification, publish a clarification
   await judgeActor.signIn(contest);
   await judgeActor.checkHeader(contest);
   const judgeActorOnSubmissions =
@@ -210,7 +220,11 @@ test("Default contest behaviour", async ({ page }) => {
     0,
     SubmissionAnswer.ACCEPTED,
   );
-  await judgeActorOnSubmissions.signOut(contest);
+  const judgeActorOnClarificationsPage =
+    await judgeActorOnSubmissions.navigateToClarificationsPage(contest);
+  await judgeActorOnClarificationsPage.answerClarification(0);
+  await judgeActorOnClarificationsPage.publishClarification(0);
+  await judgeActorOnClarificationsPage.signOut(contest);
 
   // Step 8: Sign in as admin, force end the contest
   await adminActor.signIn(contest);

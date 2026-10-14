@@ -32,7 +32,9 @@ export class Actor {
     await expect(enterGuestButton).toBeEnabled();
 
     await signInButton.click();
-    await expect(this.page).toHaveURL(`/${contest.slug}/leaderboard`);
+    await expect(this.page).toHaveURL(
+      new RegExp(`/${contest.slug}/leaderboard/?$`),
+    );
 
     await this.page.waitForTimeout(1500);
   }
@@ -45,7 +47,9 @@ export class Actor {
     await expect(signOutButton).toBeVisible();
     await signOutButton.click();
 
-    await expect(this.page).toHaveURL(`/${contest.slug}/sign-in`);
+    await expect(this.page).toHaveURL(
+      new RegExp(`/${contest.slug}/sign-in/?$`),
+    );
   }
 
   async navigateToLeaderboard(contest: Contest) {
@@ -76,6 +80,13 @@ export class Actor {
     return new ActorOnAnnouncementsPage(this.page, this.member);
   }
 
+  async navigateToClarificationsPage(contest: Contest) {
+    await this.navigate(contest, "clarifications");
+    const { ActorOnClarificationsPage } =
+      require("@/test/actor/ActorOnClarificationsPage") as typeof import("@/test/actor/ActorOnClarificationsPage");
+    return new ActorOnClarificationsPage(this.page, this.member);
+  }
+
   async navigateToSettings(contest: Contest) {
     await this.navigate(contest, "settings");
     const { ActorOnSettingsPage } =
@@ -92,7 +103,7 @@ export class Actor {
     await tabButton.scrollIntoViewIfNeeded();
 
     await tabButton.click();
-    await expect(this.page).toHaveURL(`/${contest.slug}/${tab}`);
+    await expect(this.page).toHaveURL(new RegExp(`/${contest.slug}/${tab}/?$`));
 
     // Allow time for WebSocket connections to establish
     await this.page.waitForTimeout(1000);

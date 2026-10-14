@@ -14,8 +14,8 @@ import com.forsetijudge.core.domain.exception.BusinessException
 import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
 import com.forsetijudge.core.port.output.repository.ContestRepository
@@ -52,7 +52,7 @@ class UpdateContestService(
     @Transactional
     override fun execute(
         @Valid command: UpdateContestUseCase.Command,
-    ): ContestWithMembersAndProblemsResponseBodyDTO {
+    ): ContestWithMembersAndProblemsResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
         val now = OffsetDateTime.now()
 
@@ -123,7 +123,7 @@ class UpdateContestService(
         businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest updated successfully with id: ${contest.id}")
-        return contest.toWithMembersAndProblemsResponseBodyDTO()
+        return contest.toWithMembersAndProblemsResponseDTO()
     }
 
     /**

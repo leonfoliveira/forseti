@@ -6,6 +6,8 @@ import com.forsetijudge.core.port.output.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
@@ -17,6 +19,7 @@ class SubmissionResubmittedEventListener(
     private val logger = SafeLogger(this::class)
 
     @TransactionalEventListener
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     fun handle(event: SubmissionEvent.Resubmitted) {
         val submission =
             submissionRepository.findById(event.submissionId)

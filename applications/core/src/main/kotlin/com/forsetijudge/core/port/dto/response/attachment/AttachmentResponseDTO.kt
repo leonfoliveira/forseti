@@ -16,7 +16,7 @@ data class AttachmentResponseDTO(
     val version: Long,
 ) : Serializable
 
-fun Attachment.toResponseBodyDTO(): AttachmentResponseDTO =
+fun Attachment.toResponseDTO(): AttachmentResponseDTO =
     AttachmentResponseDTO(
         id = this.id,
         createdAt = this.createdAt,

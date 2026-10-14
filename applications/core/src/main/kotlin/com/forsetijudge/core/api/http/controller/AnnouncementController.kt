@@ -1,7 +1,7 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.announcement.CreateAnnouncementRequestBody
-import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
 import com.forsetijudge.core.port.input.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
@@ -17,7 +17,7 @@ import java.util.UUID
 @RequestMapping("/v1")
 @Suppress("unused")
 class AnnouncementController(
-    private val announcementUseCase: CreateAnnouncementUseCase,
+    private val createAnnouncementUseCase: CreateAnnouncementUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -26,10 +26,10 @@ class AnnouncementController(
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateAnnouncementRequestBody,
-    ): ResponseEntity<AnnouncementResponseBodyDTO> {
+    ): ResponseEntity<AnnouncementResponseDTO> {
         logger.info("[POST] /v1/contests/$contestId/announcements")
         val announcement =
-            announcementUseCase.execute(
+            createAnnouncementUseCase.execute(
                 CreateAnnouncementUseCase.Command(
                     contestId = contestId,
                     text = body.text,

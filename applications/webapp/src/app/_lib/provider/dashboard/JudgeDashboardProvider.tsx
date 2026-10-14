@@ -15,6 +15,7 @@ import { JudgeDashboardWebSocketRoom } from "@/port/output/websocket/room/dashbo
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 /**
  * Provider component for fetching judge dashboard data and setting up broadcast listeners.
@@ -51,6 +52,9 @@ export function JudgeDashboardProvider({
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_CREATED: receiveClarificationCreated,
+            CLARIFICATION_ANSWERED: receiveClarificationAnswered,
+            CLARIFICATION_PUBLISHED: receiveClarificationPublished,
           }),
         );
 
@@ -116,6 +120,29 @@ export function JudgeDashboardProvider({
     if (announcement.member.id !== session?.member.id) {
       toast.warning(`New announcement: ${announcement.text}`);
     }
+  }
+
+  function receiveClarificationCreated(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification created:", clarification);
+    dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
+    toast.info(`New clarification created`);
+  }
+
+  function receiveClarificationAnswered(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification answered:", clarification);
+    dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
+  }
+
+  function receiveClarificationPublished(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification published:", clarification);
+    dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
+    toast.info(`A clarification has been published`);
   }
 
   if (state.isLoading) {

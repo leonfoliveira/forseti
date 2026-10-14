@@ -18,6 +18,7 @@ import org.mockito.kotlin.whenever
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -158,13 +159,13 @@ class ContestControllerTest {
         whenever(forceEnd.execute(any())).thenReturn(response)
 
         mvc
-            .perform(put("/v1/contests/$contestId:force-start"))
+            .perform(patch("/v1/contests/$contestId:force-start"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.id").value(contestId.toString()))
         verify(forceStart).execute(ForceStartContestUseCase.Command(contestId))
 
         mvc
-            .perform(put("/v1/contests/$contestId:force-end"))
+            .perform(patch("/v1/contests/$contestId:force-end"))
             .andExpect(status().isOk)
         verify(forceEnd).execute(ForceEndContestUseCase.Command(contestId))
     }

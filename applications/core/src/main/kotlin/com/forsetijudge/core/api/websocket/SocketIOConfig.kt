@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.SocketConfig
 import com.corundumstudio.socketio.SocketIOServer
 import com.forsetijudge.core.api.websocket.listener.SocketIOJoinListener
 import com.forsetijudge.core.api.websocket.listener.SocketIOSyncListener
+import com.forsetijudge.core.api.websocket.listener.SocketIOSyncListenerPayload
 import jakarta.annotation.PreDestroy
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -35,7 +36,7 @@ class SocketIOConfig(
         server = SocketIOServer(config)
 
         server.addEventListener("join", String::class.java, socketIOJoinListener)
-        server.addEventListener("sync", String::class.java, socketIOSyncListener)
+        server.addEventListener("sync", SocketIOSyncListenerPayload::class.java, socketIOSyncListener)
         server.start()
 
         return server

@@ -2,7 +2,7 @@ package com.forsetijudge.core.port.input.usecase.contest
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Submission
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertTrue
 import jakarta.validation.constraints.Future
@@ -21,7 +21,7 @@ interface CreateContestUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): ContestResponseBodyDTO
+    ): ContestResponseDTO
 
     /**
      * Command for creating a new contest.

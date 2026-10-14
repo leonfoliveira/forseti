@@ -10,11 +10,15 @@ import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/Conte
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { ContestantDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/ContestantDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestantPrivateWebSocketRoom } from "@/port/output/websocket/room/private/ContestantPrivateWebSocketRoom";
+import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
+import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up broadcast listeners.
@@ -51,6 +55,13 @@ export function ContestantDashboardProvider({
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
+            CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+          }),
+        );
+        await Composition.webSocketClient.join(
+          new ContestantPrivateWebSocketRoom(contest.id, session!.member.id, {
+            SUBMISSION_UPDATED: receiveMemberSubmission,
+            CLARIFICATION_ANSWERED: receiveClarificationAnswered,
           }),
         );
 
@@ -101,9 +112,42 @@ export function ContestantDashboardProvider({
   function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
     dispatch(ContestantDashboardSlice.actions.mergeSubmission(submission));
+  }
 
-    if (submission.status === SubmissionStatus.FAILED) {
-      toast.error("New failed submission");
+  function receiveMemberSubmission(submission: SubmissionWithCodeResponseDTO) {
+    console.debug("Received member submission:", submission);
+    if (!submission.answer) {
+      return;
+    }
+
+    dispatch(
+      ContestantDashboardSlice.actions.mergeMemberSubmission(submission),
+    );
+
+    const text = `Problem ${submission.problem.letter}: ${submission.answer}`;
+
+    switch (submission.answer) {
+      case SubmissionAnswer.ACCEPTED: {
+        toast.success(text);
+        dispatch(
+          BalloonSlice.actions.addBalloon({ color: submission.problem.color }),
+        );
+        break;
+      }
+      case SubmissionAnswer.WRONG_ANSWER: {
+        toast.error(text);
+        break;
+      }
+      case SubmissionAnswer.TIME_LIMIT_EXCEEDED:
+      case SubmissionAnswer.MEMORY_LIMIT_EXCEEDED: {
+        toast.info(text);
+        break;
+      }
+      case SubmissionAnswer.RUNTIME_ERROR:
+      case SubmissionAnswer.COMPILATION_ERROR: {
+        toast.warning(text);
+        break;
+      }
     }
   }
 
@@ -114,6 +158,26 @@ export function ContestantDashboardProvider({
     if (announcement.member.id !== session?.member.id) {
       toast.warning(`New announcement: ${announcement.text}`);
     }
+  }
+
+  function receiveClarificationAnswered(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification answered:", clarification);
+    dispatch(
+      ContestantDashboardSlice.actions.mergeClarification(clarification),
+    );
+    toast.info(`Clarification answered`);
+  }
+
+  function receiveClarificationPublished(
+    clarification: ClarificationResponseDTO,
+  ) {
+    console.debug("Received clarification published:", clarification);
+    dispatch(
+      ContestantDashboardSlice.actions.mergeClarification(clarification),
+    );
+    toast.info(`A clarification has been published`);
   }
 
   if (state.isLoading) {

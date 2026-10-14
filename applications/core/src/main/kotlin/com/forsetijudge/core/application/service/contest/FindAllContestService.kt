@@ -4,8 +4,8 @@ import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -26,7 +26,7 @@ class FindAllContestService(
      * @return A list of contests available in the system.
      */
     @Transactional(readOnly = true)
-    override fun execute(): List<ContestResponseBodyDTO> {
+    override fun execute(): List<ContestResponseDTO> {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Finding all contests")
@@ -42,6 +42,6 @@ class FindAllContestService(
         val contests = contestRepository.findAllOrdersByCreatedAt()
 
         logger.info("Found ${contests.size} contests")
-        return contests.map { it.toResponseBodyDTO() }
+        return contests.map { it.toResponseDTO() }
     }
 }

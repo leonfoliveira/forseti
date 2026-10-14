@@ -32,6 +32,9 @@ import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStora
 import { SubmissionWritter } from "@/port/input/usecase/submission/SubmissionWritter";
 import { WebSocketClient } from "@/port/output/websocket/WebSocketClient";
 import { S3BucketRepository } from "@/infrastructure/axios/bucket/S3BucketRepository";
+import { AxiosClarificationRepository } from "@/infrastructure/axios/repository/AxiosClarificationRepository";
+import { ClarificationService } from "@/service/ClarificationService";
+import { ClarificationWritter } from "@/port/input/usecase/clarification/ClarificationWritter";
 
 const webSocketClient = new SocketIOWebSocketClient(env.wsUrl);
 
@@ -41,6 +44,7 @@ const axiosClient = new AxiosClient(env.httpUrl);
 const announcementRepository = new AxiosAnnouncementRepository(axiosClient);
 const attachmentRepository = new AxiosAttachmentRepository(axiosClient);
 const authenticationRepository = new AxiosAuthenticationRepository(axiosClient);
+const clarificationRepository = new AxiosClarificationRepository(axiosClient);
 const contestRepository = new AxiosContestRepository(axiosClient);
 const dashboardRepository = new AxiosDashboardRepository(axiosClient);
 const sessionRepository = new AxiosSessionRepository(axiosClient);
@@ -56,6 +60,7 @@ const attachmentService = new AttachmentService(
 const authenticationService = new AuthenticationService(
   authenticationRepository,
 );
+const clarificationService = new ClarificationService(clarificationRepository);
 const contestService = new ContestService(contestRepository, attachmentService);
 const dashboardService = new DashboardService(dashboardRepository);
 const sessionService = new SessionService(sessionRepository);
@@ -79,6 +84,7 @@ const Composition: {
   localStorageReader: LocalStorageReader;
   localStorageWritter: LocalStorageWritter;
   submissionWritter: SubmissionWritter;
+  clarificationWritter: ClarificationWritter;
   announcementWritter: AnnouncementWritter;
 } = {
   webSocketClient: webSocketClient,
@@ -93,6 +99,7 @@ const Composition: {
   localStorageReader: localStorageService,
   localStorageWritter: localStorageService,
   submissionWritter: submissionService,
+  clarificationWritter: clarificationService,
   announcementWritter: announcementService,
 };
 

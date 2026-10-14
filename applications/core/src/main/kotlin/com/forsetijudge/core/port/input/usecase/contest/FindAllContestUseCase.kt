@@ -1,6 +1,6 @@
 package com.forsetijudge.core.port.input.usecase.contest
 
-import com.forsetijudge.core.port.dto.response.contest.ContestResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 
 interface FindAllContestUseCase {
     /**
@@ -8,5 +8,5 @@ interface FindAllContestUseCase {
      *
      * @return A list of contests available in the system.
      */
-    fun execute(): List<ContestResponseBodyDTO>
+    fun execute(): List<ContestResponseDTO>
 }

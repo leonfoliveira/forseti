@@ -91,13 +91,13 @@ jobs:
         run: pip install mkdocs mkdocs-material
 
       - name: Build MkDocs site
-        working-directory: docs
+        working-directory: documentation
         run: VERSION=${{ steps.vars.outputs.tag }} mkdocs build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/site
+          path: documentation/site
 
   deploy-pages:
     needs: build-and-release

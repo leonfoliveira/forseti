@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.AssertFalse
 import jakarta.validation.constraints.AssertTrue
@@ -25,7 +25,7 @@ interface UpdateContestUseCase {
      */
     fun execute(
         @Valid command: Command,
-    ): ContestWithMembersAndProblemsResponseBodyDTO
+    ): ContestWithMembersAndProblemsResponseDTO
 
     /**
      * Command for updating a contest, containing all necessary fields for the update operation.

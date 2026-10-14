@@ -7,8 +7,8 @@ import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -32,7 +32,7 @@ class ForceStartContestService(
      * @return The updated Contest object after being forced to start.
      */
     @Transactional
-    override fun execute(command: ForceStartContestUseCase.Command): ContestWithMembersAndProblemsResponseBodyDTO {
+    override fun execute(command: ForceStartContestUseCase.Command): ContestWithMembersAndProblemsResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         logger.info("Force starting contest with id: ${command.contestId} by member with id: $contextMemberId")
@@ -59,6 +59,6 @@ class ForceStartContestService(
         businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest force started successfully")
-        return contest.toWithMembersAndProblemsResponseBodyDTO()
+        return contest.toWithMembersAndProblemsResponseDTO()
     }
 }

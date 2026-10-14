@@ -2,11 +2,13 @@ package com.forsetijudge.core.api.websocket.room
 
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
 import com.forsetijudge.core.domain.entity.Announcement
+import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
-import com.forsetijudge.core.port.dto.response.announcement.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.leaderboard.toResponseBodyDTO
-import com.forsetijudge.core.port.dto.response.submission.toResponseBodyDTO
+import com.forsetijudge.core.port.dto.response.announcement.toResponseDTO
+import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
 import java.util.UUID
 
 class SocketIOGuestDashboardRoom(
@@ -18,27 +20,34 @@ class SocketIOGuestDashboardRoom(
         SocketIOFanoutMessage(
             room = name,
             eventName = "LEADERBOARD_UPDATED",
-            data = leaderboardCell.toResponseBodyDTO(),
+            data = leaderboardCell.toResponseDTO(),
         )
 
     fun buildSubmissionCreatedEvent(submission: Submission) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "SUBMISSION_CREATED",
-            data = submission.toResponseBodyDTO(),
+            data = submission.toResponseDTO(),
         )
 
     fun buildSubmissionUpdatedEvent(submission: Submission) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "SUBMISSION_UPDATED",
-            data = submission.toResponseBodyDTO(),
+            data = submission.toResponseDTO(),
         )
 
     fun buildAnnouncementCreatedEvent(announcement: Announcement) =
         SocketIOFanoutMessage(
             room = name,
             eventName = "ANNOUNCEMENT_CREATED",
-            data = announcement.toResponseBodyDTO(),
+            data = announcement.toResponseDTO(),
+        )
+
+    fun buildClarificationPublishedEvent(clarification: Clarification) =
+        SocketIOFanoutMessage(
+            room = name,
+            eventName = "CLARIFICATION_PUBLISHED",
+            data = clarification.toResponseDTO(),
         )
 }

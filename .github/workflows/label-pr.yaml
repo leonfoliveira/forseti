@@ -29,8 +29,8 @@ jobs:
               - 'applications/webapp/**'
             autojudge:
               - 'applications/autojudge/**'
-            docs:
-              - 'docs/**'
+            documentation:
+              - 'documentation/**'
             test:
               - 'test/**'
 
@@ -83,7 +83,7 @@ jobs:
             })
 
       - name: Add documentation label
-        if: steps.changes.outputs.docs == 'true'
+        if: steps.changes.outputs.documentation == 'true'
         uses: actions/github-script@v8
         with:
           script: |
