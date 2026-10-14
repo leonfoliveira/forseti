@@ -22,6 +22,9 @@ export function AdminClarificationsPage() {
       onAnswer={(clarification: ClarificationResponseDTO) => {
         dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
       }}
+      onPublish={(clarification: ClarificationResponseDTO) => {
+        dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
+      }}
     />
   );
 }

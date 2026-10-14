@@ -22,6 +22,9 @@ export function JudgeClarificationsPage() {
       onAnswer={(clarification: ClarificationResponseDTO) => {
         dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
       }}
+      onPublish={(clarification: ClarificationResponseDTO) => {
+        dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
+      }}
     />
   );
 }

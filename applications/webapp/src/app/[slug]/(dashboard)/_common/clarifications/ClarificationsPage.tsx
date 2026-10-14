@@ -39,10 +39,12 @@ type Props = {
     | {
         canAnswer: true;
         onAnswer: (data: ClarificationResponseDTO) => void;
+        onPublish: (data: ClarificationResponseDTO) => void;
       }
     | {
         canAnswer?: false;
         onAnswer?: (data: ClarificationResponseDTO) => void;
+        onPublish?: (data: ClarificationResponseDTO) => void;
       }
   );
 
@@ -56,6 +58,7 @@ export function ClarificationsPage({
   onCreate,
   canAnswer,
   onAnswer,
+  onPublish,
 }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const contestStatus = useContestStatusWatcher();
@@ -118,7 +121,8 @@ export function ClarificationsPage({
                 contestId={contestId}
                 clarification={clarification}
                 canAnswer={canAnswer}
-                onAnswer={onAnswer as any}
+                onAnswer={onAnswer as never}
+                onPublish={onPublish as never}
               />
             ))}
           </div>

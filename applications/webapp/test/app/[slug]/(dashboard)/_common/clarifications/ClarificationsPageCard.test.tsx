@@ -8,6 +8,15 @@ import { Composition } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
+jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
+  ConfirmationDialog: ({ isOpen, onConfirm }: never) =>
+    isOpen ? (
+      <button onClick={onConfirm} data-testid="confirmation-confirm-button">
+        Confirm
+      </button>
+    ) : null,
+}));
+
 describe("ClarificationsPageCard", () => {
   describe("Cannot answer clarifications", () => {
     it("should render clarifications card without problem", async () => {
@@ -106,6 +115,7 @@ describe("ClarificationsPageCard", () => {
           contestId="test-contest"
           canAnswer
           onAnswer={() => {}}
+          onPublish={() => {}}
         />,
       );
 
@@ -122,6 +132,7 @@ describe("ClarificationsPageCard", () => {
           contestId="test-contest"
           canAnswer
           onAnswer={() => {}}
+          onPublish={() => {}}
         />,
       );
 
@@ -133,7 +144,7 @@ describe("ClarificationsPageCard", () => {
     it("should create answer when form is submitted", async () => {
       const newClarification = MockClarificationResponseDTO({});
       (
-        Composition.clarificationWritter.create as jest.Mock
+        Composition.clarificationWritter.answer as jest.Mock
       ).mockResolvedValueOnce(newClarification);
       const clarification = MockClarificationResponseDTO({ answer: undefined });
       const onAnswer = jest.fn();
@@ -143,6 +154,7 @@ describe("ClarificationsPageCard", () => {
           contestId="test-contest"
           canAnswer
           onAnswer={onAnswer}
+          onPublish={() => {}}
         />,
       );
 
@@ -158,8 +170,9 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+      expect(Composition.clarificationWritter.answer).toHaveBeenCalledWith(
         "test-contest",
+        clarification.id,
         ClarificationAnswerForm.toInputDTO({
           text: "This is an answer",
         }),
@@ -170,7 +183,7 @@ describe("ClarificationsPageCard", () => {
 
     it("should show error toast when creating answer fails", async () => {
       (
-        Composition.clarificationWritter.create as jest.Mock
+        Composition.clarificationWritter.answer as jest.Mock
       ).mockRejectedValueOnce(new Error("Failed to create answer"));
       const clarification = MockClarificationResponseDTO({ answer: undefined });
       await renderWithProviders(
@@ -179,6 +192,7 @@ describe("ClarificationsPageCard", () => {
           contestId="test-contest"
           canAnswer
           onAnswer={() => {}}
+          onPublish={() => {}}
         />,
       );
 
@@ -194,13 +208,69 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+      expect(Composition.clarificationWritter.answer).toHaveBeenCalledWith(
         "test-contest",
+        clarification.id,
         ClarificationAnswerForm.toInputDTO({
           text: "This is an answer",
         }),
       );
       expect(useToast().error).toHaveBeenCalled();
     });
+  });
+
+  it("should publish clarification when publish button is clicked", async () => {
+    const clarification = MockClarificationResponseDTO({ isPublic: false });
+    const onPublish = jest.fn();
+    (
+      Composition.clarificationWritter.publish as jest.Mock
+    ).mockResolvedValueOnce(clarification);
+    await renderWithProviders(
+      <ClarificationsPageCard
+        clarification={clarification}
+        contestId="test-contest"
+        canAnswer
+        onAnswer={() => {}}
+        onPublish={onPublish}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("clarification-publish-button"));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("confirmation-confirm-button"));
+    });
+    expect(Composition.clarificationWritter.publish).toHaveBeenCalledWith(
+      "test-contest",
+      clarification.id,
+    );
+    expect(onPublish).toHaveBeenCalledWith(clarification);
+  });
+
+  it("should show error toast when publishing fails", async () => {
+    const clarification = MockClarificationResponseDTO({ isPublic: false });
+    const onPublish = jest.fn();
+    (
+      Composition.clarificationWritter.publish as jest.Mock
+    ).mockRejectedValueOnce(new Error("Failed to publish"));
+    await renderWithProviders(
+      <ClarificationsPageCard
+        clarification={clarification}
+        contestId="test-contest"
+        canAnswer
+        onAnswer={() => {}}
+        onPublish={onPublish}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("clarification-publish-button"));
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("confirmation-confirm-button"));
+    });
+
+    expect(Composition.clarificationWritter.publish).toHaveBeenCalledWith(
+      "test-contest",
+      clarification.id,
+    );
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

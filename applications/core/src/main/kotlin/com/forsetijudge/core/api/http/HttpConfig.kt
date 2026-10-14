@@ -61,7 +61,7 @@ class HttpConfig(
         registry
             .addMapping("/**")
             .allowedOrigins(*allowedOrigins.split(",").map { it.trim() }.toTypedArray())
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+            .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
             .exposedHeaders(HttpHeaders.CONTENT_DISPOSITION)
             .allowCredentials(true)
     }

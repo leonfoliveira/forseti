@@ -27,6 +27,9 @@ import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { Button } from "@/app/_lib/component/shadcn/button";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
+import { useDialog } from "@/app/_lib/hook/useDialog";
 
 type Props = {
   contestId: string;
@@ -34,11 +37,13 @@ type Props = {
 } & (
   | {
       canAnswer: true;
-      onAnswer: (data: ClarificationAnswerFormType) => void;
+      onAnswer: (data: ClarificationResponseDTO) => void;
+      onPublish: (data: ClarificationResponseDTO) => void;
     }
   | {
       canAnswer?: false;
-      onAnswer?: (data: ClarificationAnswerFormType) => void;
+      onAnswer?: (data: ClarificationResponseDTO) => void;
+      onPublish?: (data: ClarificationResponseDTO) => void;
     }
 );
 
@@ -47,9 +52,12 @@ export function ClarificationsPageCard({
   clarification,
   canAnswer,
   onAnswer,
+  onPublish,
 }: Props) {
-  const answerClarificationState = useLoadableState();
+  const answerState = useLoadableState();
+  const publishState = useLoadableState();
   const toast = useToast();
+  const publishDialog = useDialog();
 
   const form = useForm<ClarificationAnswerFormType>({
     resolver: joiResolver(ClarificationAnswerForm.schema),
@@ -58,22 +66,49 @@ export function ClarificationsPageCard({
 
   async function answerClarification(data: ClarificationAnswerFormType) {
     console.debug("Answering clarification with data:", data);
-    answerClarificationState.start();
+    answerState.start();
 
     try {
-      const newClarification = await Composition.clarificationWritter.create(
+      const newClarification = await Composition.clarificationWritter.answer(
         contestId,
+        clarification.id,
         ClarificationAnswerForm.toInputDTO(data),
       );
 
       toast.success("Clarification answered successfully");
       onAnswer?.(newClarification);
-      answerClarificationState.finish();
+      answerState.finish();
       form.reset();
       console.debug("Clarification answered successfully:", newClarification);
     } catch (error) {
-      await answerClarificationState.fail(error, {
+      await answerState.fail(error, {
         default: () => toast.error("Failed to answer clarification"),
+      });
+    }
+  }
+
+  async function publishClarification() {
+    console.debug("Publishing clarification with id:", clarification.id);
+    publishState.start();
+
+    try {
+      const publishedClarification =
+        await Composition.clarificationWritter.publish(
+          contestId,
+          clarification.id,
+        );
+
+      toast.success("Clarification published successfully");
+      onPublish?.(publishedClarification);
+      publishState.finish();
+      publishDialog.close();
+      console.debug(
+        "Clarification published successfully:",
+        publishedClarification.id,
+      );
+    } catch (error) {
+      await publishState.fail(error, {
+        default: () => toast.error("Failed to publish clarification"),
       });
     }
   }
@@ -110,6 +145,12 @@ export function ClarificationsPageCard({
               <FormattedDateTime timestamp={clarification.createdAt} />
             </p>
           </div>
+          <Badge
+            variant={clarification.isPublic ? "default" : "outline"}
+            data-testid="clarification-is-public"
+          >
+            {clarification.isPublic ? "Public" : "Private"}
+          </Badge>
         </div>
         <p className="mt-3" data-testid="clarification-text">
           {clarification.text}
@@ -119,7 +160,10 @@ export function ClarificationsPageCard({
       {!!clarification.answer || canAnswer ? (
         <CardFooter>
           {!!clarification.answer && (
-            <div className="ml-5" data-testid="clarification-answer-card">
+            <div
+              className="w-full pl-5"
+              data-testid="clarification-answer-card"
+            >
               <div className="flex items-center gap-4">
                 <MessageCircleReplyIcon size={24} />
                 <div>
@@ -142,12 +186,23 @@ export function ClarificationsPageCard({
               <p className="mt-3" data-testid="clarification-answer-text">
                 {clarification.answer.text}
               </p>
+              {!clarification.isPublic && (
+                <div className="flex justify-end">
+                  <AsyncButton
+                    isLoading={publishState.isLoading}
+                    onClick={publishDialog.open}
+                    data-testid="clarification-publish-button"
+                  >
+                    Publish
+                  </AsyncButton>
+                </div>
+              )}
             </div>
           )}
           {!clarification.answer && (
             <div className="flex-1" data-testid="clarification-answer-form">
               <Form onSubmit={form.handleSubmit(answerClarification)}>
-                <FieldSet disabled={answerClarificationState.isLoading}>
+                <FieldSet disabled={answerState.isLoading}>
                   <div className="flex flex-col items-end gap-3">
                     <ControlledField
                       form={form}
@@ -160,7 +215,7 @@ export function ClarificationsPageCard({
                     <AsyncButton
                       type="submit"
                       icon={<SendIcon size={16} />}
-                      isLoading={answerClarificationState.isLoading}
+                      isLoading={answerState.isLoading}
                       data-testid="clarification-answer-submit-button"
                     >
                       Answer
@@ -172,6 +227,15 @@ export function ClarificationsPageCard({
           )}
         </CardFooter>
       ) : null}
+
+      <ConfirmationDialog
+        isOpen={publishDialog.isOpen}
+        title="Publish Clarification"
+        description="Are you sure you want to publish this clarification? It will become visible to all participants."
+        onCancel={() => publishDialog.close()}
+        onConfirm={() => publishClarification()}
+        isLoading={publishState.isLoading}
+      />
     </Card>
   );
 }
