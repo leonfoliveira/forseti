@@ -1,15 +1,17 @@
 package com.forsetijudge.core.api.listener.submission
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
-import com.forsetijudge.core.api.websocket.room.SocketIOAdminDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOContestantDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOContestantPrivateRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOGuestDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOJudgeDashboardRoom
+import com.forsetijudge.core.api.http.sse.SSE
+import com.forsetijudge.core.api.http.sse.SSERoomBuilder
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
@@ -23,7 +25,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 class ApiSubmissionUpdatedEventListener(
     private val submissionRepository: SubmissionRepository,
     private val leaderboardCellBuilder: LeaderboardCellBuilder,
-    private val socketIOFanoutRedisMessageProducer: SocketIOFanoutRedisMessageProducer,
+    private val sseFanoutRedisMessageProducer: SSEFanoutRedisMessageProducer,
     private val leaderboardCacheStore: LeaderboardCacheStore,
 ) {
     private val logger = SafeLogger(this::class)
@@ -45,39 +47,69 @@ class ApiSubmissionUpdatedEventListener(
         val leaderboardCell =
             leaderboardCellBuilder.build(submission.contest, submission.member, submission.problem, cellSubmissions)
 
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOAdminDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission),
-        )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOJudgeDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(submission),
-        )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOContestantPrivateRoom(submission.contest.id, submission.member.id).buildSubmissionUpdatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildAdminDashboardRoom(submission.contest.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toWithCodeAndExecutionResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOContestantDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildJudgeDashboardRoom(submission.contest.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toWithCodeAndExecutionResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOGuestDashboardRoom(submission.contest.id).buildSubmissionUpdatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildMemberPrivateRoom(submission.member.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toWithCodeResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildGuestDashboardRoom(submission.contest.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toResponseDTO(),
             ),
         )
 
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOAdminDashboardRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildAdminDashboardRoom(submission.contest.id),
+                eventName = SSE.LEADERBOARD_UPDATED.name,
+                data = leaderboardCell.toResponseDTO(),
+            ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOContestantDashboardRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildJudgeDashboardRoom(submission.contest.id),
+                eventName = SSE.LEADERBOARD_UPDATED.name,
+                data = leaderboardCell.toResponseDTO(),
+            ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOGuestDashboardRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
+                eventName = SSE.LEADERBOARD_UPDATED.name,
+                data = leaderboardCell.toResponseDTO(),
+            ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOJudgeDashboardRoom(submission.contest.id).buildLeaderboardUpdatedEvent(leaderboardCell),
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildGuestDashboardRoom(submission.contest.id),
+                eventName = SSE.LEADERBOARD_UPDATED.name,
+                data = leaderboardCell.toResponseDTO(),
+            ),
         )
 
         leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)

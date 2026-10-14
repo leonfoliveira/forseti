@@ -1,7 +1,7 @@
 package com.forsetijudge.core.api.listener.clarification
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
@@ -19,7 +19,7 @@ import org.mockito.kotlin.whenever
 
 class ApiClarificationCreatedEventListenerTest {
     private val clarificationRepository = mock<ClarificationRepository>()
-    private val producer = mock<SocketIOFanoutRedisMessageProducer>()
+    private val producer = mock<SSEFanoutRedisMessageProducer>()
     private val listener = ApiClarificationCreatedEventListener(clarificationRepository, producer)
 
     @Test
@@ -30,17 +30,17 @@ class ApiClarificationCreatedEventListenerTest {
 
         listener.handle(ClarificationEvent.Created(clarification.id))
 
-        val messages = argumentCaptor<SocketIOFanoutMessage>()
+        val messages = argumentCaptor<SSEFanoutMessage>()
         verify(producer, times(3)).produce(messages.capture())
         assertEquals(
             listOf(
-                "/contests/${contest.id}/dashboard/admin",
-                "/contests/${contest.id}/dashboard/judge",
-                "/contests/${contest.id}/members/${clarification.member.id}/private/contestant",
+                "admin-dashboard-${contest.id}",
+                "judge-dashboard-${contest.id}",
+                "member-private-${clarification.member.id}",
             ),
-            messages.allValues.map(SocketIOFanoutMessage::room),
+            messages.allValues.map(SSEFanoutMessage::room),
         )
-        assertEquals(List(3) { "CLARIFICATION_CREATED" }, messages.allValues.map(SocketIOFanoutMessage::eventName))
+        assertEquals(List(3) { "CLARIFICATION_CREATED" }, messages.allValues.map(SSEFanoutMessage::eventName))
         assertTrue(messages.allValues[0].data is ClarificationResponseDTO)
         assertTrue(messages.allValues[1].data is ClarificationResponseDTO)
         assertTrue(messages.allValues[2].data is ClarificationResponseDTO)

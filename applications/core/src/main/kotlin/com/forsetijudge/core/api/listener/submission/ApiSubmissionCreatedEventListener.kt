@@ -1,12 +1,13 @@
 package com.forsetijudge.core.api.listener.submission
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
-import com.forsetijudge.core.api.websocket.room.SocketIOAdminDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOContestantDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOGuestDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOJudgeDashboardRoom
+import com.forsetijudge.core.api.http.sse.SSE
+import com.forsetijudge.core.api.http.sse.SSERoomBuilder
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
@@ -18,7 +19,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Suppress("unused")
 class ApiSubmissionCreatedEventListener(
     private val submissionRepository: SubmissionRepository,
-    private val socketIOFanoutRedisMessageProducer: SocketIOFanoutRedisMessageProducer,
+    private val sseFanoutRedisMessageProducer: SSEFanoutRedisMessageProducer,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -32,24 +33,32 @@ class ApiSubmissionCreatedEventListener(
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
         val contest = submission.contest
 
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOAdminDashboardRoom(contest.id).buildSubmissionCreatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildAdminDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toWithCodeAndExecutionResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOContestantDashboardRoom(contest.id).buildSubmissionCreatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOGuestDashboardRoom(contest.id).buildSubmissionCreatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildGuestDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOJudgeDashboardRoom(contest.id).buildSubmissionCreatedEvent(
-                submission,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toWithCodeAndExecutionResponseDTO(),
             ),
         )
     }

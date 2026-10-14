@@ -1,7 +1,7 @@
 package com.forsetijudge.core.api.listener.submission
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardCellBuilder
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
@@ -11,8 +11,11 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardCellResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -25,14 +28,12 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
-import java.util.UUID
 
 class ApiSubmissionUpdatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
     private val cellBuilder =
         LeaderboardCellBuilder()
-    private val producer = mock<SocketIOFanoutRedisMessageProducer>()
+    private val producer = mock<SSEFanoutRedisMessageProducer>()
     private val cache = mock<LeaderboardCacheStore>()
     private val listener = ApiSubmissionUpdatedEventListener(submissions, cellBuilder, producer, cache)
 
@@ -61,21 +62,21 @@ class ApiSubmissionUpdatedEventListenerTest {
 
         listener.handle(SubmissionEvent.Updated(submission.id))
 
-        val messages = argumentCaptor<SocketIOFanoutMessage>()
+        val messages = argumentCaptor<SSEFanoutMessage>()
         verify(producer, times(9)).produce(messages.capture())
         val expectedRooms =
             listOf(
-                "/contests/${contest.id}/dashboard/admin",
-                "/contests/${contest.id}/dashboard/judge",
-                "/contests/${contest.id}/members/${member.id}/private/contestant",
-                "/contests/${contest.id}/dashboard/contestant",
-                "/contests/${contest.id}/dashboard/guest",
-                "/contests/${contest.id}/dashboard/admin",
-                "/contests/${contest.id}/dashboard/contestant",
-                "/contests/${contest.id}/dashboard/guest",
-                "/contests/${contest.id}/dashboard/judge",
+                "admin-dashboard-${contest.id}",
+                "judge-dashboard-${contest.id}",
+                "member-private-${member.id}",
+                "contestant-dashboard-${contest.id}",
+                "guest-dashboard-${contest.id}",
+                "admin-dashboard-${contest.id}",
+                "judge-dashboard-${contest.id}",
+                "contestant-dashboard-${contest.id}",
+                "guest-dashboard-${contest.id}",
             )
-        assertEquals(expectedRooms, messages.allValues.map(SocketIOFanoutMessage::room))
+        assertEquals(expectedRooms, messages.allValues.map(SSEFanoutMessage::room))
         assertEquals(
             listOf(
                 "SUBMISSION_UPDATED",
@@ -88,10 +89,10 @@ class ApiSubmissionUpdatedEventListenerTest {
                 "LEADERBOARD_UPDATED",
                 "LEADERBOARD_UPDATED",
             ),
-            messages.allValues.map(SocketIOFanoutMessage::eventName),
+            messages.allValues.map(SSEFanoutMessage::eventName),
         )
         assertTrue(messages.allValues[0].data is SubmissionWithCodeAndExecutionsResponseDTO)
-        assertTrue(messages.allValues[2].data is SubmissionWithCodeAndExecutionsResponseDTO)
+        assertTrue(messages.allValues[2].data is SubmissionWithCodeResponseDTO)
         assertTrue(messages.allValues[3].data is SubmissionResponseDTO)
         assertTrue(messages.allValues[4].data is SubmissionResponseDTO)
         assertTrue(messages.allValues.drop(5).all { it.data is LeaderboardCellResponseDTO })

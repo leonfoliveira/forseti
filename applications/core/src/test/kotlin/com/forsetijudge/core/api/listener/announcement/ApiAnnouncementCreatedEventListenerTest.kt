@@ -1,7 +1,7 @@
 package com.forsetijudge.core.api.listener.announcement
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.AnnouncementEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
@@ -22,7 +22,7 @@ import org.mockito.kotlin.whenever
 
 class ApiAnnouncementCreatedEventListenerTest {
     private val announcementRepository = mock<AnnouncementRepository>()
-    private val producer = mock<SocketIOFanoutRedisMessageProducer>()
+    private val producer = mock<SSEFanoutRedisMessageProducer>()
     private val listener = ApiAnnouncementCreatedEventListener(announcementRepository, producer)
 
     @Test
@@ -33,18 +33,18 @@ class ApiAnnouncementCreatedEventListenerTest {
 
         listener.handle(AnnouncementEvent.Created(announcement.id))
 
-        val messages = argumentCaptor<SocketIOFanoutMessage>()
+        val messages = argumentCaptor<SSEFanoutMessage>()
         verify(producer, times(4)).produce(messages.capture())
         assertEquals(
             listOf(
-                "/contests/${contest.id}/dashboard/admin",
-                "/contests/${contest.id}/dashboard/contestant",
-                "/contests/${contest.id}/dashboard/guest",
-                "/contests/${contest.id}/dashboard/judge",
+                "admin-dashboard-${contest.id}",
+                "contestant-dashboard-${contest.id}",
+                "judge-dashboard-${contest.id}",
+                "guest-dashboard-${contest.id}",
             ),
-            messages.allValues.map(SocketIOFanoutMessage::room),
+            messages.allValues.map(SSEFanoutMessage::room),
         )
-        assertEquals(List(4) { "ANNOUNCEMENT_CREATED" }, messages.allValues.map(SocketIOFanoutMessage::eventName))
+        assertEquals(List(4) { "ANNOUNCEMENT_CREATED" }, messages.allValues.map(SSEFanoutMessage::eventName))
         assertTrue(messages.allValues[0].data is AnnouncementResponseDTO)
         assertTrue(messages.allValues[1].data is AnnouncementResponseDTO)
         assertTrue(messages.allValues[2].data is AnnouncementResponseDTO)

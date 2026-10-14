@@ -1,13 +1,14 @@
 package com.forsetijudge.core.api.listener.submission
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -19,11 +20,10 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class ApiSubmissionCreatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
-    private val producer = mock<SocketIOFanoutRedisMessageProducer>()
+    private val producer = mock<SSEFanoutRedisMessageProducer>()
     private val listener = ApiSubmissionCreatedEventListener(submissions, producer)
 
     @Test
@@ -39,18 +39,18 @@ class ApiSubmissionCreatedEventListenerTest {
 
         listener.handle(SubmissionEvent.Created(submission.id))
 
-        val messages = argumentCaptor<SocketIOFanoutMessage>()
+        val messages = argumentCaptor<SSEFanoutMessage>()
         verify(producer, times(4)).produce(messages.capture())
         assertEquals(
             listOf(
-                "/contests/${contest.id}/dashboard/admin",
-                "/contests/${contest.id}/dashboard/contestant",
-                "/contests/${contest.id}/dashboard/guest",
-                "/contests/${contest.id}/dashboard/judge",
+                "admin-dashboard-${contest.id}",
+                "contestant-dashboard-${contest.id}",
+                "guest-dashboard-${contest.id}",
+                "judge-dashboard-${contest.id}",
             ),
-            messages.allValues.map(SocketIOFanoutMessage::room),
+            messages.allValues.map(SSEFanoutMessage::room),
         )
-        assertEquals(List(4) { "SUBMISSION_CREATED" }, messages.allValues.map(SocketIOFanoutMessage::eventName))
+        assertEquals(List(4) { "SUBMISSION_CREATED" }, messages.allValues.map(SSEFanoutMessage::eventName))
         assertTrue(messages.allValues[0].data is SubmissionWithCodeAndExecutionsResponseDTO)
         assertTrue(messages.allValues[1].data is SubmissionResponseDTO)
         assertTrue(messages.allValues[2].data is SubmissionResponseDTO)
