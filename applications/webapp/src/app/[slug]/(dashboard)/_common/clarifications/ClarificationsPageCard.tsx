@@ -27,7 +27,6 @@ import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { Button } from "@/app/_lib/component/shadcn/button";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { useDialog } from "@/app/_lib/hook/useDialog";
 

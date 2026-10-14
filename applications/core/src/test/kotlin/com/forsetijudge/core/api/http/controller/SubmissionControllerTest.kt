@@ -5,7 +5,6 @@ import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.input.usecase.submission.CreateSubmissionUseCase
 import com.forsetijudge.core.port.input.usecase.submission.ResubmitSubmissionUseCase
 import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -16,6 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 class SubmissionControllerTest {
     private val create = mock<CreateSubmissionUseCase>()

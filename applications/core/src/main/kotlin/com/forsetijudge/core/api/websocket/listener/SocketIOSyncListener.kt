@@ -5,8 +5,8 @@ import com.corundumstudio.socketio.SocketIOClient
 import com.corundumstudio.socketio.listener.DataListener
 import com.forsetijudge.core.infrastructure.redis.SocketIORedisCacheStore
 import com.forsetijudge.core.util.SafeLogger
-import java.time.OffsetDateTime
 import org.springframework.stereotype.Component
+import java.time.OffsetDateTime
 
 @Component
 class SocketIOSyncListener(

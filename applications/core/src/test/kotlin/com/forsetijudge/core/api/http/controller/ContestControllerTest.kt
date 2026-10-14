@@ -10,8 +10,6 @@ import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -26,6 +24,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.time.OffsetDateTime
+import java.util.UUID
 
 class ContestControllerTest {
     private val findBySlug = mock<FindContestBySlugUseCase>()

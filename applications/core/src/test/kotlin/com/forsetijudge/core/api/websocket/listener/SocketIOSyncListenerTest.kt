@@ -4,7 +4,6 @@ import com.corundumstudio.socketio.AckRequest
 import com.corundumstudio.socketio.SocketIOClient
 import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SocketIORedisCacheStore
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -12,6 +11,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class SocketIOSyncListenerTest {
     private val cacheStore = mock<SocketIORedisCacheStore>()
