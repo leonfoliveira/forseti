@@ -146,7 +146,7 @@ export function ClarificationsPageCard({
           </div>
           <Badge
             variant={clarification.isPublic ? "default" : "outline"}
-            data-testid="clarification-is-public"
+            data-testid="clarification-is-public-badge"
           >
             {clarification.isPublic ? "Public" : "Private"}
           </Badge>
