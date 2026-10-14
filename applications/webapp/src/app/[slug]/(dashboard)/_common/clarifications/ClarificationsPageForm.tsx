@@ -108,7 +108,7 @@ export function ClarificationsPageForm({
             <ControlledField
               form={form}
               name="text"
-              label="Text"
+              label="Question"
               field={<Textarea data-testid="clarification-form-text" />}
             />
             <div className="flex justify-end gap-3">

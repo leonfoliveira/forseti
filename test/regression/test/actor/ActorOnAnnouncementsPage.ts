@@ -46,7 +46,7 @@ export class ActorOnAnnouncementsPage extends Actor {
 
     const announcementForm = this.page.getByTestId("announcement-form");
 
-    const textInput = announcementForm.getByLabel("Message");
+    const textInput = announcementForm.getByLabel("Text");
 
     await textInput.fill(announcement.text);
 

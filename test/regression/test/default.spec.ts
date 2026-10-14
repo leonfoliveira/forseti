@@ -220,9 +220,8 @@ test("Default contest behaviour", async ({ page }) => {
     0,
     SubmissionAnswer.ACCEPTED,
   );
-  await judgeActorOnSubmissions.signOut(contest);
   const judgeActorOnClarificationsPage =
-    await judgeActor.navigateToClarificationsPage(contest);
+    await judgeActorOnSubmissions.navigateToClarificationsPage(contest);
   await judgeActorOnClarificationsPage.answerClarification(0);
   await judgeActorOnClarificationsPage.publishClarification(0);
   await judgeActorOnClarificationsPage.signOut(contest);
