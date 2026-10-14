@@ -92,7 +92,7 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `max_peak_memory_kb`: The maximum peak memory used by the execution in kilobytes.
 - `details_id`: The UUIDv7 of the details attachment associated with the execution.
 
-### announcements
+### announcement
 
 - `id`: A unique UUIDv7 identifying the announcement.
 - `created_at`: The timestamp when the announcement was created.
@@ -102,6 +102,22 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `contest_id`: The UUIDv7 of the contest the announcement is associated with.
 - `member_id`: The UUIDv7 of the member who created the announcement.
 - `text`: The text content of the announcement.
+
+### clarification
+
+- `id`: A unique UUIDv7 identifying the clarification.
+- `created_at`: The timestamp when the clarification was created.
+- `updated_at`: The timestamp when the clarification was last updated.
+- `deleted_at`: The timestamp when the clarification was deleted, if applicable.
+- `version`: The version number of the clarification record, used for optimistic locking.
+- `contest_id`: The UUIDv7 of the contest the clarification is associated with.
+- `problem_id`: The UUIDv7 of the problem the clarification is related to, if applicable.
+- `question_member_id`: The UUIDv7 of the member who asked the clarification question.
+- `question_text`: The text content of the clarification question.
+- `answer_member_id`: The UUIDv7 of the member who provided the answer to the clarification, if applicable.
+- `answer_text`: The text content of the answer to the clarification, if applicable.
+- `answer_created_at`: The timestamp when the answer to the clarification was created, if applicable.
+- `is_public`: A boolean indicating whether the clarification is public.
 
 ## Audit Tables
 
