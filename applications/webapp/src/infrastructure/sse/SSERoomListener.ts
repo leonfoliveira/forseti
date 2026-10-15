@@ -41,18 +41,6 @@ export abstract class SSERoomListener {
         resolve();
       };
 
-      this.eventSource.onmessage = (event) => {
-        console.debug("Received event:", event);
-
-        const parsedData = JSON.parse(event.data);
-        const eventName = parsedData.eventName;
-        const eventData = parsedData.data;
-
-        if (listeners[eventName as never]) {
-          listeners[eventName as keyof typeof listeners](eventData);
-        }
-      };
-
       this.eventSource.onerror = (error) => {
         console.error("Error in SSE room:", error);
 
@@ -66,6 +54,14 @@ export abstract class SSERoomListener {
       this.eventSource.addEventListener("heartbeat", () => {
         console.debug("Received heartbeat");
         this.resetHeartbeatWatchdog();
+      });
+
+      Object.entries(listeners).forEach(([eventName, callback]) => {
+        this.eventSource?.addEventListener(eventName, (event) => {
+          console.debug("Received event:", event);
+          const parsedData = JSON.parse(event.data);
+          callback(parsedData);
+        });
       });
     });
   }

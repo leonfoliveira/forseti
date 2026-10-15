@@ -79,7 +79,8 @@ class SSEHelper(
                                 .toInstant()
                                 .toEpochMilli()
                                 .toString(),
-                        ).data(message.data),
+                        ).name(message.eventName)
+                        .data(message.data),
                 )
             } catch (e: Exception) {
                 logger.error("Error sending SSE to room ${message.room}", e)
@@ -121,7 +122,8 @@ class SSEHelper(
                                 .toInstant()
                                 .toEpochMilli()
                                 .toString(),
-                        ).data(it.data),
+                        ).name(it.eventName)
+                        .data(it.data),
                 )
             } catch (e: Exception) {
                 logger.error("Error sending missed SSE to room $room", e)
