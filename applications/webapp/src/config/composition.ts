@@ -1,4 +1,3 @@
-import { SocketIOWebSocketClient } from "@/infrastructure/socketio/SocketIOWebSocketClient";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { AxiosAttachmentRepository } from "@/infrastructure/axios/repository/AxiosAttachmentRepository";
 import { AxiosAuthenticationRepository } from "@/infrastructure/axios/repository/AxiosAuthenticationRepository";
@@ -30,13 +29,20 @@ import { SessionReader } from "@/port/input/usecase/session/SessionReader";
 import { SessionWritter } from "@/port/input/usecase/session/SessionWritter";
 import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
 import { SubmissionWritter } from "@/port/input/usecase/submission/SubmissionWritter";
-import { WebSocketClient } from "@/port/output/websocket/WebSocketClient";
 import { S3BucketRepository } from "@/infrastructure/axios/bucket/S3BucketRepository";
 import { AxiosClarificationRepository } from "@/infrastructure/axios/repository/AxiosClarificationRepository";
 import { ClarificationService } from "@/service/ClarificationService";
 import { ClarificationWritter } from "@/port/input/usecase/clarification/ClarificationWritter";
-
-const webSocketClient = new SocketIOWebSocketClient(env.wsUrl);
+import { SSEAdminDashboardRoomListener } from "@/infrastructure/sse/SSEAdminDashboardRoomListener";
+import { SSEMemberPrivateRoomListener } from "@/infrastructure/sse/SSEMemberPrivateRoomListener";
+import { SSEJudgeDashboardRoomListener } from "@/infrastructure/sse/SSEJudgeDashboardRoomListener";
+import { SSEContestantDashboardRoomListener } from "@/infrastructure/sse/SSEContestantDashboardRoomListener";
+import { SSEGuestDashboardRoomListener } from "@/infrastructure/sse/SSEGuestDashboardRoomListener";
+import { AdminDashboardRoomListener } from "@/port/output/sse/AdminDashboardRoomListener";
+import { ContestantDashboardRoomListener } from "@/port/output/sse/ContestantDashboardRoomListener";
+import { GuestDashboardRoomListener } from "@/port/output/sse/GuestDashboardRoomListener";
+import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoomListener";
+import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
 
 // Repositories
 const axiosClient = new AxiosClient(env.httpUrl);
@@ -71,8 +77,22 @@ const submissionService = new SubmissionService(
 );
 const announcementService = new AnnouncementService(announcementRepository);
 
+// SSE Listeners
+const adminDashboardRoomListener = new SSEAdminDashboardRoomListener(
+  env.httpUrl,
+);
+const contestantDashboardRoomListener = new SSEContestantDashboardRoomListener(
+  env.httpUrl,
+);
+const guestDashboardRoomListener = new SSEGuestDashboardRoomListener(
+  env.httpUrl,
+);
+const judgeDashboardRoomListener = new SSEJudgeDashboardRoomListener(
+  env.httpUrl,
+);
+const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.httpUrl);
+
 const Composition: {
-  webSocketClient: WebSocketClient;
   attachmentReader: AttachmentReader;
   attachmentWritter: AttachmentWritter;
   authenticationWritter: AuthenticationWritter;
@@ -86,8 +106,12 @@ const Composition: {
   submissionWritter: SubmissionWritter;
   clarificationWritter: ClarificationWritter;
   announcementWritter: AnnouncementWritter;
+  adminDashboardRoomListener: AdminDashboardRoomListener;
+  contestantDashboardRoomListener: ContestantDashboardRoomListener;
+  guestDashboardRoomListener: GuestDashboardRoomListener;
+  judgeDashboardRoomListener: JudgeDashboardRoomListener;
+  memberPrivateRoomListener: MemberPrivateRoomListener;
 } = {
-  webSocketClient: webSocketClient,
   attachmentReader: attachmentService,
   attachmentWritter: attachmentService,
   authenticationWritter: authenticationService,
@@ -101,6 +125,11 @@ const Composition: {
   submissionWritter: submissionService,
   clarificationWritter: clarificationService,
   announcementWritter: announcementService,
+  adminDashboardRoomListener: adminDashboardRoomListener,
+  contestantDashboardRoomListener: contestantDashboardRoomListener,
+  guestDashboardRoomListener: guestDashboardRoomListener,
+  judgeDashboardRoomListener: judgeDashboardRoomListener,
+  memberPrivateRoomListener: memberPrivateRoomListener,
 };
 
 export { Composition };

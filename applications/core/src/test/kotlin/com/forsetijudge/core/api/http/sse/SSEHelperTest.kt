@@ -1,5 +1,6 @@
 package com.forsetijudge.core.api.http.sse
 
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -38,7 +39,8 @@ class SSEHelperTest {
         SSEHelper.subscribe(room, emitter1)
         SSEHelper.subscribe(room, emitter2)
 
-        SSEHelper.emit(room, eventName, data)
+        val message = SSEFanoutMessage(room, eventName, data)
+        SSEHelper.emit(message)
 
         verify(emitter1, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
         verify(emitter2, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
@@ -49,21 +51,23 @@ class SSEHelperTest {
 
     @Test
     fun `emit should do nothing if room does not exist`() {
-        SSEHelper.emit("non-existent-room", eventName, data)
+        val message = SSEFanoutMessage("non-existent-room", eventName, data)
+        SSEHelper.emit(message)
     }
 
     @Test
     fun `unsubscribe should remove emitter and clean up empty rooms`() {
         val emitter = mock<SseEmitter>()
+        val message = SSEFanoutMessage(room, eventName, data)
 
         SSEHelper.subscribe(room, emitter)
-        SSEHelper.emit(room, eventName, data)
+        SSEHelper.emit(message)
 
         verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
 
         SSEHelper.unsubscribe(room, emitter)
 
-        SSEHelper.emit(room, eventName, data)
+        SSEHelper.emit(message)
         verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>()) // count shouldn't increase
     }
 
@@ -71,14 +75,14 @@ class SSEHelperTest {
     fun `completion or timeout callback should automatically unsubscribe emitter`() {
         val emitter = mock<SseEmitter>()
         val completionCaptor = argumentCaptor<Runnable>()
-
+        val message = SSEFanoutMessage(room, eventName, data)
         doNothing().whenever(emitter).onCompletion(completionCaptor.capture())
 
         SSEHelper.subscribe(room, emitter)
 
         completionCaptor.firstValue.run()
 
-        SSEHelper.emit(room, eventName, data)
+        SSEHelper.emit(message)
         verify(emitter, atMost(1)).send(any<SseEmitter.SseEventBuilder>())
     }
 }

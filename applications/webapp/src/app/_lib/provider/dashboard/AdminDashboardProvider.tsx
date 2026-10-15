@@ -12,13 +12,12 @@ import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashb
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { AdminDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/AdminDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 /**
- * Provider component for fetching admin dashboard data and setting up broadcast listeners.
+ * Provider component for fetching admin dashboard data and setting up sse listeners.
  * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
  */
 export function AdminDashboardProvider({
@@ -39,15 +38,12 @@ export function AdminDashboardProvider({
 
   useEffect(() => {
     async function setupBroadcastListeners() {
-      console.debug("Setting up broadcast listeners");
+      console.debug("Setting up sse listeners");
 
       try {
-        await Composition.webSocketClient.connect(
-          () => setListenerStatus(ListenerStatus.FAILURE),
-          () => setListenerStatus(ListenerStatus.CONNECTED),
-        );
-        await Composition.webSocketClient.join(
-          new AdminDashboardWebSocketRoom(contest.id, {
+        await Composition.adminDashboardRoomListener.subscribe(
+          contest.id,
+          {
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
@@ -55,13 +51,15 @@ export function AdminDashboardProvider({
             CLARIFICATION_CREATED: receiveClarificationCreated,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
-          }),
+          },
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
         );
 
-        console.debug("Successfully set up broadcast listeners");
+        console.debug("Successfully set up sse listeners");
         setListenerStatus(ListenerStatus.CONNECTED);
       } catch (error) {
-        console.error("Failed to setup broadcast listeners:", error);
+        console.error("Failed to setup sse listeners:", error);
         setListenerStatus(ListenerStatus.FAILURE);
       }
     }
@@ -90,10 +88,8 @@ export function AdminDashboardProvider({
     init();
 
     return () => {
-      if (Composition.webSocketClient.isConnected) {
-        Composition.webSocketClient.disconnect();
-        setListenerStatus(ListenerStatus.DISCONNECTED);
-      }
+      Composition.adminDashboardRoomListener.unsubscribe();
+      setListenerStatus(ListenerStatus.DISCONNECTED);
     };
   }, [session, contest.id]);
 

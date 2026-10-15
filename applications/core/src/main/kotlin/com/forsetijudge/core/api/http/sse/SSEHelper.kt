@@ -1,5 +1,6 @@
 package com.forsetijudge.core.api.http.sse
 
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.util.SafeLogger
 import java.util.concurrent.ConcurrentHashMap
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
@@ -52,25 +53,19 @@ object SSEHelper {
     /**
      * Emit an event to a room.
      *
-     * @param room The room to emit the event to.
-     * @param eventName The name of the event.
-     * @param data The data to send with the event.
+     * @param message The message to be sent, containing the event room, name and data.
      */
-    fun emit(
-        room: String,
-        eventName: String,
-        data: Any,
-    ) {
-        logger.info("Emitting event $eventName to room $room")
+    fun emit(message: SSEFanoutMessage) {
+        logger.info("Emitting event ${message.eventName} to room ${message.room}")
 
-        val roomEmitters = emitters[room]?.toList() ?: return
+        val roomEmitters = emitters[message.room]?.toList() ?: return
 
         for (emitter in roomEmitters) {
             try {
-                emitter.send(SseEmitter.event().name(eventName).data(data))
+                emitter.send(message)
             } catch (e: Exception) {
-                logger.error("Error sending SSE to room $room", e)
-                unsubscribe(room, emitter)
+                logger.error("Error sending SSE to room ${message.room}", e)
+                unsubscribe(message.room, emitter)
             }
         }
     }

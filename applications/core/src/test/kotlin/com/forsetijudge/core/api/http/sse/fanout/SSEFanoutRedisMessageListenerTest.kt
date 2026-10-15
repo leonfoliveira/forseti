@@ -28,7 +28,7 @@ class SSEFanoutRedisMessageListenerTest {
             listener.onMessage(message, null)
 
             verify(objectMapper).readValue(messageBytes, SSEFanoutMessage::class.java)
-            mockedStatic.verify { SSEHelper.emit(payload.room, payload.eventName, payload.data) }
+            mockedStatic.verify { SSEHelper.emit(payload) }
         }
     }
 }

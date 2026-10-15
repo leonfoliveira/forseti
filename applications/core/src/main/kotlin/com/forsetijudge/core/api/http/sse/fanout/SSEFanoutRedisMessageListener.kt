@@ -14,7 +14,7 @@ class SSEFanoutRedisMessageListener(
         message: Message,
         pattern: ByteArray?,
     ) {
-        val payload = objectMapper.readValue(message.body, SSEFanoutMessage::class.java)
-        SSEHelper.emit(payload.room, payload.eventName, payload.data)
+        val parsedMessage = objectMapper.readValue(message.body, SSEFanoutMessage::class.java)
+        SSEHelper.emit(parsedMessage)
     }
 }
