@@ -1,0 +1,25 @@
+meta {
+  name: guest_dashboard_room
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/v1/sse/contests/{{contest_id}}/dashboard/guest
+  body: none
+  auth: inherit
+}
+
+headers {
+  Accept: text/event-stream
+}
+
+vars:pre-request {
+  contest_id: 01a13ac6-c271-7d3e-aa0a-e9c40da225b3
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

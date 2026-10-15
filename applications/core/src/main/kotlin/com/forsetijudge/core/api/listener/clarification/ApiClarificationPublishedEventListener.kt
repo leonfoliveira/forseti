@@ -1,12 +1,12 @@
 package com.forsetijudge.core.api.listener.clarification
 
-import com.forsetijudge.core.api.websocket.fanout.SocketIOFanoutRedisMessageProducer
-import com.forsetijudge.core.api.websocket.room.SocketIOAdminDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOContestantDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOGuestDashboardRoom
-import com.forsetijudge.core.api.websocket.room.SocketIOJudgeDashboardRoom
+import com.forsetijudge.core.api.http.sse.SSE
+import com.forsetijudge.core.api.http.sse.SSERoomBuilder
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.domain.event.ClarificationEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
@@ -18,7 +18,7 @@ import org.springframework.transaction.event.TransactionalEventListener
 @Suppress("unused")
 class ApiClarificationPublishedEventListener(
     private val clarificationRepository: ClarificationRepository,
-    private val socketIOFanoutRedisMessageProducer: SocketIOFanoutRedisMessageProducer,
+    private val sseFanoutRedisMessageProducer: SSEFanoutRedisMessageProducer,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -32,24 +32,32 @@ class ApiClarificationPublishedEventListener(
                 ?: throw NotFoundException("Could not find clarification with id: ${event.clarificationId}")
         val contest = clarification.contest
 
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOAdminDashboardRoom(contest.id).buildClarificationPublishedEvent(
-                clarification,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildAdminDashboardRoom(contest.id),
+                eventName = SSE.CLARIFICATION_PUBLISHED.name,
+                data = clarification.toResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOJudgeDashboardRoom(contest.id).buildClarificationPublishedEvent(
-                clarification,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
+                eventName = SSE.CLARIFICATION_PUBLISHED.name,
+                data = clarification.toResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOContestantDashboardRoom(contest.id).buildClarificationPublishedEvent(
-                clarification,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
+                eventName = SSE.CLARIFICATION_PUBLISHED.name,
+                data = clarification.toResponseDTO(),
             ),
         )
-        socketIOFanoutRedisMessageProducer.produce(
-            SocketIOGuestDashboardRoom(contest.id).buildClarificationPublishedEvent(
-                clarification,
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildGuestDashboardRoom(contest.id),
+                eventName = SSE.CLARIFICATION_PUBLISHED.name,
+                data = clarification.toResponseDTO(),
             ),
         )
     }

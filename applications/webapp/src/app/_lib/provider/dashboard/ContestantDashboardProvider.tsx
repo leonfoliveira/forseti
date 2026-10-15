@@ -10,18 +10,16 @@ import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/Conte
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { ContestantDashboardWebSocketRoom } from "@/port/output/websocket/room/dashboard/ContestantDashboardWebSocketRoom";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { ContestantPrivateWebSocketRoom } from "@/port/output/websocket/room/private/ContestantPrivateWebSocketRoom";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
 
 /**
- * Provider component for fetching contestant dashboard data and setting up broadcast listeners.
+ * Provider component for fetching contestant dashboard data and setting up sse listeners.
  * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
  */
 export function ContestantDashboardProvider({
@@ -42,33 +40,35 @@ export function ContestantDashboardProvider({
 
   useEffect(() => {
     async function setupBroadcastListeners() {
-      console.debug("Setting up broadcast listeners");
+      console.debug("Setting up sse listeners");
 
       try {
-        await Composition.webSocketClient.connect(
-          () => setListenerStatus(ListenerStatus.FAILURE),
-          () => setListenerStatus(ListenerStatus.CONNECTED),
-        );
-        await Composition.webSocketClient.join(
-          new ContestantDashboardWebSocketRoom(contest.id, {
+        await Composition.contestantDashboardRoomListener.subscribe(
+          contest.id,
+          {
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
-          }),
+          },
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
         );
-        await Composition.webSocketClient.join(
-          new ContestantPrivateWebSocketRoom(contest.id, session!.member.id, {
+        await Composition.memberPrivateRoomListener.subscribe(
+          session!.member.id,
+          {
             SUBMISSION_UPDATED: receiveMemberSubmission,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
-          }),
+          },
+          () => setListenerStatus(ListenerStatus.FAILURE),
+          () => setListenerStatus(ListenerStatus.CONNECTED),
         );
 
-        console.debug("Successfully set up broadcast listeners");
+        console.debug("Successfully set up sse listeners");
         setListenerStatus(ListenerStatus.CONNECTED);
       } catch (error) {
-        console.error("Failed to setup broadcast listeners:", error);
+        console.error("Failed to setup sse listeners:", error);
         setListenerStatus(ListenerStatus.FAILURE);
       }
     }
@@ -97,10 +97,9 @@ export function ContestantDashboardProvider({
     init();
 
     return () => {
-      if (Composition.webSocketClient.isConnected) {
-        Composition.webSocketClient.disconnect();
-        setListenerStatus(ListenerStatus.DISCONNECTED);
-      }
+      Composition.contestantDashboardRoomListener.unsubscribe();
+      Composition.memberPrivateRoomListener.unsubscribe();
+      setListenerStatus(ListenerStatus.DISCONNECTED);
     };
   }, [session, contest.id]);
 

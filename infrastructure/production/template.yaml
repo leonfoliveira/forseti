@@ -779,7 +779,7 @@ Resources:
               Value: !GetAtt CoreCache.PrimaryEndPoint.Address
             - Name: REDIS_PORT
               Value: !GetAtt CoreCache.PrimaryEndPoint.Port
-            - Name: REDIS_SOCKET_IO_TTL_SECONDS
+            - Name: REDIS_SSE_TTL_SECONDS
               Value: "600"
             - Name: OTEL_TRACES_EXPORTER
               Value: none

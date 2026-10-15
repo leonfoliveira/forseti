@@ -38,7 +38,6 @@ kotlinReflect = { module = 'org.jetbrains.kotlin:kotlin-reflect', version.ref = 
 kotlinxDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
-nettySocketio = { module = "com.corundumstudio.socketio:netty-socketio", version.ref = "nettySocketio" }
 mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 opentelemetryApi = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
@@ -57,7 +56,6 @@ springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-sta
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
 springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
-springBootStarterWebsocket = { module = "org.springframework.boot:spring-boot-starter-websocket", version.ref = "springBoot" }
 springBootTestcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "springBoot" }
 springCloudAwsStarterS3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "springBoot" }
 springCloudAwsStarterSecretsManager = { module = "io.awspring.cloud:spring-cloud-aws-starter-secrets-manager", version.ref = "springBoot" }

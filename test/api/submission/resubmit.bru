@@ -4,7 +4,7 @@ meta {
   seq: 2
 }
 
-put {
+patch {
   url: {{api_url}}/v1/contests/{{contest_id}}/submissions/{{submission_id}}:resubmit
   body: none
   auth: inherit

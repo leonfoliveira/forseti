@@ -1,0 +1,21 @@
+meta {
+  name: member_private_room
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api_url}}/v1/sse/member/{{member_id}}
+  body: none
+  auth: inherit
+}
+
+headers {
+  Accept: text/event-stream
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

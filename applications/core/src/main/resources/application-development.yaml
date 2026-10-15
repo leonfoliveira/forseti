@@ -25,6 +25,12 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/forseti}
     username: ${DB_USER:forseti}
     password: ${DB_PASSWORD:forsetijudge}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:20}
+      minimum-idle: ${DB_MIN_IDLE:10}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:30000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:30000}
   jpa:
     show-sql: false
     properties:
@@ -44,7 +50,7 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:forsetijudge}
-      socket_io_ttl_seconds: ${REDIS_SOCKET_IO_TTL_SECONDS:600}
+      sse_ttl_seconds: ${SSE_TTL_SECONDS:600}
 
 # Security configuration
 security:
@@ -61,4 +67,3 @@ server:
   cors:
     allowed-origins: ${ALLOWED_ORIGINS:http://localhost:3000}
   port: ${API_PORT:8080}
-  ws-port: ${WS_PORT:8081}

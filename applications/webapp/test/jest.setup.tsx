@@ -20,6 +20,14 @@ if (!!window) {
 process.env.TZ = "UTC";
 jest.useFakeTimers();
 
+export const eventSource = {
+  onopen: jest.fn(),
+  onmessage: jest.fn(),
+  onerror: jest.fn(),
+  addEventListener: jest.fn(),
+};
+global.EventSource = jest.fn(() => eventSource) as never;
+
 declare global {
   interface HTMLElement {
     getByTestId(id: string): HTMLElement | null;
@@ -34,11 +42,6 @@ HTMLElement.prototype.getAllByTestId = function (id: string) {
 };
 
 jest.mock("@/config/composition");
-
-(globalThis as any).__CLIENT_CONFIG__ = {
-  apiPublicUrl: "http://localhost:8080",
-  grafanaPublicUrl: "http://localhost:4000",
-};
 
 const router = {
   push: jest.fn(),

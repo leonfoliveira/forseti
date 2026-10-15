@@ -1,11 +1,13 @@
 import { RefreshCwIcon } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 import { Button } from "@/app/_lib/component/shadcn/button";
 
 /**
  * Displays a generic error message with a reload button centered on the page.
  */
 export function ErrorPage() {
+  const router = useRouter();
+
   return (
     <div className="flex h-dvh flex-col items-center justify-center">
       <h1 className="font-mono text-8xl font-bold" data-testid="code">
@@ -16,7 +18,7 @@ export function ErrorPage() {
       </h2>
       <Button
         className="mt-10"
-        onClick={() => window.location.reload()}
+        onClick={() => router.refresh()}
         data-testid="reload"
       >
         <RefreshCwIcon />

@@ -2,6 +2,7 @@
 
 import { ClockAlertIcon } from "lucide-react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 import { Page } from "@/app/_lib/component/page/Page";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -12,6 +13,7 @@ import { useAppSelector } from "@/app/_lib/store/Store";
  */
 export function WaitPage() {
   const contestStartAt = useAppSelector((state) => state.contest.startAt);
+  const router = useRouter();
 
   useEffect(() => {
     const now = new Date();
@@ -26,14 +28,14 @@ export function WaitPage() {
       if (timeout <= MAX_TIMEOUT) {
         const timer = setTimeout(() => {
           console.debug("Contest started. Reloading page...");
-          window.location.reload();
+          router.refresh();
         }, timeout);
 
         return () => clearTimeout(timer);
       }
     } else {
       console.debug("Contest already started. Reloading page...");
-      window.location.reload();
+      router.refresh();
     }
   }, [contestStartAt]);
 
