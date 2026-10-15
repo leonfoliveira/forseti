@@ -26,6 +26,7 @@ object SSEHelper {
         emitter.onCompletion { unsubscribe(room, emitter) }
         emitter.onTimeout { unsubscribe(room, emitter) }
         emitter.onError { unsubscribe(room, emitter) }
+        emitter.send(SseEmitter.event().name("connect").data("connected"))
     }
 
     /**
