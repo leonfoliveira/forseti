@@ -24,6 +24,7 @@ export const eventSource = {
   onopen: jest.fn(),
   onmessage: jest.fn(),
   onerror: jest.fn(),
+  addEventListener: jest.fn(),
 };
 global.EventSource = jest.fn(() => eventSource) as never;
 

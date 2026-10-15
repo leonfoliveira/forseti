@@ -20,6 +20,7 @@ import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
+import { PathUtil } from "@/app/_lib/util/PathUtil";
 
 /**
  * Header component displayed at the top of the web application.
@@ -39,7 +40,10 @@ export function Header() {
   }
 
   const isAuthorized = !!session;
-  const isSignInPage = pathname === routes.CONTEST_SIGN_IN(contest.slug);
+  const isSignInPage = PathUtil.isSamePath(
+    pathname,
+    routes.CONTEST_SIGN_IN(contest.slug),
+  );
   const memberType = isAuthorized
     ? {
         [MemberType.ROOT]: "Root",
@@ -91,7 +95,7 @@ export function Header() {
             </TooltipTrigger>
             <TooltipContent>Toggle theme</TooltipContent>
           </Tooltip>
-          {isAuthorized && (
+          {isAuthorized && !isSignInPage && (
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -163,7 +167,7 @@ export function Header() {
           </TooltipTrigger>
           <TooltipContent>Toggle theme</TooltipContent>
         </Tooltip>
-        {isAuthorized && (
+        {isAuthorized && !isSignInPage && (
           <>
             <Separator orientation="vertical" className="h-8!" />
             <div>
@@ -212,7 +216,7 @@ export function Header() {
       </div>
 
       {/* Mobile user info bar - only show when authorized */}
-      {isAuthorized && (
+      {isAuthorized && !isSignInPage && (
         <div className="border-divider flex items-center justify-center border-t pt-2 text-center sm:hidden">
           <p className="text-sm" data-testid="member-name">
             {session.member.name}

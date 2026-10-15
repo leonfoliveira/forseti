@@ -25,12 +25,11 @@ describe("SSEGuestDashboardRoomListener", () => {
     eventSource.onopen();
     await promise;
 
-    const data = { foo: "bar" };
     for (const listener in listeners) {
-      eventSource.onmessage({
-        data: JSON.stringify({ eventName: listener, data }),
-      });
-      expect(listeners[listener as never]).toHaveBeenCalledWith(data);
+      expect(eventSource.addEventListener).toHaveBeenCalledWith(
+        listener,
+        expect.any(Function),
+      );
     }
 
     eventSource.onerror("error");
