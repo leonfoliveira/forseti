@@ -85,6 +85,25 @@ class SSEAuthorizer(
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
             .requireMemberType(Member.Type.CONTESTANT)
+            .requireContestStarted()
+            .throwIfErrors()
+    }
+
+    /**
+     * Authorizes to access the guest dashboard room of a contest.
+     *
+     * @param contestId The ID of the contest for which access is being requested.
+     * @throws NotFoundException if the contest is not found.
+     * @throws ForbiddenException if the guest does not have the required permissions.
+     */
+    @Transactional(readOnly = true)
+    fun authorizeToGuestDashboardRoom(contestId: UUID) {
+        val contest =
+            contestRepository.findById(contestId)
+                ?: throw NotFoundException("Could not find contest with id: $contestId")
+
+        ContestAuthorizer(contest, null)
+            .requireContestStarted()
             .throwIfErrors()
     }
 

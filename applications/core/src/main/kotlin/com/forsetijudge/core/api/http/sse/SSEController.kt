@@ -58,6 +58,7 @@ class SSEController(
         @PathVariable contestId: UUID,
     ): SseEmitter {
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/guest")
+        sseAuthorizer.authorizeToGuestDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         SSEHelper.subscribe(SSERoomBuilder.buildGuestDashboardRoom(contestId), emitter)
         return emitter

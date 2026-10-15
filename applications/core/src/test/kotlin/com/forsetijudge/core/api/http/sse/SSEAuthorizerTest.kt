@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -153,9 +154,10 @@ class SSEAuthorizerTest {
         @Test
         fun `should throw NotFoundException when member is not found`() {
             val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
 
             assertThrows<NotFoundException> {
@@ -166,8 +168,12 @@ class SSEAuthorizerTest {
         @Test
         fun `should throw ForbiddenException when member does not belongs to contest`() {
             val contestId = IdGenerator.getUUID()
-            val contest = MockEntityFactory.contest()
-            val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = MockEntityFactory.contest())
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
+            val member =
+                MockEntityFactory.member(
+                    type = Member.Type.CONTESTANT,
+                    contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1)),
+                )
             TestAuthentication.setMember(member)
             whenever(contestRepository.findById(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
@@ -180,7 +186,7 @@ class SSEAuthorizerTest {
         @Test
         fun `should throw ForbiddenException when member is not CONTESTANT`() {
             val contestId = IdGenerator.getUUID()
-            val contest = MockEntityFactory.contest()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
             val member = MockEntityFactory.member(type = Member.Type.JUDGE, contest = contest)
             TestAuthentication.setMember(member)
             whenever(contestRepository.findById(contestId)).thenReturn(contest)
@@ -188,6 +194,44 @@ class SSEAuthorizerTest {
 
             assertThrows<ForbiddenException> {
                 service.authorizeToContestantDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when contest has not started`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusDays(1))
+            val member = MockEntityFactory.member(type = Member.Type.CONTESTANT)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToContestantDashboardRoom(contestId)
+            }
+        }
+    }
+
+    @Nested
+    inner class AuthorizeToGuestDashboardRoom {
+        @Test
+        fun `should throw NotFoundException when contest is not found`() {
+            val contestId = IdGenerator.getUUID()
+            whenever(contestRepository.findById(contestId)).thenReturn(null)
+
+            assertThrows<NotFoundException> {
+                service.authorizeToGuestDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when contest has not started`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusDays(1))
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToGuestDashboardRoom(contestId)
             }
         }
     }

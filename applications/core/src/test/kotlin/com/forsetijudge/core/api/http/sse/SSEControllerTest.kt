@@ -52,6 +52,7 @@ class SSEControllerTest {
                 get("/v1/sse/contests/$contestId/dashboard/guest"),
             ).andExpect(status().isOk)
             .andExpect(request().asyncStarted())
+        verify(sseAuthorizer).authorizeToGuestDashboardRoom(contestId)
     }
 
     @Test
