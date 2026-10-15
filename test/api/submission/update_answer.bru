@@ -4,7 +4,7 @@ meta {
   seq: 3
 }
 
-put {
+patch {
   url: {{api_url}}/v1/contests/{{contest_id}}/submissions/{{submission_id}}:update-answer
   body: json
   auth: inherit
