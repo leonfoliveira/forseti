@@ -1,14 +1,20 @@
 package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
 import com.forsetijudge.core.util.SafeLogger
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.concurrent.ConcurrentHashMap
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @Component
-class SSEHelper {
+class SSEHelper(
+    private val redisSSERedisCacheStore: SSERedisCacheStore,
+) {
     private val logger = SafeLogger(this::class)
     private val emitters = ConcurrentHashMap<String, MutableSet<SseEmitter>>()
 
@@ -54,7 +60,7 @@ class SSEHelper {
     }
 
     /**
-     * Emit an event to a room.
+     * Emit an event to a room. The id of the event is set to the timestamp of the message in milliseconds since epoch.
      *
      * @param message The message to be sent, containing the event room, name and data.
      */
@@ -65,10 +71,62 @@ class SSEHelper {
 
         for (emitter in roomEmitters) {
             try {
-                emitter.send(message)
+                emitter.send(
+                    SseEmitter
+                        .event()
+                        .id(
+                            message.createdAt
+                                .toInstant()
+                                .toEpochMilli()
+                                .toString(),
+                        ).data(message.data),
+                )
             } catch (e: Exception) {
                 logger.error("Error sending SSE to room ${message.room}", e)
                 unsubscribe(message.room, emitter)
+            }
+        }
+    }
+
+    /**
+     * Emit missed messages to a room after a specific event ID.
+     *
+     * @param room The room to emit missed messages to.
+     * @param lastEventId The last event ID received by the client.
+     * @param emitter The SseEmitter to use for sending events.
+     */
+    fun emitMissedMessages(
+        room: String,
+        lastEventId: String,
+        emitter: SseEmitter,
+    ) {
+        logger.info("Emitting missed messages to room $room after lastEventId $lastEventId")
+
+        val messages =
+            redisSSERedisCacheStore.getAllMessagesByRoomAfterTimestamp(
+                room,
+                OffsetDateTime.ofInstant(
+                    Instant.ofEpochMilli(lastEventId.toLong()),
+                    ZoneOffset.UTC,
+                ),
+            )
+
+        messages.forEach {
+            try {
+                emitter.send(
+                    SseEmitter
+                        .event()
+                        .id(
+                            it.createdAt
+                                .toInstant()
+                                .toEpochMilli()
+                                .toString(),
+                        ).data(it.data),
+                )
+            } catch (e: Exception) {
+                logger.error("Error sending missed SSE to room $room", e)
+                unsubscribe(room, emitter)
+                return
             }
         }
     }

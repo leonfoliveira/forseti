@@ -10,10 +10,10 @@ class SSEFanoutRedisMessageProducer(
 ) {
     private val logger = SafeLogger(this::class)
 
-    fun produce(payload: SSEFanoutMessage) {
-        logger.info("Producing message for room: ${payload.room}, event: ${payload.eventName}")
+    fun produce(message: SSEFanoutMessage) {
+        logger.info("Producing message for room: ${message.room}, event: ${message.eventName}")
 
-        sseRedisCacheStore.pubFanout(payload)
-        sseRedisCacheStore.cache(payload)
+        sseRedisCacheStore.pubFanout(message)
+        sseRedisCacheStore.cache(message)
     }
 }

@@ -38,7 +38,14 @@ class SSERedisCacheStore(
 
         redisTemplate
             .opsForZSet()
-            .add(key, objectMapper.writeValueAsString(message), System.currentTimeMillis().toDouble())
+            .add(
+                key,
+                objectMapper.writeValueAsString(message),
+                message.createdAt
+                    .toInstant()
+                    .toEpochMilli()
+                    .toDouble(),
+            )
 
         clean(message.room)
     }

@@ -1,6 +1,10 @@
 package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
+import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -8,6 +12,7 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.atMost
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
@@ -16,7 +21,8 @@ class SSEHelperTest {
     private val room = "test-room"
     private val eventName = "test-event"
     private val data = "test-data"
-    val helper = SSEHelper()
+    private val sseRedisCacheStore = mock<SSERedisCacheStore>()
+    val helper = SSEHelper(sseRedisCacheStore)
 
     @Test
     fun `subscribe should add emitter and register lifecycle callbacks`() {
@@ -85,5 +91,37 @@ class SSEHelperTest {
 
         helper.emit(message)
         verify(emitter, atMost(1)).send(any<SseEmitter.SseEventBuilder>())
+    }
+
+    @Test
+    fun `emits missed messages after a specific event ID`() {
+        val emitter = mock<SseEmitter>()
+        val lastEventId = "1"
+        val message1 = SSEFanoutMessage(room, eventName, data)
+        val message2 = SSEFanoutMessage(room, eventName, data)
+
+        whenever(
+            sseRedisCacheStore.getAllMessagesByRoomAfterTimestamp(
+                room,
+                OffsetDateTime.ofInstant(
+                    Instant.ofEpochMilli(lastEventId.toLong()),
+                    ZoneOffset.UTC,
+                ),
+            ),
+        ).thenReturn(listOf(message1, message2))
+
+        helper.emitMissedMessages(room, lastEventId, emitter)
+
+        verify(emitter, times(2)).send(any<SseEmitter.SseEventBuilder>())
+    }
+
+    @Test
+    fun `emits heartbeat messages to keep the connection alive`() {
+        val emitter = mock<SseEmitter>()
+
+        helper.subscribe(room, emitter)
+        helper.heartbeat()
+
+        verify(emitter, times(2)).send(any<SseEmitter.SseEventBuilder>())
     }
 }
