@@ -2,7 +2,6 @@ package com.forsetijudge.core.api.http.sse.fanout
 
 import com.forsetijudge.core.api.http.sse.SSEHelper
 import org.junit.jupiter.api.Test
-import org.mockito.Mockito.mockStatic
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -12,7 +11,8 @@ import tools.jackson.databind.ObjectMapper
 
 class SSEFanoutRedisMessageListenerTest {
     private val objectMapper = mock<ObjectMapper>()
-    private val listener = SSEFanoutRedisMessageListener(objectMapper)
+    private val sseHelper = mock<SSEHelper>()
+    private val listener = SSEFanoutRedisMessageListener(objectMapper, sseHelper)
 
     @Test
     fun `test onMessage`() {
@@ -22,13 +22,11 @@ class SSEFanoutRedisMessageListenerTest {
         val payload = SSEFanoutMessage("guest-dashboard-123", "SUBMISSION_CREATED", mapOf("id" to "submission-1"))
         val message = DefaultMessage("topic".toByteArray(), messageBytes)
 
-        mockStatic(SSEHelper::class.java).use { mockedStatic ->
-            whenever(objectMapper.readValue(eq(messageBytes), eq(SSEFanoutMessage::class.java))).thenReturn(payload)
+        whenever(objectMapper.readValue(eq(messageBytes), eq(SSEFanoutMessage::class.java))).thenReturn(payload)
 
-            listener.onMessage(message, null)
+        listener.onMessage(message, null)
 
-            verify(objectMapper).readValue(messageBytes, SSEFanoutMessage::class.java)
-            mockedStatic.verify { SSEHelper.emit(payload) }
-        }
+        verify(objectMapper).readValue(messageBytes, SSEFanoutMessage::class.java)
+        verify(sseHelper).emit(payload)
     }
 }

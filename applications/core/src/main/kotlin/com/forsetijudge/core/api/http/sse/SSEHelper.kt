@@ -3,9 +3,12 @@ package com.forsetijudge.core.api.http.sse
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.util.SafeLogger
 import java.util.concurrent.ConcurrentHashMap
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
-object SSEHelper {
+@Component
+class SSEHelper {
     private val logger = SafeLogger(this::class)
     private val emitters = ConcurrentHashMap<String, MutableSet<SseEmitter>>()
 
@@ -66,6 +69,24 @@ object SSEHelper {
             } catch (e: Exception) {
                 logger.error("Error sending SSE to room ${message.room}", e)
                 unsubscribe(message.room, emitter)
+            }
+        }
+    }
+
+    /**
+     * Send a heartbeat event to all rooms to keep the connections alive.
+     */
+    @Scheduled(fixedRate = 15000)
+    fun heartbeat() {
+        logger.info("Sending heartbeat to all rooms")
+        for ((room, roomEmitters) in emitters) {
+            for (emitter in roomEmitters.toList()) {
+                try {
+                    emitter.send(SseEmitter.event().name("heartbeat").data("heartbeat"))
+                } catch (e: Exception) {
+                    logger.error("Error sending heartbeat to room $room", e)
+                    unsubscribe(room, emitter)
+                }
             }
         }
     }

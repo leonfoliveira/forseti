@@ -16,19 +16,20 @@ class SSEHelperTest {
     private val room = "test-room"
     private val eventName = "test-event"
     private val data = "test-data"
+    val helper = SSEHelper()
 
     @Test
     fun `subscribe should add emitter and register lifecycle callbacks`() {
         val emitter = mock<SseEmitter>()
 
-        SSEHelper.subscribe(room, emitter)
+        helper.subscribe(room, emitter)
 
         verify(emitter).onCompletion(any())
         verify(emitter).onTimeout(any())
         verify(emitter).onError(any())
         verify(emitter).send(any<SseEmitter.SseEventBuilder>())
 
-        SSEHelper.unsubscribe(room, emitter)
+        helper.unsubscribe(room, emitter)
     }
 
     @Test
@@ -36,23 +37,23 @@ class SSEHelperTest {
         val emitter1 = mock<SseEmitter>()
         val emitter2 = mock<SseEmitter>()
 
-        SSEHelper.subscribe(room, emitter1)
-        SSEHelper.subscribe(room, emitter2)
+        helper.subscribe(room, emitter1)
+        helper.subscribe(room, emitter2)
 
         val message = SSEFanoutMessage(room, eventName, data)
-        SSEHelper.emit(message)
+        helper.emit(message)
 
         verify(emitter1, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
         verify(emitter2, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
 
-        SSEHelper.unsubscribe(room, emitter1)
-        SSEHelper.unsubscribe(room, emitter2)
+        helper.unsubscribe(room, emitter1)
+        helper.unsubscribe(room, emitter2)
     }
 
     @Test
     fun `emit should do nothing if room does not exist`() {
         val message = SSEFanoutMessage("non-existent-room", eventName, data)
-        SSEHelper.emit(message)
+        helper.emit(message)
     }
 
     @Test
@@ -60,14 +61,14 @@ class SSEHelperTest {
         val emitter = mock<SseEmitter>()
         val message = SSEFanoutMessage(room, eventName, data)
 
-        SSEHelper.subscribe(room, emitter)
-        SSEHelper.emit(message)
+        helper.subscribe(room, emitter)
+        helper.emit(message)
 
         verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
 
-        SSEHelper.unsubscribe(room, emitter)
+        helper.unsubscribe(room, emitter)
 
-        SSEHelper.emit(message)
+        helper.emit(message)
         verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>()) // count shouldn't increase
     }
 
@@ -78,11 +79,11 @@ class SSEHelperTest {
         val message = SSEFanoutMessage(room, eventName, data)
         doNothing().whenever(emitter).onCompletion(completionCaptor.capture())
 
-        SSEHelper.subscribe(room, emitter)
+        helper.subscribe(room, emitter)
 
         completionCaptor.firstValue.run()
 
-        SSEHelper.emit(message)
+        helper.emit(message)
         verify(emitter, atMost(1)).send(any<SseEmitter.SseEventBuilder>())
     }
 }

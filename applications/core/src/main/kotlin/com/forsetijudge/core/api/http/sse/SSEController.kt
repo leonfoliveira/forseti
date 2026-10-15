@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 @Suppress("unused")
 class SSEController(
     private val sseAuthorizer: SSEAuthorizer,
+    private val sseHelper: SSEHelper,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -25,7 +26,7 @@ class SSEController(
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/admin")
         sseAuthorizer.authorizeToAdminDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        SSEHelper.subscribe(SSERoomBuilder.buildAdminDashboardRoom(contestId), emitter)
+        sseHelper.subscribe(SSERoomBuilder.buildAdminDashboardRoom(contestId), emitter)
         return emitter
     }
 
@@ -37,7 +38,7 @@ class SSEController(
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/contestant")
         sseAuthorizer.authorizeToContestantDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        SSEHelper.subscribe(SSERoomBuilder.buildContestantDashboardRoom(contestId), emitter)
+        sseHelper.subscribe(SSERoomBuilder.buildContestantDashboardRoom(contestId), emitter)
         return emitter
     }
 
@@ -49,7 +50,7 @@ class SSEController(
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/judge")
         sseAuthorizer.authorizeToJudgeDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        SSEHelper.subscribe(SSERoomBuilder.buildJudgeDashboardRoom(contestId), emitter)
+        sseHelper.subscribe(SSERoomBuilder.buildJudgeDashboardRoom(contestId), emitter)
         return emitter
     }
 
@@ -60,7 +61,7 @@ class SSEController(
         logger.info("[GET] /v1/sse/contests/$contestId/dashboard/guest")
         sseAuthorizer.authorizeToGuestDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        SSEHelper.subscribe(SSERoomBuilder.buildGuestDashboardRoom(contestId), emitter)
+        sseHelper.subscribe(SSERoomBuilder.buildGuestDashboardRoom(contestId), emitter)
         return emitter
     }
 
@@ -71,7 +72,7 @@ class SSEController(
         logger.info("[GET] /v1/sse/members/$memberId")
         sseAuthorizer.authorizeToMemberPrivateRoom(memberId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        SSEHelper.subscribe(SSERoomBuilder.buildMemberPrivateRoom(memberId), emitter)
+        sseHelper.subscribe(SSERoomBuilder.buildMemberPrivateRoom(memberId), emitter)
         return emitter
     }
 }

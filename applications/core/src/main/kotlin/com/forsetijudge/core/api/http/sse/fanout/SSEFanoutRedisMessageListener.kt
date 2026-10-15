@@ -9,12 +9,13 @@ import tools.jackson.databind.ObjectMapper
 @Component
 class SSEFanoutRedisMessageListener(
     private val objectMapper: ObjectMapper,
+    private val sseHelper: SSEHelper,
 ) : MessageListener {
     override fun onMessage(
         message: Message,
         pattern: ByteArray?,
     ) {
         val parsedMessage = objectMapper.readValue(message.body, SSEFanoutMessage::class.java)
-        SSEHelper.emit(parsedMessage)
+        sseHelper.emit(parsedMessage)
     }
 }
