@@ -1,18 +1,19 @@
 "use client";
 
 import { RefreshCwIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
 import { Button } from "@/app/_lib/component/shadcn/button";
 
 function Error503Content() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const previousPath = searchParams.get("from");
 
   function handleRetry() {
     if (previousPath) {
-      window.location.href = previousPath;
+      router.push(previousPath);
     }
   }
 

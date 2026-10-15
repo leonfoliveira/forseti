@@ -1,7 +1,7 @@
 "use client";
 
 import { joiResolver } from "@hookform/resolvers/joi";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
@@ -39,6 +39,7 @@ export default function SignInPage() {
   const searchParams = useSearchParams();
   const toast = useToast();
   const session = useAppSelector((state) => state.session);
+  const router = useRouter();
   const dispatch = useAppDispatch();
 
   const hasExpired = searchParams.get("expired");
@@ -57,8 +58,12 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      await Composition.authenticationWritter.authenticate(contest.id, data);
-      window.location.href = routes.CONTEST(contest.slug);
+      const session = await Composition.authenticationWritter.authenticate(
+        contest.id,
+        data,
+      );
+      dispatch(SessionSlice.actions.set(session));
+      router.push(routes.CONTEST(contest.slug));
     } catch (error) {
       await signInState.fail(error, {
         [UnauthorizedException.name]: () => {
@@ -89,7 +94,7 @@ export default function SignInPage() {
         error,
       );
     }
-    window.location.href = routes.CONTEST(contest.slug);
+    router.push(routes.CONTEST(contest.slug));
   }
 
   return (

@@ -36,7 +36,7 @@ export function Header() {
 
   async function handleSignOut() {
     await Composition.sessionWritter.deleteCurrent();
-    window.location.href = routes.CONTEST_SIGN_IN(contest.slug);
+    router.push(routes.CONTEST_SIGN_IN(contest.slug));
   }
 
   const isAuthorized = !!session;

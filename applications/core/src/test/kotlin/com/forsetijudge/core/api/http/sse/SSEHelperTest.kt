@@ -2,9 +2,6 @@ package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -16,6 +13,9 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 class SSEHelperTest {
     private val room = "test-room"
