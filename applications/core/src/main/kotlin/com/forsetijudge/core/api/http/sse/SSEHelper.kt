@@ -3,13 +3,13 @@ package com.forsetijudge.core.api.http.sse
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Component
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.ConcurrentHashMap
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @Component
 class SSEHelper(
@@ -33,9 +33,17 @@ class SSEHelper(
         val roomEmitters = emitters.computeIfAbsent(room) { ConcurrentHashMap.newKeySet() }
         roomEmitters.add(emitter)
 
-        emitter.onCompletion { unsubscribe(room, emitter) }
-        emitter.onTimeout { unsubscribe(room, emitter) }
-        emitter.onError { unsubscribe(room, emitter) }
+        emitter.onCompletion {
+            unsubscribe(room, emitter)
+        }
+        emitter.onTimeout {
+            emitter.complete()
+            unsubscribe(room, emitter)
+        }
+        emitter.onError {
+            emitter.complete()
+            unsubscribe(room, emitter)
+        }
         emitter.send(SseEmitter.event().name("connect").data("connected"))
     }
 
@@ -145,6 +153,7 @@ class SSEHelper(
                     emitter.send(SseEmitter.event().name("heartbeat").data("heartbeat"))
                 } catch (e: Exception) {
                     logger.error("Error sending heartbeat to room $room", e)
+                    emitter.complete()
                     unsubscribe(room, emitter)
                 }
             }
