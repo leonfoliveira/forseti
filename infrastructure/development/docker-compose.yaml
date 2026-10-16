@@ -197,8 +197,7 @@ services:
         condition: service_healthy
     environment:
       VERSION: latest
-      HTTP_URL: http://localhost:8080
-      WS_URL: ws://localhost:8081
+      API_URL: http://localhost:8080
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost"]
       timeout: 5s

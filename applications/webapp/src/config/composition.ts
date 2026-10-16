@@ -45,7 +45,7 @@ import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoom
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
 
 // Repositories
-const axiosClient = new AxiosClient(env.httpUrl);
+const axiosClient = new AxiosClient(env.apiUrl);
 
 const announcementRepository = new AxiosAnnouncementRepository(axiosClient);
 const attachmentRepository = new AxiosAttachmentRepository(axiosClient);
@@ -79,18 +79,18 @@ const announcementService = new AnnouncementService(announcementRepository);
 
 // SSE Listeners
 const adminDashboardRoomListener = new SSEAdminDashboardRoomListener(
-  env.httpUrl,
+  env.apiUrl,
 );
 const contestantDashboardRoomListener = new SSEContestantDashboardRoomListener(
-  env.httpUrl,
+  env.apiUrl,
 );
 const guestDashboardRoomListener = new SSEGuestDashboardRoomListener(
-  env.httpUrl,
+  env.apiUrl,
 );
 const judgeDashboardRoomListener = new SSEJudgeDashboardRoomListener(
-  env.httpUrl,
+  env.apiUrl,
 );
-const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.httpUrl);
+const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.apiUrl);
 
 const Composition: {
   attachmentReader: AttachmentReader;

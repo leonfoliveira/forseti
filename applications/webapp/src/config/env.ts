@@ -1,4 +1,4 @@
-type RuntimeEnv = { VERSION?: string; HTTP_URL?: string; WS_URL?: string };
+type RuntimeEnv = { VERSION?: string; API_URL?: string };
 
 declare global {
   interface Window {
@@ -12,6 +12,5 @@ const runtimeEnv: RuntimeEnv =
 
 export const env = {
   version: runtimeEnv.VERSION || "latest",
-  httpUrl: runtimeEnv.HTTP_URL || "http://localhost:8080",
-  wsUrl: runtimeEnv.WS_URL || "ws://localhost:8081",
+  apiUrl: runtimeEnv.API_URL || "http://localhost:8080",
 };
