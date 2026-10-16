@@ -87,9 +87,10 @@ export function SubmissionsPage({
   const memberSubmissionsMap = new Map(
     memberSubmissions?.map((s) => [s.id, s]) ?? [],
   );
-  const mergedSubmissions = submissions.map(
-    (s) => memberSubmissionsMap.get(s.id) ?? s,
-  );
+  const mergedSubmissions = submissions
+    .map((s) => memberSubmissionsMap.get(s.id) ?? s)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .toReversed();
 
   const hasCode = mergedSubmissions.some((s) => "code" in s && !!s.code);
   const hasAnyAction = canEdit || hasCode;

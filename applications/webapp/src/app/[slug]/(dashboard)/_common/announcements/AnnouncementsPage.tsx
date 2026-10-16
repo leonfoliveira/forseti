@@ -87,12 +87,15 @@ export function AnnouncementsPage({
             className="w-full max-w-4xl space-y-5"
             data-testid="announcements-list"
           >
-            {announcements.toReversed().map((announcement) => (
-              <AnnouncementsPageCard
-                key={announcement.id}
-                announcement={announcement}
-              />
-            ))}
+            {announcements
+              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+              .toReversed()
+              .map((announcement) => (
+                <AnnouncementsPageCard
+                  key={announcement.id}
+                  announcement={announcement}
+                />
+              ))}
           </div>
         )}
 

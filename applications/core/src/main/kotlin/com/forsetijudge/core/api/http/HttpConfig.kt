@@ -91,6 +91,8 @@ class HttpConfig(
                     ).permitAll()
                     .anyRequest()
                     .authenticated()
+            }.securityContext { securityContext ->
+                securityContext.requireExplicitSave(false)
             }.exceptionHandling { exceptionHandling ->
                 exceptionHandling
                     .authenticationEntryPoint { _, response, _ ->

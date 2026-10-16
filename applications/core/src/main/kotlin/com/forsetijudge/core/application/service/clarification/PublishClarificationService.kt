@@ -15,6 +15,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PublishClarificationService(
@@ -31,6 +32,7 @@ class PublishClarificationService(
      * @param command The command containing the clarification ID to be published.
      * @return A ClarificationResponseDTO representing the published clarification.
      */
+    @Transactional
     override fun execute(command: PublishClarificationUseCase.Command): ClarificationResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 

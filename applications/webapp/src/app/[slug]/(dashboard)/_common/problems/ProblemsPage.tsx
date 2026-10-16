@@ -143,64 +143,72 @@ export function ProblemsPage({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {problems.map((problem) => (
-                <TableRow key={problem.id} data-testid="problem-row">
-                  <TableCell className="font-bold" data-testid="problem-letter">
-                    <ProblemLetterBadge problem={problem} />
-                  </TableCell>
-                  <TableCell data-testid="problem-title">
-                    {problem.title}
-                  </TableCell>
-                  <TableCell data-testid="problem-time-limit">
-                    <FormattedNumber
-                      value={problem.timeLimit / 1000}
-                      suffix="s"
-                    />
-                  </TableCell>
-                  <TableCell data-testid="problem-memory-limit">
-                    <FormattedNumber value={problem.memoryLimit} suffix=" MB" />
-                  </TableCell>
-                  {hasStatus && (
+              {problems
+                .sort((a, b) => a.letter.localeCompare(b.letter))
+                .map((problem) => (
+                  <TableRow key={problem.id} data-testid="problem-row">
                     <TableCell
-                      className="text-center"
-                      data-testid="problem-status"
+                      className="font-bold"
+                      data-testid="problem-letter"
                     >
-                      {getStatus(problem.id)}
+                      <ProblemLetterBadge problem={problem} />
                     </TableCell>
-                  )}
-                  {canDownloadTestCases && (
+                    <TableCell data-testid="problem-title">
+                      {problem.title}
+                    </TableCell>
+                    <TableCell data-testid="problem-time-limit">
+                      <FormattedNumber
+                        value={problem.timeLimit / 1000}
+                        suffix="s"
+                      />
+                    </TableCell>
+                    <TableCell data-testid="problem-memory-limit">
+                      <FormattedNumber
+                        value={problem.memoryLimit}
+                        suffix=" MB"
+                      />
+                    </TableCell>
+                    {hasStatus && (
+                      <TableCell
+                        className="text-center"
+                        data-testid="problem-status"
+                      >
+                        {getStatus(problem.id)}
+                      </TableCell>
+                    )}
+                    {canDownloadTestCases && (
+                      <TableCell
+                        data-testid="problem-test-cases"
+                        className="text-right"
+                      >
+                        <Button
+                          size="xs"
+                          onClick={() =>
+                            downloadTestCases(
+                              problem as ProblemWithTestCasesResponseDTO,
+                            )
+                          }
+                          data-testid="problem-download-test-cases"
+                        >
+                          <DownloadIcon size={16} /> CSV
+                        </Button>
+                      </TableCell>
+                    )}
                     <TableCell
-                      data-testid="problem-test-cases"
                       className="text-right"
+                      data-testid="problem-download-description"
                     >
                       <Button
                         size="xs"
-                        onClick={() =>
-                          downloadTestCases(
-                            problem as ProblemWithTestCasesResponseDTO,
-                          )
-                        }
-                        data-testid="problem-download-test-cases"
+                        variant="default"
+                        onClick={() => downloadDescription(problem)}
+                        data-testid="problem-download"
                       >
-                        <DownloadIcon size={16} /> CSV
+                        <DownloadIcon size={16} /> PDF
                       </Button>
                     </TableCell>
-                  )}
-                  <TableCell
-                    className="text-right"
-                    data-testid="problem-download-description"
-                  >
-                    <Button
-                      size="xs"
-                      variant="default"
-                      onClick={() => downloadDescription(problem)}
-                      data-testid="problem-download"
-                    >
-                      <DownloadIcon size={16} /> PDF
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
 

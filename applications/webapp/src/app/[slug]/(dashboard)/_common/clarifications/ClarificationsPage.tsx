@@ -115,16 +115,19 @@ export function ClarificationsPage({
             className="w-full max-w-4xl space-y-5"
             data-testid="clarifications-list"
           >
-            {clarifications.toReversed().map((clarification) => (
-              <ClarificationsPageCard
-                key={clarification.id}
-                contestId={contestId}
-                clarification={clarification}
-                canAnswer={canAnswer}
-                onAnswer={onAnswer as never}
-                onPublish={onPublish as never}
-              />
-            ))}
+            {clarifications
+              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+              .toReversed()
+              .map((clarification) => (
+                <ClarificationsPageCard
+                  key={clarification.id}
+                  contestId={contestId}
+                  clarification={clarification}
+                  canAnswer={canAnswer}
+                  onAnswer={onAnswer as never}
+                  onPublish={onPublish as never}
+                />
+              ))}
           </div>
         )}
         <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
