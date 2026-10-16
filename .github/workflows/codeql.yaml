@@ -90,7 +90,7 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y openjdk-21-jdk
           chmod +x ./gradlew
-          ./gradlew clean compileJava compileKotlin
+          ./gradlew clean compileJava compileKotlin -Dorg.gradle.jvmargs="-Xmx3g -XX:+UseG1GC"
 
       # --- Python Specific Dependencies ---
       - name: Setup Python Dependencies
