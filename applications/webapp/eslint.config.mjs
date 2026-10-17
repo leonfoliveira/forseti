@@ -1,11 +1,12 @@
 import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import tseslintParser from "@typescript-eslint/parser";
 
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
   {
+    files: ["src/**/*.{ts,tsx}", "test/**/*.{ts,tsx}"],
+    languageOptions: {
+      parser: tseslintParser,
+    },
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/set-state-in-effect": "off",
@@ -14,7 +15,7 @@ const eslintConfig = defineConfig([
       "react-hooks/refs": "off",
     },
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores(["out/**", "build/**", "dist/**"]),
 ]);
 
 export default eslintConfig;

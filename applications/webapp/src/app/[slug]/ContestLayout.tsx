@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, usePathname } from "next/navigation";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import React, { useEffect } from "react";
 
 import { Footer } from "@/app/_lib/component/layout/Footer";
@@ -22,12 +22,9 @@ import { UnauthorizedException } from "@/domain/exception/UnauthorizedException"
  * Fetches session and contest metadata based on the slug parameter.
  * Renders the header, footer, and children components within a store provider.
  */
-export default function ContestLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
+export function ContestLayout() {
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const slug = pathname.split("/")[1];
   const errorHandler = useErrorHandlerRoot(slug);
   const initState = useLoadableStateRoot<{
@@ -51,10 +48,11 @@ export default function ContestLayout({
           [UnauthorizedException.name]: () => {
             const signInPath = `/${slug}/sign-in`;
             if (!pathname.startsWith(signInPath)) {
-              redirect(signInPath);
+              navigate(signInPath, { replace: true });
             }
           },
-          [NotFoundException.name]: () => redirect(routes.NOT_FOUND),
+          [NotFoundException.name]: () =>
+            navigate(routes.NOT_FOUND, { replace: true }),
         });
       }
     }
@@ -85,7 +83,9 @@ export default function ContestLayout({
     >
       <div className="bg-muted flex min-h-screen flex-col">
         <Header />
-        <div className="flex flex-1 flex-col">{children}</div>
+        <div className="flex flex-1 flex-col">
+          <Outlet />
+        </div>
         <Footer />
       </div>
     </StoreProvider>

@@ -1,8 +1,8 @@
 import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
-import { usePathname, useRouter } from "next/navigation";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import DashboardLayout from "@/app/[slug]/(dashboard)/layout";
+import { DashboardLayout } from "@/app/[slug]/(dashboard)/DashboardLayout";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import {
   MockContestResponseDTO,
@@ -38,24 +38,21 @@ jest.mock("@/app/_lib/component/shadcn/tabs", () => ({
 
 describe("DashboardLayout", () => {
   it("shows common navigation and admin settings, routing on selection", async () => {
-    jest.mocked(usePathname).mockReturnValue("/spring/leaderboard");
-    const router = useRouter();
-    await renderWithProviders(
-      <DashboardLayout>
-        <main>Dashboard</main>
-      </DashboardLayout>,
-      {
-        contest: MockContestResponseDTO({ slug: "spring" }),
-        session: MockSessionResponseDTO({
-          member: { id: "member-1", name: "Admin", type: MemberType.ADMIN },
-        }),
-      },
-    );
+    jest
+      .mocked(useLocation)
+      .mockReturnValue({ pathname: "/spring/leaderboard" } as never);
+    const navigate = useNavigate();
+    await renderWithProviders(<DashboardLayout />, {
+      contest: MockContestResponseDTO({ slug: "spring" }),
+      session: MockSessionResponseDTO({
+        member: { id: "member-1", name: "Admin", type: MemberType.ADMIN },
+      }),
+    });
     expect(screen.getByTestId("tab-/spring/settings")).toHaveTextContent(
       "Settings",
     );
     fireEvent.click(screen.getByTestId("tab-/spring/problems"));
-    expect(router.push).toHaveBeenCalledWith("/spring/problems");
+    expect(navigate).toHaveBeenCalledWith("/spring/problems");
     expect(screen.getByTestId("balloons")).toBeInTheDocument();
   });
 });

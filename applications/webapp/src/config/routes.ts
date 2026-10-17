@@ -1,4 +1,5 @@
 export const routes = {
+  ROOT: `/`,
   CONTEST: (slug: string) => `/${slug}`,
   CONTEST_SIGN_IN: (slug: string) => `/${slug}/sign-in`,
   CONTEST_LEADERBOARD: (slug: string) => `/${slug}/leaderboard`,

@@ -3,7 +3,7 @@
 import clsx from "clsx";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { AlertCircleIcon, SaveIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -58,7 +58,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
   const contestStatus = useContestStatusWatcher();
   const updateContestState = useLoadableState();
   const toast = useToast();
-  const router = useRouter();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const [selectedTab, setSelectedTab] = useState<TabKey>(TabKey.CONTEST);
@@ -91,7 +91,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
 
       if (updatedContest.slug !== contest.slug) {
         /* Redirect to new path if slug has changed */
-        router.push(routes.CONTEST_SETTINGS(updatedContest.slug));
+        navigate(routes.CONTEST_SETTINGS(updatedContest.slug));
       } else {
         const dashboard = await Composition.dashboardReader.getAdminDashboard(
           contest.id,

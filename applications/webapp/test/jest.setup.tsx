@@ -1,4 +1,9 @@
 import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from "util";
+import { randomUUID } from "crypto";
+
+global.TextEncoder = TextEncoder as typeof global.TextEncoder;
+global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 
 if (!!window) {
   global.window = Object.create(window);
@@ -41,27 +46,21 @@ HTMLElement.prototype.getAllByTestId = function (id: string) {
   return Array.from(this.querySelectorAll(`[data-testid="${id}"]`));
 };
 
+jest.mock("uuid", () => ({
+  v4: jest.fn().mockImplementation(() => randomUUID()),
+}));
 jest.mock("@/config/composition");
 
-const router = {
-  push: jest.fn(),
-  replace: jest.fn(),
-};
-export const useRouter = jest.fn(() => router);
-export const useParams = jest.fn(() => ({ slug: "test-slug" }));
-export const usePathname = jest.fn(() => "/");
-export const useSearchParams = jest.fn(() => ({
-  get: jest.fn().mockReturnValue("bar"),
-}));
-export const redirect = jest.fn();
-jest.mock("next/navigation", () => ({
-  usePathname,
-  useRouter,
-  useParams,
-  useSearchParams,
-  forbidden: jest.fn(),
-  notFound: jest.fn(),
-  redirect,
+export const location = { pathname: "/" };
+export const navigate = jest.fn();
+export const getSearchParams = { get: jest.fn().mockReturnValue("contest-1") };
+export const revalidate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useLocation: jest.fn(() => location),
+  useNavigate: jest.fn(() => navigate),
+  useSearchParams: jest.fn(() => [getSearchParams] as never),
+  useRevalidator: jest.fn(() => ({ revalidate })),
 }));
 
 jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({

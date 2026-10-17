@@ -1,4 +1,4 @@
-import { usePathname, useRouter } from "next/navigation";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { routes } from "@/config/routes";
@@ -15,11 +15,11 @@ export function useErrorHandler() {
 }
 
 export function useErrorHandlerRoot(slug: string) {
-  const router = useRouter();
-  const pathname = usePathname();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   async function handleUnauthorized() {
-    router.push(`${routes.CONTEST_SIGN_IN(slug)}?expired=true`);
+    navigate(`${routes.CONTEST_SIGN_IN(slug)}?expired=true`);
   }
 
   async function handle(
@@ -38,15 +38,13 @@ export function useErrorHandlerRoot(slug: string) {
     > = {
       [UnauthorizedException.name]: handleUnauthorized,
       [ForbiddenException.name]: () =>
-        router.push(
-          `${routes.FORBIDDEN}?from=${encodeURIComponent(currentPath)}`,
-        ),
+        navigate(`${routes.FORBIDDEN}?from=${encodeURIComponent(currentPath)}`),
       [ServiceUnavailableException.name]: () =>
-        router.push(
+        navigate(
           `${routes.SERVICE_UNAVAILABLE}?from=${encodeURIComponent(currentPath)}`,
         ),
       default: () =>
-        router.push(
+        navigate(
           `${routes.INTERNAL_SERVER_ERROR}?from=${encodeURIComponent(currentPath)}`,
         ),
       ...customHandlers,
