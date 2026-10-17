@@ -1,5 +1,3 @@
-"use client";
-
 import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashboardProvider";

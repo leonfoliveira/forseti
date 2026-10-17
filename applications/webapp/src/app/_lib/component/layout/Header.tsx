@@ -1,8 +1,5 @@
-"use client";
-
 import { LogOutIcon, LogInIcon, SunMoonIcon } from "lucide-react";
-import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { ContestStatusBadge } from "@/app/_lib/component/display/badge/ContestStatusBadge";
 import { CountdownClock } from "@/app/_lib/component/display/CountdownClock";
@@ -30,13 +27,13 @@ export function Header() {
   const contest = useAppSelector((state) => state.contest);
   const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
-  const pathname = usePathname();
-  const router = useRouter();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
     await Composition.sessionWritter.deleteCurrent();
-    router.push(routes.CONTEST_SIGN_IN(contest.slug));
+    navigate(routes.CONTEST_SIGN_IN(contest.slug));
   }
 
   const isAuthorized = !!session;
@@ -62,7 +59,7 @@ export function Header() {
       <div className="flex items-center justify-between sm:justify-start">
         <div className="flex gap-2">
           <div className="mr-2 flex items-center justify-center">
-            <Image
+            <img
               src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
               alt="Logo of forseti"
               width={30}
@@ -117,9 +114,7 @@ export function Header() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    router.push(routes.CONTEST_SIGN_IN(contest.slug))
-                  }
+                  onClick={() => navigate(routes.CONTEST_SIGN_IN(contest.slug))}
                   data-testid="sign-in"
                   className="h-8 px-2"
                 >
@@ -202,9 +197,7 @@ export function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() =>
-                  router.push(routes.CONTEST_SIGN_IN(contest.slug))
-                }
+                onClick={() => navigate(routes.CONTEST_SIGN_IN(contest.slug))}
                 data-testid="sign-in"
               >
                 <LogInIcon size={16} />

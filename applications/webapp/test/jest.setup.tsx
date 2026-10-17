@@ -1,4 +1,10 @@
 import "@testing-library/jest-dom";
+import { TextEncoder, TextDecoder } from "util";
+import { randomUUID } from "crypto";
+
+// Native Node.js modules polyfills
+global.TextEncoder = TextEncoder as typeof global.TextEncoder;
+global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 
 if (!!window) {
   global.window = Object.create(window);
@@ -28,6 +34,7 @@ export const eventSource = {
 };
 global.EventSource = jest.fn(() => eventSource) as never;
 
+// Custom extensions for HTMLElement to support queries by test ID
 declare global {
   interface HTMLElement {
     getByTestId(id: string): HTMLElement | null;
@@ -41,29 +48,28 @@ HTMLElement.prototype.getAllByTestId = function (id: string) {
   return Array.from(this.querySelectorAll(`[data-testid="${id}"]`));
 };
 
+// Mocking UUID generation as uuid module does not work well with jest
+jest.mock("uuid", () => ({
+  v4: jest.fn().mockImplementation(() => randomUUID()),
+}));
+
+// Mocking system composition
 jest.mock("@/config/composition");
 
-const router = {
-  push: jest.fn(),
-  replace: jest.fn(),
-};
-export const useRouter = jest.fn(() => router);
-export const useParams = jest.fn(() => ({ slug: "test-slug" }));
-export const usePathname = jest.fn(() => "/");
-export const useSearchParams = jest.fn(() => ({
-  get: jest.fn().mockReturnValue("bar"),
-}));
-export const redirect = jest.fn();
-jest.mock("next/navigation", () => ({
-  usePathname,
-  useRouter,
-  useParams,
-  useSearchParams,
-  forbidden: jest.fn(),
-  notFound: jest.fn(),
-  redirect,
+// Mocking react-router-dom hooks
+export const location = { pathname: "/" };
+export const navigate = jest.fn();
+export const getSearchParams = { get: jest.fn().mockReturnValue("contest-1") };
+export const revalidate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useLocation: jest.fn(() => location),
+  useNavigate: jest.fn(() => navigate),
+  useSearchParams: jest.fn(() => [getSearchParams] as never),
+  useRevalidator: jest.fn(() => ({ revalidate })),
 }));
 
+// Mocking shadcn UI components
 jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
   DropdownMenu: ({ children }: any) => children,
   DropdownMenuTrigger: ({ children }: any) => children,
@@ -74,7 +80,6 @@ jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
     <div {...props}>{children}</div>
   ),
 }));
-
 jest.mock("@/app/_lib/component/shadcn/badge", () => ({
   Badge: ({ children, ...props }: any) => <span {...props}>{children}</span>,
 }));
@@ -131,7 +136,8 @@ jest.mock("@/app/_lib/component/shadcn/input", () => ({
 jest.mock("@/app/_lib/component/shadcn/switch", () => ({
   Switch: (props: any) => <input type="checkbox" {...props} />,
 }));
-jest.mock("@/config/composition");
+
+// Mocking useToast hook
 const toast = {
   info: jest.fn(),
   success: jest.fn(),

@@ -45,7 +45,6 @@ dependencies {
     implementation(libs.springCloudAwsStarterS3)
     implementation(libs.springCloudAwsStarterSecretsManager)
     implementation(libs.springCloudAwsStarterSQS)
-    implementation(libs.uuidCreator)
 
     testFixturesApi(libs.junitJupiterApi)
     testFixturesApi(libs.testcontainersLocalstack)

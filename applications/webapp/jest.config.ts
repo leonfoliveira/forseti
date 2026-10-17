@@ -1,11 +1,8 @@
 import type { Config } from "jest";
-import nextJest from "next/jest.js";
-
-const createJestConfig = nextJest({
-  dir: "./",
-});
 
 const config: Config = {
+  preset: "ts-jest",
+  testEnvironment: "jsdom",
   coverageProvider: "v8",
   coverageThreshold: {
     global: {
@@ -20,19 +17,17 @@ const config: Config = {
     "!src/domain/**/*",
     "!src/port/**/*",
   ],
-  testEnvironment: "jsdom",
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],
+
   moduleNameMapper: {
     "^@/test/(.*)$": "<rootDir>/test/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
+
   clearMocks: true,
   roots: ["<rootDir>/test"],
   silent: true,
 };
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default async () => ({
-  ...(await createJestConfig(config)()),
-  transformIgnorePatterns: ["node_modules/(?!next-intl)/"],
-});
+export default config;

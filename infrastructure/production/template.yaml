@@ -1118,70 +1118,6 @@ Resources:
         - Key: Service
           Value: core
 
-  WebAppRewriteFunction:
-    Type: AWS::CloudFront::Function
-    Properties:
-      Name: !Sub ${Env}-webapp-rewrite
-      AutoPublish: true
-      FunctionConfig:
-        Comment: Rewrite Forseti static and dynamic routes to S3 objects.
-        Runtime: cloudfront-js-2.0
-      FunctionCode: |
-        function handler(event) {
-            var request = event.request;
-            var uri = request.uri;
-
-            if (uri === '/') {
-                request.uri = '/index.html';
-                return request;
-            }
-
-            if (uri.indexOf('/_next/') === 0) {
-                return request;
-            }
-
-            if (uri === '/error' || uri === '/error/') {
-                request.uri = '/error/index.html';
-                return request;
-            }
-
-            if (uri.indexOf('/error/') === 0) {
-                var errorPath = uri;
-                if (errorPath.length > 1 && errorPath.charAt(errorPath.length - 1) === '/') {
-                    errorPath = errorPath.slice(0, -1);
-                }
-
-                if (!/\.[^/]+$/.test(errorPath)) {
-                    request.uri = errorPath + '.html';
-                } else {
-                    request.uri = errorPath;
-                }
-                return request;
-            }
-
-            if (/\.[^/]+$/.test(uri)) {
-                return request;
-            }
-
-            var path = uri;
-            if (path.length > 1 && path.charAt(path.length - 1) === '/') {
-                path = path.slice(0, -1);
-            }
-
-            var parts = path.split('/').filter(function (part) {
-                return part.length > 0;
-            });
-
-            if (parts.length >= 2) {
-                var subpath = parts.slice(1).join('/');
-                request.uri = '/_/' + subpath + '.html';
-            } else if (parts.length === 1) {
-                request.uri = '/' + parts[0] + '.html';
-            }
-
-            return request;
-        }
-
   WebAppDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -1214,26 +1150,6 @@ Resources:
             - GET
             - HEAD
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
-          FunctionAssociations:
-            - EventType: viewer-request
-              FunctionARN: !GetAtt WebAppRewriteFunction.FunctionMetadata.FunctionARN
-        CustomErrorResponses:
-          - ErrorCode: 403
-            ErrorCachingMinTTL: 0
-            ResponseCode: 403
-            ResponsePagePath: /error/403/index.html
-          - ErrorCode: 404
-            ErrorCachingMinTTL: 0
-            ResponseCode: 404
-            ResponsePagePath: /error/404/index.html
-          - ErrorCode: 500
-            ErrorCachingMinTTL: 0
-            ResponseCode: 500
-            ResponsePagePath: /error/500/index.html
-          - ErrorCode: 503
-            ErrorCachingMinTTL: 0
-            ResponseCode: 503
-            ResponsePagePath: /error/503/index.html
 
   ApiDistribution:
     Type: AWS::CloudFront::Distribution

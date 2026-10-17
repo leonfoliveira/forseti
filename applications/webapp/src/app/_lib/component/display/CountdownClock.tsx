@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import { HourglassIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
