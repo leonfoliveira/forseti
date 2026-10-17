@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 
-import { SignInPage } from "@/app/[slug]/sign-in/SignInPage";
+import SignInPage from "@/app/[slug]/sign-in/SignInPage";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 

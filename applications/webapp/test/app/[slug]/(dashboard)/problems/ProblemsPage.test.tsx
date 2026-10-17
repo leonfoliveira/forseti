@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 
-import { DashboardProblemsPage } from "@/app/[slug]/(dashboard)/problems/DashboardProblemsPage";
+import ProblemsPage from "@/app/[slug]/(dashboard)/problems/ProblemsPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { MockSessionResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -18,14 +18,14 @@ jest.mock("@/app/[slug]/(dashboard)/problems/JudgeProblemsPage", () => ({
   JudgeProblemsPage: () => <div data-testid="role-page">judge</div>,
 }));
 
-describe("DashboardProblemsPage", () => {
+describe("ProblemsPage", () => {
   it.each([
     [MemberType.ADMIN, "admin"],
     [MemberType.ROOT, "admin"],
     [MemberType.JUDGE, "judge"],
     [MemberType.CONTESTANT, "contestant"],
   ])("selects the role-specific view for %s", async (type, expected) => {
-    await renderWithProviders(<DashboardProblemsPage />, {
+    await renderWithProviders(<ProblemsPage />, {
       session: MockSessionResponseDTO({
         member: { id: "member-1", name: "Member", type },
       }),
@@ -34,7 +34,7 @@ describe("DashboardProblemsPage", () => {
   });
 
   it("uses guest problems without a session", async () => {
-    await renderWithProviders(<DashboardProblemsPage />, { session: null });
+    await renderWithProviders(<ProblemsPage />, { session: null });
     expect(screen.getByTestId("role-page")).toHaveTextContent("guest");
   });
 });

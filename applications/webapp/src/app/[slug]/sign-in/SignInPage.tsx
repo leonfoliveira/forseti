@@ -32,7 +32,7 @@ import { UnauthorizedException } from "@/domain/exception/UnauthorizedException"
 /**
  * SignInPage component allows members to sign in to a contest.
  */
-export function SignInPage() {
+export default function SignInPage() {
   const signInState = useLoadableState();
   const enterAsGuestState = useLoadableState();
   const contest = useAppSelector((state) => state.contest);

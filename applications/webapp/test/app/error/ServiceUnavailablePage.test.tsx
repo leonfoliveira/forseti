@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { useSearchParams } from "react-router-dom";
 
-import { ServiceUnavailablePage } from "@/app/error/ServiceUnavailablePage";
+import ServiceUnavailablePage from "@/app/error/ServiceUnavailablePage";
 
 describe("ServiceUnavailablePage", () => {
   it("shows the unavailable status and conditionally offers retry", () => {

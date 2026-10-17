@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 
-import { DashboardLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/DashboardLeaderboardPage";
+import LeaderboardPage from "@/app/[slug]/(dashboard)/leaderboard/LeaderboardPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { MockSessionResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -23,14 +23,14 @@ jest.mock("@/app/[slug]/(dashboard)/leaderboard/JudgeLeaderboardPage", () => ({
   JudgeLeaderboardPage: () => <div data-testid="role-page">judge</div>,
 }));
 
-describe("DashboardLeaderboardPage", () => {
+describe("LeaderboardPage", () => {
   it.each([
     [MemberType.ADMIN, "admin"],
     [MemberType.ROOT, "admin"],
     [MemberType.JUDGE, "judge"],
     [MemberType.CONTESTANT, "contestant"],
   ])("selects the role-specific view for %s", async (type, expected) => {
-    await renderWithProviders(<DashboardLeaderboardPage />, {
+    await renderWithProviders(<LeaderboardPage />, {
       session: MockSessionResponseDTO({
         member: { id: "member-1", name: "Member", type },
       }),
@@ -39,7 +39,7 @@ describe("DashboardLeaderboardPage", () => {
   });
 
   it("uses the guest view without a session", async () => {
-    await renderWithProviders(<DashboardLeaderboardPage />, { session: null });
+    await renderWithProviders(<LeaderboardPage />, { session: null });
     expect(screen.getByTestId("role-page")).toHaveTextContent("guest");
   });
 });

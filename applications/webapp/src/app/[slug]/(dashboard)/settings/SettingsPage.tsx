@@ -9,7 +9,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 /**
  * Page displaying the settings for the contest.
  */
-export function DashboardSettingsPage() {
+export default function SettingsPage() {
   const session = useAppSelector((state) => state.session);
 
   if (

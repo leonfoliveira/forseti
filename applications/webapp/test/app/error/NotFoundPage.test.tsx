@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { NotFoundPage } from "@/app/error/NotFoundPage";
+import NotFoundPage from "@/app/error/NotFoundPage";
 
 describe("NotFoundPage", () => {
   it("shows the not-found status and explanation", () => {

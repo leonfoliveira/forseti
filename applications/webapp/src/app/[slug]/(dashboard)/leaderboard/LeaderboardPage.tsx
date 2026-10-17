@@ -10,7 +10,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 /**
  * Page displaying the leaderboard for the contest.
  */
-export function DashboardLeaderboardPage() {
+export default function LeaderboardPage() {
   const session = useAppSelector((state) => state.session);
 
   switch (session?.member.type) {

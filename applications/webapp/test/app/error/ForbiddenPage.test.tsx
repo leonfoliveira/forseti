@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 
-import { ForbiddenPage } from "@/app/error/ForbiddenPage";
+import ForbiddenPage from "@/app/error/ForbiddenPage";
 
 describe("ForbiddenPage", () => {
   it("shows the forbidden status and explanation", () => {

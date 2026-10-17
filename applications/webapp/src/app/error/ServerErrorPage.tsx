@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/app/_lib/component/shadcn/button";
 
-export function ServerErrorPage() {
+export default function ServerErrorPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const previousPath = searchParams.get("from");

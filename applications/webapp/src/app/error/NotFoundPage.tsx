@@ -3,7 +3,7 @@
 /**
  * Displays a 404 Not Found error page.
  */
-export function NotFoundPage() {
+export default function NotFoundPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <h1 className="font-mono text-8xl font-bold" data-testid="code">

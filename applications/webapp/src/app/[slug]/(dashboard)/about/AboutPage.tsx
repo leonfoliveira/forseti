@@ -11,7 +11,7 @@ import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 /**
  * Page displaying information about the contest.
  */
-export function DashboardAboutPage() {
+export default function DashboardAboutPage() {
   const contest = useAppSelector((state) => state.contest);
 
   return (

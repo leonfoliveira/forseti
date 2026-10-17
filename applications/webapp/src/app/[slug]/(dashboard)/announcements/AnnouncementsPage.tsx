@@ -10,7 +10,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 /**
  * Page displaying announcements for the contest.
  */
-export function DashboardAnnouncementsPage() {
+export default function AnnouncementsPage() {
   const session = useAppSelector((state) => state.session);
 
   switch (session?.member.type) {

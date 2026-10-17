@@ -3,7 +3,7 @@
 /**
  * Displays a 403 Forbidden error page.
  */
-export function ForbiddenPage() {
+export default function ForbiddenPage() {
   return (
     <div className="flex h-screen flex-col items-center justify-center">
       <h1 className="font-mono text-8xl font-bold" data-testid="code">

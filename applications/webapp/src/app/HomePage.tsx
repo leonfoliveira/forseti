@@ -7,7 +7,7 @@ import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
  * The home page of the web application.
  * Displays the app logo and instructions for accessing contests.
  */
-export function HomePage() {
+export default function HomePage() {
   const { theme } = useTheme();
 
   return (

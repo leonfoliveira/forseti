@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { useSearchParams } from "react-router-dom";
 
-import { ServerErrorPage } from "@/app/error/ServerErrorPage";
+import ServerErrorPage from "@/app/error/ServerErrorPage";
 
 describe("ServerErrorPage", () => {
   it("shows the server error and only offers retry when a previous path exists", () => {

@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/dom";
 
-import { DashboardAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/DashboardAnnouncementsPage";
+import AnnouncementsPage from "@/app/[slug]/(dashboard)/announcements/AnnouncementsPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -29,7 +29,7 @@ jest.mock(
   }),
 );
 
-describe("DashboardAnnouncementsPage", () => {
+describe("AnnouncementsPage", () => {
   it.each([
     [MemberType.ROOT, "admin-page"],
     [MemberType.ADMIN, "admin-page"],
@@ -39,7 +39,7 @@ describe("DashboardAnnouncementsPage", () => {
   ])(
     "should render correct page for member type",
     async (memberType, expectedTestId) => {
-      await renderWithProviders(<DashboardAnnouncementsPage />, {
+      await renderWithProviders(<AnnouncementsPage />, {
         session: { member: { type: memberType } },
       } as any);
 
