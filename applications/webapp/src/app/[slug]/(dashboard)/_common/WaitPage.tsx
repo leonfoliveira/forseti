@@ -1,5 +1,3 @@
-"use client";
-
 import { ClockAlertIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useRevalidator } from "react-router-dom";

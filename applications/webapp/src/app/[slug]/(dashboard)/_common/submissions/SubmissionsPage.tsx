@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import { ArrowUp10Icon, FunnelIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";

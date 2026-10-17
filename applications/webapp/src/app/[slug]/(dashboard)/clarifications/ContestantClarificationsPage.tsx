@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPage";

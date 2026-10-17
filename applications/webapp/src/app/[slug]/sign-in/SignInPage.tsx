@@ -1,5 +1,3 @@
-"use client";
-
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";

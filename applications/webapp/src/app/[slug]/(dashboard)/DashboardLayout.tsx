@@ -1,5 +1,3 @@
-"use client";
-
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";

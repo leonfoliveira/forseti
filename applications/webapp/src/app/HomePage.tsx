@@ -1,5 +1,3 @@
-"use client";
-
 import { Page } from "@/app/_lib/component/page/Page";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
 

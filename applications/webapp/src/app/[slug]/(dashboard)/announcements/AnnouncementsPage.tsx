@@ -1,5 +1,3 @@
-"use client";
-
 import { AdminAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/AdminAnnouncementsPage";
 import { ContestantAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/ContestantAnnouncementsPage";
 import { GuestAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/GuestAnnouncementsPage";

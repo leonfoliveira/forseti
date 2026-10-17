@@ -1,5 +1,3 @@
-"use client";
-
 import { LogOutIcon, LogInIcon, SunMoonIcon } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 

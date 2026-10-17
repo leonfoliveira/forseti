@@ -1,5 +1,3 @@
-"use client";
-
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 import React from "react";
 

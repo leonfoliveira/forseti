@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Displays a 404 Not Found error page.
  */

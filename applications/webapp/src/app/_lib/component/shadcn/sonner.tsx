@@ -1,5 +1,3 @@
-"use client";
-
 import { useTheme } from "@/app/_lib/provider/ThemeProvider";
 import {
   CircleCheckIcon,

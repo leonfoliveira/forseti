@@ -1,5 +1,3 @@
-"use client";
-
 import { FormattedDateTime } from "@/app/_lib/component/i18n/FormattedDateTime";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Badge } from "@/app/_lib/component/shadcn/badge";

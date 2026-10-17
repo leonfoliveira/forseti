@@ -1,5 +1,3 @@
-"use client";
-
 import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/AdminLeaderboardPage";
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/ContestantLeaderboardPage";
 import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/GuestLeaderboardPage";

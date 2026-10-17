@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Displays a 403 Forbidden error page.
  */

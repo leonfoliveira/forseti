@@ -1,5 +1,3 @@
-"use client";
-
 import { Navigate } from "react-router-dom";
 
 import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/AdminSettingsPage";

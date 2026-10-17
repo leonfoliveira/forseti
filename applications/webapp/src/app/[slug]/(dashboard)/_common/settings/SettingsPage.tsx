@@ -1,5 +1,3 @@
-"use client";
-
 import clsx from "clsx";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { AlertCircleIcon, SaveIcon } from "lucide-react";

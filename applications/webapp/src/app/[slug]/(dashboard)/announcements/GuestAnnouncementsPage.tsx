@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPage";
