@@ -22,7 +22,6 @@ prometheusMetrics = "1.4.3"
 snakeyaml = "2.7"
 springBoot = "4.1.1"
 testcontainers = "1.21.4"
-uuidCreator = "6.1.1"
 
 [libraries]
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
@@ -64,7 +63,6 @@ testcontainersLocalstack = { module = "org.testcontainers:localstack", version.r
 testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
 testcontainersRedis = { module = "com.redis:testcontainers-redis", version = "2.2.4" }
-uuidCreator = { module = "com.github.f4b6a3:uuid-creator", version.ref = "uuidCreator" }
 
 [plugins]
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
