@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "vite --port 3000",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
     "lint": "eslint 'src/**/*.{ts,tsx}' 'test/**/*.{ts,tsx}'",
     "format": "eslint 'src/**/*.{ts,tsx}' 'test/**/*.{ts,tsx}' --fix",

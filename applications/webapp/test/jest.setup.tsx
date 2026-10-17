@@ -2,6 +2,7 @@ import "@testing-library/jest-dom";
 import { TextEncoder, TextDecoder } from "util";
 import { randomUUID } from "crypto";
 
+// Native Node.js modules polyfills
 global.TextEncoder = TextEncoder as typeof global.TextEncoder;
 global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 
@@ -33,6 +34,7 @@ export const eventSource = {
 };
 global.EventSource = jest.fn(() => eventSource) as never;
 
+// Custom extensions for HTMLElement to support queries by test ID
 declare global {
   interface HTMLElement {
     getByTestId(id: string): HTMLElement | null;
@@ -46,11 +48,15 @@ HTMLElement.prototype.getAllByTestId = function (id: string) {
   return Array.from(this.querySelectorAll(`[data-testid="${id}"]`));
 };
 
+// Mocking UUID generation as uuid module does not work well with jest
 jest.mock("uuid", () => ({
   v4: jest.fn().mockImplementation(() => randomUUID()),
 }));
+
+// Mocking system composition
 jest.mock("@/config/composition");
 
+// Mocking react-router-dom hooks
 export const location = { pathname: "/" };
 export const navigate = jest.fn();
 export const getSearchParams = { get: jest.fn().mockReturnValue("contest-1") };
@@ -63,6 +69,7 @@ jest.mock("react-router-dom", () => ({
   useRevalidator: jest.fn(() => ({ revalidate })),
 }));
 
+// Mocking shadcn UI components
 jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
   DropdownMenu: ({ children }: any) => children,
   DropdownMenuTrigger: ({ children }: any) => children,
@@ -73,7 +80,6 @@ jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
     <div {...props}>{children}</div>
   ),
 }));
-
 jest.mock("@/app/_lib/component/shadcn/badge", () => ({
   Badge: ({ children, ...props }: any) => <span {...props}>{children}</span>,
 }));
@@ -130,7 +136,8 @@ jest.mock("@/app/_lib/component/shadcn/input", () => ({
 jest.mock("@/app/_lib/component/shadcn/switch", () => ({
   Switch: (props: any) => <input type="checkbox" {...props} />,
 }));
-jest.mock("@/config/composition");
+
+// Mocking useToast hook
 const toast = {
   info: jest.fn(),
   success: jest.fn(),
