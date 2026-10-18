@@ -5,12 +5,12 @@ import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import java.util.UUID
 import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.security.web.csrf.CsrfTokenRepository
 import org.springframework.security.web.csrf.DefaultCsrfToken
 import org.springframework.stereotype.Component
 import org.springframework.web.util.WebUtils
-import java.util.UUID
 
 /**
  * Resolves the expected CSRF token from the server-side session identified by the "session_id"
@@ -67,6 +67,7 @@ class SessionCsrfTokenRepository(
             } catch (_: UnauthorizedException) {
                 return null
             }
+
         return DefaultCsrfToken(HEADER_NAME, PARAMETER_NAME, session.csrfToken.toString())
     }
 }

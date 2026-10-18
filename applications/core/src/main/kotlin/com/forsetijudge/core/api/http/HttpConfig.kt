@@ -90,6 +90,7 @@ class HttpConfig(
                         "/v1/contests/slug/*",
                         "/v1/contests/*/dashboard/guest",
                         "/v1/sse/contests/*/dashboard/guest",
+                        "/v1/contests/*/attachments/*",
                     ).permitAll()
                     .anyRequest()
                     .authenticated()
