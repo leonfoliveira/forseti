@@ -3,14 +3,14 @@ package com.forsetijudge.core.api.http.sse
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
 import com.forsetijudge.core.util.SafeLogger
+import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.stereotype.Component
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 import java.io.IOException
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.util.concurrent.ConcurrentHashMap
-import org.springframework.scheduling.annotation.Scheduled
-import org.springframework.stereotype.Component
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @Component
 class SSEHelper(

@@ -5,7 +5,6 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboa
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
-import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -14,6 +13,7 @@ import org.mockito.kotlin.whenever
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.UUID
 
 class DashboardControllerTest {
     private val buildAdminDashboardUseCase = mock<BuildAdminDashboardUseCase>()
