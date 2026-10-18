@@ -2,6 +2,7 @@ import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDa
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 
 export interface DashboardRepository {
   /**
@@ -11,6 +12,22 @@ export interface DashboardRepository {
    * @returns A promise that resolves to the admin dashboard response DTO.
    */
   getAdminDashboard(contestId: string): Promise<AdminDashboardResponseDTO>;
+
+  /**
+   * Retrieves the judge dashboard for a specific contest.
+   *
+   * @param contestId - The ID of the contest for which to retrieve the judge dashboard.
+   * @returns A promise that resolves to the judge dashboard response DTO.
+   */
+  getJudgeDashboard(contestId: string): Promise<JudgeDashboardResponseDTO>;
+
+  /**
+   * Retrieves the staff dashboard for a specific contest.
+   *
+   * @param contestId - The ID of the contest for which to retrieve the staff dashboard.
+   * @returns A promise that resolves to the staff dashboard response DTO.
+   */
+  getStaffDashboard(contestId: string): Promise<StaffDashboardResponseDTO>;
 
   /**
    * Retrieves the contestant dashboard for a specific contest.
@@ -29,12 +46,4 @@ export interface DashboardRepository {
    * @returns A promise that resolves to the guest dashboard response DTO.
    */
   getGuestDashboard(contestId: string): Promise<GuestDashboardResponseDTO>;
-
-  /**
-   * Retrieves the judge dashboard for a specific contest.
-   *
-   * @param contestId - The ID of the contest for which to retrieve the judge dashboard.
-   * @returns A promise that resolves to the judge dashboard response DTO.
-   */
-  getJudgeDashboard(contestId: string): Promise<JudgeDashboardResponseDTO>;
 }
