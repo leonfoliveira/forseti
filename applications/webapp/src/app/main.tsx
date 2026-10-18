@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { FrontendObservability } from "@/app/_lib/FrontendObservability";
 import { ErrorBoundary } from "@/app/ErrorBundary";
 import { App } from "./App";
 import "./globals.css";
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <App />
+      <FrontendObservability />
     </ErrorBoundary>
   </React.StrictMode>,
 );

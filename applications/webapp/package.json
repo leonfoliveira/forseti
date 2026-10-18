@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@grafana/faro-web-sdk": "^2.12.1",
+    "@grafana/faro-web-tracing": "^2.12.1",
     "@hookform/resolvers": "^5.9.1",
     "@reduxjs/toolkit": "^2.13.0",
     "@tailwindcss/vite": "^4.3.3",

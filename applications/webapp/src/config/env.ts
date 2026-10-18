@@ -1,4 +1,4 @@
-type RuntimeEnv = { VERSION?: string; API_URL?: string };
+type RuntimeEnv = { VERSION?: string; API_URL?: string; OTEL_URL?: string };
 
 declare global {
   interface Window {
@@ -13,4 +13,5 @@ const runtimeEnv: RuntimeEnv =
 export const env = {
   version: runtimeEnv.VERSION || "latest",
   apiUrl: runtimeEnv.API_URL || "http://localhost:8080",
+  otelUrl: runtimeEnv.OTEL_URL,
 };
