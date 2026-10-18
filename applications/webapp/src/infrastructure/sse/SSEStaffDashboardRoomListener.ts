@@ -3,7 +3,7 @@ import { ClarificationResponseDTO } from "@/port/dto/response/clarification/Clar
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { StaffDashboardRoomListener } from "@/port/output/sse/StaffDashboardRoomListener";
 import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
-import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export class SSEStaffDashboardRoomListener
   extends SSERoomListener
@@ -22,8 +22,8 @@ export class SSEStaffDashboardRoomListener
       LEADERBOARD_UPDATED: (
         leaderboardCell: LeaderboardCellResponseDTO,
       ) => void;
-      SUBMISSION_CREATED: (submission: SubmissionResponseDTO) => void;
-      SUBMISSION_UPDATED: (submission: SubmissionResponseDTO) => void;
+      SUBMISSION_CREATED: (submission: SubmissionWithCodeResponseDTO) => void;
+      SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
       ANNOUNCEMENT_CREATED: (announcement: AnnouncementResponseDTO) => void;
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,

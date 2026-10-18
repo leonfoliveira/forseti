@@ -1,7 +1,7 @@
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export interface StaffDashboardRoomListener {
   /**
@@ -19,8 +19,8 @@ export interface StaffDashboardRoomListener {
       LEADERBOARD_UPDATED: (
         leaderboardCell: LeaderboardCellResponseDTO,
       ) => void;
-      SUBMISSION_CREATED: (submission: SubmissionResponseDTO) => void;
-      SUBMISSION_UPDATED: (submission: SubmissionResponseDTO) => void;
+      SUBMISSION_CREATED: (submission: SubmissionWithCodeResponseDTO) => void;
+      SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
       ANNOUNCEMENT_CREATED: (announcement: AnnouncementResponseDTO) => void;
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
