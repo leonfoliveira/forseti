@@ -16,8 +16,8 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { MemberType } from "@/domain/enumerate/MemberType";
 import { PathUtil } from "@/app/_lib/util/PathUtil";
+import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 /**
  * Header component displayed at the top of the web application.
@@ -42,12 +42,7 @@ export function Header() {
     routes.CONTEST_SIGN_IN(contest.slug),
   );
   const memberType = isAuthorized
-    ? {
-        [MemberType.ROOT]: "Root",
-        [MemberType.ADMIN]: "Admin",
-        [MemberType.CONTESTANT]: "Contestant",
-        [MemberType.JUDGE]: "Judge",
-      }[session.member.type]
+    ? EnumeratedTextUtil.getMemberType(session.member.type)
     : "";
 
   return (
