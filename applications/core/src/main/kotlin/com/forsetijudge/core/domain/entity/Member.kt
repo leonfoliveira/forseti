@@ -12,10 +12,10 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "member")
@@ -78,6 +78,11 @@ class Member(
          * Represents a member who is part of the jury, responsible for judging submissions.
          */
         JUDGE,
+
+        /**
+         * Represents a member who is part of the staff, assisting in the organization and management of the contest.
+         */
+        STAFF,
 
         /**
          * Represents a member who participates in the contest, such as a contestant.
