@@ -3,6 +3,7 @@ package com.forsetijudge.core.api.http
 import com.forsetijudge.core.api.http.dto.response.ErrorResponseBodyDTO
 import com.forsetijudge.core.api.http.middleware.AuthenticationFilter
 import com.forsetijudge.core.api.http.middleware.SessionCsrfTokenRepository
+import jakarta.servlet.DispatcherType
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.FilterRegistrationBean
 import org.springframework.context.annotation.Bean
@@ -78,6 +79,8 @@ class HttpConfig(
                     .ignoringRequestMatchers(*SIGN_IN_ROUTES)
             }.authorizeHttpRequests { auth ->
                 auth
+                    .dispatcherTypeMatchers(DispatcherType.ERROR)
+                    .permitAll()
                     .requestMatchers(HttpMethod.OPTIONS, "/**")
                     .permitAll()
                     .requestMatchers(
