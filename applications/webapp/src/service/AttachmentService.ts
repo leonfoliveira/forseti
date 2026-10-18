@@ -22,6 +22,7 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
         context,
         contentType: file.type,
       });
+    console.debug("Uploading attachment to URL:", uploadUrl);
     await this.bucketRepository.upload(uploadUrl, file);
     return attachment;
   }
@@ -35,6 +36,7 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
         contestId,
         attachment,
       );
+    console.debug("Downloading attachment from URL:", downloadUrl);
     const file = await this.bucketRepository.download(downloadUrl, attachment);
 
     const url = URL.createObjectURL(file);

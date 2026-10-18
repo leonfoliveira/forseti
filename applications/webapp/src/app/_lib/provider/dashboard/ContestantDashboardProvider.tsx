@@ -89,7 +89,9 @@ export function ContestantDashboardProvider({
         await fetch();
         await setupBroadcastListeners();
         state.finish();
+        console.debug("Successfully initialized dashboard");
       } catch (error) {
+        console.error("Failed to initialize dashboard:", error);
         await state.fail(error as Error);
       }
     }

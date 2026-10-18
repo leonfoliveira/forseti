@@ -1,6 +1,6 @@
 import { ClockAlertIcon } from "lucide-react";
 import { useEffect } from "react";
-import { useRevalidator } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { Page } from "@/app/_lib/component/page/Page";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -11,29 +11,27 @@ import { useAppSelector } from "@/app/_lib/store/Store";
  */
 export function WaitPage() {
   const contestStartAt = useAppSelector((state) => state.contest.startAt);
-  const revalidator = useRevalidator();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const now = new Date();
     const startAt = new Date(contestStartAt);
     const timeout = startAt.getTime() - now.getTime();
 
-    // Maximum setTimeout value (24.86 days)
     const MAX_TIMEOUT = 2147483647;
 
     if (timeout > 0) {
-      // Only set timeout if within safe limits
       if (timeout <= MAX_TIMEOUT) {
         const timer = setTimeout(() => {
           console.debug("Contest started. Reloading page...");
-          revalidator.revalidate();
+          navigate(0);
         }, timeout);
 
         return () => clearTimeout(timer);
       }
     } else {
       console.debug("Contest already started. Reloading page...");
-      revalidator.revalidate();
+      navigate(0);
     }
   }, [contestStartAt]);
 
