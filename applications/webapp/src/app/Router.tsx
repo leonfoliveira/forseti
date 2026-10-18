@@ -49,7 +49,7 @@ export function Router() {
           <Route element={<ContestLayout />}>
             <Route
               path="/:slug"
-              element={<Navigate to="/:slug/leaderboard" replace />}
+              element={<Navigate to="leaderboard" replace />}
             />
 
             <Route path="/:slug/sign-in" element={<SignInPage />} />

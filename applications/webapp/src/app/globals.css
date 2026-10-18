@@ -140,3 +140,7 @@
     transform: translateX(5px) rotate(1deg) scale(1); 
   }
 }
+
+body {
+  background-color: var(--bg-card);
+}

@@ -116,7 +116,7 @@ export function ClarificationsPage({
             data-testid="clarifications-list"
           >
             {clarifications
-              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+              .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
               .toReversed()
               .map((clarification) => (
                 <ClarificationsPageCard

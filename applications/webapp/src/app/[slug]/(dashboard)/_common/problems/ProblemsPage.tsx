@@ -142,7 +142,7 @@ export function ProblemsPage({
             </TableHeader>
             <TableBody>
               {problems
-                .sort((a, b) => a.letter.localeCompare(b.letter))
+                .toSorted((a, b) => a.letter.localeCompare(b.letter))
                 .map((problem) => (
                   <TableRow key={problem.id} data-testid="problem-row">
                     <TableCell

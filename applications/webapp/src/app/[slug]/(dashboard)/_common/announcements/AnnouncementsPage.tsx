@@ -88,7 +88,7 @@ export function AnnouncementsPage({
             data-testid="announcements-list"
           >
             {announcements
-              .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+              .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
               .toReversed()
               .map((announcement) => (
                 <AnnouncementsPageCard

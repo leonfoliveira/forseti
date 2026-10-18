@@ -252,7 +252,7 @@ export class SettingsForm {
     contest: ContestWithMembersAndProblemsDTO,
   ): SettingsFormType {
     const problems = [...contest.problems]
-      .sort((a, b) => a.letter.localeCompare(b.letter))
+      .toSorted((a, b) => a.letter.localeCompare(b.letter))
       .map((problem) => ({
         _id: problem.id,
         color: problem.color,
