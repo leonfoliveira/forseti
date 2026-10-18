@@ -2,6 +2,7 @@ import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProble
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
 import { GuestProblemsPage } from "@/app/[slug]/(dashboard)/problems/GuestProblemsPage";
 import { JudgeProblemsPage } from "@/app/[slug]/(dashboard)/problems/JudgeProblemsPage";
+import { StaffProblemsPage } from "@/app/[slug]/(dashboard)/problems/StaffProblemsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
@@ -17,6 +18,8 @@ export default function ProblemsPage() {
       return <AdminProblemsPage />;
     case MemberType.JUDGE:
       return <JudgeProblemsPage />;
+    case MemberType.STAFF:
+      return <StaffProblemsPage />;
     case MemberType.CONTESTANT:
       return <ContestantProblemsPage />;
     default:

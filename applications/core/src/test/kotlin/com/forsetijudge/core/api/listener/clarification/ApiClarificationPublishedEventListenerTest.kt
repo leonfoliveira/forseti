@@ -31,21 +31,23 @@ class ApiClarificationPublishedEventListenerTest {
         listener.handle(ClarificationEvent.Published(clarification.id))
 
         val messages = argumentCaptor<SSEFanoutMessage>()
-        verify(producer, times(4)).produce(messages.capture())
+        verify(producer, times(5)).produce(messages.capture())
         assertEquals(
             listOf(
                 "admin-dashboard-${contest.id}",
                 "judge-dashboard-${contest.id}",
+                "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
                 "guest-dashboard-${contest.id}",
             ),
             messages.allValues.map(SSEFanoutMessage::room),
         )
-        assertEquals(List(4) { "CLARIFICATION_PUBLISHED" }, messages.allValues.map(SSEFanoutMessage::eventName))
+        assertEquals(List(5) { "CLARIFICATION_PUBLISHED" }, messages.allValues.map(SSEFanoutMessage::eventName))
         assertTrue(messages.allValues[0].data is ClarificationResponseDTO)
         assertTrue(messages.allValues[1].data is ClarificationResponseDTO)
         assertTrue(messages.allValues[2].data is ClarificationResponseDTO)
         assertTrue(messages.allValues[3].data is ClarificationResponseDTO)
+        assertTrue(messages.allValues[4].data is ClarificationResponseDTO)
     }
 
     @Test

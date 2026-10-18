@@ -17,6 +17,7 @@ export function JudgeSubmissionsPage() {
       submissions={submissions}
       problems={problems}
       canViewExecutions
+      canDownloadAny
       canEdit
       onEdit={(submission: SubmissionWithCodeAndExecutionsResponseDTO) => {
         dispatch(JudgeDashboardSlice.actions.mergeSubmission(submission));

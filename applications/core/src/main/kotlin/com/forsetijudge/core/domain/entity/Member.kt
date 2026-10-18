@@ -80,6 +80,11 @@ class Member(
         JUDGE,
 
         /**
+         * Represents a member who is part of the staff, assisting in the organization and management of the contest.
+         */
+        STAFF,
+
+        /**
          * Represents a member who participates in the contest, such as a contestant.
          */
         CONTESTANT,

@@ -4,14 +4,20 @@ import {
   MockContestantDashboardResponseDTO,
   MockGuestDashboardResponseDTO,
   MockJudgeDashboardResponseDTO,
+  MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 
 describe("AxiosDashboardRepository", () => {
   it.each([
     ["admin", "getAdminDashboard", MockAdminDashboardResponseDTO()],
-    ["contestant", "getContestantDashboard", MockContestantDashboardResponseDTO()],
-    ["guest", "getGuestDashboard", MockGuestDashboardResponseDTO()],
     ["judge", "getJudgeDashboard", MockJudgeDashboardResponseDTO()],
+    ["staff", "getStaffDashboard", MockStaffDashboardResponseDTO()],
+    [
+      "contestant",
+      "getContestantDashboard",
+      MockContestantDashboardResponseDTO(),
+    ],
+    ["guest", "getGuestDashboard", MockGuestDashboardResponseDTO()],
   ] as const)("gets the %s dashboard", async (role, method, dashboard) => {
     const client = { get: jest.fn().mockResolvedValue({ data: dashboard }) };
     const repository = new AxiosDashboardRepository(client as never);

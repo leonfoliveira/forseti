@@ -8,6 +8,7 @@ import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashb
 import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
 import { GuestDashboardSlice } from "@/app/_lib/store/slice/dashboard/GuestDashboardSlice";
 import { JudgeDashboardSlice } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
+import { StaffDashboardSlice } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
 import { SessionSlice } from "@/app/_lib/store/slice/SessionSlice";
 
 const rootReducer = combineReducers({
@@ -15,9 +16,10 @@ const rootReducer = combineReducers({
   session: SessionSlice.reducer,
   contest: ContestSlice.reducer,
   adminDashboard: AdminDashboardSlice.reducer,
+  judgeDashboard: JudgeDashboardSlice.reducer,
+  staffDashboard: StaffDashboardSlice.reducer,
   contestantDashboard: ContestantDashboardSlice.reducer,
   guestDashboard: GuestDashboardSlice.reducer,
-  judgeDashboard: JudgeDashboardSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

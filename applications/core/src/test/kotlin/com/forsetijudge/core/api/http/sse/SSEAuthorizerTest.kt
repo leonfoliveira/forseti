@@ -138,6 +138,62 @@ class SSEAuthorizerTest {
     }
 
     @Nested
+    inner class AuthorizeToStaffDashboardRoomTest {
+        @Test
+        fun `should throw NotFoundException when contest is not found`() {
+            val contestId = IdGenerator.getUUID()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(null)
+
+            assertThrows<NotFoundException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw NotFoundException when member is not found`() {
+            val contestId = IdGenerator.getUUID()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
+
+            assertThrows<NotFoundException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when member does not belongs to contest`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF, contest = MockEntityFactory.contest())
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when member is not STAFF`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest()
+            val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+    }
+
+    @Nested
     inner class AuthorizeToContestantDashboardRoomTest {
         @Test
         fun `should throw NotFoundException when contest is not found`() {

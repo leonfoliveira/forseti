@@ -10,6 +10,7 @@ import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseD
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
@@ -107,6 +108,17 @@ internal object MockMvcTestSupport {
 
     fun judgeDashboardResponse(id: UUID = UUID.randomUUID()) =
         JudgeDashboardResponseDTO(
+            contest = contestResponse(id),
+            leaderboard = leaderboardResponse(id),
+            members = emptyList(),
+            problems = emptyList(),
+            submissions = emptyList(),
+            announcements = emptyList(),
+            clarifications = emptyList(),
+        )
+
+    fun staffDashboardResponse(id: UUID = UUID.randomUUID()) =
+        StaffDashboardResponseDTO(
             contest = contestResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),

@@ -63,7 +63,7 @@ class ApiSubmissionUpdatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildMemberPrivateRoom(submission.member.id),
+                room = SSERoomBuilder.buildStaffDashboardRoom(submission.contest.id),
                 eventName = SSE.SUBMISSION_UPDATED.name,
                 data = submission.toWithCodeResponseDTO(),
             ),
@@ -82,6 +82,13 @@ class ApiSubmissionUpdatedEventListener(
                 data = submission.toResponseDTO(),
             ),
         )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildMemberPrivateRoom(submission.member.id),
+                eventName = SSE.SUBMISSION_UPDATED.name,
+                data = submission.toWithCodeResponseDTO(),
+            ),
+        )
 
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
@@ -93,6 +100,13 @@ class ApiSubmissionUpdatedEventListener(
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
                 room = SSERoomBuilder.buildJudgeDashboardRoom(submission.contest.id),
+                eventName = SSE.LEADERBOARD_UPDATED.name,
+                data = leaderboardCell.toResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildStaffDashboardRoom(submission.contest.id),
                 eventName = SSE.LEADERBOARD_UPDATED.name,
                 data = leaderboardCell.toResponseDTO(),
             ),

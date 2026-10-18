@@ -3,6 +3,7 @@ import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/
 import { GuestSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/GuestSubmissionsPage";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { StaffSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/StaffSubmissionsPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**
@@ -17,6 +18,8 @@ export default function SubmissionsPage() {
       return <AdminSubmissionsPage />;
     case MemberType.JUDGE:
       return <JudgeSubmissionsPage />;
+    case MemberType.STAFF:
+      return <StaffSubmissionsPage />;
     case MemberType.CONTESTANT:
       return <ContestantSubmissionsPage />;
     default:

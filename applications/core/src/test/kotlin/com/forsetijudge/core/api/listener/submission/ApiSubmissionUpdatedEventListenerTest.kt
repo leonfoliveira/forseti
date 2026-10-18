@@ -63,16 +63,18 @@ class ApiSubmissionUpdatedEventListenerTest {
         listener.handle(SubmissionEvent.Updated(submission.id))
 
         val messages = argumentCaptor<SSEFanoutMessage>()
-        verify(producer, times(9)).produce(messages.capture())
+        verify(producer, times(11)).produce(messages.capture())
         val expectedRooms =
             listOf(
                 "admin-dashboard-${contest.id}",
                 "judge-dashboard-${contest.id}",
-                "member-private-${member.id}",
+                "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
                 "guest-dashboard-${contest.id}",
+                "member-private-${member.id}",
                 "admin-dashboard-${contest.id}",
                 "judge-dashboard-${contest.id}",
+                "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
                 "guest-dashboard-${contest.id}",
             )
@@ -84,6 +86,8 @@ class ApiSubmissionUpdatedEventListenerTest {
                 "SUBMISSION_UPDATED",
                 "SUBMISSION_UPDATED",
                 "SUBMISSION_UPDATED",
+                "SUBMISSION_UPDATED",
+                "LEADERBOARD_UPDATED",
                 "LEADERBOARD_UPDATED",
                 "LEADERBOARD_UPDATED",
                 "LEADERBOARD_UPDATED",
@@ -92,10 +96,12 @@ class ApiSubmissionUpdatedEventListenerTest {
             messages.allValues.map(SSEFanoutMessage::eventName),
         )
         assertTrue(messages.allValues[0].data is SubmissionWithCodeAndExecutionsResponseDTO)
+        assertTrue(messages.allValues[1].data is SubmissionWithCodeAndExecutionsResponseDTO)
         assertTrue(messages.allValues[2].data is SubmissionWithCodeResponseDTO)
         assertTrue(messages.allValues[3].data is SubmissionResponseDTO)
         assertTrue(messages.allValues[4].data is SubmissionResponseDTO)
-        assertTrue(messages.allValues.drop(5).all { it.data is LeaderboardCellResponseDTO })
+        assertTrue(messages.allValues[5].data is SubmissionWithCodeResponseDTO)
+        assertTrue(messages.allValues.drop(6).all { it.data is LeaderboardCellResponseDTO })
 
         val cellCaptor = argumentCaptor<Leaderboard.Cell>()
         verify(cache).cacheCell(eq(contest.id), cellCaptor.capture())

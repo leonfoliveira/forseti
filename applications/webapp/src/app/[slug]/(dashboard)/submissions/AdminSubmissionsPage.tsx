@@ -17,6 +17,7 @@ export function AdminSubmissionsPage() {
       submissions={submissions}
       problems={problems}
       canViewExecutions
+      canDownloadAny
       canEdit
       onEdit={(submission: SubmissionWithCodeAndExecutionsResponseDTO) => {
         dispatch(AdminDashboardSlice.actions.mergeSubmission(submission));

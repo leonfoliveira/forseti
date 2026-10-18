@@ -65,6 +65,30 @@ class SSEAuthorizer(
     }
 
     /**
+     * Authorizes the current user to access the staff dashboard room of a contest.
+     *
+     * @param contestId The ID of the contest for which access is being requested.
+     * @throws NotFoundException if the contest or member is not found.
+     * @throws ForbiddenException if the member does not have the required permissions.
+     */
+    @Transactional(readOnly = true)
+    fun authorizeToStaffDashboardRoom(contestId: UUID) {
+        val contextMemberId = AuthenticationHelper.getCurrentMemberId()
+
+        val contest =
+            contestRepository.findById(contestId)
+                ?: throw NotFoundException("Could not find contest with id: $contestId")
+        val member =
+            memberRepository.findByIdAndContestId(contextMemberId, contestId)
+                ?: throw NotFoundException("Could not find member with id: $contextMemberId in this contest")
+
+        ContestAuthorizer(contest, member)
+            .requireMemberToBelong()
+            .requireMemberType(Member.Type.STAFF)
+            .throwIfErrors()
+    }
+
+    /**
      * Authorizes the current user to access the contestant dashboard room of a contest.
      *
      * @param contestId The ID of the contest for which access is being requested.

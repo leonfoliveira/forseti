@@ -21,6 +21,7 @@ class AttachmentAuthorizationConfigTest {
             Member.Type.ROOT to "admin-upload",
             Member.Type.ADMIN to "admin-upload",
             Member.Type.JUDGE to "judge-upload",
+            Member.Type.STAFF to "staff-upload",
             Member.Type.CONTESTANT to "contestant-upload",
         ).forEach { (type, expected) ->
             config.authorizeUpload(contest, MockEntityFactory.member(type = type))
@@ -32,6 +33,7 @@ class AttachmentAuthorizationConfigTest {
             Member.Type.ROOT to "admin-download",
             Member.Type.ADMIN to "admin-download",
             Member.Type.JUDGE to "judge-download",
+            Member.Type.STAFF to "staff-download",
             Member.Type.CONTESTANT to "contestant-download",
         ).forEach { (type, expected) ->
             config.authorizeDownload(contest, MockEntityFactory.member(type = type), attachment)
@@ -163,6 +165,13 @@ class AttachmentAuthorizationConfigTest {
             calls += "judge-upload"
         }
 
+        override fun authorizeStaffUpload(
+            contest: Contest,
+            member: Member,
+        ) {
+            calls += "staff-upload"
+        }
+
         override fun authorizeContestantUpload(
             contest: Contest,
             member: Member,
@@ -184,6 +193,14 @@ class AttachmentAuthorizationConfigTest {
             attachment: Attachment,
         ) {
             calls += "judge-download"
+        }
+
+        override fun authorizeStaffDownload(
+            contest: Contest,
+            member: Member,
+            attachment: Attachment,
+        ) {
+            calls += "staff-download"
         }
 
         override fun authorizeContestantDownload(

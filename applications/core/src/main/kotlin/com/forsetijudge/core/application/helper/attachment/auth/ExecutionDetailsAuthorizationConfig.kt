@@ -19,6 +19,11 @@ class ExecutionDetailsAuthorizationConfig : AttachmentAuthorizationConfig() {
         member: Member,
     ) = throw ForbiddenException("Judges cannot upload execution details attachments")
 
+    override fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Staff cannot upload execution details attachments")
+
     override fun authorizeContestantUpload(
         contest: Contest,
         member: Member,
@@ -41,6 +46,12 @@ class ExecutionDetailsAuthorizationConfig : AttachmentAuthorizationConfig() {
     ) {
         ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
     }
+
+    override fun authorizeStaffDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Staff cannot download execution details attachments")
 
     override fun authorizeContestantDownload(
         contest: Contest,

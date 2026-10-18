@@ -19,6 +19,7 @@ import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDa
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -321,6 +322,19 @@ export const MockJudgeDashboardResponseDTO = (
   members: [MockMemberResponseDTO({ type: MemberType.JUDGE })],
   problems: [MockProblemWithTestCasesResponseDTO()],
   submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
+  announcements: [MockAnnouncementResponseDTO()],
+  clarifications: [MockClarificationResponseDTO()],
+  ...overrides,
+});
+
+export const MockStaffDashboardResponseDTO = (
+  overrides: Partial<StaffDashboardResponseDTO> = {},
+): StaffDashboardResponseDTO => ({
+  contest: MockContestResponseDTO(),
+  leaderboard: MockLeaderboardResponseDTO(),
+  members: [MockMemberResponseDTO({ type: MemberType.STAFF })],
+  problems: [MockProblemResponseDTO()],
+  submissions: [MockSubmissionWithCodeResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
   ...overrides,

@@ -41,14 +41,21 @@ class ApiAnnouncementCreatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
+                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
                 eventName = SSE.ANNOUNCEMENT_CREATED.name,
                 data = announcement.toResponseDTO(),
             ),
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
+                room = SSERoomBuilder.buildStaffDashboardRoom(contest.id),
+                eventName = SSE.ANNOUNCEMENT_CREATED.name,
+                data = announcement.toResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
                 eventName = SSE.ANNOUNCEMENT_CREATED.name,
                 data = announcement.toResponseDTO(),
             ),

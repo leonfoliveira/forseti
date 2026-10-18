@@ -24,6 +24,8 @@ abstract class AttachmentAuthorizationConfig {
 
             Member.Type.JUDGE -> authorizeJudgeUpload(contest, member)
 
+            Member.Type.STAFF -> authorizeStaffUpload(contest, member)
+
             Member.Type.CONTESTANT,
             -> authorizeContestantUpload(contest, member)
 
@@ -51,6 +53,8 @@ abstract class AttachmentAuthorizationConfig {
             -> authorizeAdminDownload(contest, member, attachment)
 
             Member.Type.JUDGE -> authorizeJudgeDownload(contest, member, attachment)
+
+            Member.Type.STAFF -> authorizeStaffDownload(contest, member, attachment)
 
             Member.Type.CONTESTANT,
             -> authorizeContestantDownload(contest, member, attachment)
@@ -81,6 +85,18 @@ abstract class AttachmentAuthorizationConfig {
      * @throws ForbiddenException if the upload is not authorized.
      */
     abstract fun authorizeJudgeUpload(
+        contest: Contest,
+        member: Member,
+    )
+
+    /**
+     * Authorizes the upload of an attachment in a contest by a staff member.
+     *
+     * @param contest The contest where the attachment is being uploaded.
+     * @param member The staff member attempting the upload.
+     * @throws ForbiddenException if the upload is not authorized.
+     */
+    abstract fun authorizeStaffUpload(
         contest: Contest,
         member: Member,
     )
@@ -122,6 +138,20 @@ abstract class AttachmentAuthorizationConfig {
      * @throws ForbiddenException if the download is not authorized.
      */
     abstract fun authorizeJudgeDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    )
+
+    /**
+     * Authorizes the download of an attachment in a contest by a staff member.
+     *
+     * @param contest The contest where the attachment is being downloaded.
+     * @param member The staff member attempting the download.
+     * @param attachment The attachment being downloaded.
+     * @throws ForbiddenException if the download is not authorized.
+     */
+    abstract fun authorizeStaffDownload(
         contest: Contest,
         member: Member,
         attachment: Attachment,

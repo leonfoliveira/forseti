@@ -4,6 +4,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUse
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -15,42 +16,80 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.UUID
 
 class DashboardControllerTest {
-    private val admin = mock<BuildAdminDashboardUseCase>()
-    private val contestant = mock<BuildContestantDashboardUseCase>()
-    private val guest = mock<BuildGuestDashboardUseCase>()
-    private val judge = mock<BuildJudgeDashboardUseCase>()
-    private val mvc = MockMvcTestSupport.mvc(DashboardController(admin, contestant, guest, judge))
+    private val buildAdminDashboardUseCase = mock<BuildAdminDashboardUseCase>()
+    private val buildJudgeDashboardUseCase = mock<BuildJudgeDashboardUseCase>()
+    private val buildStaffDashboardUseCase = mock<BuildStaffDashboardUseCase>()
+    private val buildContestantDashboardUseCase = mock<BuildContestantDashboardUseCase>()
+    private val buildGuestDashboardUseCase = mock<BuildGuestDashboardUseCase>()
+
+    private val mvc =
+        MockMvcTestSupport.mvc(
+            DashboardController(
+                buildAdminDashboardUseCase,
+                buildJudgeDashboardUseCase,
+                buildStaffDashboardUseCase,
+                buildContestantDashboardUseCase,
+                buildGuestDashboardUseCase,
+            ),
+        )
     private val contestId = UUID.randomUUID()
 
     @Test
     fun `routes dashboard requests and returns response bodies`() {
-        whenever(admin.execute(any())).thenReturn(MockMvcTestSupport.adminDashboardResponse(contestId))
-        whenever(contestant.execute(any())).thenReturn(MockMvcTestSupport.contestantDashboardResponse(contestId))
-        whenever(guest.execute(any())).thenReturn(MockMvcTestSupport.guestDashboardResponse(contestId))
-        whenever(judge.execute(any())).thenReturn(MockMvcTestSupport.judgeDashboardResponse(contestId))
+        whenever(buildAdminDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.adminDashboardResponse(
+                contestId,
+            ),
+        )
+        whenever(buildJudgeDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.judgeDashboardResponse(
+                contestId,
+            ),
+        )
+        whenever(buildStaffDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.staffDashboardResponse(
+                contestId,
+            ),
+        )
+        whenever(buildContestantDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.contestantDashboardResponse(
+                contestId,
+            ),
+        )
+        whenever(buildGuestDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.guestDashboardResponse(
+                contestId,
+            ),
+        )
 
         mvc
             .perform(get("/v1/contests/$contestId/dashboard/admin"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
-        verify(admin).execute(BuildAdminDashboardUseCase.Command(contestId))
-
-        mvc
-            .perform(get("/v1/contests/$contestId/dashboard/contestant"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
-        verify(contestant).execute(BuildContestantDashboardUseCase.Command(contestId))
-
-        mvc
-            .perform(get("/v1/contests/$contestId/dashboard/guest"))
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
-        verify(guest).execute(BuildGuestDashboardUseCase.Command(contestId))
+        verify(buildAdminDashboardUseCase).execute(BuildAdminDashboardUseCase.Command(contestId))
 
         mvc
             .perform(get("/v1/contests/$contestId/dashboard/judge"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
-        verify(judge).execute(BuildJudgeDashboardUseCase.Command(contestId))
+        verify(buildJudgeDashboardUseCase).execute(BuildJudgeDashboardUseCase.Command(contestId))
+
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/staff"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
+        verify(buildStaffDashboardUseCase).execute(BuildStaffDashboardUseCase.Command(contestId))
+
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/contestant"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
+        verify(buildContestantDashboardUseCase).execute(BuildContestantDashboardUseCase.Command(contestId))
+
+        mvc
+            .perform(get("/v1/contests/$contestId/dashboard/guest"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
+        verify(buildGuestDashboardUseCase).execute(BuildGuestDashboardUseCase.Command(contestId))
     }
 }

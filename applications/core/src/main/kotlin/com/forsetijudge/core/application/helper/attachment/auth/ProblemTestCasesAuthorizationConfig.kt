@@ -21,6 +21,11 @@ class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
         member: Member,
     ) = throw ForbiddenException("Judges cannot upload test cases description attachments")
 
+    override fun authorizeStaffUpload(
+        contest: Contest,
+        member: Member,
+    ) = throw ForbiddenException("Staff cannot upload test cases description attachments")
+
     override fun authorizeContestantUpload(
         contest: Contest,
         member: Member,
@@ -43,6 +48,12 @@ class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
     ) {
         ContestAuthorizer(contest, member).requireMemberToBelong().throwIfErrors()
     }
+
+    override fun authorizeStaffDownload(
+        contest: Contest,
+        member: Member,
+        attachment: Attachment,
+    ) = throw ForbiddenException("Staff cannot download test cases attachments")
 
     override fun authorizeContestantDownload(
         contest: Contest,

@@ -43,6 +43,8 @@ import { ContestantDashboardRoomListener } from "@/port/output/sse/ContestantDas
 import { GuestDashboardRoomListener } from "@/port/output/sse/GuestDashboardRoomListener";
 import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoomListener";
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
+import { SSEStaffDashboardRoomListener } from "@/infrastructure/sse/SSEStaffDashboardRoomListener";
+import { StaffDashboardRoomListener } from "@/port/output/sse/StaffDashboardRoomListener";
 
 // Repositories
 const axiosClient = new AxiosClient(env.apiUrl);
@@ -81,13 +83,16 @@ const announcementService = new AnnouncementService(announcementRepository);
 const adminDashboardRoomListener = new SSEAdminDashboardRoomListener(
   env.apiUrl,
 );
+const judgeDashboardRoomListener = new SSEJudgeDashboardRoomListener(
+  env.apiUrl,
+);
+const staffDashboardRoomListener = new SSEStaffDashboardRoomListener(
+  env.apiUrl,
+);
 const contestantDashboardRoomListener = new SSEContestantDashboardRoomListener(
   env.apiUrl,
 );
 const guestDashboardRoomListener = new SSEGuestDashboardRoomListener(
-  env.apiUrl,
-);
-const judgeDashboardRoomListener = new SSEJudgeDashboardRoomListener(
   env.apiUrl,
 );
 const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.apiUrl);
@@ -107,9 +112,10 @@ const Composition: {
   clarificationWritter: ClarificationWritter;
   announcementWritter: AnnouncementWritter;
   adminDashboardRoomListener: AdminDashboardRoomListener;
+  judgeDashboardRoomListener: JudgeDashboardRoomListener;
+  staffDashboardRoomListener: StaffDashboardRoomListener;
   contestantDashboardRoomListener: ContestantDashboardRoomListener;
   guestDashboardRoomListener: GuestDashboardRoomListener;
-  judgeDashboardRoomListener: JudgeDashboardRoomListener;
   memberPrivateRoomListener: MemberPrivateRoomListener;
 } = {
   attachmentReader: attachmentService,
@@ -126,9 +132,10 @@ const Composition: {
   clarificationWritter: clarificationService,
   announcementWritter: announcementService,
   adminDashboardRoomListener: adminDashboardRoomListener,
+  judgeDashboardRoomListener: judgeDashboardRoomListener,
+  staffDashboardRoomListener: staffDashboardRoomListener,
   contestantDashboardRoomListener: contestantDashboardRoomListener,
   guestDashboardRoomListener: guestDashboardRoomListener,
-  judgeDashboardRoomListener: judgeDashboardRoomListener,
   memberPrivateRoomListener: memberPrivateRoomListener,
 };
 

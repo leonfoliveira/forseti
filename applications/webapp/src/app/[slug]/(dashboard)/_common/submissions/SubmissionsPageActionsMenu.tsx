@@ -19,6 +19,7 @@ import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/Su
 type Props = {
   submission:
     SubmissionWithCodeResponseDTO | SubmissionWithCodeAndExecutionsResponseDTO;
+  canDownloadAny?: boolean;
   canViewExecutions?: boolean;
 } & (
   | {
@@ -33,6 +34,8 @@ type Props = {
 
 export function SubmissionsPageActionsMenu({
   submission,
+  canDownloadAny,
+  canViewExecutions,
   canEdit,
   onEdit,
 }: Props) {
@@ -42,7 +45,7 @@ export function SubmissionsPageActionsMenu({
 
   const items: React.ReactNode[] = [];
 
-  if (submission.code) {
+  if (canDownloadAny || submission.code) {
     items.push(
       <SubmissionsPageActionDownload
         key="download"
@@ -92,24 +95,25 @@ export function SubmissionsPageActionsMenu({
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {submission.code && (
+            {(canDownloadAny || submission.code) && (
               <SubmissionsPageActionDownload
                 submission={submission}
                 onClose={close}
               />
             )}
 
+            {canViewExecutions && (
+              <SubmissionsPageActionExecutions
+                executions={
+                  (submission as SubmissionWithCodeAndExecutionsResponseDTO)
+                    .executions
+                }
+                onClose={close}
+              />
+            )}
+
             {canEdit && (
               <>
-                {submission.status != SubmissionStatus.JUDGING && (
-                  <SubmissionsPageActionExecutions
-                    executions={
-                      (submission as SubmissionWithCodeAndExecutionsResponseDTO)
-                        .executions
-                    }
-                    onClose={close}
-                  />
-                )}
                 {submission.status != SubmissionStatus.JUDGING && (
                   <SubmissionsPageActionResubmit
                     submission={
