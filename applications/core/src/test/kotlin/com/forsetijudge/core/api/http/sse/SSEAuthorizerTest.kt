@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class SSEAuthorizerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -133,6 +133,62 @@ class SSEAuthorizerTest {
 
             assertThrows<ForbiddenException> {
                 service.authorizeToJudgeDashboardRoom(contestId)
+            }
+        }
+    }
+
+    @Nested
+    inner class AuthorizeToStaffDashboardRoomTest {
+        @Test
+        fun `should throw NotFoundException when contest is not found`() {
+            val contestId = IdGenerator.getUUID()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(null)
+
+            assertThrows<NotFoundException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw NotFoundException when member is not found`() {
+            val contestId = IdGenerator.getUUID()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
+
+            assertThrows<NotFoundException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when member does not belongs to contest`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest()
+            val member = MockEntityFactory.member(type = Member.Type.STAFF, contest = MockEntityFactory.contest())
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToStaffDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when member is not STAFF`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest()
+            val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
+            TestAuthentication.setMember(member)
+            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToStaffDashboardRoom(contestId)
             }
         }
     }

@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
+import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Component
@@ -42,6 +43,20 @@ class ApiSubmissionCreatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
+                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toWithCodeAndExecutionResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
+                room = SSERoomBuilder.buildStaffDashboardRoom(contest.id),
+                eventName = SSE.SUBMISSION_CREATED.name,
+                data = submission.toWithCodeResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
                 room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
                 eventName = SSE.SUBMISSION_CREATED.name,
                 data = submission.toResponseDTO(),
@@ -52,13 +67,6 @@ class ApiSubmissionCreatedEventListener(
                 room = SSERoomBuilder.buildGuestDashboardRoom(contest.id),
                 eventName = SSE.SUBMISSION_CREATED.name,
                 data = submission.toResponseDTO(),
-            ),
-        )
-        sseFanoutRedisMessageProducer.produce(
-            SSEFanoutMessage(
-                room = SSERoomBuilder.buildJudgeDashboardRoom(contest.id),
-                eventName = SSE.SUBMISSION_CREATED.name,
-                data = submission.toWithCodeAndExecutionResponseDTO(),
             ),
         )
     }

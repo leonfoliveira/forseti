@@ -1,6 +1,7 @@
 package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
@@ -36,16 +36,16 @@ class SSEController(
         return emitter
     }
 
-    @GetMapping("/sse/contests/{contestId}/dashboard/contestant")
-    @PreAuthorize("hasRole('CONTESTANT')")
-    fun subscribeToContestantDashboardRoom(
+    @GetMapping("/sse/contests/{contestId}/dashboard/staff")
+    @PreAuthorize("hasRole('Staff')")
+    fun subscribeToStaffDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
     ): SseEmitter {
-        logger.info("[GET] /v1/sse/contests/$contestId/dashboard/contestant (lastEventId=$lastEventId)")
-        sseAuthorizer.authorizeToContestantDashboardRoom(contestId)
+        logger.info("[GET] /v1/sse/contests/$contestId/dashboard/staff")
+        sseAuthorizer.authorizeToStaffDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        val room = SSERoomBuilder.buildContestantDashboardRoom(contestId)
+        val room = SSERoomBuilder.buildStaffDashboardRoom(contestId)
         sseHelper.subscribe(room, emitter)
         if (lastEventId != null) {
             sseHelper.emitMissedMessages(room, lastEventId, emitter)
@@ -63,6 +63,23 @@ class SSEController(
         sseAuthorizer.authorizeToJudgeDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
         val room = SSERoomBuilder.buildJudgeDashboardRoom(contestId)
+        sseHelper.subscribe(room, emitter)
+        if (lastEventId != null) {
+            sseHelper.emitMissedMessages(room, lastEventId, emitter)
+        }
+        return emitter
+    }
+
+    @GetMapping("/sse/contests/{contestId}/dashboard/contestant")
+    @PreAuthorize("hasRole('CONTESTANT')")
+    fun subscribeToContestantDashboardRoom(
+        @PathVariable contestId: UUID,
+        @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
+    ): SseEmitter {
+        logger.info("[GET] /v1/sse/contests/$contestId/dashboard/contestant (lastEventId=$lastEventId)")
+        sseAuthorizer.authorizeToContestantDashboardRoom(contestId)
+        val emitter = SseEmitter(Long.MAX_VALUE)
+        val room = SSERoomBuilder.buildContestantDashboardRoom(contestId)
         sseHelper.subscribe(room, emitter)
         if (lastEventId != null) {
             sseHelper.emitMissedMessages(room, lastEventId, emitter)

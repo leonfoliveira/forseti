@@ -48,6 +48,13 @@ class ApiClarificationPublishedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
+                room = SSERoomBuilder.buildStaffDashboardRoom(contest.id),
+                eventName = SSE.CLARIFICATION_PUBLISHED.name,
+                data = clarification.toResponseDTO(),
+            ),
+        )
+        sseFanoutRedisMessageProducer.produce(
+            SSEFanoutMessage(
                 room = SSERoomBuilder.buildContestantDashboardRoom(contest.id),
                 eventName = SSE.CLARIFICATION_PUBLISHED.name,
                 data = clarification.toResponseDTO(),

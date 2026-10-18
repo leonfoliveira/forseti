@@ -30,17 +30,6 @@ class SSEControllerTest {
     }
 
     @Test
-    fun `test subscribe to contestant dashboard room`() {
-        mvc
-            .perform(
-                get("/v1/sse/contests/$contestId/dashboard/contestant"),
-            ).andExpect(status().isOk)
-            .andExpect(request().asyncStarted())
-        verify(sseAuthorizer).authorizeToContestantDashboardRoom(contestId)
-        verify(sseHelper).subscribe(eq(SSERoomBuilder.buildContestantDashboardRoom(contestId)), any())
-    }
-
-    @Test
     fun `test subscribe to judge dashboard room`() {
         mvc
             .perform(
@@ -49,6 +38,28 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToJudgeDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildJudgeDashboardRoom(contestId)), any())
+    }
+
+    @Test
+    fun `test subscribe to staff dashboard room`() {
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/staff"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseAuthorizer).authorizeToStaffDashboardRoom(contestId)
+        verify(sseHelper).subscribe(eq(SSERoomBuilder.buildStaffDashboardRoom(contestId)), any())
+    }
+
+    @Test
+    fun `test subscribe to contestant dashboard room`() {
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/contestant"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseAuthorizer).authorizeToContestantDashboardRoom(contestId)
+        verify(sseHelper).subscribe(eq(SSERoomBuilder.buildContestantDashboardRoom(contestId)), any())
     }
 
     @Test
