@@ -4,27 +4,30 @@ import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseD
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
 @Suppress("unused")
 class DashboardController(
     private val buildAdminDashboardUseCase: BuildAdminDashboardUseCase,
+    private val buildJudgeDashboardUseCase: BuildJudgeDashboardUseCase,
+    private val buildStaffDashboardUseCase: BuildStaffDashboardUseCase,
     private val buildContestantDashboardUseCase: BuildContestantDashboardUseCase,
     private val buildGuestDashboardUseCase: BuildGuestDashboardUseCase,
-    private val buildJudgeDashboardUseCase: BuildJudgeDashboardUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -37,6 +40,32 @@ class DashboardController(
         val dashboard =
             buildAdminDashboardUseCase.execute(
                 BuildAdminDashboardUseCase.Command(contestId),
+            )
+        return ResponseEntity.ok(dashboard)
+    }
+
+    @GetMapping("/contests/{contestId}/dashboard/judge")
+    @PreAuthorize("hasRole('JUDGE')")
+    fun getJudgeDashboard(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<JudgeDashboardResponseDTO> {
+        logger.info("[GET] /v1/contests/$contestId/dashboard/judge")
+        val dashboard =
+            buildJudgeDashboardUseCase.execute(
+                BuildJudgeDashboardUseCase.Command(contestId),
+            )
+        return ResponseEntity.ok(dashboard)
+    }
+
+    @GetMapping("/contests/{contestId}/dashboard/staff")
+    @PreAuthorize("hasRole('STAFF')")
+    fun getStaffDashboard(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<StaffDashboardResponseDTO> {
+        logger.info("[GET] /v1/contests/$contestId/dashboard/staff")
+        val dashboard =
+            buildStaffDashboardUseCase.execute(
+                BuildStaffDashboardUseCase.Command(contestId),
             )
         return ResponseEntity.ok(dashboard)
     }
@@ -62,19 +91,6 @@ class DashboardController(
         val dashboard =
             buildGuestDashboardUseCase.execute(
                 BuildGuestDashboardUseCase.Command(contestId),
-            )
-        return ResponseEntity.ok(dashboard)
-    }
-
-    @GetMapping("/contests/{contestId}/dashboard/judge")
-    @PreAuthorize("hasRole('JUDGE')")
-    fun getJudgeDashboard(
-        @PathVariable contestId: UUID,
-    ): ResponseEntity<JudgeDashboardResponseDTO> {
-        logger.info("[GET] /v1/contests/$contestId/dashboard/judge")
-        val dashboard =
-            buildJudgeDashboardUseCase.execute(
-                BuildJudgeDashboardUseCase.Command(contestId),
             )
         return ResponseEntity.ok(dashboard)
     }
