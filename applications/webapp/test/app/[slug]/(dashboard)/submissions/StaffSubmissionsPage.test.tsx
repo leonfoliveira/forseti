@@ -10,8 +10,9 @@ jest.mock(
     SubmissionsPage: (props: {
       submissions: unknown[];
       problems: unknown[];
+      canDownloadAny?: boolean;
     }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}`}</div>
+      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}:${Boolean(props.canDownloadAny)}`}</div>
     ),
   }),
 );
@@ -21,6 +22,8 @@ describe("StaffSubmissionsPage", () => {
     await renderWithProviders(<StaffSubmissionsPage />, {
       staffDashboard: MockStaffDashboardResponseDTO(),
     });
-    expect(screen.getByTestId("submission-props")).toHaveTextContent("1:1");
+    expect(screen.getByTestId("submission-props")).toHaveTextContent(
+      "1:1:true",
+    );
   });
 });

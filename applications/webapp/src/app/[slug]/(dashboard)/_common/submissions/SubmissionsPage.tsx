@@ -38,6 +38,7 @@ type Props = {
     | SubmissionWithCodeAndExecutionsResponseDTO[];
   memberSubmissions?: SubmissionWithCodeResponseDTO[];
   problems: ProblemResponseDTO[];
+  canDownloadAny?: boolean;
   canViewExecutions?: boolean;
 } & (
   | {
@@ -71,6 +72,7 @@ export function SubmissionsPage({
   submissions,
   memberSubmissions,
   problems,
+  canDownloadAny,
   canViewExecutions,
   canCreate,
   onCreate,
@@ -91,7 +93,8 @@ export function SubmissionsPage({
     .toReversed();
 
   const hasCode = mergedSubmissions.some((s) => "code" in s && !!s.code);
-  const hasAnyAction = canEdit || hasCode;
+  const hasAnyAction =
+    canDownloadAny || canViewExecutions || canEdit || hasCode;
   const shouldSeeCreationComponents =
     canCreate && contestStatus === ContestStatus.IN_PROGRESS;
 
@@ -202,6 +205,7 @@ export function SubmissionsPage({
                               | SubmissionWithCodeResponseDTO
                               | SubmissionWithCodeAndExecutionsResponseDTO
                           }
+                          canDownloadAny={canDownloadAny}
                           canViewExecutions={canViewExecutions}
                           canEdit={canEdit}
                           onEdit={onEdit as any}

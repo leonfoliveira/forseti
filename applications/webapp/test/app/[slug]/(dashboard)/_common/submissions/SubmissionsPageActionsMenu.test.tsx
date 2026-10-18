@@ -64,6 +64,7 @@ describe("SubmissionsPageActionsMenu", () => {
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={MockSubmissionWithCodeAndExecutionResponseDTO()}
+        canViewExecutions
         canEdit
         onEdit={jest.fn()}
       />,
