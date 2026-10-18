@@ -7,8 +7,9 @@ export class EnumeratedTextUtil {
     return {
       [MemberType.ROOT]: "Root",
       [MemberType.ADMIN]: "Admin",
-      [MemberType.CONTESTANT]: "Contestant",
       [MemberType.JUDGE]: "Judge",
+      [MemberType.STAFF]: "Staff",
+      [MemberType.CONTESTANT]: "Contestant",
     }[type];
   }
 

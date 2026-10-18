@@ -4,6 +4,7 @@ import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashb
 import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/ContestantDashboardProvider";
 import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/GuestDashboardProvider";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/JudgeDashboardProvider";
+import { StaffDashboardProvider } from "@/app/_lib/provider/dashboard/StaffDashboardProvider";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
@@ -22,6 +23,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       return <AdminDashboardProvider>{children}</AdminDashboardProvider>;
     case MemberType.JUDGE:
       return <JudgeDashboardProvider>{children}</JudgeDashboardProvider>;
+    case MemberType.STAFF:
+      return <StaffDashboardProvider>{children}</StaffDashboardProvider>;
     case MemberType.CONTESTANT:
       if (contestStatus === ContestStatus.NOT_STARTED) {
         return <WaitPage />;

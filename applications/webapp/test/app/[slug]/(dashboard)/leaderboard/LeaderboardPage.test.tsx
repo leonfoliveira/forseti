@@ -22,18 +22,23 @@ jest.mock("@/app/[slug]/(dashboard)/leaderboard/GuestLeaderboardPage", () => ({
 jest.mock("@/app/[slug]/(dashboard)/leaderboard/JudgeLeaderboardPage", () => ({
   JudgeLeaderboardPage: () => <div data-testid="role-page">judge</div>,
 }));
+jest.mock("@/app/[slug]/(dashboard)/leaderboard/StaffLeaderboardPage", () => ({
+  StaffLeaderboardPage: () => <div data-testid="role-page">staff</div>,
+}));
 
 describe("LeaderboardPage", () => {
   it.each([
-    [MemberType.ADMIN, "admin"],
     [MemberType.ROOT, "admin"],
+    [MemberType.ADMIN, "admin"],
     [MemberType.JUDGE, "judge"],
+    [MemberType.STAFF, "staff"],
     [MemberType.CONTESTANT, "contestant"],
+    [null, "guest"],
   ])("selects the role-specific view for %s", async (type, expected) => {
     await renderWithProviders(<LeaderboardPage />, {
       session: MockSessionResponseDTO({
         member: { id: "member-1", name: "Member", type },
-      }),
+      } as any),
     });
     expect(screen.getByTestId("role-page")).toHaveTextContent(expected);
   });
