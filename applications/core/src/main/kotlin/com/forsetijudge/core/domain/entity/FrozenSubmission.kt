@@ -11,9 +11,9 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
+import org.hibernate.annotations.SQLRestriction
 import java.time.OffsetDateTime
 import java.util.UUID
-import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "frozen_submission")

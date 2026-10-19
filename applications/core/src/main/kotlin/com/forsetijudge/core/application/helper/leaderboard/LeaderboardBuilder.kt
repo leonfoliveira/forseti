@@ -10,8 +10,8 @@ import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
-import java.time.Duration
 import org.springframework.stereotype.Service
+import java.time.Duration
 
 @Service
 class LeaderboardBuilder(
