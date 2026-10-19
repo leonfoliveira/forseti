@@ -1,0 +1,20 @@
+meta {
+  name: unfreeze
+  type: http
+  seq: 8
+}
+
+patch {
+  url: {{api_url}}/v1/contests/{{contest_id}}:unfreeze
+  body: none
+  auth: inherit
+}
+
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
