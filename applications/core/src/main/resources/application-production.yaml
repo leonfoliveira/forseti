@@ -14,6 +14,7 @@ spring:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:prod-submission-queue}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:prod-submission-failed-queue}
         submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:prod-submission-judged-queue}
+        freeze-queue: ${AWS_SQS_FREEZE_QUEUE:prod-freeze-queue}
 
   # PostgreSQL database configuration
   datasource:
