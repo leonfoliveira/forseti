@@ -79,7 +79,7 @@ class SubmissionCodeAuthorizationConfig : AttachmentAuthorizationConfig() {
         }
     }
 
-    override fun authorizeGuestDownload(
+    override fun authorizeSpectatorDownload(
         contest: Contest,
         attachment: Attachment,
     ) = throw ForbiddenException("Guest users cannot download submission code attachments")

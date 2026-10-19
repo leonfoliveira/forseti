@@ -2,13 +2,13 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
-import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
@@ -27,7 +27,7 @@ class DashboardController(
     private val buildJudgeDashboardUseCase: BuildJudgeDashboardUseCase,
     private val buildStaffDashboardUseCase: BuildStaffDashboardUseCase,
     private val buildContestantDashboardUseCase: BuildContestantDashboardUseCase,
-    private val buildGuestDashboardUseCase: BuildGuestDashboardUseCase,
+    private val buildSpectatorDashboardUseCase: BuildSpectatorDashboardUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -83,14 +83,14 @@ class DashboardController(
         return ResponseEntity.ok(dashboard)
     }
 
-    @GetMapping("/contests/{contestId}/dashboard/guest")
-    fun getGuestDashboard(
+    @GetMapping("/contests/{contestId}/dashboard/spectator")
+    fun getSpectatorDashboard(
         @PathVariable contestId: UUID,
-    ): ResponseEntity<GuestDashboardResponseDTO> {
-        logger.info("[GET] /v1/contests/$contestId/dashboard/guest")
+    ): ResponseEntity<SpectatorDashboardResponseDTO> {
+        logger.info("[GET] /v1/contests/$contestId/dashboard/spectator")
         val dashboard =
-            buildGuestDashboardUseCase.execute(
-                BuildGuestDashboardUseCase.Command(contestId),
+            buildSpectatorDashboardUseCase.execute(
+                BuildSpectatorDashboardUseCase.Command(contestId),
             )
         return ResponseEntity.ok(dashboard)
     }

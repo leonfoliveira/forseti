@@ -1,6 +1,6 @@
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
-import { GuestDashboardSlice } from "@/app/_lib/store/slice/dashboard/GuestDashboardSlice";
+import { SpectatorDashboardSlice } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { JudgeDashboardSlice } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
 import { useAppDispatch } from "@/app/_lib/store/Store";
 
@@ -17,7 +17,7 @@ export function useDashboardReseter() {
     dispatch(AdminDashboardSlice.actions.reset());
     dispatch(ContestantDashboardSlice.actions.reset());
     dispatch(JudgeDashboardSlice.actions.reset());
-    dispatch(GuestDashboardSlice.actions.reset());
+    dispatch(SpectatorDashboardSlice.actions.reset());
   }
 
   return { reset };

@@ -1,11 +1,11 @@
 meta {
-  name: get_guest
+  name: get_spectator
   type: http
   seq: 5
 }
 
 get {
-  url: {{api_url}}/v1/contests/{{contest_id}}/dashboard/guest
+  url: {{api_url}}/v1/contests/{{contest_id}}/dashboard/spectator
   body: none
   auth: inherit
 }

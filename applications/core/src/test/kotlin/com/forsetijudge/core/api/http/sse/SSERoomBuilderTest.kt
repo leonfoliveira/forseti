@@ -27,10 +27,10 @@ class SSERoomBuilderTest {
     }
 
     @Test
-    fun `test buildGuestDashboardRoom`() {
+    fun `test buildSpectatorDashboardRoom`() {
         val contestId = IdGenerator.getUUID()
-        val roomName = SSERoomBuilder.buildGuestDashboardRoom(contestId)
-        assertEquals(roomName, "guest-dashboard-$contestId")
+        val roomName = SSERoomBuilder.buildSpectatorDashboardRoom(contestId)
+        assertEquals(roomName, "spectator-dashboard-$contestId")
     }
 
     @Test

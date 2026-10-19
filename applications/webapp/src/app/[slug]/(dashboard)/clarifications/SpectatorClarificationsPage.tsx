@@ -3,10 +3,10 @@ import React from "react";
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
 
-export function GuestClarificationsPage() {
-  const problems = useAppSelector((state) => state.guestDashboard.problems);
+export function SpectatorClarificationsPage() {
+  const problems = useAppSelector((state) => state.spectatorDashboard.problems);
   const clarifications = useAppSelector(
-    (state) => state.guestDashboard.clarifications,
+    (state) => state.spectatorDashboard.clarifications,
   );
 
   return (

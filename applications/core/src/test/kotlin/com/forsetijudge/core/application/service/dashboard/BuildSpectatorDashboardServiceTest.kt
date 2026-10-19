@@ -6,7 +6,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
-import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -20,13 +20,18 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.time.OffsetDateTime
 
-class BuildGuestDashboardServiceTest {
+class BuildSpectatorDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
-        BuildGuestDashboardService(contestRepository, submissionRepository, clarificationRepository, leaderboardBuilder)
+        BuildSpectatorDashboardService(
+            contestRepository,
+            submissionRepository,
+            clarificationRepository,
+            leaderboardBuilder,
+        )
 
     @Test
     fun `builds public dashboard after contest starts`() {
@@ -37,23 +42,23 @@ class BuildGuestDashboardServiceTest {
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestIdAndIsPublic(contest.id)).thenReturn(emptyList())
 
-        assertEquals(contest.id, service.execute(BuildGuestDashboardUseCase.Command(contest.id)).contest.id)
+        assertEquals(contest.id, service.execute(BuildSpectatorDashboardUseCase.Command(contest.id)).contest.id)
         verify(leaderboardBuilder).build(contest)
     }
 
     @Test
-    fun `rejects guest before contest starts and missing contest`() {
+    fun `rejects spectator before contest starts and missing contest`() {
         TestAuthentication.clear()
         val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         assertThrows(ForbiddenException::class.java) {
-            service.execute(BuildGuestDashboardUseCase.Command(contest.id))
+            service.execute(BuildSpectatorDashboardUseCase.Command(contest.id))
         }
         verify(leaderboardBuilder, never()).build(any())
 
         whenever(contestRepository.findById(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {
-            service.execute(BuildGuestDashboardUseCase.Command(contest.id))
+            service.execute(BuildSpectatorDashboardUseCase.Command(contest.id))
         }
     }
 }

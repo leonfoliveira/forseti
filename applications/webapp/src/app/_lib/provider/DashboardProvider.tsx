@@ -2,7 +2,7 @@ import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashboardProvider";
 import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/ContestantDashboardProvider";
-import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/GuestDashboardProvider";
+import { SpectatorDashboardProvider } from "@/app/_lib/provider/dashboard/SpectatorDashboardProvider";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/JudgeDashboardProvider";
 import { StaffDashboardProvider } from "@/app/_lib/provider/dashboard/StaffDashboardProvider";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -36,6 +36,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
       if (contestStatus === ContestStatus.NOT_STARTED) {
         return <WaitPage />;
       }
-      return <GuestDashboardProvider>{children}</GuestDashboardProvider>;
+      return (
+        <SpectatorDashboardProvider>{children}</SpectatorDashboardProvider>
+      );
   }
 }

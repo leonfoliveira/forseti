@@ -64,7 +64,7 @@ class ApiSubmissionCreatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildGuestDashboardRoom(contest.id),
+                room = SSERoomBuilder.buildSpectatorDashboardRoom(contest.id),
                 eventName = SSE.SUBMISSION_CREATED.name,
                 data = submission.toResponseDTO(),
             ),

@@ -2,8 +2,8 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
-import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -20,7 +20,7 @@ class DashboardControllerTest {
     private val buildJudgeDashboardUseCase = mock<BuildJudgeDashboardUseCase>()
     private val buildStaffDashboardUseCase = mock<BuildStaffDashboardUseCase>()
     private val buildContestantDashboardUseCase = mock<BuildContestantDashboardUseCase>()
-    private val buildGuestDashboardUseCase = mock<BuildGuestDashboardUseCase>()
+    private val buildSpectatorDashboardUseCase = mock<BuildSpectatorDashboardUseCase>()
 
     private val mvc =
         MockMvcTestSupport.mvc(
@@ -29,7 +29,7 @@ class DashboardControllerTest {
                 buildJudgeDashboardUseCase,
                 buildStaffDashboardUseCase,
                 buildContestantDashboardUseCase,
-                buildGuestDashboardUseCase,
+                buildSpectatorDashboardUseCase,
             ),
         )
     private val contestId = UUID.randomUUID()
@@ -56,8 +56,8 @@ class DashboardControllerTest {
                 contestId,
             ),
         )
-        whenever(buildGuestDashboardUseCase.execute(any())).thenReturn(
-            MockMvcTestSupport.guestDashboardResponse(
+        whenever(buildSpectatorDashboardUseCase.execute(any())).thenReturn(
+            MockMvcTestSupport.spectatorDashboardResponse(
                 contestId,
             ),
         )
@@ -87,9 +87,9 @@ class DashboardControllerTest {
         verify(buildContestantDashboardUseCase).execute(BuildContestantDashboardUseCase.Command(contestId))
 
         mvc
-            .perform(get("/v1/contests/$contestId/dashboard/guest"))
+            .perform(get("/v1/contests/$contestId/dashboard/spectator"))
             .andExpect(status().isOk)
             .andExpect(jsonPath("$.contest.id").value(contestId.toString()))
-        verify(buildGuestDashboardUseCase).execute(BuildGuestDashboardUseCase.Command(contestId))
+        verify(buildSpectatorDashboardUseCase).execute(BuildSpectatorDashboardUseCase.Command(contestId))
     }
 }

@@ -61,7 +61,7 @@ class ProblemTestCasesAuthorizationConfig : AttachmentAuthorizationConfig() {
         attachment: Attachment,
     ) = throw ForbiddenException("Contestants cannot download test cases attachments")
 
-    override fun authorizeGuestDownload(
+    override fun authorizeSpectatorDownload(
         contest: Contest,
         attachment: Attachment,
     ) = throw ForbiddenException("Guest users cannot download test cases attachments")

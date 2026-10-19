@@ -59,7 +59,7 @@ class ExecutionDetailsAuthorizationConfig : AttachmentAuthorizationConfig() {
         attachment: Attachment,
     ) = throw ForbiddenException("Contestants cannot download execution details attachments")
 
-    override fun authorizeGuestDownload(
+    override fun authorizeSpectatorDownload(
         contest: Contest,
         attachment: Attachment,
     ) = throw ForbiddenException("Guest users cannot download execution details attachments")

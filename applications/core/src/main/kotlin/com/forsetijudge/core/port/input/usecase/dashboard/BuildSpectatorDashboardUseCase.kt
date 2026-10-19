@@ -1,0 +1,24 @@
+package com.forsetijudge.core.port.input.usecase.dashboard
+
+import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardResponseDTO
+import java.util.UUID
+
+interface BuildSpectatorDashboardUseCase {
+    /**
+     * Builds the spectator dashboard by aggregating various metrics and information relevant to spectators.
+     *
+     * @param command The command containing the necessary parameters to build the spectator dashboard.
+     *
+     * @return An GuestDashboardResultDTO containing the aggregated data for the spectator dashboard.
+     */
+    fun execute(command: Command): SpectatorDashboardResponseDTO
+
+    /**
+     * Command for building the spectator dashboard.
+     *
+     * @param contestId The unique identifier of the contest for which the spectator dashboard is being built.
+     */
+    data class Command(
+        val contestId: UUID,
+    )
+}

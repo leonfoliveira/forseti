@@ -62,7 +62,7 @@ class ApiAnnouncementCreatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildGuestDashboardRoom(contest.id),
+                room = SSERoomBuilder.buildSpectatorDashboardRoom(contest.id),
                 eventName = SSE.ANNOUNCEMENT_CREATED.name,
                 data = announcement.toResponseDTO(),
             ),

@@ -10,7 +10,7 @@ abstract class AttachmentAuthorizationConfig {
      * Authorizes the upload of an attachment in a contest by a member.
      *
      * @param contest The contest where the attachment is being uploaded.
-     * @param member The member attempting the upload, or null if the user is a guest
+     * @param member The member attempting the upload, or null if the user is a spectator
      * @throws ForbiddenException if the upload is not authorized.
      */
     fun authorizeUpload(
@@ -29,7 +29,7 @@ abstract class AttachmentAuthorizationConfig {
             Member.Type.CONTESTANT,
             -> authorizeContestantUpload(contest, member)
 
-            null -> throw ForbiddenException("Guests cannot upload attachments")
+            null -> throw ForbiddenException("Spectators cannot upload attachments")
         }
     }
 
@@ -38,7 +38,7 @@ abstract class AttachmentAuthorizationConfig {
      * Authorizes the download of an attachment in a contest by a member.
      *
      * @param contest The contest where the attachment is being downloaded.
-     * @param member The member attempting the download, or null if the user is a guest
+     * @param member The member attempting the download, or null if the user is a spectator
      * @param attachment The attachment being downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
@@ -59,7 +59,7 @@ abstract class AttachmentAuthorizationConfig {
             Member.Type.CONTESTANT,
             -> authorizeContestantDownload(contest, member, attachment)
 
-            null -> authorizeGuestDownload(contest, attachment)
+            null -> authorizeSpectatorDownload(contest, attachment)
         }
     }
 
@@ -172,13 +172,13 @@ abstract class AttachmentAuthorizationConfig {
     )
 
     /**
-     * Authorizes the download of an attachment in a contest by a guest user.
+     * Authorizes the download of an attachment in a contest by a spectator user.
      *
      * @param contest The contest where the attachment is being downloaded.
      * @param attachment The attachment being downloaded.
      * @throws ForbiddenException if the download is not authorized.
      */
-    abstract fun authorizeGuestDownload(
+    abstract fun authorizeSpectatorDownload(
         contest: Contest,
         attachment: Attachment,
     )

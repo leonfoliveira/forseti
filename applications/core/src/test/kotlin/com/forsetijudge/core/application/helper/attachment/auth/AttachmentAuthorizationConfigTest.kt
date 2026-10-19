@@ -40,7 +40,7 @@ class AttachmentAuthorizationConfigTest {
             assertEquals(expected, config.calls.last())
         }
         config.authorizeDownload(contest, null, attachment)
-        assertEquals("guest-download", config.calls.last())
+        assertEquals("spectator-download", config.calls.last())
     }
 
     @Test
@@ -211,11 +211,11 @@ class AttachmentAuthorizationConfigTest {
             calls += "contestant-download"
         }
 
-        override fun authorizeGuestDownload(
+        override fun authorizeSpectatorDownload(
             contest: Contest,
             attachment: Attachment,
         ) {
-            calls += "guest-download"
+            calls += "spectator-download"
         }
     }
 }

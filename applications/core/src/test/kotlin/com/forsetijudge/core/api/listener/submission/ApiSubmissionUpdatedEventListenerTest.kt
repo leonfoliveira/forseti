@@ -70,13 +70,13 @@ class ApiSubmissionUpdatedEventListenerTest {
                 "judge-dashboard-${contest.id}",
                 "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
-                "guest-dashboard-${contest.id}",
+                "spectator-dashboard-${contest.id}",
                 "member-private-${member.id}",
                 "admin-dashboard-${contest.id}",
                 "judge-dashboard-${contest.id}",
                 "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
-                "guest-dashboard-${contest.id}",
+                "spectator-dashboard-${contest.id}",
             )
         assertEquals(expectedRooms, messages.allValues.map(SSEFanoutMessage::room))
         assertEquals(

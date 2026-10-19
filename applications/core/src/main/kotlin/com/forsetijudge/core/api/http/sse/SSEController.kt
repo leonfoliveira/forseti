@@ -87,15 +87,15 @@ class SSEController(
         return emitter
     }
 
-    @GetMapping("/sse/contests/{contestId}/dashboard/guest")
-    fun subscribeToGuestDashboardRoom(
+    @GetMapping("/sse/contests/{contestId}/dashboard/spectator")
+    fun subscribeToSpectatorDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
     ): SseEmitter {
-        logger.info("[GET] /v1/sse/contests/$contestId/dashboard/guest")
-        sseAuthorizer.authorizeToGuestDashboardRoom(contestId)
+        logger.info("[GET] /v1/sse/contests/$contestId/dashboard/spectator")
+        sseAuthorizer.authorizeToSpectatorDashboardRoom(contestId)
         val emitter = SseEmitter(Long.MAX_VALUE)
-        val room = SSERoomBuilder.buildGuestDashboardRoom(contestId)
+        val room = SSERoomBuilder.buildSpectatorDashboardRoom(contestId)
         sseHelper.subscribe(room, emitter)
         if (lastEventId != null) {
             sseHelper.emitMissedMessages(room, lastEventId, emitter)

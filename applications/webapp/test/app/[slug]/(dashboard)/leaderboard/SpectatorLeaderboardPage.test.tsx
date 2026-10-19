@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 
-import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/GuestLeaderboardPage";
+import { SpectatorLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/SpectatorLeaderboardPage";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { MockGuestDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MockSpectatorDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/leaderboard/LeaderboardPage",
@@ -19,10 +19,10 @@ jest.mock(
   }),
 );
 
-describe("GuestLeaderboardPage", () => {
-  it("passes guest dashboard data to the shared page", async () => {
-    await renderWithProviders(<GuestLeaderboardPage />, {
-      guestDashboard: MockGuestDashboardResponseDTO() as never,
+describe("SpectatorLeaderboardPage", () => {
+  it("passes spectator dashboard data to the shared page", async () => {
+    await renderWithProviders(<SpectatorLeaderboardPage />, {
+      spectatorDashboard: MockSpectatorDashboardResponseDTO() as never,
     });
     expect(screen.getByTestId("leaderboard-props")).toHaveTextContent("1:1");
   });

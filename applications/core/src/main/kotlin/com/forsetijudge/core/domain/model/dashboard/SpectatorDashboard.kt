@@ -9,7 +9,7 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 
 /**
- * Represents the data to be displayed on the guest (not signed-in) dashboard of a contest.
+ * Represents the data to be displayed on the spectator (not signed-in) dashboard of a contest.
  *
  * @property contest The contest for which the dashboard is being displayed.
  * @property leaderboard The current leaderboard of the contest.
@@ -19,7 +19,7 @@ import com.forsetijudge.core.domain.model.Leaderboard
  * @property announcements The list of announcements related to the contest.
  * @property clarifications The list of clarifications related to the contest.
  */
-data class GuestDashboard(
+data class SpectatorDashboard(
     val contest: Contest,
     val leaderboard: Leaderboard,
     val members: List<Member>,

@@ -1,7 +1,7 @@
 import { DashboardRepository } from "@/port/output/repository/DashboardRepository";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
@@ -48,11 +48,11 @@ export class AxiosDashboardRepository implements DashboardRepository {
     return response.data;
   }
 
-  async getGuestDashboard(
+  async getSpectatorDashboard(
     contestId: string,
-  ): Promise<GuestDashboardResponseDTO> {
-    const response = await this.axiosClient.get<GuestDashboardResponseDTO>(
-      `${this.basePath(contestId)}/guest`,
+  ): Promise<SpectatorDashboardResponseDTO> {
+    const response = await this.axiosClient.get<SpectatorDashboardResponseDTO>(
+      `${this.basePath(contestId)}/spectator`,
     );
     return response.data;
   }

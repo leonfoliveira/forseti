@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 
-import { GuestSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/GuestSubmissionsPage";
+import { SpectatorSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/SpectatorSubmissionsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { MockGuestDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MockSpectatorDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",
@@ -16,10 +16,10 @@ jest.mock(
   }),
 );
 
-describe("GuestSubmissionsPage", () => {
-  it("passes guest submission and problem data to the shared view", async () => {
-    await renderWithProviders(<GuestSubmissionsPage />, {
-      guestDashboard: MockGuestDashboardResponseDTO() as never,
+describe("SpectatorSubmissionsPage", () => {
+  it("passes spectator submission and problem data to the shared view", async () => {
+    await renderWithProviders(<SpectatorSubmissionsPage />, {
+      spectatorDashboard: MockSpectatorDashboardResponseDTO() as never,
     });
     expect(screen.getByTestId("submission-props")).toHaveTextContent("1:1");
   });

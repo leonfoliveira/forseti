@@ -11,8 +11,8 @@ jest.mock("@/app/[slug]/(dashboard)/problems/AdminProblemsPage", () => ({
 jest.mock("@/app/[slug]/(dashboard)/problems/ContestantProblemsPage", () => ({
   ContestantProblemsPage: () => <div data-testid="role-page">contestant</div>,
 }));
-jest.mock("@/app/[slug]/(dashboard)/problems/GuestProblemsPage", () => ({
-  GuestProblemsPage: () => <div data-testid="role-page">guest</div>,
+jest.mock("@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage", () => ({
+  SpectatorProblemsPage: () => <div data-testid="role-page">spectator</div>,
 }));
 jest.mock("@/app/[slug]/(dashboard)/problems/JudgeProblemsPage", () => ({
   JudgeProblemsPage: () => <div data-testid="role-page">judge</div>,
@@ -28,7 +28,7 @@ describe("ProblemsPage", () => {
     [MemberType.STAFF, "staff"],
     [MemberType.JUDGE, "judge"],
     [MemberType.CONTESTANT, "contestant"],
-    [null, "guest"],
+    [null, "spectator"],
   ])("selects the role-specific view for %s", async (type, expected) => {
     await renderWithProviders(<ProblemsPage />, {
       session: MockSessionResponseDTO({
@@ -38,8 +38,8 @@ describe("ProblemsPage", () => {
     expect(screen.getByTestId("role-page")).toHaveTextContent(expected);
   });
 
-  it("uses guest problems without a session", async () => {
+  it("uses spectator problems without a session", async () => {
     await renderWithProviders(<ProblemsPage />, { session: null });
-    expect(screen.getByTestId("role-page")).toHaveTextContent("guest");
+    expect(screen.getByTestId("role-page")).toHaveTextContent("spectator");
   });
 });

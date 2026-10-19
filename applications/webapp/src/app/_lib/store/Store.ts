@@ -6,7 +6,7 @@ import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
-import { GuestDashboardSlice } from "@/app/_lib/store/slice/dashboard/GuestDashboardSlice";
+import { SpectatorDashboardSlice } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { JudgeDashboardSlice } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
 import { StaffDashboardSlice } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
 import { SessionSlice } from "@/app/_lib/store/slice/SessionSlice";
@@ -19,7 +19,7 @@ const rootReducer = combineReducers({
   judgeDashboard: JudgeDashboardSlice.reducer,
   staffDashboard: StaffDashboardSlice.reducer,
   contestantDashboard: ContestantDashboardSlice.reducer,
-  guestDashboard: GuestDashboardSlice.reducer,
+  spectatorDashboard: SpectatorDashboardSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

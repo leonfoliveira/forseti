@@ -3,10 +3,10 @@ package com.forsetijudge.core.application.service.dashboard
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.exception.NotFoundException
-import com.forsetijudge.core.domain.model.dashboard.GuestDashboard
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
+import com.forsetijudge.core.domain.model.dashboard.SpectatorDashboard
+import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
-import com.forsetijudge.core.port.input.usecase.dashboard.BuildGuestDashboardUseCase
+import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
@@ -15,24 +15,24 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class BuildGuestDashboardService(
+class BuildSpectatorDashboardService(
     private val contestRepository: ContestRepository,
     private val submissionRepository: SubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
-) : BuildGuestDashboardUseCase {
+) : BuildSpectatorDashboardUseCase {
     private val logger = SafeLogger(this::class)
 
     /**
-     * Builds the guest dashboard by aggregating various metrics and information relevant to guests.
+     * Builds the spectator dashboard by aggregating various metrics and information relevant to spectators.
      *
-     * @param command The command containing the necessary parameters to build the guest dashboard.
+     * @param command The command containing the necessary parameters to build the spectator dashboard.
      *
-     * @return An GuestDashboardResultDTO containing the aggregated data for the guest dashboard.
+     * @return An BuildSpectatorDashboardUseCase containing the aggregated data for the spectator dashboard.
      */
     @Transactional(readOnly = true)
-    override fun execute(command: BuildGuestDashboardUseCase.Command): GuestDashboardResponseDTO {
-        logger.info("Building guest dashboard")
+    override fun execute(command: BuildSpectatorDashboardUseCase.Command): SpectatorDashboardResponseDTO {
+        logger.info("Building spectator dashboard")
 
         val contest =
             contestRepository.findById(command.contestId)
@@ -47,7 +47,7 @@ class BuildGuestDashboardService(
         val clarifications = clarificationRepository.findAllByContestIdAndIsPublic(contest.id)
 
         val dashboard =
-            GuestDashboard(
+            SpectatorDashboard(
                 contest = contest,
                 leaderboard = leaderboard,
                 members = contest.members,

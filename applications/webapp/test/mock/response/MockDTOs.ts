@@ -17,7 +17,7 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
@@ -301,9 +301,9 @@ export const MockContestantDashboardResponseDTO = (
   ...overrides,
 });
 
-export const MockGuestDashboardResponseDTO = (
-  overrides: Partial<GuestDashboardResponseDTO> = {},
-): GuestDashboardResponseDTO => ({
+export const MockSpectatorDashboardResponseDTO = (
+  overrides: Partial<SpectatorDashboardResponseDTO> = {},
+): SpectatorDashboardResponseDTO => ({
   contest: MockContestResponseDTO(),
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberResponseDTO()],

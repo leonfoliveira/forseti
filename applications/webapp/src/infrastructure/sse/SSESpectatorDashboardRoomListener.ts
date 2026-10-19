@@ -1,16 +1,16 @@
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { GuestDashboardRoomListener } from "@/port/output/sse/GuestDashboardRoomListener";
+import { SpectatorDashboardRoomListener } from "@/port/output/sse/SpectatorDashboardRoomListener";
 import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 
-export class SSEGuestDashboardRoomListener
+export class SSESpectatorDashboardRoomListener
   extends SSERoomListener
-  implements GuestDashboardRoomListener
+  implements SpectatorDashboardRoomListener
 {
   private basePath = (contestId: string) =>
-    `/v1/sse/contests/${contestId}/dashboard/guest`;
+    `/v1/sse/contests/${contestId}/dashboard/spectator`;
 
   constructor(apiUrl: string) {
     super(apiUrl);

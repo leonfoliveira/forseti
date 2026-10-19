@@ -1,8 +1,10 @@
-import { SSEGuestDashboardRoomListener } from "@/infrastructure/sse/SSEGuestDashboardRoomListener";
+import { SSESpectatorDashboardRoomListener } from "@/infrastructure/sse/SSESpectatorDashboardRoomListener";
 import { eventSource } from "@/test/jest.setup";
 
-describe("SSEGuestDashboardRoomListener", () => {
-  const listener = new SSEGuestDashboardRoomListener("http://localhost:8080");
+describe("SSESpectatorDashboardRoomListener", () => {
+  const listener = new SSESpectatorDashboardRoomListener(
+    "http://localhost:8080",
+  );
 
   it("should subscribe to SSE", async () => {
     const contestId = "contest-1";

@@ -3,9 +3,9 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 
-export interface GuestDashboardRoomListener {
+export interface SpectatorDashboardRoomListener {
   /**
-   * Subscribes to the guest dashboard room for the specified contest.
+   * Subscribes to the spectator dashboard room for the specified contest.
    *
    * @param contestId The ID of the contest to subscribe to.
    * @param listeners An object containing the event listeners.
@@ -31,7 +31,7 @@ export interface GuestDashboardRoomListener {
   ): Promise<void>;
 
   /**
-   * Unsubscribes from the guest dashboard room.
+   * Unsubscribes from the spectator dashboard room.
    *
    * @returns A promise that resolves when the unsubscription is successful.
    */

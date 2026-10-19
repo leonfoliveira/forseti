@@ -17,9 +17,9 @@ jest.mock(
   }),
 );
 jest.mock(
-  "@/app/[slug]/(dashboard)/announcements/GuestAnnouncementsPage",
+  "@/app/[slug]/(dashboard)/announcements/SpectatorAnnouncementsPage",
   () => ({
-    GuestAnnouncementsPage: () => <span data-testid="guest-page" />,
+    SpectatorAnnouncementsPage: () => <span data-testid="spectator-page" />,
   }),
 );
 jest.mock(
@@ -42,7 +42,7 @@ describe("AnnouncementsPage", () => {
     [MemberType.JUDGE, "judge-page"],
     [MemberType.STAFF, "staff-page"],
     [MemberType.CONTESTANT, "contestant-page"],
-    [null, "guest-page"],
+    [null, "spectator-page"],
   ])(
     "should render correct page for member type",
     async (memberType, expectedTestId) => {

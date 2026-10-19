@@ -59,7 +59,7 @@ jest.mock("@/app/_lib/component/shadcn/separator", () => ({
 }));
 
 describe("SignInPage", () => {
-  it("renders login and guest entry controls", async () => {
+  it("renders login and spectator entry controls", async () => {
     await renderWithProviders(<SignInPage />, {
       contest: MockContestResponseDTO(),
       session: null,
@@ -68,6 +68,6 @@ describe("SignInPage", () => {
     expect(screen.getByTestId("login")).toBeInTheDocument();
     expect(screen.getByTestId("password")).toHaveAttribute("type", "password");
     expect(screen.getByTestId("sign-in")).toBeInTheDocument();
-    expect(screen.getByTestId("enter-guest")).toBeInTheDocument();
+    expect(screen.getByTestId("enter-spectator")).toBeInTheDocument();
   });
 });

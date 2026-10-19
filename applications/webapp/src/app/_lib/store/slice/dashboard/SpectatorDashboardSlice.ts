@@ -3,29 +3,29 @@ import { createSlice } from "@reduxjs/toolkit";
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
 import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
-export type GuestDashboardState = GuestDashboardResponseDTO;
+export type SpectatorDashboardState = SpectatorDashboardResponseDTO;
 
 /**
  * Redux slice for the guest dashboard data.
  */
-export const GuestDashboardSlice = createSlice({
-  name: "guestDashboard",
+export const SpectatorDashboardSlice = createSlice({
+  name: "spectatorDashboard",
   initialState: {
     listenerStatus: ListenerStatus.DISCONNECTED,
-  } as unknown as GuestDashboardState,
+  } as unknown as SpectatorDashboardState,
   reducers: {
-    set(state, action: { payload: GuestDashboardResponseDTO }) {
+    set(state, action: { payload: SpectatorDashboardResponseDTO }) {
       return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
     },
     reset() {
-      return {} as unknown as GuestDashboardState;
+      return {} as unknown as SpectatorDashboardState;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;

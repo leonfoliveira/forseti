@@ -1,22 +1,22 @@
 import { act, screen } from "@testing-library/react";
 
-import { GuestDashboardProvider } from "@/app/_lib/provider/dashboard/GuestDashboardProvider";
+import { SpectatorDashboardProvider } from "@/app/_lib/provider/dashboard/SpectatorDashboardProvider";
 import { Composition } from "@/config/composition";
 import {
-  MockGuestDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
   MockContestResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
-describe("GuestDashboardProvider", () => {
-  it("fetches guest dashboard data and renders children when initialized", async () => {
+describe("SpectatorDashboardProvider", () => {
+  it("fetches spectator dashboard data and renders children when initialized", async () => {
     (
-      Composition.dashboardReader.getGuestDashboard as jest.Mock
-    ).mockResolvedValue(MockGuestDashboardResponseDTO());
+      Composition.dashboardReader.getSpectatorDashboard as jest.Mock
+    ).mockResolvedValue(MockSpectatorDashboardResponseDTO());
     await renderWithProviders(
-      <GuestDashboardProvider>
+      <SpectatorDashboardProvider>
         <span data-testid="child">Ready</span>
-      </GuestDashboardProvider>,
+      </SpectatorDashboardProvider>,
       {
         contest: MockContestResponseDTO(),
         session: null,
@@ -26,22 +26,24 @@ describe("GuestDashboardProvider", () => {
       await Promise.resolve();
       await Promise.resolve();
     });
-    expect(Composition.dashboardReader.getGuestDashboard).toHaveBeenCalledWith(
-      "contest-1",
-    );
-    expect(Composition.guestDashboardRoomListener.subscribe).toHaveBeenCalled();
+    expect(
+      Composition.dashboardReader.getSpectatorDashboard,
+    ).toHaveBeenCalledWith("contest-1");
+    expect(
+      Composition.spectatorDashboardRoomListener.subscribe,
+    ).toHaveBeenCalled();
     expect(screen.getByTestId("child")).toHaveTextContent("Ready");
   });
 
   it("renders the error view when fetching fails", async () => {
     (
-      Composition.dashboardReader.getGuestDashboard as jest.Mock
+      Composition.dashboardReader.getSpectatorDashboard as jest.Mock
     ).mockRejectedValue(new Error("network"));
     jest.spyOn(console, "error").mockImplementation(() => {});
     await renderWithProviders(
-      <GuestDashboardProvider>
-        <span>Guest</span>
-      </GuestDashboardProvider>,
+      <SpectatorDashboardProvider>
+        <span>Spectator</span>
+      </SpectatorDashboardProvider>,
       {
         contest: MockContestResponseDTO(),
         session: null,

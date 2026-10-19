@@ -37,10 +37,10 @@ import { SSEAdminDashboardRoomListener } from "@/infrastructure/sse/SSEAdminDash
 import { SSEMemberPrivateRoomListener } from "@/infrastructure/sse/SSEMemberPrivateRoomListener";
 import { SSEJudgeDashboardRoomListener } from "@/infrastructure/sse/SSEJudgeDashboardRoomListener";
 import { SSEContestantDashboardRoomListener } from "@/infrastructure/sse/SSEContestantDashboardRoomListener";
-import { SSEGuestDashboardRoomListener } from "@/infrastructure/sse/SSEGuestDashboardRoomListener";
+import { SSESpectatorDashboardRoomListener } from "@/infrastructure/sse/SSESpectatorDashboardRoomListener";
 import { AdminDashboardRoomListener } from "@/port/output/sse/AdminDashboardRoomListener";
 import { ContestantDashboardRoomListener } from "@/port/output/sse/ContestantDashboardRoomListener";
-import { GuestDashboardRoomListener } from "@/port/output/sse/GuestDashboardRoomListener";
+import { SpectatorDashboardRoomListener } from "@/port/output/sse/SpectatorDashboardRoomListener";
 import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoomListener";
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
 import { SSEStaffDashboardRoomListener } from "@/infrastructure/sse/SSEStaffDashboardRoomListener";
@@ -92,7 +92,7 @@ const staffDashboardRoomListener = new SSEStaffDashboardRoomListener(
 const contestantDashboardRoomListener = new SSEContestantDashboardRoomListener(
   env.apiUrl,
 );
-const guestDashboardRoomListener = new SSEGuestDashboardRoomListener(
+const spectatorDashboardRoomListener = new SSESpectatorDashboardRoomListener(
   env.apiUrl,
 );
 const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.apiUrl);
@@ -115,7 +115,7 @@ const Composition: {
   judgeDashboardRoomListener: JudgeDashboardRoomListener;
   staffDashboardRoomListener: StaffDashboardRoomListener;
   contestantDashboardRoomListener: ContestantDashboardRoomListener;
-  guestDashboardRoomListener: GuestDashboardRoomListener;
+  spectatorDashboardRoomListener: SpectatorDashboardRoomListener;
   memberPrivateRoomListener: MemberPrivateRoomListener;
 } = {
   attachmentReader: attachmentService,
@@ -135,7 +135,7 @@ const Composition: {
   judgeDashboardRoomListener: judgeDashboardRoomListener,
   staffDashboardRoomListener: staffDashboardRoomListener,
   contestantDashboardRoomListener: contestantDashboardRoomListener,
-  guestDashboardRoomListener: guestDashboardRoomListener,
+  spectatorDashboardRoomListener: spectatorDashboardRoomListener,
   memberPrivateRoomListener: memberPrivateRoomListener,
 };
 
