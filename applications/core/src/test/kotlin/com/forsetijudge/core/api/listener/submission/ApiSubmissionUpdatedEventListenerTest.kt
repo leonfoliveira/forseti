@@ -14,8 +14,6 @@ import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndE
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -28,6 +26,8 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
+import java.util.UUID
 
 class ApiSubmissionUpdatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
