@@ -2,6 +2,7 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export interface SpectatorDashboardRoomListener {
   /**
@@ -25,6 +26,11 @@ export interface SpectatorDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_FROZEN: () => void;
+      CONTEST_UNFROZEN: (data: {
+        leaderboard: LeaderboardResponseDTO;
+        submissions: SubmissionResponseDTO[];
+      }) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

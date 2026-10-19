@@ -4,6 +4,7 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { ContestantDashboardRoomListener } from "@/port/output/sse/ContestantDashboardRoomListener";
 import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 export class SSEContestantDashboardRoomListener
   extends SSERoomListener
@@ -28,11 +29,16 @@ export class SSEContestantDashboardRoomListener
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_FROZEN: () => void;
+      CONTEST_UNFROZEN: (data: {
+        leaderboard: LeaderboardResponseDTO;
+        submissions: SubmissionResponseDTO[];
+      }) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,
   ): Promise<void> {
-    return super.subscribe(
+    return super._subscribe(
       this.basePath(contestId),
       listeners,
       onDisconnect,

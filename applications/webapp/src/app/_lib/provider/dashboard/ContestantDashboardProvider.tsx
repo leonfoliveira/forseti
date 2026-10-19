@@ -17,6 +17,7 @@ import { ClarificationResponseDTO } from "@/port/dto/response/clarification/Clar
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -51,6 +52,8 @@ export function ContestantDashboardProvider({
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_FROZEN: receiveContestFrozen,
+            CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -179,6 +182,21 @@ export function ContestantDashboardProvider({
       ContestantDashboardSlice.actions.mergeClarification(clarification),
     );
     toast.info(`A clarification has been published`);
+  }
+
+  function receiveContestFrozen() {
+    console.debug("Received contest frozen");
+    dispatch(ContestantDashboardSlice.actions.freeze());
+    toast.info("The contest has been frozen");
+  }
+
+  function receiveContestUnfrozen(data: {
+    leaderboard: LeaderboardResponseDTO;
+    submissions: SubmissionResponseDTO[];
+  }) {
+    console.debug("Received contest unfrozen");
+    dispatch(ContestantDashboardSlice.actions.unfreeze(data));
+    toast.info("The contest has been unfrozen");
   }
 
   if (state.isLoading) {

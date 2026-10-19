@@ -15,6 +15,7 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 /**
  * Provider component for fetching spectator dashboard data and setting up sse listeners.
@@ -49,6 +50,8 @@ export function SpectatorDashboardProvider({
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_FROZEN: receiveContestFrozen,
+            CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -120,6 +123,21 @@ export function SpectatorDashboardProvider({
     console.debug("Received clarification published:", clarification);
     dispatch(SpectatorDashboardSlice.actions.mergeClarification(clarification));
     toast.info(`A clarification has been published`);
+  }
+
+  function receiveContestFrozen() {
+    console.debug("Received contest frozen");
+    dispatch(SpectatorDashboardSlice.actions.freeze());
+    toast.info("The contest has been frozen");
+  }
+
+  function receiveContestUnfrozen(data: {
+    leaderboard: LeaderboardResponseDTO;
+    submissions: SubmissionResponseDTO[];
+  }) {
+    console.debug("Received contest unfrozen");
+    dispatch(SpectatorDashboardSlice.actions.unfreeze(data));
+    toast.info("The contest has been unfrozen");
   }
 
   if (state.isLoading) {

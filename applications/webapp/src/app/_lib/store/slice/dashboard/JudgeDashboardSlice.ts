@@ -57,5 +57,24 @@ export const JudgeDashboardSlice = createSlice({
         action.payload,
       );
     },
+    freeze(state) {
+      state.contest.isFrozen = true;
+    },
+    unfreeze(
+      state,
+      action: {
+        payload: {
+          leaderboard: LeaderboardResponseDTO;
+          submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
+        };
+      },
+    ) {
+      state.contest.isFrozen = false;
+      state.leaderboard = action.payload.leaderboard;
+      state.submissions = EntityUtil.mergeBatch(
+        state.submissions,
+        action.payload.submissions,
+      );
+    },
   },
 });
