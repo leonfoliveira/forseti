@@ -15,6 +15,7 @@ object MockEntityFactory {
         id: UUID = UUID.randomUUID(),
         startAt: OffsetDateTime = OffsetDateTime.now().minusHours(1),
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
+        freezeAt: OffsetDateTime? = null,
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
@@ -23,6 +24,7 @@ object MockEntityFactory {
         languages = listOf(Submission.Language.CPP_17),
         startAt = startAt,
         endAt = endAt,
+        freezeAt = freezeAt,
         problems = problems,
     )
 

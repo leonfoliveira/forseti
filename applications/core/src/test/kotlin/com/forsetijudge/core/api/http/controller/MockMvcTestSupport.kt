@@ -68,6 +68,7 @@ internal object MockMvcTestSupport {
             languages = listOf(Submission.Language.CPP_17),
             startAt = timestamp.plusHours(1),
             endAt = timestamp.plusHours(2),
+            isFrozen = false,
             members = emptyList(),
             problems = emptyList(),
             version = 1,
