@@ -25,11 +25,11 @@ export class Actor {
     const loginInput = signInForm.getByLabel("Login");
     const passwordInput = signInForm.getByLabel("Password");
     const signInButton = signInForm.getByTestId("sign-in");
-    const enterGuestButton = signInForm.getByTestId("enter-guest");
+    const enterSpectatorButton = signInForm.getByTestId("enter-spectator");
 
     await loginInput.fill(this.member.login);
     await passwordInput.fill(this.member.password);
-    await expect(enterGuestButton).toBeEnabled();
+    await expect(enterSpectatorButton).toBeEnabled();
 
     await signInButton.click();
     await expect(this.page).toHaveURL(
