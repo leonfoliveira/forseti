@@ -20,7 +20,7 @@ jest.mock(
 );
 
 describe("StaffLeaderboardPage", () => {
-  it("passes guest dashboard data to the shared page", async () => {
+  it("passes staff dashboard data to the shared page", async () => {
     await renderWithProviders(<StaffLeaderboardPage />, {
       staffDashboard: MockStaffDashboardResponseDTO(),
     });

@@ -1,5 +1,5 @@
 import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPage";
-import { GuestAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/GuestAnnouncementsPage";
+import { SpectatorAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/SpectatorAnnouncementsPage";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
@@ -10,14 +10,14 @@ jest.mock(
   }),
 );
 
-describe("GuestAnnouncementsPage", () => {
+describe("SpectatorAnnouncementsPage", () => {
   it("should render common AnnouncementsPage with correct data", async () => {
     const announcements = [
       MockAnnouncementResponseDTO(),
       MockAnnouncementResponseDTO(),
     ];
-    await renderWithProviders(<GuestAnnouncementsPage />, {
-      guestDashboard: {
+    await renderWithProviders(<SpectatorAnnouncementsPage />, {
+      spectatorDashboard: {
         announcements,
       },
     } as any);

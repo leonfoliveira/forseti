@@ -18,7 +18,7 @@ jest.mock(
 );
 
 describe("StaffSubmissionsPage", () => {
-  it("passes guest submission and problem data to the shared view", async () => {
+  it("passes staff submission and problem data to the shared view", async () => {
     await renderWithProviders(<StaffSubmissionsPage />, {
       staffDashboard: MockStaffDashboardResponseDTO(),
     });

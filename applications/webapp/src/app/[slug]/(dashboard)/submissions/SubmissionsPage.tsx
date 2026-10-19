@@ -1,6 +1,6 @@
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/AdminSubmissionsPage";
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
-import { GuestSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/GuestSubmissionsPage";
+import { SpectatorSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/SpectatorSubmissionsPage";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { StaffSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/StaffSubmissionsPage";
@@ -23,6 +23,6 @@ export default function SubmissionsPage() {
     case MemberType.CONTESTANT:
       return <ContestantSubmissionsPage />;
     default:
-      return <GuestSubmissionsPage />;
+      return <SpectatorSubmissionsPage />;
   }
 }

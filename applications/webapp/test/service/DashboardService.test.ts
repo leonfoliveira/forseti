@@ -2,7 +2,7 @@ import { DashboardService } from "@/service/DashboardService";
 import {
   MockAdminDashboardResponseDTO,
   MockContestantDashboardResponseDTO,
-  MockGuestDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
   MockJudgeDashboardResponseDTO,
   MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
@@ -14,12 +14,12 @@ describe("DashboardService", () => {
       judge: MockJudgeDashboardResponseDTO(),
       staff: MockStaffDashboardResponseDTO(),
       contestant: MockContestantDashboardResponseDTO(),
-      guest: MockGuestDashboardResponseDTO(),
+      spectator: MockSpectatorDashboardResponseDTO(),
     };
     const repository = {
       getAdminDashboard: jest.fn().mockResolvedValue(expected.admin),
       getContestantDashboard: jest.fn().mockResolvedValue(expected.contestant),
-      getGuestDashboard: jest.fn().mockResolvedValue(expected.guest),
+      getSpectatorDashboard: jest.fn().mockResolvedValue(expected.spectator),
       getJudgeDashboard: jest.fn().mockResolvedValue(expected.judge),
       getStaffDashboard: jest.fn().mockResolvedValue(expected.staff),
     };
@@ -31,8 +31,8 @@ describe("DashboardService", () => {
     await expect(service.getContestantDashboard("contest-42")).resolves.toBe(
       expected.contestant,
     );
-    await expect(service.getGuestDashboard("contest-42")).resolves.toBe(
-      expected.guest,
+    await expect(service.getSpectatorDashboard("contest-42")).resolves.toBe(
+      expected.spectator,
     );
     await expect(service.getJudgeDashboard("contest-42")).resolves.toBe(
       expected.judge,

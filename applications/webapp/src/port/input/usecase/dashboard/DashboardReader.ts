@@ -1,6 +1,6 @@
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 
@@ -40,10 +40,12 @@ export interface DashboardReader {
   ): Promise<ContestantDashboardResponseDTO>;
 
   /**
-   * Get the guest dashboard for a contest.
+   * Get the spectator dashboard for a contest.
    *
    * @param contestId ID of the contest
-   * @return The guest dashboard data
+   * @return The spectator dashboard data
    */
-  getGuestDashboard(contestId: string): Promise<GuestDashboardResponseDTO>;
+  getSpectatorDashboard(
+    contestId: string,
+  ): Promise<SpectatorDashboardResponseDTO>;
 }

@@ -32,7 +32,7 @@ import { UnauthorizedException } from "@/domain/exception/UnauthorizedException"
  */
 export default function SignInPage() {
   const signInState = useLoadableState();
-  const enterAsGuestState = useLoadableState();
+  const enterAsSpectatorState = useLoadableState();
   const contest = useAppSelector((state) => state.contest);
   const [searchParams] = useSearchParams();
   const toast = useToast();
@@ -79,8 +79,8 @@ export default function SignInPage() {
     }
   }
 
-  async function enterAsGuest() {
-    enterAsGuestState.start();
+  async function enterAsSpectator() {
+    enterAsSpectatorState.start();
     try {
       if (!!session) {
         dispatch(SessionSlice.actions.clear());
@@ -88,7 +88,7 @@ export default function SignInPage() {
       }
     } catch (error) {
       console.error(
-        "Error deleting current session before entering as guest:",
+        "Error deleting current session before entering as spectator:",
         error,
       );
     }
@@ -104,7 +104,7 @@ export default function SignInPage() {
           data-testid="sign-in-form"
         >
           <FieldSet
-            disabled={signInState.isLoading || enterAsGuestState.isLoading}
+            disabled={signInState.isLoading || enterAsSpectatorState.isLoading}
           >
             <Card>
               <CardHeader>
@@ -143,12 +143,12 @@ export default function SignInPage() {
                 <AsyncButton
                   className="w-full"
                   type="button"
-                  onClick={enterAsGuest}
+                  onClick={enterAsSpectator}
                   variant="outline"
-                  isLoading={enterAsGuestState.isLoading}
-                  data-testid="enter-guest"
+                  isLoading={enterAsSpectatorState.isLoading}
+                  data-testid="enter-spectator"
                 >
-                  Enter as Guest
+                  Enter as Spectator
                 </AsyncButton>
               </CardFooter>
             </Card>

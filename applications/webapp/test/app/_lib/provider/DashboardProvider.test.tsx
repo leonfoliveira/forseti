@@ -37,9 +37,9 @@ jest.mock("@/app/_lib/provider/dashboard/ContestantDashboardProvider", () => ({
     children: React.ReactNode;
   }) => <div data-testid="contestant-provider">{children}</div>,
 }));
-jest.mock("@/app/_lib/provider/dashboard/GuestDashboardProvider", () => ({
-  GuestDashboardProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="guest-provider">{children}</div>
+jest.mock("@/app/_lib/provider/dashboard/SpectatorDashboardProvider", () => ({
+  SpectatorDashboardProvider: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="spectator-provider">{children}</div>
   ),
 }));
 
@@ -87,7 +87,7 @@ describe("DashboardProvider", () => {
     expect(screen.getByTestId(testId)).toBeInTheDocument();
   });
 
-  it("selects guest dashboard after a contest has started", async () => {
+  it("selects spectator dashboard after a contest has started", async () => {
     status.mockReturnValue(ContestStatus.ENDED);
     await renderWithProviders(
       <DashboardProvider>
@@ -98,6 +98,6 @@ describe("DashboardProvider", () => {
         session: null,
       },
     );
-    expect(screen.getByTestId("guest-provider")).toHaveTextContent("Body");
+    expect(screen.getByTestId("spectator-provider")).toHaveTextContent("Body");
   });
 });

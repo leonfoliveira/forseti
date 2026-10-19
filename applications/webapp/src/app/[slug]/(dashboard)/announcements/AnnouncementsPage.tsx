@@ -1,6 +1,6 @@
 import { AdminAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/AdminAnnouncementsPage";
 import { ContestantAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/ContestantAnnouncementsPage";
-import { GuestAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/GuestAnnouncementsPage";
+import { SpectatorAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/SpectatorAnnouncementsPage";
 import { JudgeAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/JudgeAnnouncementsPage";
 import { StaffAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/StaffAnnouncementsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -23,6 +23,6 @@ export default function AnnouncementsPage() {
     case MemberType.CONTESTANT:
       return <ContestantAnnouncementsPage />;
     default:
-      return <GuestAnnouncementsPage />;
+      return <SpectatorAnnouncementsPage />;
   }
 }

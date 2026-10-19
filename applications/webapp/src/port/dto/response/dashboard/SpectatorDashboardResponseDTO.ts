@@ -6,7 +6,7 @@ import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO"
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 
-export type GuestDashboardResponseDTO = {
+export type SpectatorDashboardResponseDTO = {
   contest: ContestResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   members: MemberResponseDTO[];

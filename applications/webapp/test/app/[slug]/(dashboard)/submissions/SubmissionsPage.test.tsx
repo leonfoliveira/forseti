@@ -16,9 +16,14 @@ jest.mock(
     ),
   }),
 );
-jest.mock("@/app/[slug]/(dashboard)/submissions/GuestSubmissionsPage", () => ({
-  GuestSubmissionsPage: () => <div data-testid="role-page">guest</div>,
-}));
+jest.mock(
+  "@/app/[slug]/(dashboard)/submissions/SpectatorSubmissionsPage",
+  () => ({
+    SpectatorSubmissionsPage: () => (
+      <div data-testid="role-page">spectator</div>
+    ),
+  }),
+);
 jest.mock("@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage", () => ({
   JudgeSubmissionsPage: () => <div data-testid="role-page">judge</div>,
 }));
@@ -33,7 +38,7 @@ describe("SubmissionsPage", () => {
     [MemberType.JUDGE, "judge"],
     [MemberType.STAFF, "staff"],
     [MemberType.CONTESTANT, "contestant"],
-    [null, "guest"],
+    [null, "spectator"],
   ])("selects the role-specific view for %s", async (type, expected) => {
     await renderWithProviders(<SubmissionsPage />, {
       session: MockSessionResponseDTO({
@@ -43,8 +48,8 @@ describe("SubmissionsPage", () => {
     expect(screen.getByTestId("role-page")).toHaveTextContent(expected);
   });
 
-  it("uses guest submissions without a session", async () => {
+  it("uses spectator submissions without a session", async () => {
     await renderWithProviders(<SubmissionsPage />, { session: null });
-    expect(screen.getByTestId("role-page")).toHaveTextContent("guest");
+    expect(screen.getByTestId("role-page")).toHaveTextContent("spectator");
   });
 });

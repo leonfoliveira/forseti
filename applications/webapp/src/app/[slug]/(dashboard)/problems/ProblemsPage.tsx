@@ -1,6 +1,6 @@
 import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProblemsPage";
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
-import { GuestProblemsPage } from "@/app/[slug]/(dashboard)/problems/GuestProblemsPage";
+import { SpectatorProblemsPage } from "@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage";
 import { JudgeProblemsPage } from "@/app/[slug]/(dashboard)/problems/JudgeProblemsPage";
 import { StaffProblemsPage } from "@/app/[slug]/(dashboard)/problems/StaffProblemsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -23,6 +23,6 @@ export default function ProblemsPage() {
     case MemberType.CONTESTANT:
       return <ContestantProblemsPage />;
     default:
-      return <GuestProblemsPage />;
+      return <SpectatorProblemsPage />;
   }
 }

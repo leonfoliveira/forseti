@@ -6,7 +6,7 @@ import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { GuestDashboardSlice } from "@/app/_lib/store/slice/dashboard/GuestDashboardSlice";
+import { SpectatorDashboardSlice } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
@@ -17,10 +17,10 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 /**
- * Provider component for fetching guest dashboard data and setting up sse listeners.
+ * Provider component for fetching spectator dashboard data and setting up sse listeners.
  * Failures in setting up listeners will not cause the entire provider to fail, but will show a disconnection banner and attempt to reconnect.
  */
-export function GuestDashboardProvider({
+export function SpectatorDashboardProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -41,7 +41,7 @@ export function GuestDashboardProvider({
       console.debug("Setting up sse listeners");
 
       try {
-        await Composition.guestDashboardRoomListener.subscribe(
+        await Composition.spectatorDashboardRoomListener.subscribe(
           contest.id,
           {
             LEADERBOARD_UPDATED: receiveLeaderboardPartial,
@@ -64,10 +64,10 @@ export function GuestDashboardProvider({
 
     async function fetch() {
       console.debug("Fetching dashboard data");
-      const data = await Composition.dashboardReader.getGuestDashboard(
+      const data = await Composition.dashboardReader.getSpectatorDashboard(
         contest.id,
       );
-      dispatch(GuestDashboardSlice.actions.set(data));
+      dispatch(SpectatorDashboardSlice.actions.set(data));
       console.debug("Successfully fetched dashboard data");
     }
 
@@ -86,19 +86,19 @@ export function GuestDashboardProvider({
     init();
 
     return () => {
-      Composition.guestDashboardRoomListener.unsubscribe();
+      Composition.spectatorDashboardRoomListener.unsubscribe();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };
   }, [session, contest.id]);
 
   function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
     console.debug("Received leaderboard cell update:", leaderboard);
-    dispatch(GuestDashboardSlice.actions.mergeLeaderboard(leaderboard));
+    dispatch(SpectatorDashboardSlice.actions.mergeLeaderboard(leaderboard));
   }
 
   function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
-    dispatch(GuestDashboardSlice.actions.mergeSubmission(submission));
+    dispatch(SpectatorDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
       toast.error("New failed submission");
@@ -107,7 +107,7 @@ export function GuestDashboardProvider({
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
     console.debug("Received announcement:", announcement);
-    dispatch(GuestDashboardSlice.actions.mergeAnnouncement(announcement));
+    dispatch(SpectatorDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
       toast.warning(`New announcement: ${announcement.text}`);
@@ -118,7 +118,7 @@ export function GuestDashboardProvider({
     clarification: ClarificationResponseDTO,
   ) {
     console.debug("Received clarification published:", clarification);
-    dispatch(GuestDashboardSlice.actions.mergeClarification(clarification));
+    dispatch(SpectatorDashboardSlice.actions.mergeClarification(clarification));
     toast.info(`A clarification has been published`);
   }
 

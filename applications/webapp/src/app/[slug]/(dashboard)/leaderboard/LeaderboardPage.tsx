@@ -1,6 +1,6 @@
 import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/AdminLeaderboardPage";
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/ContestantLeaderboardPage";
-import { GuestLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/GuestLeaderboardPage";
+import { SpectatorLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/SpectatorLeaderboardPage";
 import { JudgeLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/JudgeLeaderboardPage";
 import { StaffLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/StaffLeaderboardPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -23,6 +23,6 @@ export default function LeaderboardPage() {
     case MemberType.CONTESTANT:
       return <ContestantLeaderboardPage />;
     default:
-      return <GuestLeaderboardPage />;
+      return <SpectatorLeaderboardPage />;
   }
 }

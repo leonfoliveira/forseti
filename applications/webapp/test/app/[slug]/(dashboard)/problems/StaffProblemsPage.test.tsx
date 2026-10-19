@@ -11,7 +11,7 @@ jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
 }));
 
 describe("StaffProblemsPage", () => {
-  it("passes the guest problem list to the shared view", async () => {
+  it("passes the staff problem list to the shared view", async () => {
     await renderWithProviders(<StaffProblemsPage />, {
       staffDashboard: MockStaffDashboardResponseDTO(),
     });

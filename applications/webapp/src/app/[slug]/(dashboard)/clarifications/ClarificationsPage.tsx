@@ -1,6 +1,6 @@
 import { AdminClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/AdminClarificationsPage";
 import { ContestantClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/ContestantClarificationsPage";
-import { GuestClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/GuestClarificationsPage";
+import { SpectatorClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/SpectatorClarificationsPage";
 import { JudgeClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/JudgeClarificationsPage";
 import { StaffClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/StaffClarificationsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
@@ -23,6 +23,6 @@ export default function ClarificationsPage() {
     case MemberType.CONTESTANT:
       return <ContestantClarificationsPage />;
     default:
-      return <GuestClarificationsPage />;
+      return <SpectatorClarificationsPage />;
   }
 }

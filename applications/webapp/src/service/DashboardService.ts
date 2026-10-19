@@ -2,7 +2,7 @@ import { DashboardRepository } from "@/port/output/repository/DashboardRepositor
 import { DashboardReader } from "@/port/input/usecase/dashboard/DashboardReader";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { GuestDashboardResponseDTO } from "@/port/dto/response/dashboard/GuestDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 
@@ -33,9 +33,9 @@ export class DashboardService implements DashboardReader {
     return await this.dashboardRepository.getContestantDashboard(contestId);
   }
 
-  async getGuestDashboard(
+  async getSpectatorDashboard(
     contestId: string,
-  ): Promise<GuestDashboardResponseDTO> {
-    return await this.dashboardRepository.getGuestDashboard(contestId);
+  ): Promise<SpectatorDashboardResponseDTO> {
+    return await this.dashboardRepository.getSpectatorDashboard(contestId);
   }
 }

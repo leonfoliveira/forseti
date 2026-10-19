@@ -1,5 +1,5 @@
 import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPage";
-import { GuestClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/GuestClarificationsPage";
+import { SpectatorClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/SpectatorClarificationsPage";
 import {
   MockClarificationResponseDTO,
   MockProblemResponseDTO,
@@ -13,15 +13,15 @@ jest.mock(
   }),
 );
 
-describe("GuestClarificationsPage", () => {
+describe("SpectatorClarificationsPage", () => {
   it("should render common ClarificationsPage with correct data", async () => {
     const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
     const clarifications = [
       MockClarificationResponseDTO(),
       MockClarificationResponseDTO(),
     ];
-    await renderWithProviders(<GuestClarificationsPage />, {
-      guestDashboard: {
+    await renderWithProviders(<SpectatorClarificationsPage />, {
+      spectatorDashboard: {
         problems,
         clarifications,
       },
