@@ -23,12 +23,12 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
 @Validated
@@ -88,6 +88,27 @@ class UpdateContestService(
             }
         }
 
+        val isUpdatingFreezeAt =
+            (command.freezeAt != null && contest.freezeAt == null) ||
+                (command.freezeAt == null && contest.freezeAt != null) ||
+                (
+                    (
+                        command.freezeAt != null &&
+                            !command.freezeAt
+                                .truncatedTo(ChronoUnit.SECONDS)
+                                .isEqual(contest.freezeAt!!.truncatedTo(ChronoUnit.SECONDS))
+                    )
+                )
+        if (isUpdatingFreezeAt) {
+            if (contest.isFrozen()) {
+                throw ForbiddenException("Contest is already frozen and cannot have its freeze time updated")
+            }
+
+            if (command.freezeAt != null && command.freezeAt.isAfter(command.endAt) && command.freezeAt.isBefore(now)) {
+                throw BusinessException("Contest freeze time must be before the end time and in the future")
+            }
+        }
+
         if (contestRepository.existsBySlugAndIdNot(command.slug, contest.id)) {
             throw ConflictException("Contest with slug '${command.slug}' already exists")
         }
@@ -97,6 +118,7 @@ class UpdateContestService(
         contest.languages = command.languages
         contest.startAt = command.startAt
         contest.endAt = command.endAt
+        contest.freezeAt = command.freezeAt
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }

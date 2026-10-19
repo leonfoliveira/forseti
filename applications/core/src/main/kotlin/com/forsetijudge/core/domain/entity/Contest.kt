@@ -10,10 +10,10 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "contest")
@@ -52,6 +52,16 @@ class Contest(
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
     /**
+     * The time when the contest was frozen, hiding submissions updates.
+     */
+    @Column(name = "freeze_at")
+    var freezeAt: OffsetDateTime? = null,
+    /**
+     * The time when the contest was unfrozen, allowing submissions updates to be visible again.
+     */
+    @Column(name = "unfreeze_at")
+    var unfreezeAt: OffsetDateTime? = null,
+    /**
      * Members of the contest, which can include contestants, juries, and other participants.
      */
     @Audited(withModifiedFlag = false)
@@ -80,4 +90,6 @@ class Contest(
     fun hasEnded(): Boolean = !endAt.isAfter(OffsetDateTime.now())
 
     fun isActive(): Boolean = hasStarted() && !hasEnded()
+
+    fun isFrozen(): Boolean = freezeAt != null && (unfreezeAt == null || freezeAt!!.isAfter(unfreezeAt))
 }
