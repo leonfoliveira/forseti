@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,7 +21,6 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class ApiSubmissionCreatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
@@ -48,7 +48,7 @@ class ApiSubmissionCreatedEventListenerTest {
                 "judge-dashboard-${contest.id}",
                 "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
-                "guest-dashboard-${contest.id}",
+                "spectator-dashboard-${contest.id}",
             ),
             messages.allValues.map(SSEFanoutMessage::room),
         )

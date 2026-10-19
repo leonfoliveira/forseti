@@ -41,7 +41,7 @@ class ApiAnnouncementCreatedEventListenerTest {
                 "judge-dashboard-${contest.id}",
                 "staff-dashboard-${contest.id}",
                 "contestant-dashboard-${contest.id}",
-                "guest-dashboard-${contest.id}",
+                "spectator-dashboard-${contest.id}",
             ),
             messages.allValues.map(SSEFanoutMessage::room),
         )

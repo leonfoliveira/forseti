@@ -77,7 +77,7 @@ class ApiSubmissionUpdatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildGuestDashboardRoom(submission.contest.id),
+                room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
                 eventName = SSE.SUBMISSION_UPDATED.name,
                 data = submission.toResponseDTO(),
             ),
@@ -120,7 +120,7 @@ class ApiSubmissionUpdatedEventListener(
         )
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
-                room = SSERoomBuilder.buildGuestDashboardRoom(submission.contest.id),
+                room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
                 eventName = SSE.LEADERBOARD_UPDATED.name,
                 data = leaderboardCell.toResponseDTO(),
             ),

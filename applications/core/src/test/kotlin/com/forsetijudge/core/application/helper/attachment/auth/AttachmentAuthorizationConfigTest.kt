@@ -5,10 +5,10 @@ import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.factory.MockEntityFactory
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import java.time.OffsetDateTime
 
 class AttachmentAuthorizationConfigTest {
     @Test
@@ -40,7 +40,7 @@ class AttachmentAuthorizationConfigTest {
             assertEquals(expected, config.calls.last())
         }
         config.authorizeDownload(contest, null, attachment)
-        assertEquals("guest-download", config.calls.last())
+        assertEquals("spectator-download", config.calls.last())
     }
 
     @Test
@@ -211,11 +211,11 @@ class AttachmentAuthorizationConfigTest {
             calls += "contestant-download"
         }
 
-        override fun authorizeGuestDownload(
+        override fun authorizeSpectatorDownload(
             contest: Contest,
             attachment: Attachment,
         ) {
-            calls += "guest-download"
+            calls += "spectator-download"
         }
     }
 }

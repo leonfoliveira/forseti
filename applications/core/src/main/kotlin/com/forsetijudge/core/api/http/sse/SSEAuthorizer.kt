@@ -7,9 +7,9 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class SSEAuthorizer(
@@ -114,14 +114,14 @@ class SSEAuthorizer(
     }
 
     /**
-     * Authorizes to access the guest dashboard room of a contest.
+     * Authorizes to access the spectator dashboard room of a contest.
      *
      * @param contestId The ID of the contest for which access is being requested.
      * @throws NotFoundException if the contest is not found.
-     * @throws ForbiddenException if the guest does not have the required permissions.
+     * @throws ForbiddenException if the spectator does not have the required permissions.
      */
     @Transactional(readOnly = true)
-    fun authorizeToGuestDashboardRoom(contestId: UUID) {
+    fun authorizeToSpectatorDashboardRoom(contestId: UUID) {
         val contest =
             contestRepository.findById(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")

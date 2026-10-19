@@ -38,7 +38,7 @@ class BuildJudgeDashboardService(
     override fun execute(command: BuildJudgeDashboardUseCase.Command): JudgeDashboardResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
-        logger.info("Building guest dashboard")
+        logger.info("Building spectator dashboard")
 
         val contest =
             contestRepository.findById(command.contestId)

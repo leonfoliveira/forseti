@@ -68,7 +68,7 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig() {
             .throwIfErrors()
     }
 
-    override fun authorizeGuestDownload(
+    override fun authorizeSpectatorDownload(
         contest: Contest,
         attachment: Attachment,
     ) {

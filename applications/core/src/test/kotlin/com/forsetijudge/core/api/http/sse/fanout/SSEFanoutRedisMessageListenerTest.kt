@@ -17,9 +17,9 @@ class SSEFanoutRedisMessageListenerTest {
     @Test
     fun `test onMessage`() {
         val rawMessage =
-            """{"room":"guest-dashboard-123","eventName":"SUBMISSION_CREATED","data":{"id":"submission-1"}}"""
+            """{"room":"spectator-dashboard-123","eventName":"SUBMISSION_CREATED","data":{"id":"submission-1"}}"""
         val messageBytes = rawMessage.toByteArray()
-        val payload = SSEFanoutMessage("guest-dashboard-123", "SUBMISSION_CREATED", mapOf("id" to "submission-1"))
+        val payload = SSEFanoutMessage("spectator-dashboard-123", "SUBMISSION_CREATED", mapOf("id" to "submission-1"))
         val message = DefaultMessage("topic".toByteArray(), messageBytes)
 
         whenever(objectMapper.readValue(eq(messageBytes), eq(SSEFanoutMessage::class.java))).thenReturn(payload)

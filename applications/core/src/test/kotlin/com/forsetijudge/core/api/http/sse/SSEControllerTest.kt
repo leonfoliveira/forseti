@@ -63,14 +63,14 @@ class SSEControllerTest {
     }
 
     @Test
-    fun `test subscribe to guest dashboard room`() {
+    fun `test subscribe to spectator dashboard room`() {
         mvc
             .perform(
-                get("/v1/sse/contests/$contestId/dashboard/guest"),
+                get("/v1/sse/contests/$contestId/dashboard/spectator"),
             ).andExpect(status().isOk)
             .andExpect(request().asyncStarted())
-        verify(sseAuthorizer).authorizeToGuestDashboardRoom(contestId)
-        verify(sseHelper).subscribe(eq(SSERoomBuilder.buildGuestDashboardRoom(contestId)), any())
+        verify(sseAuthorizer).authorizeToSpectatorDashboardRoom(contestId)
+        verify(sseHelper).subscribe(eq(SSERoomBuilder.buildSpectatorDashboardRoom(contestId)), any())
     }
 
     @Test

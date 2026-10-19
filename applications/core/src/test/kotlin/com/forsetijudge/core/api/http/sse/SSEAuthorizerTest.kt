@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class SSEAuthorizerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -269,14 +269,14 @@ class SSEAuthorizerTest {
     }
 
     @Nested
-    inner class AuthorizeToGuestDashboardRoom {
+    inner class AuthorizeToSpectatorDashboardRoom {
         @Test
         fun `should throw NotFoundException when contest is not found`() {
             val contestId = IdGenerator.getUUID()
             whenever(contestRepository.findById(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
-                service.authorizeToGuestDashboardRoom(contestId)
+                service.authorizeToSpectatorDashboardRoom(contestId)
             }
         }
 
@@ -287,7 +287,7 @@ class SSEAuthorizerTest {
             whenever(contestRepository.findById(contestId)).thenReturn(contest)
 
             assertThrows<ForbiddenException> {
-                service.authorizeToGuestDashboardRoom(contestId)
+                service.authorizeToSpectatorDashboardRoom(contestId)
             }
         }
     }

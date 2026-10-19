@@ -8,14 +8,16 @@ import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
-import com.forsetijudge.core.port.dto.response.dashboard.GuestDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
+import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -23,8 +25,6 @@ import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.module.SimpleModule
 import tools.jackson.module.kotlin.KotlinModule
-import java.time.OffsetDateTime
-import java.util.UUID
 
 internal object MockMvcTestSupport {
     private val messageConverter =
@@ -95,8 +95,8 @@ internal object MockMvcTestSupport {
             clarifications = emptyList(),
         )
 
-    fun guestDashboardResponse(id: UUID = UUID.randomUUID()) =
-        GuestDashboardResponseDTO(
+    fun spectatorDashboardResponse(id: UUID = UUID.randomUUID()) =
+        SpectatorDashboardResponseDTO(
             contest = contestResponse(id),
             leaderboard = leaderboardResponse(id),
             members = emptyList(),

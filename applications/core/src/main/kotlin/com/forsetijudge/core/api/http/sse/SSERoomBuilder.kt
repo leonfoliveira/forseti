@@ -36,12 +36,12 @@ object SSERoomBuilder {
     fun buildContestantDashboardRoom(contestId: UUID): String = "contestant-dashboard-$contestId"
 
     /**
-     * Build a room name for sse events related to a guest dashboard.
+     * Build a room name for sse events related to a spectator dashboard.
      *
      * @param contestId The ID of the contest.
-     * @return The room name for the guest dashboard.
+     * @return The room name for the spectator dashboard.
      */
-    fun buildGuestDashboardRoom(contestId: UUID): String = "guest-dashboard-$contestId"
+    fun buildSpectatorDashboardRoom(contestId: UUID): String = "spectator-dashboard-$contestId"
 
     /**
      * Build a room name for sse events related to a member private room.

@@ -88,8 +88,8 @@ class HttpConfig(
                         "/metrics/**",
                         *SIGN_IN_ROUTES,
                         "/v1/contests/slug/*",
-                        "/v1/contests/*/dashboard/guest",
-                        "/v1/sse/contests/*/dashboard/guest",
+                        "/v1/contests/*/dashboard/spectator",
+                        "/v1/sse/contests/*/dashboard/spectator",
                         "/v1/contests/*/attachments/*",
                     ).permitAll()
                     .anyRequest()

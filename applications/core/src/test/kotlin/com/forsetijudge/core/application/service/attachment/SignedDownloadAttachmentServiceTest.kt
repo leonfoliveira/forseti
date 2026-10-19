@@ -49,7 +49,7 @@ class SignedDownloadAttachmentServiceTest {
     }
 
     @Test
-    fun `rejects guests for restricted context and missing attachment`() {
+    fun `rejects spectators for restricted context and missing attachment`() {
         TestAuthentication.clear()
         val contest = MockEntityFactory.contest()
         val attachment =
