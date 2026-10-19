@@ -48,14 +48,20 @@ class FreezeContestService(
             contestRepository.findById(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id ${command.contestId}")
         val member =
-            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
-                ?: throw NotFoundException("Could not find member with id $contextMemberId in this contest")
+            if (!command.bypassMemberAuthorization) {
+                memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
+                    ?: throw NotFoundException("Could not find member with id $contextMemberId in this contest")
+            } else {
+                null
+            }
 
-        ContestAuthorizer(contest, member)
-            .requireMemberToBelong()
-            .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
-            .requireContestNotEnded()
-            .throwIfErrors()
+        if (!command.bypassMemberAuthorization) {
+            ContestAuthorizer(contest, member)
+                .requireMemberToBelong()
+                .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
+                .requireContestNotEnded()
+                .throwIfErrors()
+        }
 
         if (contest.isFrozen()) {
             throw ForbiddenException("Contest with id ${command.contestId} is already frozen")

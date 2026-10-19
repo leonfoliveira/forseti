@@ -16,8 +16,10 @@ interface FreezeContestUseCase {
      * Command class representing the input parameters for freezing a contest.
      *
      * @property contestId The unique identifier of the contest to be frozen.
+     * @property bypassMemberAuthorization A flag indicating whether to bypass member authorization checks (default is false).
      */
     data class Command(
         val contestId: UUID,
+        val bypassMemberAuthorization: Boolean = false,
     )
 }
