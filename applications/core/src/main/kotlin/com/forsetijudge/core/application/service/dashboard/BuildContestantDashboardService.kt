@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
@@ -22,6 +23,7 @@ class BuildContestantDashboardService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildContestantDashboardUseCase {
@@ -54,7 +56,12 @@ class BuildContestantDashboardService(
             .throwIfErrors()
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
-        val submissions = submissionRepository.findAllByContestId(contest.id)
+        val submissions =
+            if (contest.isFrozen()) {
+                frozenSubmissionRepository.findAllByContestId(contest.id)
+            } else {
+                submissionRepository.findAllByContestId(contest.id)
+            }
         val memberSubmissions = submissionRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
         val clarifications =
             clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contextMemberId)
