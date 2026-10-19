@@ -16,6 +16,7 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 
 /**
  * Provider component for fetching admin dashboard data and setting up sse listeners.
@@ -168,6 +169,7 @@ export function AdminDashboardProvider({
 
   return (
     <>
+      {contest.isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

@@ -16,6 +16,7 @@ import { SubmissionResponseDTO } from "@/port/dto/response/submission/Submission
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 
 /**
  * Provider component for fetching spectator dashboard data and setting up sse listeners.
@@ -149,6 +150,7 @@ export function SpectatorDashboardProvider({
 
   return (
     <>
+      {contest.isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

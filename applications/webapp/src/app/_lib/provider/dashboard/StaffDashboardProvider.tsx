@@ -15,6 +15,7 @@ import { ClarificationResponseDTO } from "@/port/dto/response/clarification/Clar
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { StaffDashboardSlice } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 
 /**
  * Provider component for fetching staff dashboard data and setting up sse listeners.
@@ -146,6 +147,7 @@ export function StaffDashboardProvider({
 
   return (
     <>
+      {contest.isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

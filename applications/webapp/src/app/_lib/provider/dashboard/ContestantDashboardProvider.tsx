@@ -18,6 +18,7 @@ import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/Su
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -208,6 +209,7 @@ export function ContestantDashboardProvider({
 
   return (
     <>
+      {contest.isFrozen && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>
