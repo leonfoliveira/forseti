@@ -1,8 +1,9 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Submission
-import org.springframework.data.jpa.repository.Query
+import java.time.OffsetDateTime
 import java.util.UUID
+import org.springframework.data.jpa.repository.Query
 
 /**
  * Accessor for persistence operations related to Submission entity
@@ -20,6 +21,14 @@ interface SubmissionRepository : BaseRepository<Submission> {
     fun findAllByContestIdAndMemberId(
         contestId: UUID,
         memberId: UUID,
+    ): List<Submission>
+
+    @Query(
+        """SELECT s FROM Submission s WHERE s.problem.contest.id = :contestId AND s.updatedAt > :updatedAt AND deletedAt IS NULL""",
+    )
+    fun findAllByContestAndUpdatedAtAfter(
+        contestId: UUID,
+        updatedAt: OffsetDateTime,
     ): List<Submission>
 
     @Query(
