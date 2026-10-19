@@ -8,6 +8,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
+import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import java.time.OffsetDateTime
@@ -23,8 +24,10 @@ import org.mockito.kotlin.whenever
 class UnfreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
     private val memberRepository = mock<MemberRepository>()
+    private val freezeQueueProducer = mock<FreezeQueueProducer>()
     private val businessEventPublisher = mock<BusinessEventPublisher>()
-    val service = UnfreezeContestService(contestRepository, memberRepository, businessEventPublisher)
+    val service =
+        UnfreezeContestService(contestRepository, memberRepository, freezeQueueProducer, businessEventPublisher)
 
     val contest =
         MockEntityFactory.contest(freezeAt = OffsetDateTime.now().minusDays(1))
@@ -102,6 +105,7 @@ class UnfreezeContestServiceTest {
         assertEquals(contest.id, result.id)
         assertFalse(contest.isFrozen())
         verify(contestRepository).save(contest)
+        verify(freezeQueueProducer).cancel(contestId = contest.id)
         verify(businessEventPublisher).publish(
             argThat {
                 this is ContestEvent.Unfrozen && this.contestId == contest.id

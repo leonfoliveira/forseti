@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.output.queue
 
 import java.time.OffsetDateTime
+import java.util.UUID
 
 interface FreezeQueueProducer {
     /**
@@ -18,7 +19,7 @@ interface FreezeQueueProducer {
      *
      * @param contestId The ID of the contest for which the freeze event is being canceled.
      */
-    fun cancel(contestId: String)
+    fun cancel(contestId: UUID)
 
     /**
      * Represents a message to be sent to the freeze queue.
@@ -26,6 +27,6 @@ interface FreezeQueueProducer {
      * @param contestId The ID of the contest for which the freeze event is being produced.
      */
     data class Message(
-        val contestId: String,
+        val contestId: UUID,
     )
 }

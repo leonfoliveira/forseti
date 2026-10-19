@@ -18,6 +18,7 @@ import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProb
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
+import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
@@ -39,6 +40,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val attachmentCommiter: AttachmentCommiter,
+    private val freezeQueueProducer: FreezeQueueProducer,
     private val businessEventPublisher: BusinessEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -106,6 +108,16 @@ class UpdateContestService(
 
             if (command.freezeAt != null && command.freezeAt.isAfter(command.endAt) && command.freezeAt.isBefore(now)) {
                 throw BusinessException("Contest freeze time must be before the end time and in the future")
+            }
+
+            if (contest.freezeAt != null) {
+                freezeQueueProducer.cancel(contest.id)
+            }
+            if (command.freezeAt != null) {
+                freezeQueueProducer.produce(
+                    FreezeQueueProducer.Message(contestId = contest.id),
+                    command.freezeAt,
+                )
             }
         }
 

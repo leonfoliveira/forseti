@@ -3,6 +3,7 @@ package com.forsetijudge.core.infrastructure.sqs
 import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.util.SafeLogger
 import java.time.OffsetDateTime
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.scheduler.SchedulerClient
@@ -11,6 +12,7 @@ import software.amazon.awssdk.services.scheduler.model.CreateScheduleRequest
 import software.amazon.awssdk.services.scheduler.model.DeleteScheduleRequest
 import software.amazon.awssdk.services.scheduler.model.FlexibleTimeWindow
 import software.amazon.awssdk.services.scheduler.model.FlexibleTimeWindowMode
+import software.amazon.awssdk.services.scheduler.model.ResourceNotFoundException
 import software.amazon.awssdk.services.scheduler.model.Target
 import tools.jackson.databind.ObjectMapper
 
@@ -55,7 +57,7 @@ class FreezeQueueSQSProducer(
         schedulerClient.createSchedule(createScheduleRequest)
     }
 
-    override fun cancel(contestId: String) {
+    override fun cancel(contestId: UUID) {
         logger.info("Cancelling scheduled freeze event for contest: $contestId")
 
         val scheduleName = "freeze-$contestId"
@@ -69,8 +71,11 @@ class FreezeQueueSQSProducer(
         try {
             schedulerClient.deleteSchedule(deleteScheduleRequest)
             logger.info("Successfully cancelled scheduled freeze event for contest: $contestId")
+        } catch (_: ResourceNotFoundException) {
+            logger.info("No scheduled freeze event found for contest: $contestId, nothing to cancel")
         } catch (e: Exception) {
             logger.error("Failed to cancel scheduled freeze event for contest: $contestId", e)
+            throw e
         }
     }
 }

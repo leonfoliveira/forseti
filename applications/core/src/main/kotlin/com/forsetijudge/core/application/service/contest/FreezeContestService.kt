@@ -11,6 +11,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
+import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -26,6 +27,7 @@ class FreezeContestService(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
+    private val freezeQueueProducer: FreezeQueueProducer,
     private val businessEventPublisher: BusinessEventPublisher,
 ) : FreezeContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -67,6 +69,7 @@ class FreezeContestService(
 
         contest.freezeAt = OffsetDateTime.now()
         contestRepository.save(contest)
+        freezeQueueProducer.cancel(contestId = contest.id)
         businessEventPublisher.publish(ContestEvent.Frozen(contestId = contest.id))
 
         logger.info("Frozen contest with id: ${command.contestId}")

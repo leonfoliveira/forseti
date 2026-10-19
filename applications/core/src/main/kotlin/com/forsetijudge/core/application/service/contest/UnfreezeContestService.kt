@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
+import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional
 class UnfreezeContestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
+    private val freezeQueueProducer: FreezeQueueProducer,
     private val businessEventPublisher: BusinessEventPublisher,
 ) : UnfreezeContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -55,6 +57,7 @@ class UnfreezeContestService(
         val freezeAt = contest.freezeAt!!
         contest.freezeAt = null
         contestRepository.save(contest)
+        freezeQueueProducer.cancel(contestId = contest.id)
         businessEventPublisher.publish(ContestEvent.Unfrozen(contestId = contest.id, freezeAt = freezeAt))
 
         logger.info("Unfrozen contest with id: ${command.contestId} created")
