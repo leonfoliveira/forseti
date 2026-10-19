@@ -13,4 +13,14 @@ interface FrozenSubmissionRepository : BaseRepository<FrozenSubmission> {
         """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND deletedAt IS NULL""",
     )
     fun findAllByContestId(contestId: UUID): List<Submission>
+
+    @Query(
+        """SELECT f FROM FrozenSubmission f WHERE f.problem.contest.id = :contestId AND f.status = :status 
+           AND CONCAT(f.member.id, ':', f.problem.id) NOT IN :excludedPairs AND f.deletedAt IS NULL""",
+    )
+    fun findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
+        contestId: UUID,
+        status: Submission.Status,
+        excludedPairs: Collection<String>,
+    ): List<FrozenSubmission>
 }

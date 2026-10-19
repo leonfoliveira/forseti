@@ -52,7 +52,7 @@ class BuildStaffDashboardService(
             .requireMemberType(Member.Type.STAFF)
             .throwIfErrors()
 
-        val leaderboard = leaderboardBuilder.build(contest = contest)
+        val leaderboard = leaderboardBuilder.build(contest = contest, shouldBypassFreeze = true)
         val submissions = submissionRepository.findAllByContestId(contest.id)
         val clarifications =
             clarificationRepository.findAllByContestIdAndIsPublic(contest.id)

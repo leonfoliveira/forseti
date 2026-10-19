@@ -54,7 +54,7 @@ class BuildAdminDashboardServiceTest {
         val result = service.execute(BuildAdminDashboardUseCase.Command(contest.id))
 
         assertEquals(contest.id, result.contest.id)
-        verify(leaderboardBuilder).build(contest)
+        verify(leaderboardBuilder).build(contest, true)
         verify(submissionRepository).findAllByContestId(contest.id)
     }
 

@@ -52,7 +52,7 @@ class BuildAdminDashboardService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
             .throwIfErrors()
 
-        val leaderboard = leaderboardBuilder.build(contest = contest)
+        val leaderboard = leaderboardBuilder.build(contest = contest, shouldBypassFreeze = true)
         val submissions = submissionRepository.findAllByContestId(contest.id)
         val clarifications = clarificationRepository.findAllByContestId(contest.id)
 
