@@ -1,4 +1,10 @@
-type RuntimeEnv = { VERSION?: string; API_URL?: string; OTEL_URL?: string };
+type RuntimeEnv = {
+  VERSION?: string;
+  API_URL?: string;
+  OTEL_URL?: string;
+  CLOUDWATCH_RUM_APP_ID?: string;
+  CLOUDWATCH_RUM_REGION?: string;
+};
 
 declare global {
   interface Window {
@@ -13,5 +19,6 @@ const runtimeEnv: RuntimeEnv =
 export const env = {
   version: runtimeEnv.VERSION || "latest",
   apiUrl: runtimeEnv.API_URL || "http://localhost:8080",
-  otelUrl: runtimeEnv.OTEL_URL,
+  cloudWatchRumAppId: runtimeEnv.CLOUDWATCH_RUM_APP_ID,
+  cloudWatchRumRegion: runtimeEnv.CLOUDWATCH_RUM_REGION,
 };
