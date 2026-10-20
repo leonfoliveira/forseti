@@ -21,12 +21,15 @@ jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
 
 describe("ContestantProblemsPage", () => {
   it("passes contestant problems and the matching member leaderboard row", async () => {
+    const session = MockSessionResponseDTO();
     const dashboard = MockContestantDashboardResponseDTO();
-    dashboard.leaderboard.rows[0].memberId = "member-1";
+    dashboard.leaderboard.rows[0].memberId = session.member.id;
     await renderWithProviders(<ContestantProblemsPage />, {
-      contestantDashboard: dashboard as never,
-      session: MockSessionResponseDTO(),
+      contestantDashboard: dashboard,
+      session,
     });
-    expect(screen.getByTestId("problem-props")).toHaveTextContent("1:member-1");
+    expect(screen.getByTestId("problem-props")).toHaveTextContent(
+      `1:${session.member.id}`,
+    );
   });
 });

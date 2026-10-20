@@ -30,10 +30,10 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { ColorUtil } from "@/app/_lib/util/ColorUtil";
 import { Composition } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 type Props = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   form: UseFormReturn<SettingsFormType>;
   isDisabled?: boolean;
 };

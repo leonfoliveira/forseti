@@ -9,6 +9,8 @@ import com.forsetijudge.core.port.input.usecase.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
+import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
+import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -34,10 +36,12 @@ class ContestControllerTest {
     private val update = mock<UpdateContestUseCase>()
     private val forceStart = mock<ForceStartContestUseCase>()
     private val forceEnd = mock<ForceEndContestUseCase>()
+    private val freeze = mock<FreezeContestUseCase>()
+    private val unfreeze = mock<UnfreezeContestUseCase>()
     private val delete = mock<DeleteContestUseCase>()
     private val mvc =
         MockMvcTestSupport.mvc(
-            ContestController(findBySlug, findAll, create, update, forceStart, forceEnd, delete),
+            ContestController(findBySlug, findAll, create, update, forceStart, forceEnd, freeze, unfreeze, delete),
         )
     private val contestId = UUID.randomUUID()
     private val timestamp = OffsetDateTime.parse("2026-10-02T12:00:00Z")
@@ -125,6 +129,7 @@ class ContestControllerTest {
                 languages = listOf(Submission.Language.CPP_17),
                 startAt = startAt,
                 endAt = endAt,
+                autoFreezeAt = null,
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
@@ -168,6 +173,25 @@ class ContestControllerTest {
             .perform(patch("/v1/contests/$contestId:force-end"))
             .andExpect(status().isOk)
         verify(forceEnd).execute(ForceEndContestUseCase.Command(contestId))
+    }
+
+    @Test
+    fun `routes freeze and unfreeze with contest id`() {
+        val response = MockMvcTestSupport.contestWithDetailsResponse(contestId)
+        whenever(freeze.execute(any())).thenReturn(response)
+        whenever(unfreeze.execute(any())).thenReturn(response)
+
+        mvc
+            .perform(patch("/v1/contests/$contestId:freeze"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(contestId.toString()))
+        verify(freeze).execute(FreezeContestUseCase.Command(contestId))
+
+        mvc
+            .perform(patch("/v1/contests/$contestId:unfreeze"))
+            .andExpect(status().isOk)
+            .andExpect(jsonPath("$.id").value(contestId.toString()))
+        verify(unfreeze).execute(UnfreezeContestUseCase.Command(contestId))
     }
 
     @Test

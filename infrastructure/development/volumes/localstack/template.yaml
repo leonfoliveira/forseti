@@ -51,3 +51,63 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: dev-submission-queue
+
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-auto-freeze-queue
+
+  # --- EventBridge Scheduler Execution Role ---
+  AutoFreezeScheduleExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: dev-auto-freeze-scheduler-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+                aws:SourceArn: !Sub
+                  - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule-group/default"
+                  - {}
+      Policies:
+        - PolicyName: SendAutoFreezeMessage
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt AutoFreezeQueue.Arn
+
+  # --- Scheduler Policies ---
+  AutoFreezeSchedulerPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: dev-auto-freeze-scheduler-policy
+      Description: Allows the core application to manage auto-freeze schedules.
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ManageAutoFreezeSchedules
+            Effect: Allow
+            Action:
+              - scheduler:CreateSchedule
+              - scheduler:DeleteSchedule
+            Resource: !Sub
+              - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/auto-freeze-*"
+              - {}
+
+          - Sid: PassAutoFreezeExecutionRole
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: !GetAtt AutoFreezeScheduleExecutionRole.Arn
+            Condition:
+              StringEquals:
+                iam:PassedToService: scheduler.amazonaws.com

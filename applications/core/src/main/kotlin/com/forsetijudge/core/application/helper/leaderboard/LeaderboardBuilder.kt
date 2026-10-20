@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
@@ -16,6 +17,7 @@ import java.time.Duration
 class LeaderboardBuilder(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val leaderboardCellBuilder: LeaderboardCellBuilder,
     private val leaderboardCacheStore: LeaderboardCacheStore,
 ) {
@@ -25,10 +27,14 @@ class LeaderboardBuilder(
      * Builds the leaderboard for a specific contest.
      *
      * @param contest the contest for which the leaderboard is being built
+     * @param shouldBypassFreeze a flag indicating whether to bypass the freeze period for the leaderboard
      * @return the leaderboard for the contest
      */
-    fun build(contest: Contest): Leaderboard {
-        logger.info("Building leaderboard for contest with id: ${contest.id}")
+    fun build(
+        contest: Contest,
+        shouldBypassFreeze: Boolean = false,
+    ): Leaderboard {
+        logger.info("Building leaderboard for contest with id: ${contest.id}, shouldBypassFreeze: $shouldBypassFreeze")
 
         val contestants =
             memberRepository.findAllByContestIdAndTypeIn(
@@ -38,7 +44,7 @@ class LeaderboardBuilder(
         val problems = contest.problems
 
         val rows =
-            buildRows(contest, contestants, problems)
+            buildRows(contest, contestants, problems, shouldBypassFreeze)
                 .sortedWith { a, b ->
                     if (a.score != b.score) {
                         return@sortedWith -a.score.compareTo(b.score)
@@ -49,13 +55,11 @@ class LeaderboardBuilder(
 
                     val aAcceptedTimes =
                         a.cells
-                            .map { it.acceptedAt }
-                            .filter { it != null }
+                            .mapNotNull { it.acceptedAt }
                             .sortedByDescending { it }
                     val bAcceptedTimes =
                         b.cells
-                            .map { it.acceptedAt }
-                            .filter { it != null }
+                            .mapNotNull { it.acceptedAt }
                             .sortedByDescending { it }
 
                     for (i in aAcceptedTimes.indices) {
@@ -82,13 +86,15 @@ class LeaderboardBuilder(
      * @param contest the contest for which the leaderboard is being built
      * @param members the list of contestants participating in the contest
      * @param problems the list of problems in the contest
+     * @param shouldBypassFreeze a flag indicating whether to bypass the freeze period for the leaderboard
      */
     private fun buildRows(
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
+        shouldBypassFreeze: Boolean,
     ): List<Leaderboard.Row> {
-        val cells = buildCells(contest, members, problems)
+        val cells = buildCells(contest, members, problems, shouldBypassFreeze)
         val cellsByMemberId = cells.groupBy { it.memberId }
 
         val rows =
@@ -117,25 +123,39 @@ class LeaderboardBuilder(
      * @param contest the contest for which the leaderboard is being built
      * @param members the list of contestants participating in the contest
      * @param problems the list of problems in the contest
+     * @param shouldBypassFreeze a flag indicating whether to bypass the freeze period for the leaderboard
      */
     private fun buildCells(
         contest: Contest,
         members: List<Member>,
         problems: List<Problem>,
+        shouldBypassFreeze: Boolean,
     ): List<Leaderboard.Cell> {
         val cachedCells =
-            leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy {
-                it.memberId to
-                    it.problemId
+            if (shouldBypassFreeze) {
+                emptyMap()
+            } else {
+                leaderboardCacheStore.getAllCellsByContestId(contest.id).groupBy {
+                    it.memberId to
+                        it.problemId
+                }
             }
-
         val submissionsForNonCachedMemberProblemPairs =
-            submissionRepository
-                .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
-                    contestId = contest.id,
-                    status = Submission.Status.JUDGED,
-                    excludedPairs = cachedCells.keys.map { "${it.first}:${it.second}" },
-                ).groupBy { it.member.id to it.problem.id }
+            if (contest.isFrozen() && !shouldBypassFreeze) {
+                frozenSubmissionRepository
+                    .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
+                        contestId = contest.id,
+                        status = Submission.Status.JUDGED,
+                        excludedPairs = cachedCells.keys.map { "${it.first}:${it.second}" },
+                    ).map { it.unfreeze() }
+            } else {
+                submissionRepository
+                    .findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
+                        contestId = contest.id,
+                        status = Submission.Status.JUDGED,
+                        excludedPairs = cachedCells.keys.map { "${it.first}:${it.second}" },
+                    )
+            }.groupBy { it.member.id to it.problem.id }
 
         val cells =
             members.flatMap { member ->

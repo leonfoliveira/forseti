@@ -38,11 +38,11 @@ import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ObjectUtil } from "@/util/ObjectUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 type Props = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
 };
 
@@ -95,12 +95,8 @@ export function SettingsPage({ contest, leaderboard }: Props) {
           contest.id,
         );
 
-        dispatch(
-          ContestSlice.actions.set(
-            ObjectUtil.removeKeys(updatedContest, "members", "problems"),
-          ),
-        );
         dispatch(AdminDashboardSlice.actions.set(dashboard));
+        dispatch(ContestSlice.actions.set(updatedContest));
 
         toast.success("Settings saved successfully.");
         setIsConfirmDialogOpen(false);

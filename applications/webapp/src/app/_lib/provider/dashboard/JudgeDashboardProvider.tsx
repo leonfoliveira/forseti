@@ -15,6 +15,10 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching judge dashboard data and setting up sse listeners.
@@ -51,6 +55,8 @@ export function JudgeDashboardProvider({
             CLARIFICATION_CREATED: receiveClarificationCreated,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_FROZEN: receiveContestFrozen,
+            CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -141,6 +147,24 @@ export function JudgeDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
+  function receiveContestFrozen(
+    contest: ContestWithMembersAndProblemsResponseDTO,
+  ) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(JudgeDashboardSlice.actions.freeze(contest));
+    toast.info("The contest has been frozen");
+  }
+
+  function receiveContestUnfrozen(data: {
+    contest: ContestWithMembersAndProblemsResponseDTO;
+    leaderboard: LeaderboardResponseDTO;
+    submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
+  }) {
+    console.debug("Received contest unfrozen");
+    dispatch(JudgeDashboardSlice.actions.unfreeze(data));
+    toast.info("The contest has been unfrozen");
+  }
+
   if (state.isLoading) {
     return <LoadingPage />;
   }
@@ -150,6 +174,7 @@ export function JudgeDashboardProvider({
 
   return (
     <>
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

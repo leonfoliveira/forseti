@@ -1,7 +1,7 @@
 import { ContestRepository } from "@/port/output/repository/ContestRepository";
 import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 
 export class AxiosContestRepository implements ContestRepository {
@@ -12,9 +12,9 @@ export class AxiosContestRepository implements ContestRepository {
   async update(
     contestId: string,
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestWithMembersAndProblemsDTO> {
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
     const response =
-      await this.axiosClient.put<ContestWithMembersAndProblemsDTO>(
+      await this.axiosClient.put<ContestWithMembersAndProblemsResponseDTO>(
         `${this.basePath}/${contestId}`,
         {
           data: requestDTO,
@@ -30,19 +30,41 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
+  async freeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
+    const response =
+      await this.axiosClient.patch<ContestWithMembersAndProblemsResponseDTO>(
+        `${this.basePath}/${contestId}:freeze`,
+      );
+    return response.data;
+  }
+
+  async unfreeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
+    const response =
+      await this.axiosClient.patch<ContestWithMembersAndProblemsResponseDTO>(
+        `${this.basePath}/${contestId}:unfreeze`,
+      );
+    return response.data;
+  }
+
   async forceStart(
     contestId: string,
-  ): Promise<ContestWithMembersAndProblemsDTO> {
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
     const response =
-      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
+      await this.axiosClient.patch<ContestWithMembersAndProblemsResponseDTO>(
         `${this.basePath}/${contestId}:force-start`,
       );
     return response.data;
   }
 
-  async forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+  async forceEnd(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
     const response =
-      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
+      await this.axiosClient.patch<ContestWithMembersAndProblemsResponseDTO>(
         `${this.basePath}/${contestId}:force-end`,
       );
     return response.data;

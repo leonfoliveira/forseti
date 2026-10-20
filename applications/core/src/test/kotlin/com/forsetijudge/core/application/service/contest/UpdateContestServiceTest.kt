@@ -13,6 +13,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
+import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
@@ -34,8 +35,10 @@ class UpdateContestServiceTest {
     private val hasher = mock<Hasher>()
     private val validator = mock<TestCasesValidator>()
     private val committer = mock<AttachmentCommiter>()
+    private val autoFreezeQueueProducer = mock<AutoFreezeQueueProducer>()
     private val events = mock<BusinessEventPublisher>()
-    private val service = UpdateContestService(contests, problems, members, hasher, validator, committer, events)
+    private val service =
+        UpdateContestService(contests, problems, members, hasher, validator, committer, autoFreezeQueueProducer, events)
 
     @AfterEach
     fun clearAuthentication() = TestAuthentication.clear()
@@ -58,6 +61,7 @@ class UpdateContestServiceTest {
                 languages = listOf(Submission.Language.JAVA_21),
                 startAt = startAt,
                 endAt = endAt,
+                autoFreezeAt = contest.autoFreezeAt,
                 members = emptyList(),
                 problems = emptyList(),
             )
@@ -87,6 +91,7 @@ class UpdateContestServiceTest {
                 languages = listOf(Submission.Language.CPP_17),
                 startAt = contest.startAt,
                 endAt = contest.endAt,
+                autoFreezeAt = contest.autoFreezeAt,
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
@@ -121,6 +126,7 @@ class UpdateContestServiceTest {
                 listOf(Submission.Language.CPP_17),
                 OffsetDateTime.now().plusHours(1),
                 OffsetDateTime.now().plusHours(2),
+                null,
                 emptyList(),
                 emptyList(),
             )

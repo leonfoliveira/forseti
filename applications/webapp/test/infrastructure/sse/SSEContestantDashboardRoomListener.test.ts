@@ -14,6 +14,8 @@ describe("SSEContestantDashboardRoomListener", () => {
       SUBMISSION_UPDATED: jest.fn(),
       ANNOUNCEMENT_CREATED: jest.fn(),
       CLARIFICATION_PUBLISHED: jest.fn(),
+      CONTEST_FROZEN: jest.fn(),
+      CONTEST_UNFROZEN: jest.fn(),
     };
     const onDisconnect = jest.fn();
     const onReconnect = jest.fn();

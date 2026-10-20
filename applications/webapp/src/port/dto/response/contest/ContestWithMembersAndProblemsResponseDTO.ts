@@ -2,7 +2,7 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { MemberWithLoginResponseDTO } from "@/port/dto/response/member/MemberWithLoginResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 
-export type ContestWithMembersAndProblemsDTO = ContestResponseDTO & {
+export type ContestWithMembersAndProblemsResponseDTO = ContestResponseDTO & {
   members: MemberWithLoginResponseDTO[];
   problems: ProblemWithTestCasesResponseDTO[];
 };

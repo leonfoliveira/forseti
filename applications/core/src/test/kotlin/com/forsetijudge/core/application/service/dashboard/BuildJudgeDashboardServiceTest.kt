@@ -46,7 +46,12 @@ class BuildJudgeDashboardServiceTest {
         TestAuthentication.setMember(judge)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
-        whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
+        whenever(
+            leaderboardBuilder.build(
+                contest,
+                true,
+            ),
+        ).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
@@ -65,6 +70,6 @@ class BuildJudgeDashboardServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildJudgeDashboardUseCase.Command(contest.id))
         }
-        verify(leaderboardBuilder, never()).build(any())
+        verify(leaderboardBuilder, never()).build(any(), any())
     }
 }

@@ -47,14 +47,19 @@ class BuildAdminDashboardServiceTest {
         TestAuthentication.setMember(root)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(root.id, contest.id)).thenReturn(root)
-        whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
+        whenever(
+            leaderboardBuilder.build(
+                contest,
+                true,
+            ),
+        ).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
         val result = service.execute(BuildAdminDashboardUseCase.Command(contest.id))
 
         assertEquals(contest.id, result.contest.id)
-        verify(leaderboardBuilder).build(contest)
+        verify(leaderboardBuilder).build(contest, true)
         verify(submissionRepository).findAllByContestId(contest.id)
     }
 
@@ -68,7 +73,7 @@ class BuildAdminDashboardServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildAdminDashboardUseCase.Command(contest.id))
         }
-        verify(leaderboardBuilder, never()).build(any())
+        verify(leaderboardBuilder, never()).build(any(), any())
 
         whenever(contestRepository.findById(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

@@ -38,6 +38,7 @@ class ApiSubmissionUpdatedEventListener(
         val submission =
             submissionRepository.findById(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
+        val contest = submission.contest
         val cellSubmissions =
             submissionRepository.findAllByMemberIdAndProblemIdAndStatus(
                 memberId = submission.member.id,
@@ -68,20 +69,22 @@ class ApiSubmissionUpdatedEventListener(
                 data = submission.toWithCodeResponseDTO(),
             ),
         )
-        sseFanoutRedisMessageProducer.produce(
-            SSEFanoutMessage(
-                room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
-                eventName = SSE.SUBMISSION_UPDATED.name,
-                data = submission.toResponseDTO(),
-            ),
-        )
-        sseFanoutRedisMessageProducer.produce(
-            SSEFanoutMessage(
-                room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
-                eventName = SSE.SUBMISSION_UPDATED.name,
-                data = submission.toResponseDTO(),
-            ),
-        )
+        if (!contest.isFrozen()) {
+            sseFanoutRedisMessageProducer.produce(
+                SSEFanoutMessage(
+                    room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
+                    eventName = SSE.SUBMISSION_UPDATED.name,
+                    data = submission.toResponseDTO(),
+                ),
+            )
+            sseFanoutRedisMessageProducer.produce(
+                SSEFanoutMessage(
+                    room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
+                    eventName = SSE.SUBMISSION_UPDATED.name,
+                    data = submission.toResponseDTO(),
+                ),
+            )
+        }
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
                 room = SSERoomBuilder.buildMemberPrivateRoom(submission.member.id),
@@ -111,21 +114,25 @@ class ApiSubmissionUpdatedEventListener(
                 data = leaderboardCell.toResponseDTO(),
             ),
         )
-        sseFanoutRedisMessageProducer.produce(
-            SSEFanoutMessage(
-                room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
-                eventName = SSE.LEADERBOARD_UPDATED.name,
-                data = leaderboardCell.toResponseDTO(),
-            ),
-        )
-        sseFanoutRedisMessageProducer.produce(
-            SSEFanoutMessage(
-                room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
-                eventName = SSE.LEADERBOARD_UPDATED.name,
-                data = leaderboardCell.toResponseDTO(),
-            ),
-        )
+        if (!contest.isFrozen()) {
+            sseFanoutRedisMessageProducer.produce(
+                SSEFanoutMessage(
+                    room = SSERoomBuilder.buildContestantDashboardRoom(submission.contest.id),
+                    eventName = SSE.LEADERBOARD_UPDATED.name,
+                    data = leaderboardCell.toResponseDTO(),
+                ),
+            )
+            sseFanoutRedisMessageProducer.produce(
+                SSEFanoutMessage(
+                    room = SSERoomBuilder.buildSpectatorDashboardRoom(submission.contest.id),
+                    eventName = SSE.LEADERBOARD_UPDATED.name,
+                    data = leaderboardCell.toResponseDTO(),
+                ),
+            )
+        }
 
-        leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
+        if (!contest.isFrozen()) {
+            leaderboardCacheStore.cacheCell(submission.contest.id, leaderboardCell)
+        }
     }
 }

@@ -14,6 +14,10 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { StaffDashboardSlice } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching staff dashboard data and setting up sse listeners.
@@ -48,6 +52,8 @@ export function StaffDashboardProvider({
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_FROZEN: receiveContestFrozen,
+            CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -119,6 +125,22 @@ export function StaffDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
+  function receiveContestFrozen(contest: ContestResponseDTO) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(StaffDashboardSlice.actions.freeze(contest));
+    toast.info("The contest has been frozen");
+  }
+
+  function receiveContestUnfrozen(data: {
+    contest: ContestResponseDTO;
+    leaderboard: LeaderboardResponseDTO;
+    submissions: SubmissionWithCodeResponseDTO[];
+  }) {
+    console.debug("Received contest unfrozen");
+    dispatch(StaffDashboardSlice.actions.unfreeze(data));
+    toast.info("The contest has been unfrozen");
+  }
+
   if (state.isLoading) {
     return <LoadingPage />;
   }
@@ -128,6 +150,7 @@ export function StaffDashboardProvider({
 
   return (
     <>
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

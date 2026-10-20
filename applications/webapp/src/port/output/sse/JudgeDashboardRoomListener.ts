@@ -2,7 +2,8 @@ import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/Lead
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 export interface JudgeDashboardRoomListener {
   /**
    * Subscribes to the judge dashboard room for the specified contest.
@@ -31,6 +32,14 @@ export interface JudgeDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_FROZEN: (
+        contest: ContestWithMembersAndProblemsResponseDTO,
+      ) => void;
+      CONTEST_UNFROZEN: (data: {
+        contest: ContestWithMembersAndProblemsResponseDTO;
+        leaderboard: LeaderboardResponseDTO;
+        submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
+      }) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

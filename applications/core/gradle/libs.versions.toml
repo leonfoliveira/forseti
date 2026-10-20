@@ -1,4 +1,5 @@
 [versions]
+awsSdk = "2.56.0"
 bcrypt = "0.10.2"
 flyway = "13.8.0"
 hibernateEnvers = "7.4.10.Final"
@@ -24,6 +25,7 @@ springBoot = "4.1.1"
 testcontainers = "1.21.4"
 
 [libraries]
+awsSdkScheduler = { module = "software.amazon.awssdk:scheduler", version.ref = "awsSdk" }
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flywayDatabasePostgresql = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }

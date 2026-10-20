@@ -11,6 +11,8 @@ import com.forsetijudge.core.port.input.usecase.contest.FindAllContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceEndContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
+import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
+import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
@@ -36,6 +38,8 @@ class ContestController(
     private val updateContestUseCase: UpdateContestUseCase,
     private val forceStartContestUseCase: ForceStartContestUseCase,
     private val forceEndContestUseCase: ForceEndContestUseCase,
+    private val freezeContestUseCase: FreezeContestUseCase,
+    private val unfreezeContestUseCase: UnfreezeContestUseCase,
     private val deleteContestUseCase: DeleteContestUseCase,
 ) {
     private val logger = SafeLogger(this::class)
@@ -95,6 +99,7 @@ class ContestController(
                     languages = body.languages,
                     startAt = body.startAt,
                     endAt = body.endAt,
+                    autoFreezeAt = body.autoFreezeAt,
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(
@@ -151,6 +156,32 @@ class ContestController(
         val contest =
             forceEndContestUseCase.execute(
                 ForceEndContestUseCase.Command(contestId),
+            )
+        return ResponseEntity.ok(contest)
+    }
+
+    @PatchMapping("/contests/{contestId}:freeze")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    fun freeze(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
+        logger.info("[PATCH] /v1/contests/$contestId:freeze")
+        val contest =
+            freezeContestUseCase.execute(
+                FreezeContestUseCase.Command(contestId),
+            )
+        return ResponseEntity.ok(contest)
+    }
+
+    @PatchMapping("/contests/{contestId}:unfreeze")
+    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    fun unfreeze(
+        @PathVariable contestId: UUID,
+    ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
+        logger.info("[PATCH] /v1/contests/$contestId:unfreeze")
+        val contest =
+            unfreezeContestUseCase.execute(
+                UnfreezeContestUseCase.Command(contestId),
             )
         return ResponseEntity.ok(contest)
     }

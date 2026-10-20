@@ -18,6 +18,7 @@ import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProb
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
+import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
@@ -39,6 +40,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val attachmentCommiter: AttachmentCommiter,
+    private val autoFreezeQueueProducer: AutoFreezeQueueProducer,
     private val businessEventPublisher: BusinessEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -88,6 +90,42 @@ class UpdateContestService(
             }
         }
 
+        val isUpdatingAutoFreezeAt =
+            (command.autoFreezeAt != null && contest.autoFreezeAt == null) ||
+                (command.autoFreezeAt == null && contest.autoFreezeAt != null) ||
+                (
+                    (
+                        command.autoFreezeAt != null &&
+                            !command.autoFreezeAt
+                                .truncatedTo(ChronoUnit.SECONDS)
+                                .isEqual(contest.autoFreezeAt!!.truncatedTo(ChronoUnit.SECONDS))
+                    )
+                )
+        if (isUpdatingAutoFreezeAt) {
+            if (contest.isFrozen()) {
+                throw ForbiddenException("Contest is already frozen and cannot have its freeze time updated")
+            }
+
+            if (command.autoFreezeAt != null &&
+                command.autoFreezeAt.isAfter(command.endAt) &&
+                command.autoFreezeAt.isBefore(
+                    now,
+                )
+            ) {
+                throw BusinessException("Contest freeze time must be before the end time and in the future")
+            }
+
+            if (contest.autoFreezeAt != null) {
+                autoFreezeQueueProducer.cancel(contest.id)
+            }
+            if (command.autoFreezeAt != null) {
+                autoFreezeQueueProducer.produce(
+                    AutoFreezeQueueProducer.Message(contestId = contest.id),
+                    command.autoFreezeAt,
+                )
+            }
+        }
+
         if (contestRepository.existsBySlugAndIdNot(command.slug, contest.id)) {
             throw ConflictException("Contest with slug '${command.slug}' already exists")
         }
@@ -97,6 +135,7 @@ class UpdateContestService(
         contest.languages = command.languages
         contest.startAt = command.startAt
         contest.endAt = command.endAt
+        contest.autoFreezeAt = command.autoFreezeAt
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }

@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.dto.response.dashboard.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional
 class BuildSpectatorDashboardService(
     private val contestRepository: ContestRepository,
     private val submissionRepository: SubmissionRepository,
+    private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildSpectatorDashboardUseCase {
@@ -43,7 +45,12 @@ class BuildSpectatorDashboardService(
             .throwIfErrors()
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
-        val submissions = submissionRepository.findAllByContestId(contest.id)
+        val submissions =
+            if (contest.isFrozen()) {
+                frozenSubmissionRepository.findAllByContestId(contest.id)
+            } else {
+                submissionRepository.findAllByContestId(contest.id)
+            }
         val clarifications = clarificationRepository.findAllByContestIdAndIsPublic(contest.id)
 
         val dashboard =

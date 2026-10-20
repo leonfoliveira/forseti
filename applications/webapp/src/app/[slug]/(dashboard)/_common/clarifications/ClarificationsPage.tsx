@@ -117,7 +117,6 @@ export function ClarificationsPage({
           >
             {clarifications
               .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
-              .toReversed()
               .map((clarification) => (
                 <ClarificationsPageCard
                   key={clarification.id}

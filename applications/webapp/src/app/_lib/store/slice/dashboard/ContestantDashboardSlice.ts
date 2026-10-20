@@ -10,6 +10,7 @@ import { SubmissionResponseDTO } from "@/port/dto/response/submission/Submission
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 
 export type ContestantDashboardState = ContestantDashboardResponseDTO;
 
@@ -35,17 +36,8 @@ export const ContestantDashboardSlice = createSlice({
         action.payload,
       );
     },
-    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
-      state.leaderboard.isFrozen = action.payload;
-    },
     mergeSubmission(state, action: { payload: SubmissionResponseDTO }) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
-    },
-    mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
-      state.submissions = EntityUtil.mergeBatch(
-        state.submissions,
-        action.payload,
-      );
     },
     mergeMemberSubmission(
       state,
@@ -66,6 +58,26 @@ export const ContestantDashboardSlice = createSlice({
       state.clarifications = EntityUtil.merge(
         state.clarifications,
         action.payload,
+      );
+    },
+    freeze(state, action: { payload: ContestResponseDTO }) {
+      state.contest = action.payload;
+    },
+    unfreeze(
+      state,
+      action: {
+        payload: {
+          contest: ContestResponseDTO;
+          leaderboard: LeaderboardResponseDTO;
+          submissions: SubmissionResponseDTO[];
+        };
+      },
+    ) {
+      state.contest = action.payload.contest;
+      state.leaderboard = action.payload.leaderboard;
+      state.submissions = EntityUtil.mergeBatch(
+        state.submissions,
+        action.payload.submissions,
       );
     },
   },

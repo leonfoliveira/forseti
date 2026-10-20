@@ -11,6 +11,8 @@ describe("ContestService", () => {
   const repository = {
     update: jest.fn(),
     findBySlug: jest.fn(),
+    freeze: jest.fn(),
+    unfreeze: jest.fn(),
     forceStart: jest.fn(),
     forceEnd: jest.fn(),
   };
@@ -99,6 +101,17 @@ describe("ContestService", () => {
         ],
       }),
     );
+  });
+
+  it("freeze and unfreeze contest", async () => {
+    const updated = MockContestWithMembersAndProblemsDTO();
+    repository.freeze.mockResolvedValue(updated);
+    repository.unfreeze.mockResolvedValue(updated);
+
+    await expect(service.freeze("contest-42")).resolves.toBe(updated);
+    await expect(service.unfreeze("contest-42")).resolves.toBe(updated);
+    expect(repository.freeze).toHaveBeenCalledWith("contest-42");
+    expect(repository.unfreeze).toHaveBeenCalledWith("contest-42");
   });
 
   it("delegates contest lookup and force operations", async () => {

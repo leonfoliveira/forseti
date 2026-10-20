@@ -1,27 +1,134 @@
-import { SpectatorDashboardSlice } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
+import {
+  SpectatorDashboardState,
+  SpectatorDashboardSlice,
+} from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { MockSpectatorDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/MockDTOs";
+import {
+  MockSpectatorDashboardResponseDTO,
+  MockContestWithMembersAndProblemsDTO,
+  MockLeaderboardResponseDTO,
+  MockLeaderboardCellResponseDTO,
+  MockAnnouncementResponseDTO,
+  MockClarificationResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 
 describe("SpectatorDashboardSlice", () => {
-  it("sets dashboard state, freezes leaderboard, and resets", () => {
-    let state = SpectatorDashboardSlice.reducer(
+  const stateWithData: SpectatorDashboardState = {
+    ...MockSpectatorDashboardResponseDTO(),
+  };
+
+  it("should set the initial state correctly", () => {
+    const state = SpectatorDashboardSlice.reducer(
       undefined,
-      SpectatorDashboardSlice.actions.set(MockSpectatorDashboardResponseDTO()),
+      SpectatorDashboardSlice.actions.set(stateWithData),
     );
-    state = SpectatorDashboardSlice.reducer(
-      state,
-      SpectatorDashboardSlice.actions.setLeaderboardIsFrozen(true),
+    expect(state).toEqual({
+      ...stateWithData,
+      listenerStatus: ListenerStatus.CONNECTED,
+    });
+  });
+
+  it("should reset the state", () => {
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.reset(),
     );
-    expect(
-      (state as typeof state & { listenerStatus: ListenerStatus })
-        .listenerStatus,
-    ).toBe(ListenerStatus.CONNECTED);
-    expect(state.leaderboard.isFrozen).toBe(true);
-    expect(
-      SpectatorDashboardSlice.reducer(
-        state,
-        SpectatorDashboardSlice.actions.reset(),
-      ),
-    ).toEqual({});
+
+    expect(state).toEqual({});
+  });
+
+  it("should set the leaderboard", () => {
+    const newLeaderboard = MockLeaderboardResponseDTO();
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.setLeaderboard(newLeaderboard),
+    );
+
+    expect(state.leaderboard).toEqual(newLeaderboard);
+  });
+
+  it("should merge a partial leaderboard", () => {
+    const leaderboardCell = MockLeaderboardCellResponseDTO({
+      memberId: stateWithData.leaderboard.rows[0].memberId,
+      problemId: stateWithData.leaderboard.rows[0].cells[0].problemId,
+      isAccepted: !stateWithData.leaderboard.rows[0].cells[0].isAccepted,
+    });
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.mergeLeaderboard(leaderboardCell),
+    );
+
+    expect(state.leaderboard.rows[0].cells[0].isAccepted).toBe(
+      leaderboardCell.isAccepted,
+    );
+  });
+
+  it("should merge a new submission", () => {
+    const newSubmission = MockSubmissionResponseDTO();
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.mergeSubmission(newSubmission),
+    );
+
+    expect(state.submissions).toHaveLength(2);
+    expect(state.submissions).toContainEqual(newSubmission);
+  });
+
+  it("should merge a new announcement", () => {
+    const newAnnouncement = MockAnnouncementResponseDTO();
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.mergeAnnouncement(newAnnouncement),
+    );
+
+    expect(state.announcements).toHaveLength(2);
+    expect(state.announcements).toContainEqual(newAnnouncement);
+  });
+
+  it("should merge a new clarification", () => {
+    const mockClarification = MockClarificationResponseDTO();
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.mergeClarification(mockClarification),
+    );
+
+    expect(state.clarifications).toHaveLength(2);
+    expect(state.clarifications).toContainEqual(mockClarification);
+  });
+
+  it("should freeze the contest", () => {
+    const mockContest = MockContestWithMembersAndProblemsDTO();
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.freeze(mockContest),
+    );
+
+    expect(state.contest).toEqual(mockContest);
+  });
+
+  it("should unfreeze the contest", () => {
+    const contest = MockContestWithMembersAndProblemsDTO();
+    const leaderboard = MockLeaderboardResponseDTO();
+    const submissions = [MockSubmissionResponseDTO()];
+
+    const state = SpectatorDashboardSlice.reducer(
+      stateWithData,
+      SpectatorDashboardSlice.actions.unfreeze({
+        contest,
+        leaderboard,
+        submissions,
+      }),
+    );
+
+    expect(state.contest).toEqual(contest);
+    expect(state.leaderboard).toEqual(leaderboard);
+    expect(state.submissions).toEqual(expect.arrayContaining(submissions));
   });
 });

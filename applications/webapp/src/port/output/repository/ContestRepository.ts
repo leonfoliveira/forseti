@@ -1,6 +1,6 @@
 import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export interface ContestRepository {
   /**
@@ -13,7 +13,7 @@ export interface ContestRepository {
   update(
     contestId: string,
     requestDTO: UpdateContestRequestDTO,
-  ): Promise<ContestWithMembersAndProblemsDTO>;
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Find contest by its Slug.
@@ -24,12 +24,32 @@ export interface ContestRepository {
   findBySlug(slug: string): Promise<ContestResponseDTO>;
 
   /**
+   * Freeze a contest by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The updated contest
+   */
+  freeze(contestId: string): Promise<ContestWithMembersAndProblemsResponseDTO>;
+
+  /**
+   * Unfreeze a contest by its ID.
+   *
+   * @param contestId ID of the contest
+   * @returns The updated contest
+   */
+  unfreeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
+
+  /**
    * Force start a contest by its ID.
    *
    * @param contestId ID of the contest
    * @returns The updated contest
    */
-  forceStart(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  forceStart(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Force end a contest by its ID.
@@ -37,5 +57,7 @@ export interface ContestRepository {
    * @param contestId ID of the contest
    * @returns The updated contest
    */
-  forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  forceEnd(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 }

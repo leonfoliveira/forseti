@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildContestantDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.AfterEach
@@ -25,6 +26,7 @@ class BuildContestantDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
     private val memberRepository = mock<MemberRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
+    private val frozenSubmissionRepository = mock<FrozenSubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
@@ -32,6 +34,7 @@ class BuildContestantDashboardServiceTest {
             contestRepository,
             memberRepository,
             submissionRepository,
+            frozenSubmissionRepository,
             clarificationRepository,
             leaderboardBuilder,
         )
@@ -48,6 +51,7 @@ class BuildContestantDashboardServiceTest {
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
         whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(frozenSubmissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(submissionRepository.findAllByContestIdAndMemberId(contest.id, contestant.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contestant.id)).thenReturn(
             emptyList(),
@@ -71,6 +75,6 @@ class BuildContestantDashboardServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildContestantDashboardUseCase.Command(contest.id))
         }
-        verify(leaderboardBuilder, never()).build(any())
+        verify(leaderboardBuilder, never()).build(any(), any())
     }
 }

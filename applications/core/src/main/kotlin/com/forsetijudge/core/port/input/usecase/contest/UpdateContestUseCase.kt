@@ -36,6 +36,7 @@ interface UpdateContestUseCase {
      * @param languages The list of programming languages allowed in the
      * @param startAt The scheduled start time of the contest.
      * @param endAt The scheduled end time of the contest, which must be in the future and after the start time.
+     * @param autoFreezeAt The time at which the scoreboard will be automatically frozen, which must be before the end time.
      * @param members The list of members participating in the contest, which must have unique logins and valid types.
      * @param problems The list of problems included in the contest, which must have unique letters and valid attributes such as time and memory limits.
      */
@@ -50,9 +51,9 @@ interface UpdateContestUseCase {
         val title: String,
         @field:NotEmpty(message = "'languages' must not be empty")
         val languages: List<Submission.Language>,
-        // Must be in the future if it is being updated (validated in the service layer)
         val startAt: OffsetDateTime,
         val endAt: OffsetDateTime,
+        val autoFreezeAt: OffsetDateTime?,
         @field:Valid
         val members: List<Member>,
         @field:Valid

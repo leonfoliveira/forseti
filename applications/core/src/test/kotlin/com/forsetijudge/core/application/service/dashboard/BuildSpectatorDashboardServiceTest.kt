@@ -9,6 +9,7 @@ import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboardUseCase
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -23,12 +24,14 @@ import java.time.OffsetDateTime
 class BuildSpectatorDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
+    private val frozenSubmissionRepository = mock<FrozenSubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
         BuildSpectatorDashboardService(
             contestRepository,
             submissionRepository,
+            frozenSubmissionRepository,
             clarificationRepository,
             leaderboardBuilder,
         )
@@ -40,6 +43,7 @@ class BuildSpectatorDashboardServiceTest {
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(frozenSubmissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestIdAndIsPublic(contest.id)).thenReturn(emptyList())
 
         assertEquals(contest.id, service.execute(BuildSpectatorDashboardUseCase.Command(contest.id)).contest.id)
@@ -54,7 +58,7 @@ class BuildSpectatorDashboardServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildSpectatorDashboardUseCase.Command(contest.id))
         }
-        verify(leaderboardBuilder, never()).build(any())
+        verify(leaderboardBuilder, never()).build(any(), any())
 
         whenever(contestRepository.findById(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

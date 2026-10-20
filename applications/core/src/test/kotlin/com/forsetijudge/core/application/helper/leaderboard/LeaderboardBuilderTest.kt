@@ -6,6 +6,7 @@ import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
+import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -20,8 +21,9 @@ import java.time.OffsetDateTime
 class LeaderboardBuilderTest {
     private val members = mock<MemberRepository>()
     private val submissions = mock<SubmissionRepository>()
+    private val frozenSubmissions = mock<FrozenSubmissionRepository>()
     private val cache = mock<LeaderboardCacheStore>()
-    private val builder = LeaderboardBuilder(members, submissions, LeaderboardCellBuilder(), cache)
+    private val builder = LeaderboardBuilder(members, submissions, frozenSubmissions, LeaderboardCellBuilder(), cache)
 
     @Test
     fun `builds rows from cached and submitted cells and ranks contestants`() {

@@ -10,15 +10,16 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SpectatorDashboardProvider", () => {
   it("fetches spectator dashboard data and renders children when initialized", async () => {
+    const dashboard = MockSpectatorDashboardResponseDTO();
     (
       Composition.dashboardReader.getSpectatorDashboard as jest.Mock
-    ).mockResolvedValue(MockSpectatorDashboardResponseDTO());
+    ).mockResolvedValue(dashboard);
     await renderWithProviders(
       <SpectatorDashboardProvider>
         <span data-testid="child">Ready</span>
       </SpectatorDashboardProvider>,
       {
-        contest: MockContestResponseDTO(),
+        contest: dashboard.contest,
         session: null,
       },
     );
@@ -28,7 +29,7 @@ describe("SpectatorDashboardProvider", () => {
     });
     expect(
       Composition.dashboardReader.getSpectatorDashboard,
-    ).toHaveBeenCalledWith("contest-1");
+    ).toHaveBeenCalledWith(dashboard.contest.id);
     expect(
       Composition.spectatorDashboardRoomListener.subscribe,
     ).toHaveBeenCalled();

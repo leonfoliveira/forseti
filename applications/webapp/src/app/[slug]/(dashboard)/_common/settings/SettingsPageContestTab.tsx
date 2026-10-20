@@ -1,7 +1,10 @@
 import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
@@ -26,27 +29,64 @@ import {
   languageGroups,
   SubmissionLanguage,
 } from "@/domain/enumerate/SubmissionLanguage";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { ContestUtil } from "@/util/ContestUtil";
 
 type Props = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
   isDisabled?: boolean;
 };
 
 export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
+  const freezeState = useLoadableState();
   const forceState = useLoadableState();
   const contestStatus = useContestStatusWatcher();
   const dispatch = useAppDispatch();
   const toast = useToast();
 
+  const freezeConfirmationDialog = useDialog();
   const forceConfirmationDialog = useDialog();
 
   const languageError = form.formState.errors.contest?.languages?.message;
+
+  const isContestFrozen = ContestUtil.isFrozen(contest);
+
+  async function toggleFreeze() {
+    const method = isContestFrozen
+      ? Composition.contestWritter.unfreeze.bind(Composition.contestWritter)
+      : Composition.contestWritter.freeze.bind(Composition.contestWritter);
+    const successMessage = isContestFrozen
+      ? "Contest has been unfrozen successfully."
+      : "Contest has been frozen successfully.";
+    const errorMessage = isContestFrozen
+      ? "Failed to unfreeze the contest."
+      : "Failed to freeze the contest.";
+
+    console.debug("Toggling freeze. Current state:", isContestFrozen);
+    freezeState.start();
+
+    try {
+      const updatedContest = await method(contest.id);
+
+      toast.success(successMessage);
+      dispatch(AdminDashboardSlice.actions.setContest(updatedContest));
+      dispatch(ContestSlice.actions.set(updatedContest));
+      form.reset(SettingsForm.fromResponseDTO(updatedContest));
+      freezeConfirmationDialog.close();
+      freezeState.finish();
+
+      console.debug("Freeze toggled successfully");
+    } catch (error) {
+      await freezeState.fail(error, {
+        default: () => toast.error(errorMessage),
+      });
+    }
+  }
 
   async function force(mode: "start" | "end") {
     const method =
@@ -66,16 +106,12 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
     forceState.start();
 
     try {
-      const newContestMetadata = await method(contest.id);
+      const updatedContest = await method(contest.id);
 
       toast.success(successMessage);
-      dispatch(
-        AdminDashboardSlice.actions.setContest({
-          ...contest,
-          ...newContestMetadata,
-        }),
-      );
-      dispatch(ContestSlice.actions.set(newContestMetadata));
+      dispatch(AdminDashboardSlice.actions.setContest(updatedContest));
+      dispatch(ContestSlice.actions.set(updatedContest));
+      form.reset(SettingsForm.fromResponseDTO(updatedContest));
       forceConfirmationDialog.close();
       forceState.finish();
 
@@ -131,6 +167,20 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
               }
               description="The date and time when the contest will end."
             />
+
+            <ControlledField
+              form={form}
+              name="contest.autoFreezeAt"
+              label="Auto Freeze At (optional)"
+              field={
+                <Input
+                  type="datetime-local"
+                  data-testid="contest-auto-freeze-at"
+                  disabled={isContestFrozen}
+                />
+              }
+              description="The date and time when the contest will automatically freeze."
+            />
           </div>
 
           <div className="flex flex-col gap-3">
@@ -179,6 +229,16 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
         <Button
           type="button"
           variant="secondary"
+          onClick={freezeConfirmationDialog.open}
+          data-testid="freeze-toggle-button"
+          disabled={isDisabled && !isContestFrozen}
+        >
+          {isContestFrozen ? "Unfreeze" : "Freeze"}
+        </Button>
+
+        <Button
+          type="button"
+          variant="secondary"
           data-testid="force-toggle-button"
           onClick={forceConfirmationDialog.open}
           disabled={isDisabled || forceState.isLoading}
@@ -188,6 +248,23 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
             : "Force End"}
         </Button>
       </div>
+
+      <ConfirmationDialog
+        isOpen={freezeConfirmationDialog.isOpen}
+        icon={<TriangleAlertIcon />}
+        title={
+          isContestFrozen ? "Unfreeze Confirmation" : "Freeze Confirmation"
+        }
+        description={
+          isContestFrozen
+            ? "Are you sure you want to unfreeze the contest?"
+            : "Are you sure you want to freeze the contest?"
+        }
+        onCancel={freezeConfirmationDialog.close}
+        onConfirm={toggleFreeze}
+        isLoading={freezeState.isLoading}
+        data-testid="freeze-confirmation-dialog"
+      />
 
       <ConfirmationDialog
         isOpen={forceConfirmationDialog.isOpen}
@@ -207,6 +284,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
           force(contestStatus === ContestStatus.NOT_STARTED ? "start" : "end")
         }
         isLoading={forceState.isLoading}
+        data-testid="force-confirmation-dialog"
       />
     </>
   );

@@ -56,7 +56,7 @@ class BuildLeaderboardServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildLeaderboardUseCase.Command(contest.id))
         }
-        verify(builder, never()).build(any())
+        verify(builder, never()).build(any(), any())
 
         whenever(contests.findById(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

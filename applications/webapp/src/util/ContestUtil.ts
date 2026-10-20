@@ -22,4 +22,16 @@ export class ContestUtil {
       return ContestStatus.ENDED;
     }
   }
+
+  /**
+   * Check if contest is currently frozen
+   *
+   * @param contest An object containing an optional frozenAt date string.
+   * @returns Whether the contest is frozen or not.
+   */
+  static isFrozen<TContest extends { frozenAt?: string }>(
+    contest: TContest,
+  ): boolean {
+    return !!contest.frozenAt;
+  }
 }

@@ -229,7 +229,9 @@ test("Default contest behaviour", async ({ page }) => {
   // Step 8: Sign in as admin, force end the contest
   await adminActor.signIn(contest);
   const adminActorOnSettings2 = await adminActor.navigateToSettings(contest);
+  await adminActorOnSettings2.freeze();
   await adminActorOnSettings2.forceEnd();
   contest.status = ContestStatus.ENDED;
   await adminActorOnSettings2.checkHeader(contest);
+  await adminActorOnSettings2.unfreeze();
 });

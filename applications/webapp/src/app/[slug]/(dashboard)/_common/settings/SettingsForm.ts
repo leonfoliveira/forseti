@@ -6,7 +6,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWritter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export type SettingsFormType = {
   contest: {
@@ -17,6 +17,8 @@ export type SettingsFormType = {
     };
     startAt: string;
     endAt: string;
+    autoFreezeAt?: string;
+    frozenAt?: string;
   };
   problems: {
     _id?: string;
@@ -133,6 +135,62 @@ export class SettingsForm {
             "datetime-local.after-start":
               "End date must be after the start date",
           }),
+        autoFreezeAt: Joi.string()
+          .allow("")
+          .custom((value: string, helpers) => {
+            try {
+              console.log("Auto-freeze value:", value);
+              if (value === "") {
+                return value;
+              }
+
+              const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+              if (!pattern.test(value)) {
+                return helpers.error("datetime-local.invalid");
+              }
+
+              const autoFreezeDate = new Date(value);
+              const startValue = helpers.state.ancestors[0].startAt as string;
+              const endValue = helpers.state.ancestors[0].endAt as string;
+              const now = new Date();
+
+              if (startValue) {
+                const startDate = new Date(startValue);
+                if (autoFreezeDate <= startDate) {
+                  return helpers.error(
+                    "datetime-local.auto-freeze-after-start",
+                  );
+                }
+              }
+
+              if (endValue) {
+                const endDate = new Date(endValue);
+                if (autoFreezeDate >= endDate) {
+                  return helpers.error("datetime-local.auto-freeze-before-end");
+                }
+              }
+
+              if (autoFreezeDate <= now) {
+                return helpers.error("datetime-local.future");
+              }
+
+              return value;
+            } catch {
+              return helpers.error("datetime-local.invalid");
+            }
+          })
+          .optional()
+          .messages({
+            "string.pattern.base": "Freeze date is invalid",
+            "datetime-local.invalid": "Freeze date is invalid",
+            "datetime-local.after-start":
+              "Freeze date must be after the start date",
+            "datetime-local.before-end":
+              "Freeze date must be before the end date",
+            "datetime-local.future": "Freeze date must be in the future",
+          }),
+        frozenAt: Joi.optional(),
+        unfrozenAt: Joi.optional(),
       }).required(),
       problems: Joi.array()
         .items(
@@ -249,7 +307,7 @@ export class SettingsForm {
   }
 
   static fromResponseDTO(
-    contest: ContestWithMembersAndProblemsDTO,
+    contest: ContestWithMembersAndProblemsResponseDTO,
   ): SettingsFormType {
     const problems = [...contest.problems]
       .toSorted((a, b) => a.letter.localeCompare(b.letter))
@@ -288,6 +346,10 @@ export class SettingsForm {
         languages,
         startAt: DateTimeUtil.toDatetimeLocal(contest.startAt),
         endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
+        autoFreezeAt: contest.autoFreezeAt
+          ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
+          : "",
+        frozenAt: contest.frozenAt,
       },
       members,
       problems,
@@ -303,6 +365,10 @@ export class SettingsForm {
       ) as SubmissionLanguage[],
       startAt: DateTimeUtil.fromDatetimeLocal(form.contest.startAt),
       endAt: DateTimeUtil.fromDatetimeLocal(form.contest.endAt),
+      autoFreezeAt: form.contest.autoFreezeAt
+        ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
+        : undefined,
+      frozenAt: form.contest.frozenAt,
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,

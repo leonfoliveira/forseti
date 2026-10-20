@@ -15,7 +15,7 @@ export abstract class SSERoomListener {
    * @param onReconnect Callback for reconnections
    * @returns
    */
-  async subscribe(
+  async _subscribe(
     path: string,
     listeners: Record<string, (data: any) => void>,
     onDisconnect?: () => void,

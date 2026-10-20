@@ -23,7 +23,7 @@ export class SSEMemberPrivateRoomListener
     onDisconnect?: () => void,
     onReconnect?: () => void,
   ): Promise<void> {
-    return super.subscribe(
+    return super._subscribe(
       this.basePath(memberId),
       listeners,
       onDisconnect,

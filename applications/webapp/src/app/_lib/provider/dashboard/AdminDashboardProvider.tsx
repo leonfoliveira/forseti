@@ -7,7 +7,11 @@ import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
+import {
+  useAppDispatch,
+  useAppSelector,
+  useAppStore,
+} from "@/app/_lib/store/Store";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
@@ -15,6 +19,11 @@ import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 
 /**
  * Provider component for fetching admin dashboard data and setting up sse listeners.
@@ -29,6 +38,7 @@ export function AdminDashboardProvider({
   const contest = useAppSelector((state) => state.contest);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
+  const store = useAppStore();
   const toast = useToast();
   const dashboardReseter = useDashboardReseter();
 
@@ -51,6 +61,8 @@ export function AdminDashboardProvider({
             CLARIFICATION_CREATED: receiveClarificationCreated,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_FROZEN: receiveContestFrozen,
+            CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -138,7 +150,27 @@ export function AdminDashboardProvider({
   ) {
     console.debug("Received clarification published:", clarification);
     dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`A clarification has been published`);
+    toast.info("A clarification has been published");
+  }
+
+  function receiveContestFrozen(
+    contest: ContestWithMembersAndProblemsResponseDTO,
+  ) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(AdminDashboardSlice.actions.freeze(contest));
+    dispatch(ContestSlice.actions.set(contest));
+    toast.info("The contest has been frozen");
+  }
+
+  function receiveContestUnfrozen(data: {
+    contest: ContestWithMembersAndProblemsResponseDTO;
+    leaderboard: LeaderboardResponseDTO;
+    submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
+  }) {
+    console.debug("Received contest unfrozen");
+    dispatch(AdminDashboardSlice.actions.unfreeze(data));
+    dispatch(ContestSlice.actions.set(data.contest));
+    toast.info("The contest has been unfrozen");
   }
 
   if (state.isLoading) {
@@ -150,6 +182,7 @@ export function AdminDashboardProvider({
 
   return (
     <>
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

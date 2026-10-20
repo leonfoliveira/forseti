@@ -118,6 +118,43 @@ export class ActorOnSettingsPage extends Actor {
     }
   }
 
+  async freeze() {
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
+
+    const freezeButton = contestManagementActions.getByTestId(
+      "freeze-toggle-button",
+    );
+    await freezeButton.scrollIntoViewIfNeeded();
+    await expect(freezeButton).toHaveText("Freeze");
+    await freezeButton.click();
+    await this.confirmDialog();
+    await this.closeToasts();
+
+    const freezeBanner = this.page.getByTestId("freeze-banner");
+    await freezeBanner.scrollIntoViewIfNeeded();
+    await expect(freezeBanner).toBeVisible();
+  }
+
+  async unfreeze() {
+    const contestManagementActions = this.page.getByTestId(
+      "contest-management-actions",
+    );
+
+    const unfreezeButton = contestManagementActions.getByTestId(
+      "freeze-toggle-button",
+    );
+    await unfreezeButton.scrollIntoViewIfNeeded();
+    await expect(unfreezeButton).toHaveText("Unfreeze");
+    await unfreezeButton.click();
+    await this.confirmDialog();
+    await this.closeToasts();
+
+    const freezeBanner = this.page.getByTestId("freeze-banner");
+    await expect(freezeBanner).not.toBeVisible();
+  }
+
   async forceStart() {
     const contestManagementActions = this.page.getByTestId(
       "contest-management-actions",
