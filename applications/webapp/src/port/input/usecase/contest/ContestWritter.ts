@@ -1,6 +1,6 @@
 import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export type UpdateContestInputDTO = Omit<
   UpdateContestRequestDTO,
@@ -28,7 +28,7 @@ export interface ContestWritter {
   update(
     contestId: string,
     inputDTO: UpdateContestInputDTO,
-  ): Promise<ContestWithMembersAndProblemsDTO>;
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Freeze the contest, preventing further submissions.
@@ -36,7 +36,7 @@ export interface ContestWritter {
    * @param contestId ID of the contest to freeze
    * @return The updated contest
    */
-  freeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  freeze(contestId: string): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Unfreeze the contest, allowing submissions again.
@@ -44,7 +44,9 @@ export interface ContestWritter {
    * @param contestId ID of the contest to unfreeze
    * @return The updated contest
    */
-  unfreeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  unfreeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Force start a contest immediately.
@@ -52,7 +54,9 @@ export interface ContestWritter {
    * @param contestId ID of the contest to start
    * @return The updated contest
    */
-  forceStart(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  forceStart(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 
   /**
    * Force end a contest immediately.
@@ -60,5 +64,7 @@ export interface ContestWritter {
    * @param contestId ID of the contest to end
    * @return The updated contest
    */
-  forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+  forceEnd(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO>;
 }

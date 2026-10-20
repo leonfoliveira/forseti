@@ -3,6 +3,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 
 export interface SpectatorDashboardRoomListener {
   /**
@@ -26,8 +27,9 @@ export interface SpectatorDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
-      CONTEST_FROZEN: () => void;
+      CONTEST_FROZEN: (contest: ContestResponseDTO) => void;
       CONTEST_UNFROZEN: (data: {
+        contest: ContestResponseDTO;
         leaderboard: LeaderboardResponseDTO;
         submissions: SubmissionResponseDTO[];
       }) => void;

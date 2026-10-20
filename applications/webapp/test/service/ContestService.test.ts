@@ -11,6 +11,8 @@ describe("ContestService", () => {
   const repository = {
     update: jest.fn(),
     findBySlug: jest.fn(),
+    freeze: jest.fn(),
+    unfreeze: jest.fn(),
     forceStart: jest.fn(),
     forceEnd: jest.fn(),
   };

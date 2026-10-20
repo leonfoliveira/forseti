@@ -7,6 +7,8 @@ import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
+import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
@@ -48,6 +50,7 @@ class ApiContestUnfrozenEventListener(
                 eventName = SSE.CONTEST_UNFROZEN.name,
                 data =
                     mapOf(
+                        "contest" to contest.toWithMembersAndProblemsResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to submissions.map { it.toWithCodeAndExecutionResponseDTO() },
                     ),
@@ -58,6 +61,7 @@ class ApiContestUnfrozenEventListener(
                 room = SSERoomBuilder.buildJudgeDashboardRoom(event.contestId),
                 eventName = SSE.CONTEST_UNFROZEN.name,
                 mapOf(
+                    "contest" to contest.toWithMembersAndProblemsResponseDTO(),
                     "leaderboard" to leaderboard.toResponseDTO(),
                     "submissions" to submissions.map { it.toWithCodeAndExecutionResponseDTO() },
                 ),
@@ -68,6 +72,7 @@ class ApiContestUnfrozenEventListener(
                 room = SSERoomBuilder.buildStaffDashboardRoom(event.contestId),
                 eventName = SSE.CONTEST_UNFROZEN.name,
                 mapOf(
+                    "contest" to contest.toResponseDTO(),
                     "leaderboard" to leaderboard.toResponseDTO(),
                     "submissions" to submissions.map { it.toWithCodeResponseDTO() },
                 ),
@@ -78,6 +83,7 @@ class ApiContestUnfrozenEventListener(
                 room = SSERoomBuilder.buildContestantDashboardRoom(event.contestId),
                 eventName = SSE.CONTEST_UNFROZEN.name,
                 mapOf(
+                    "contest" to contest.toResponseDTO(),
                     "leaderboard" to leaderboard.toResponseDTO(),
                     "submissions" to submissions.map { it.toResponseDTO() },
                 ),
@@ -88,6 +94,7 @@ class ApiContestUnfrozenEventListener(
                 room = SSERoomBuilder.buildSpectatorDashboardRoom(event.contestId),
                 eventName = SSE.CONTEST_UNFROZEN.name,
                 mapOf(
+                    "contest" to contest.toResponseDTO(),
                     "leaderboard" to leaderboard.toResponseDTO(),
                     "submissions" to submissions.map { it.toResponseDTO() },
                 ),

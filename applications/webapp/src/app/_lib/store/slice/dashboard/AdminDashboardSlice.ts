@@ -5,7 +5,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
 import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -26,7 +26,10 @@ export const AdminDashboardSlice = createSlice({
     reset() {
       return {} as unknown as AdminDashboardState;
     },
-    setContest(state, action: { payload: ContestWithMembersAndProblemsDTO }) {
+    setContest(
+      state,
+      action: { payload: ContestWithMembersAndProblemsResponseDTO },
+    ) {
       state.contest = action.payload;
     },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
@@ -59,19 +62,23 @@ export const AdminDashboardSlice = createSlice({
         action.payload,
       );
     },
-    freeze(state) {
-      state.contest.isFrozen = true;
+    freeze(
+      state,
+      action: { payload: ContestWithMembersAndProblemsResponseDTO },
+    ) {
+      state.contest = action.payload;
     },
     unfreeze(
       state,
       action: {
         payload: {
+          contest: ContestWithMembersAndProblemsResponseDTO;
           leaderboard: LeaderboardResponseDTO;
           submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
         };
       },
     ) {
-      state.contest.isFrozen = false;
+      state.contest = action.payload.contest;
       state.leaderboard = action.payload.leaderboard;
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,

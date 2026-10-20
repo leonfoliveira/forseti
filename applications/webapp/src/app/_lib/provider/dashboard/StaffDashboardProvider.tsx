@@ -16,6 +16,8 @@ import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/Su
 import { StaffDashboardSlice } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching staff dashboard data and setting up sse listeners.
@@ -123,13 +125,14 @@ export function StaffDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
-  function receiveContestFrozen() {
-    console.debug("Received contest frozen");
-    dispatch(StaffDashboardSlice.actions.freeze());
+  function receiveContestFrozen(contest: ContestResponseDTO) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(StaffDashboardSlice.actions.freeze(contest));
     toast.info("The contest has been frozen");
   }
 
   function receiveContestUnfrozen(data: {
+    contest: ContestResponseDTO;
     leaderboard: LeaderboardResponseDTO;
     submissions: SubmissionWithCodeResponseDTO[];
   }) {
@@ -147,7 +150,7 @@ export function StaffDashboardProvider({
 
   return (
     <>
-      {contest.isFrozen && <FreezeBanner />}
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

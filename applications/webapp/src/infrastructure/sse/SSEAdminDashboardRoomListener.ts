@@ -5,6 +5,7 @@ import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/
 import { AdminDashboardRoomListener } from "@/port/output/sse/AdminDashboardRoomListener";
 import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export class SSEAdminDashboardRoomListener
   extends SSERoomListener
@@ -35,8 +36,11 @@ export class SSEAdminDashboardRoomListener
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
-      CONTEST_FROZEN: () => void;
+      CONTEST_FROZEN: (
+        contest: ContestWithMembersAndProblemsResponseDTO,
+      ) => void;
       CONTEST_UNFROZEN: (data: {
+        contest: ContestWithMembersAndProblemsResponseDTO;
         leaderboard: LeaderboardResponseDTO;
         submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
       }) => void;

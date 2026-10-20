@@ -17,6 +17,8 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching spectator dashboard data and setting up sse listeners.
@@ -126,13 +128,14 @@ export function SpectatorDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
-  function receiveContestFrozen() {
-    console.debug("Received contest frozen");
-    dispatch(SpectatorDashboardSlice.actions.freeze());
+  function receiveContestFrozen(contest: ContestResponseDTO) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(SpectatorDashboardSlice.actions.freeze(contest));
     toast.info("The contest has been frozen");
   }
 
   function receiveContestUnfrozen(data: {
+    contest: ContestResponseDTO;
     leaderboard: LeaderboardResponseDTO;
     submissions: SubmissionResponseDTO[];
   }) {
@@ -150,7 +153,7 @@ export function SpectatorDashboardProvider({
 
   return (
     <>
-      {contest.isFrozen && <FreezeBanner />}
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

@@ -17,6 +17,8 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching judge dashboard data and setting up sse listeners.
@@ -145,13 +147,16 @@ export function JudgeDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
-  function receiveContestFrozen() {
-    console.debug("Received contest frozen");
-    dispatch(JudgeDashboardSlice.actions.freeze());
+  function receiveContestFrozen(
+    contest: ContestWithMembersAndProblemsResponseDTO,
+  ) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(JudgeDashboardSlice.actions.freeze(contest));
     toast.info("The contest has been frozen");
   }
 
   function receiveContestUnfrozen(data: {
+    contest: ContestWithMembersAndProblemsResponseDTO;
     leaderboard: LeaderboardResponseDTO;
     submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
   }) {
@@ -169,7 +174,7 @@ export function JudgeDashboardProvider({
 
   return (
     <>
-      {contest.isFrozen && <FreezeBanner />}
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

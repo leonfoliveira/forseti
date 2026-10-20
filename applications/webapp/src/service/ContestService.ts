@@ -9,7 +9,7 @@ import {
 import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export class ContestService implements ContestWritter, ContestReader {
   constructor(
@@ -29,13 +29,27 @@ export class ContestService implements ContestWritter, ContestReader {
     return await this.contestRepository.findBySlug(slug);
   }
 
+  async freeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
+    return await this.contestRepository.freeze(contestId);
+  }
+
+  async unfreeze(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
+    return await this.contestRepository.unfreeze(contestId);
+  }
+
   async forceStart(
     contestId: string,
-  ): Promise<ContestWithMembersAndProblemsDTO> {
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
     return await this.contestRepository.forceStart(contestId);
   }
 
-  async forceEnd(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+  async forceEnd(
+    contestId: string,
+  ): Promise<ContestWithMembersAndProblemsResponseDTO> {
     return await this.contestRepository.forceEnd(contestId);
   }
 

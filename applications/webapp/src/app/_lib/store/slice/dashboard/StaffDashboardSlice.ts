@@ -9,6 +9,7 @@ import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/Su
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 
 export type StaffDashboardState = StaffDashboardResponseDTO;
 
@@ -61,19 +62,20 @@ export const StaffDashboardSlice = createSlice({
         action.payload,
       );
     },
-    freeze(state) {
-      state.contest.isFrozen = true;
+    freeze(state, action: { payload: ContestResponseDTO }) {
+      state.contest = action.payload;
     },
     unfreeze(
       state,
       action: {
         payload: {
+          contest: ContestResponseDTO;
           leaderboard: LeaderboardResponseDTO;
           submissions: SubmissionWithCodeResponseDTO[];
         };
       },
     ) {
-      state.contest.isFrozen = false;
+      state.contest = action.payload.contest;
       state.leaderboard = action.payload.leaderboard;
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,

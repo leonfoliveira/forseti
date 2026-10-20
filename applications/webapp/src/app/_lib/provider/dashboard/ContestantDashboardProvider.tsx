@@ -19,6 +19,8 @@ import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -185,13 +187,14 @@ export function ContestantDashboardProvider({
     toast.info(`A clarification has been published`);
   }
 
-  function receiveContestFrozen() {
-    console.debug("Received contest frozen");
-    dispatch(ContestantDashboardSlice.actions.freeze());
+  function receiveContestFrozen(contest: ContestResponseDTO) {
+    console.debug("Received contest frozen:", contest);
+    dispatch(ContestantDashboardSlice.actions.freeze(contest));
     toast.info("The contest has been frozen");
   }
 
   function receiveContestUnfrozen(data: {
+    contest: ContestResponseDTO;
     leaderboard: LeaderboardResponseDTO;
     submissions: SubmissionResponseDTO[];
   }) {
@@ -209,7 +212,7 @@ export function ContestantDashboardProvider({
 
   return (
     <>
-      {contest.isFrozen && <FreezeBanner />}
+      {ContestUtil.isFrozen(contest) && <FreezeBanner />}
       {listenerStatus === ListenerStatus.FAILURE && <DisconnectionBanner />}
       {children}
     </>

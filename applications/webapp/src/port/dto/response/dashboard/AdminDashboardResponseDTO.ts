@@ -1,4 +1,4 @@
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberWithLoginResponseDTO } from "@/port/dto/response/member/MemberWithLoginResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
@@ -7,7 +7,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
 export type AdminDashboardResponseDTO = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   members: MemberWithLoginResponseDTO[];
   problems: ProblemWithTestCasesResponseDTO[];

@@ -18,6 +18,7 @@ spring:
         submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-submission-queue}
         submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-submission-failed-queue}
         submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-submission-judged-queue}
+        auto-freeze-queue: ${AWS_SQS_AUTO_FREEZE_QUEUE:dev-auto-freeze-queue}
         auto-freeze-queue-arn: ${AWS_SQS_AUTO_FREEZE_QUEUE_ARN:arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue}
 
   # PostgreSQL database configuration

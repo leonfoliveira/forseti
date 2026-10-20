@@ -38,11 +38,11 @@ import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ObjectUtil } from "@/util/ObjectUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 
 type Props = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
 };
 

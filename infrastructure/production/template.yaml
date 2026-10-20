@@ -789,6 +789,8 @@ Resources:
               Value: !Ref SubmissionFailedQueue
             - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
               Value: !Ref SubmissionJudgedQueue
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE
+              Value: !Ref AutoFreezeQueue
             - Name: AWS_SQS_AUTO_FREEZE_QUEUE_ARN
               Value: !GetAtt AutoFreezeQueue.Arn
             - Name: DB_URL

@@ -26,14 +26,14 @@ import {
   languageGroups,
   SubmissionLanguage,
 } from "@/domain/enumerate/SubmissionLanguage";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { ContestUtil } from "@/util/ContestUtil";
 
 type Props = {
-  contest: ContestWithMembersAndProblemsDTO;
+  contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
   isDisabled?: boolean;

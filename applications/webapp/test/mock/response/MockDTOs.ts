@@ -14,7 +14,7 @@ import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachm
 import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
 import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
@@ -231,8 +231,8 @@ export const MockAnnouncementResponseDTO = (
 });
 
 export const MockContestWithMembersAndProblemsDTO = (
-  overrides: Partial<ContestWithMembersAndProblemsDTO> = {},
-): ContestWithMembersAndProblemsDTO => ({
+  overrides: Partial<ContestWithMembersAndProblemsResponseDTO> = {},
+): ContestWithMembersAndProblemsResponseDTO => ({
   ...MockContestResponseDTO(),
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],

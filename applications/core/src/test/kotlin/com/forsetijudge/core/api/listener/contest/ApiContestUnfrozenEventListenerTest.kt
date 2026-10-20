@@ -8,12 +8,15 @@ import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
+import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
+import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecutionResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -21,7 +24,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class ApiContestUnfrozenEventListenerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -58,6 +60,7 @@ class ApiContestUnfrozenEventListenerTest {
                 listOf(
                     SSERoomBuilder.buildAdminDashboardRoom(event.contestId),
                     mapOf(
+                        "contest" to contest.toWithMembersAndProblemsResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to frozenSubmissions.map { it.toWithCodeAndExecutionResponseDTO() },
                     ),
@@ -65,6 +68,7 @@ class ApiContestUnfrozenEventListenerTest {
                 listOf(
                     SSERoomBuilder.buildJudgeDashboardRoom(event.contestId),
                     mapOf(
+                        "contest" to contest.toWithMembersAndProblemsResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to frozenSubmissions.map { it.toWithCodeAndExecutionResponseDTO() },
                     ),
@@ -72,6 +76,7 @@ class ApiContestUnfrozenEventListenerTest {
                 listOf(
                     SSERoomBuilder.buildStaffDashboardRoom(event.contestId),
                     mapOf(
+                        "contest" to contest.toResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to frozenSubmissions.map { it.toWithCodeResponseDTO() },
                     ),
@@ -79,6 +84,7 @@ class ApiContestUnfrozenEventListenerTest {
                 listOf(
                     SSERoomBuilder.buildContestantDashboardRoom(event.contestId),
                     mapOf(
+                        "contest" to contest.toResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to frozenSubmissions.map { it.toResponseDTO() },
                     ),
@@ -86,6 +92,7 @@ class ApiContestUnfrozenEventListenerTest {
                 listOf(
                     SSERoomBuilder.buildSpectatorDashboardRoom(event.contestId),
                     mapOf(
+                        "contest" to contest.toResponseDTO(),
                         "leaderboard" to leaderboard.toResponseDTO(),
                         "submissions" to frozenSubmissions.map { it.toResponseDTO() },
                     ),

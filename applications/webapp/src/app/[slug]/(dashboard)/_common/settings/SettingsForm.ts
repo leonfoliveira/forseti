@@ -6,7 +6,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWritter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
-import { ContestWithMembersAndProblemsDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsDTO";
+import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
 export type SettingsFormType = {
   contest: {
@@ -293,7 +293,7 @@ export class SettingsForm {
   }
 
   static fromResponseDTO(
-    contest: ContestWithMembersAndProblemsDTO,
+    contest: ContestWithMembersAndProblemsResponseDTO,
   ): SettingsFormType {
     const problems = [...contest.problems]
       .toSorted((a, b) => a.letter.localeCompare(b.letter))
