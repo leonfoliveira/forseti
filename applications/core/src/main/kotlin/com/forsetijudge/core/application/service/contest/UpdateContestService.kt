@@ -24,12 +24,12 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
 @Validated
@@ -90,33 +90,37 @@ class UpdateContestService(
             }
         }
 
-        val isUpdatingFreezeAt =
-            (command.freezeAt != null && contest.freezeAt == null) ||
-                (command.freezeAt == null && contest.freezeAt != null) ||
+        val isUpdatingAutoFreezeAt =
+            (command.autoFreezeAt != null && contest.autoFreezeAt == null) ||
+                (command.autoFreezeAt == null && contest.autoFreezeAt != null) ||
                 (
                     (
-                        command.freezeAt != null &&
-                            !command.freezeAt
+                        command.autoFreezeAt != null &&
+                            !command.autoFreezeAt
                                 .truncatedTo(ChronoUnit.SECONDS)
-                                .isEqual(contest.freezeAt!!.truncatedTo(ChronoUnit.SECONDS))
+                                .isEqual(contest.autoFreezeAt!!.truncatedTo(ChronoUnit.SECONDS))
                     )
                 )
-        if (isUpdatingFreezeAt) {
+        if (isUpdatingAutoFreezeAt) {
             if (contest.isFrozen()) {
                 throw ForbiddenException("Contest is already frozen and cannot have its freeze time updated")
             }
 
-            if (command.freezeAt != null && command.freezeAt.isAfter(command.endAt) && command.freezeAt.isBefore(now)) {
+            if (command.autoFreezeAt != null && command.autoFreezeAt.isAfter(command.endAt) &&
+                command.autoFreezeAt.isBefore(
+                    now,
+                )
+            ) {
                 throw BusinessException("Contest freeze time must be before the end time and in the future")
             }
 
-            if (contest.freezeAt != null) {
+            if (contest.autoFreezeAt != null) {
                 freezeQueueProducer.cancel(contest.id)
             }
-            if (command.freezeAt != null) {
+            if (command.autoFreezeAt != null) {
                 freezeQueueProducer.produce(
                     FreezeQueueProducer.Message(contestId = contest.id),
-                    command.freezeAt,
+                    command.autoFreezeAt,
                 )
             }
         }
@@ -130,7 +134,7 @@ class UpdateContestService(
         contest.languages = command.languages
         contest.startAt = command.startAt
         contest.endAt = command.endAt
-        contest.freezeAt = command.freezeAt
+        contest.autoFreezeAt = command.autoFreezeAt
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }

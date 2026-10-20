@@ -10,10 +10,10 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "contest")
@@ -52,31 +52,31 @@ class Contest(
     @Column(name = "end_at", nullable = false)
     var endAt: OffsetDateTime,
     /**
-     * The time when the contest was frozen, hiding submissions updates.
+     * The time when the contest will automatically freeze, hiding submissions updates.
      */
-    @Column(name = "freeze_at")
-    var freezeAt: OffsetDateTime? = null,
+    @Column(name = "auto_freeze_at")
+    var autoFreezeAt: OffsetDateTime? = null,
     /**
-     * The time when the contest was unfrozen, allowing submissions updates to be visible again.
+     * The time when the contest was frozen.
      */
-    @Column(name = "unfreeze_at")
-    var unfreezeAt: OffsetDateTime? = null,
+    @Column(name = "frozen_at", nullable = false)
+    var frozenAt: OffsetDateTime? = null,
     /**
-     * Members of the contest, which can include contestants, juries, and other participants.
+     * The members of the contest, which can include contestants, judges, and other roles.
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("createdAt ASC")
     var members: List<Member> = mutableListOf(),
     /**
-     * The problems that are part of the contest, which participants will solve.
+     * The problems that are part of the contest, which contestants will solve.
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @OrderBy("letter ASC")
     var problems: List<Problem> = mutableListOf(),
     /**
-     * Announcements related to the contest, which can include important updates or information for participants.
+     * Announcements related to the contest, which can include important updates or information for contestants.
      */
     @Audited(withModifiedFlag = false)
     @OneToMany(mappedBy = "contest", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
@@ -89,7 +89,15 @@ class Contest(
 
     fun hasEnded(): Boolean = !endAt.isAfter(OffsetDateTime.now())
 
-    fun isActive(): Boolean = hasStarted() && !hasEnded()
+    fun isActive(): Boolean {
+        val currentStartAt = startAt
+        val currentEndAt = endAt
+        val now = OffsetDateTime.now()
+        return !currentStartAt.isAfter(now) && !currentEndAt.isBefore(now)
+    }
 
-    fun isFrozen(): Boolean = freezeAt != null && (unfreezeAt == null || freezeAt!!.isAfter(unfreezeAt))
+    fun isFrozen(): Boolean {
+        val currentFrozenAt = frozenAt
+        return currentFrozenAt != null && !currentFrozenAt.isAfter(OffsetDateTime.now())
+    }
 }

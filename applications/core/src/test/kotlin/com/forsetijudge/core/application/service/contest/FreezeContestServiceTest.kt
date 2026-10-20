@@ -14,15 +14,15 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class FreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -110,7 +110,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when contest is already frozen`() {
         TestAuthentication.setMember(member)
-        val frozenContest = MockEntityFactory.contest(freezeAt = OffsetDateTime.now().minusDays(1))
+        val frozenContest = MockEntityFactory.contest(frozenAt = OffsetDateTime.now().minusDays(1))
         whenever(contestRepository.findById(frozenContest.id)).thenReturn(frozenContest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, frozenContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = frozenContest),
@@ -133,7 +133,7 @@ class FreezeContestServiceTest {
         val result = service.execute(FreezeContestUseCase.Command(contestId = contest.id))
 
         assertEquals(contest.id, result.id)
-        assertTrue(result.isFrozen)
+        assertNotNull(result.frozenAt)
         verify(frozenSubmissionRepository).saveAll(
             argThat<List<FrozenSubmission>> { it ->
                 it.size == 1 && it[0].id == submission.id
@@ -153,7 +153,7 @@ class FreezeContestServiceTest {
             service.execute(FreezeContestUseCase.Command(contestId = contest.id, bypassMemberAuthorization = true))
 
         assertEquals(contest.id, result.id)
-        assertTrue(result.isFrozen)
+        assertNotNull(result.frozenAt)
         verify(frozenSubmissionRepository).saveAll(
             argThat<List<FrozenSubmission>> { it ->
                 it.size == 1 && it[0].id == submission.id

@@ -54,11 +54,11 @@ class UnfreezeContestService(
             throw ForbiddenException("Contest with id ${command.contestId} is not frozen")
         }
 
-        val freezeAt = contest.freezeAt!!
-        contest.freezeAt = null
+        val currentFrozenAt = contest.frozenAt!!
+        contest.frozenAt = null
         contestRepository.save(contest)
         freezeQueueProducer.cancel(contestId = contest.id)
-        businessEventPublisher.publish(ContestEvent.Unfrozen(contestId = contest.id, freezeAt = freezeAt))
+        businessEventPublisher.publish(ContestEvent.Unfrozen(contestId = contest.id, frozenAt = currentFrozenAt))
 
         logger.info("Unfrozen contest with id: ${command.contestId} created")
         return contest.toWithMembersAndProblemsResponseDTO()

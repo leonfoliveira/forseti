@@ -44,10 +44,10 @@ interface ContestEvent : BusinessEvent {
      * Event triggered when a contest is unfrozen.
      *
      * @property contestId The contest that was unfrozen.
-     * @property freezeAt The time when the contest was unfrozen.
+     * @property frozenAt The time when the contest was unfrozen.
      */
     data class Unfrozen(
         val contestId: UUID,
-        val freezeAt: OffsetDateTime,
+        val frozenAt: OffsetDateTime,
     ) : ContestEvent
 }

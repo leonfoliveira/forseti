@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
@@ -19,7 +20,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class UnfreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -30,7 +30,7 @@ class UnfreezeContestServiceTest {
         UnfreezeContestService(contestRepository, memberRepository, freezeQueueProducer, businessEventPublisher)
 
     val contest =
-        MockEntityFactory.contest(freezeAt = OffsetDateTime.now().minusDays(1))
+        MockEntityFactory.contest(frozenAt = OffsetDateTime.now().minusDays(1))
     val member = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
 
     @Test
@@ -83,7 +83,7 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when contest is not frozen`() {
         TestAuthentication.setMember(member)
-        val unfrozenContest = MockEntityFactory.contest(freezeAt = null)
+        val unfrozenContest = MockEntityFactory.contest(frozenAt = null)
         whenever(contestRepository.findById(unfrozenContest.id)).thenReturn(unfrozenContest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, unfrozenContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = unfrozenContest),

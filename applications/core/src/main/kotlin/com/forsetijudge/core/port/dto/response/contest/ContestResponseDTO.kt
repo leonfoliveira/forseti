@@ -15,7 +15,8 @@ data class ContestResponseDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
-    val isFrozen: Boolean,
+    val autoFreezeAt: OffsetDateTime?,
+    val frozenAt: OffsetDateTime?,
     val version: Long,
 ) : Serializable
 
@@ -29,6 +30,7 @@ fun Contest.toResponseDTO(): ContestResponseDTO =
         languages = this.languages,
         startAt = this.startAt,
         endAt = this.endAt,
-        isFrozen = this.isFrozen(),
+        autoFreezeAt = this.autoFreezeAt,
+        frozenAt = this.frozenAt,
         version = this.version,
     )

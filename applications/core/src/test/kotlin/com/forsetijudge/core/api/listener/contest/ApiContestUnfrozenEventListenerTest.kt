@@ -42,7 +42,7 @@ class ApiContestUnfrozenEventListenerTest {
         val contest = MockEntityFactory.contest()
         val leaderboard = MockModelFactory.leaderboard()
         val frozenSubmissions = listOf(MockEntityFactory.submission())
-        val event = ContestEvent.Unfrozen(contestId = contest.id, freezeAt = freezeAt)
+        val event = ContestEvent.Unfrozen(contestId = contest.id, frozenAt = freezeAt)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(leaderboardBuilder.build(contest)).thenReturn(leaderboard)
         whenever(submissionRepository.findAllByContestAndUpdatedAtAfter(contest.id, freezeAt)).thenReturn(

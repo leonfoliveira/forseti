@@ -41,7 +41,12 @@ class BuildStaffDashboardServiceTest {
         TestAuthentication.setMember(staff)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(staff.id, contest.id)).thenReturn(staff)
-        whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
+        whenever(
+            leaderboardBuilder.build(
+                contest,
+                true,
+            ),
+        ).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(submissionRepository.findAllByContestIdAndMemberId(contest.id, staff.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestIdAndIsPublic(contest.id)).thenReturn(

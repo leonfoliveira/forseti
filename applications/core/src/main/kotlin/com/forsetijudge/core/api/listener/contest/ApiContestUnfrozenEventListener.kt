@@ -40,7 +40,7 @@ class ApiContestUnfrozenEventListener(
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =
             submissionRepository
-                .findAllByContestAndUpdatedAtAfter(contest.id, event.freezeAt)
+                .findAllByContestAndUpdatedAtAfter(contest.id, event.frozenAt)
 
         sseFanoutRedisMessageProducer.produce(
             SSEFanoutMessage(
