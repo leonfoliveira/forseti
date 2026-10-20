@@ -14,6 +14,7 @@ data class UpdateContestRequestBodyDTO(
     val languages: List<Submission.Language>,
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
+    val autoFreezeAt: OffsetDateTime?,
     val members: List<Member>,
     val problems: List<Problem>,
 ) {

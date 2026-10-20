@@ -95,12 +95,8 @@ export function SettingsPage({ contest, leaderboard }: Props) {
           contest.id,
         );
 
-        dispatch(
-          ContestSlice.actions.set(
-            ObjectUtil.removeKeys(updatedContest, "members", "problems"),
-          ),
-        );
         dispatch(AdminDashboardSlice.actions.set(dashboard));
+        dispatch(ContestSlice.actions.set(updatedContest));
 
         toast.success("Settings saved successfully.");
         setIsConfirmDialogOpen(false);

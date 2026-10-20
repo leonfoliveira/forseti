@@ -129,6 +129,7 @@ class ContestControllerTest {
                 languages = listOf(Submission.Language.CPP_17),
                 startAt = startAt,
                 endAt = endAt,
+                autoFreezeAt = null,
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(

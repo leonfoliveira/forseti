@@ -7,7 +7,6 @@ services:
       - DEBUG=0
       - DOCKER_HOST=unix:///var/run/docker.sock
       - PERSISTENCE=1
-      - SERVICES=s3,sqs,events,cloudformation,secretsmanager
     healthcheck:
       test:
         [
@@ -117,6 +116,7 @@ services:
       AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
       AWS_SQS_AUTO_FREEZE_QUEUE: dev-auto-freeze-queue
       AWS_SQS_AUTO_FREEZE_QUEUE_ARN: arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue
+      AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN: arn:aws:iam::000000000000:role/dev-auto-freeze-scheduler-role
       DB_URL: jdbc:postgresql://postgres:5432/forseti
       DB_USER: forseti
       DB_PASSWORD: forsetijudge

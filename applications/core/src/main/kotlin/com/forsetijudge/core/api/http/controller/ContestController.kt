@@ -99,6 +99,7 @@ class ContestController(
                     languages = body.languages,
                     startAt = body.startAt,
                     endAt = body.endAt,
+                    autoFreezeAt = body.autoFreezeAt,
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(

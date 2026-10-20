@@ -177,6 +177,8 @@ export class SettingsForm {
               "Freeze date must be before the end date",
             "datetime-local.future": "Freeze date must be in the future",
           }),
+        frozenAt: Joi.optional(),
+        unfrozenAt: Joi.optional(),
       }).required(),
       problems: Joi.array()
         .items(
@@ -334,7 +336,7 @@ export class SettingsForm {
         endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
         autoFreezeAt: contest.autoFreezeAt
           ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
-          : undefined,
+          : "",
         frozenAt: contest.frozenAt,
       },
       members,

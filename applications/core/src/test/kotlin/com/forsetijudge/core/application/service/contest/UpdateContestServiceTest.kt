@@ -61,6 +61,7 @@ class UpdateContestServiceTest {
                 languages = listOf(Submission.Language.JAVA_21),
                 startAt = startAt,
                 endAt = endAt,
+                autoFreezeAt = contest.autoFreezeAt,
                 members = emptyList(),
                 problems = emptyList(),
             )
@@ -90,6 +91,7 @@ class UpdateContestServiceTest {
                 languages = listOf(Submission.Language.CPP_17),
                 startAt = contest.startAt,
                 endAt = contest.endAt,
+                autoFreezeAt = contest.autoFreezeAt,
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(

@@ -89,7 +89,6 @@ export function AnnouncementsPage({
           >
             {announcements
               .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
-              .toReversed()
               .map((announcement) => (
                 <AnnouncementsPageCard
                   key={announcement.id}

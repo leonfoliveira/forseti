@@ -14,6 +14,9 @@ import software.amazon.awssdk.services.scheduler.model.ResourceNotFoundException
 import software.amazon.awssdk.services.scheduler.model.Target
 import tools.jackson.databind.ObjectMapper
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 
 @Component
@@ -21,6 +24,8 @@ class AutoFreezeQueueSQSProducer(
     private val schedulerClient: SchedulerClient,
     @Value($$"${spring.cloud.aws.sqs.auto-freeze-queue-arn}")
     private val queueArn: String,
+    @Value($$"${spring.cloud.aws.scheduler.auto-freeze-scheduler-role-arn}")
+    private val schedulerRoleArn: String,
     private val objectMapper: ObjectMapper,
 ) : AutoFreezeQueueProducer {
     private val logger = SafeLogger(this::class)
@@ -37,14 +42,23 @@ class AutoFreezeQueueSQSProducer(
             Target
                 .builder()
                 .arn(queueArn)
+                .roleArn(schedulerRoleArn)
                 .input(objectMapper.writeValueAsString(message))
                 .build()
+
+        val scheduleTime =
+            at
+                .withOffsetSameInstant(ZoneOffset.UTC)
+                .toLocalDateTime()
+                .truncatedTo(ChronoUnit.SECONDS)
+                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
 
         val createScheduleRequest =
             CreateScheduleRequest
                 .builder()
                 .name(scheduleName)
-                .scheduleExpression("at($at)")
+                .scheduleExpression("at($scheduleTime)")
+                .scheduleExpressionTimezone("UTC")
                 .flexibleTimeWindow(
                     FlexibleTimeWindow
                         .builder()

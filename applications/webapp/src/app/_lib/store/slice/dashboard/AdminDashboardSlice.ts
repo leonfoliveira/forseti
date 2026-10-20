@@ -66,6 +66,7 @@ export const AdminDashboardSlice = createSlice({
       state,
       action: { payload: ContestWithMembersAndProblemsResponseDTO },
     ) {
+      console.debug("Freezing contest:", action.payload);
       state.contest = action.payload;
     },
     unfreeze(
@@ -78,6 +79,7 @@ export const AdminDashboardSlice = createSlice({
         };
       },
     ) {
+      console.debug("Unfreezing contest:", action.payload);
       state.contest = action.payload.contest;
       state.leaderboard = action.payload.leaderboard;
       state.submissions = EntityUtil.mergeBatch(

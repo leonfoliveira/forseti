@@ -51,10 +51,9 @@ interface UpdateContestUseCase {
         val title: String,
         @field:NotEmpty(message = "'languages' must not be empty")
         val languages: List<Submission.Language>,
-        // Must be in the future if it is being updated (validated in the service layer)
         val startAt: OffsetDateTime,
         val endAt: OffsetDateTime,
-        val autoFreezeAt: OffsetDateTime? = null,
+        val autoFreezeAt: OffsetDateTime?,
         @field:Valid
         val members: List<Member>,
         @field:Valid

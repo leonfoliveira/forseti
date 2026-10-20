@@ -1,7 +1,10 @@
 import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
-import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
@@ -72,8 +75,11 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
 
       toast.success(successMessage);
       dispatch(AdminDashboardSlice.actions.setContest(updatedContest));
+      dispatch(ContestSlice.actions.set(updatedContest));
+      form.reset(SettingsForm.fromResponseDTO(updatedContest));
       freezeConfirmationDialog.close();
       freezeState.finish();
+
       console.debug("Freeze toggled successfully");
     } catch (error) {
       await freezeState.fail(error, {
@@ -100,16 +106,12 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
     forceState.start();
 
     try {
-      const newContestMetadata = await method(contest.id);
+      const updatedContest = await method(contest.id);
 
       toast.success(successMessage);
-      dispatch(
-        AdminDashboardSlice.actions.setContest({
-          ...contest,
-          ...newContestMetadata,
-        }),
-      );
-      dispatch(ContestSlice.actions.set(newContestMetadata));
+      dispatch(AdminDashboardSlice.actions.setContest(updatedContest));
+      dispatch(ContestSlice.actions.set(updatedContest));
+      form.reset(SettingsForm.fromResponseDTO(updatedContest));
       forceConfirmationDialog.close();
       forceState.finish();
 
@@ -174,6 +176,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
                 <Input
                   type="datetime-local"
                   data-testid="contest-auto-freeze-at"
+                  disabled={isContestFrozen}
                 />
               }
               description="The date and time when the contest will automatically freeze."
@@ -247,7 +250,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
       </div>
 
       <ConfirmationDialog
-        isOpen={forceConfirmationDialog.isOpen}
+        isOpen={freezeConfirmationDialog.isOpen}
         icon={<TriangleAlertIcon />}
         title={
           isContestFrozen ? "Unfreeze Confirmation" : "Freeze Confirmation"
@@ -257,9 +260,9 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
             ? "Are you sure you want to unfreeze the contest?"
             : "Are you sure you want to freeze the contest?"
         }
-        onCancel={forceConfirmationDialog.close}
+        onCancel={freezeConfirmationDialog.close}
         onConfirm={toggleFreeze}
-        isLoading={forceState.isLoading}
+        isLoading={freezeState.isLoading}
         data-testid="freeze-confirmation-dialog"
       />
 

@@ -89,8 +89,7 @@ export function SubmissionsPage({
   );
   const mergedSubmissions = submissions
     .map((s) => memberSubmissionsMap.get(s.id) ?? s)
-    .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt))
-    .toReversed();
+    .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   const hasCode = mergedSubmissions.some((s) => "code" in s && !!s.code);
   const hasAnyAction =

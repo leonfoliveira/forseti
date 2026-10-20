@@ -7,7 +7,11 @@ import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
+import {
+  useAppDispatch,
+  useAppSelector,
+  useAppStore,
+} from "@/app/_lib/store/Store";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
@@ -19,6 +23,7 @@ import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/Leaderbo
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 
 /**
  * Provider component for fetching admin dashboard data and setting up sse listeners.
@@ -33,6 +38,7 @@ export function AdminDashboardProvider({
   const contest = useAppSelector((state) => state.contest);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
+  const store = useAppStore();
   const toast = useToast();
   const dashboardReseter = useDashboardReseter();
 
@@ -152,6 +158,7 @@ export function AdminDashboardProvider({
   ) {
     console.debug("Received contest frozen:", contest);
     dispatch(AdminDashboardSlice.actions.freeze(contest));
+    dispatch(ContestSlice.actions.set(contest));
     toast.info("The contest has been frozen");
   }
 
@@ -162,6 +169,7 @@ export function AdminDashboardProvider({
   }) {
     console.debug("Received contest unfrozen");
     dispatch(AdminDashboardSlice.actions.unfreeze(data));
+    dispatch(ContestSlice.actions.set(data.contest));
     toast.info("The contest has been unfrozen");
   }
 
