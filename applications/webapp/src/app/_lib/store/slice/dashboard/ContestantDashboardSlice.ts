@@ -36,17 +36,8 @@ export const ContestantDashboardSlice = createSlice({
         action.payload,
       );
     },
-    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
-      state.leaderboard.isFrozen = action.payload;
-    },
     mergeSubmission(state, action: { payload: SubmissionResponseDTO }) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
-    },
-    mergeSubmissionBatch(state, action: { payload: SubmissionResponseDTO[] }) {
-      state.submissions = EntityUtil.mergeBatch(
-        state.submissions,
-        action.payload,
-      );
     },
     mergeMemberSubmission(
       state,

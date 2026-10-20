@@ -35,9 +35,6 @@ export const AdminDashboardSlice = createSlice({
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
     },
-    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
-      state.leaderboard.isFrozen = action.payload;
-    },
     mergeLeaderboard(state, action: { payload: LeaderboardCellResponseDTO }) {
       state.leaderboard = LeaderboardMerger.merge(
         state.leaderboard,

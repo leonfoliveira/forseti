@@ -1,7 +1,7 @@
 import { fireEvent, screen } from "@testing-library/react";
 
 import { SubmissionsPageActionResubmit } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionResubmit";
-import { MockSubmissionWithCodeAndExecutionResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
@@ -22,7 +22,7 @@ describe("SubmissionsPageActionResubmit", () => {
   it("opens confirmation when selecting Resubmit", async () => {
     await renderWithProviders(
       <SubmissionsPageActionResubmit
-        submission={MockSubmissionWithCodeAndExecutionResponseDTO()}
+        submission={MockSubmissionWithCodeAndExecutionsResponseDTO()}
         onClose={jest.fn()}
         onResubmit={jest.fn()}
       />,

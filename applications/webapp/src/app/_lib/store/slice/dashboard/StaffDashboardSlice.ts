@@ -35,9 +35,6 @@ export const StaffDashboardSlice = createSlice({
         action.payload,
       );
     },
-    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
-      state.leaderboard.isFrozen = action.payload;
-    },
     mergeSubmission(state, action: { payload: SubmissionWithCodeResponseDTO }) {
       state.submissions = EntityUtil.merge(state.submissions, action.payload);
     },

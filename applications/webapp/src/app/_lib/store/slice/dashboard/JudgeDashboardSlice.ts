@@ -37,9 +37,6 @@ export const JudgeDashboardSlice = createSlice({
         action.payload,
       );
     },
-    setLeaderboardIsFrozen(state, action: { payload: boolean }) {
-      state.leaderboard.isFrozen = action.payload;
-    },
     mergeSubmission(
       state,
       action: { payload: SubmissionWithCodeAndExecutionsResponseDTO },

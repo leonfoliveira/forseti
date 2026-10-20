@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionsMenu";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import {
-  MockSubmissionWithCodeAndExecutionResponseDTO,
+  MockSubmissionWithCodeAndExecutionsResponseDTO,
   MockSubmissionWithCodeResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
@@ -63,7 +63,7 @@ describe("SubmissionsPageActionsMenu", () => {
   it("offers download, resubmit, and judge actions for editable submissions", async () => {
     await renderWithProviders(
       <SubmissionsPageActionsMenu
-        submission={MockSubmissionWithCodeAndExecutionResponseDTO()}
+        submission={MockSubmissionWithCodeAndExecutionsResponseDTO()}
         canViewExecutions
         canEdit
         onEdit={jest.fn()}

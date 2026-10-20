@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
@@ -37,7 +38,7 @@ const createdAt = "2026-01-01T00:00:00.000Z";
 export const MockAttachmentResponseDTO = (
   overrides: Partial<AttachmentResponseDTO> = {},
 ): AttachmentResponseDTO => ({
-  id: "attachment-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   filename: "file.txt",
@@ -65,7 +66,7 @@ export const MockSignedUploadAttachmentResponseDTO = (
 export const MockContestResponseDTO = (
   overrides: Partial<ContestResponseDTO> = {},
 ): ContestResponseDTO => ({
-  id: "contest-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   slug: "test-slug",
@@ -82,7 +83,7 @@ export const MockContestResponseDTO = (
 export const MockMemberResponseDTO = (
   overrides: Partial<MemberResponseDTO> = {},
 ): MemberResponseDTO => ({
-  id: "member-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   type: MemberType.CONTESTANT,
@@ -102,7 +103,7 @@ export const MockMemberWithLoginResponseDTO = (
 export const MockProblemResponseDTO = (
   overrides: Partial<ProblemResponseDTO> = {},
 ): ProblemResponseDTO => ({
-  id: "problem-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   letter: "A",
@@ -126,7 +127,7 @@ export const MockProblemWithTestCasesResponseDTO = (
 export const MockSubmissionResponseDTO = (
   overrides: Partial<SubmissionResponseDTO> = {},
 ): SubmissionResponseDTO => ({
-  id: "submission-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   problem: MockProblemResponseDTO(),
@@ -146,7 +147,7 @@ export const MockSubmissionWithCodeResponseDTO = (
   ...overrides,
 });
 
-export const MockSubmissionWithCodeAndExecutionResponseDTO = (
+export const MockSubmissionWithCodeAndExecutionsResponseDTO = (
   overrides: Partial<SubmissionWithCodeAndExecutionsResponseDTO> = {},
 ): SubmissionWithCodeAndExecutionsResponseDTO => ({
   ...MockSubmissionWithCodeResponseDTO(),
@@ -157,7 +158,7 @@ export const MockSubmissionWithCodeAndExecutionResponseDTO = (
 export const MockExecutionResponseDTO = (
   overrides: Partial<ExecutionResponseDTO> = {},
 ): ExecutionResponseDTO => ({
-  id: "execution-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   answer: SubmissionAnswer.ACCEPTED,
@@ -167,7 +168,7 @@ export const MockExecutionResponseDTO = (
   maxClockTimeMs: 1000,
   maxPeakMemoryKb: 1024,
   details: MockAttachmentResponseDTO({
-    id: "details-1",
+    id: randomUUID(),
     filename: "details.log",
   }),
   version: 1,
@@ -177,8 +178,8 @@ export const MockExecutionResponseDTO = (
 export const MockLeaderboardCellResponseDTO = (
   overrides: Partial<LeaderboardCellResponseDTO> = {},
 ): LeaderboardCellResponseDTO => ({
-  memberId: "member-1",
-  problemId: "problem-1",
+  memberId: randomUUID(),
+  problemId: randomUUID(),
   problemLetter: "A",
   problemColor: "#336699",
   letter: "A",
@@ -191,20 +192,20 @@ export const MockLeaderboardCellResponseDTO = (
 export const MockLeaderboardResponseDTO = (
   overrides: Partial<LeaderboardResponseDTO> = {},
 ): LeaderboardResponseDTO => ({
-  contestId: "contest-1",
+  contestId: randomUUID(),
   contestStartAt: "2026-01-01T00:00:00.000Z",
   isFrozen: false,
   issuedAt: createdAt,
   rows: [
     {
-      memberId: "member-1",
+      memberId: randomUUID(),
       memberName: "Ada Lovelace",
       memberType: MemberType.CONTESTANT,
       score: 0,
       penalty: 0,
       cells: [
         {
-          problemId: "problem-1",
+          problemId: randomUUID(),
           problemLetter: "A",
           problemColor: "#336699",
           isAccepted: false,
@@ -220,7 +221,7 @@ export const MockLeaderboardResponseDTO = (
 export const MockAnnouncementResponseDTO = (
   overrides: Partial<AnnouncementResponseDTO> = {},
 ): AnnouncementResponseDTO => ({
-  id: "announcement-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   contest: MockContestResponseDTO(),
@@ -242,7 +243,7 @@ export const MockContestWithMembersAndProblemsDTO = (
 export const MockClarificationResponseDTO = (
   overrides: Partial<ClarificationResponseDTO> = {},
 ): ClarificationResponseDTO => ({
-  id: "clarification-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
   contest: MockContestResponseDTO(),
@@ -262,12 +263,12 @@ export const MockClarificationResponseDTO = (
 export const MockSessionResponseDTO = (
   overrides: Partial<SessionResponseDTO> = {},
 ): SessionResponseDTO => ({
-  id: "session-1",
+  id: randomUUID(),
   createdAt,
   updatedAt: createdAt,
-  contestId: "contest-1",
+  contestId: randomUUID(),
   member: {
-    id: "member-1",
+    id: randomUUID(),
     name: "Ada Lovelace",
     type: MemberType.CONTESTANT,
   },
@@ -283,7 +284,7 @@ export const MockAdminDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberWithLoginResponseDTO()],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionsResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
   ...overrides,
@@ -323,7 +324,7 @@ export const MockJudgeDashboardResponseDTO = (
   leaderboard: MockLeaderboardResponseDTO(),
   members: [MockMemberResponseDTO({ type: MemberType.JUDGE })],
   problems: [MockProblemWithTestCasesResponseDTO()],
-  submissions: [MockSubmissionWithCodeAndExecutionResponseDTO()],
+  submissions: [MockSubmissionWithCodeAndExecutionsResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
   ...overrides,

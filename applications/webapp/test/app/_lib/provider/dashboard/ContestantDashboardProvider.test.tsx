@@ -11,15 +11,16 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ContestantDashboardProvider", () => {
   it("fetches contestant dashboard data and renders children when initialized", async () => {
+    const dashboard = MockContestantDashboardResponseDTO();
     (
       Composition.dashboardReader.getContestantDashboard as jest.Mock
-    ).mockResolvedValue(MockContestantDashboardResponseDTO());
+    ).mockResolvedValue(dashboard);
     await renderWithProviders(
       <ContestantDashboardProvider>
         <span data-testid="child">Ready</span>
       </ContestantDashboardProvider>,
       {
-        contest: MockContestResponseDTO(),
+        contest: dashboard.contest,
         session: MockSessionResponseDTO(),
       },
     );
@@ -29,7 +30,7 @@ describe("ContestantDashboardProvider", () => {
     });
     expect(
       Composition.dashboardReader.getContestantDashboard,
-    ).toHaveBeenCalledWith("contest-1");
+    ).toHaveBeenCalledWith(dashboard.contest.id);
     expect(
       Composition.contestantDashboardRoomListener.subscribe,
     ).toHaveBeenCalled();
