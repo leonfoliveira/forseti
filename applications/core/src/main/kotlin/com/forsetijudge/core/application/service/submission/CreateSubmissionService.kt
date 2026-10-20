@@ -3,6 +3,7 @@ package com.forsetijudge.core.application.service.submission
 import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Member
@@ -32,6 +33,7 @@ class CreateSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val attachmentCommiter: AttachmentCommiter,
     private val businessEventPublisher: BusinessEventPublisher,
+    private val metricsCollector: MetricsCollector,
 ) : CreateSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -87,7 +89,8 @@ class CreateSubmissionService(
         submissionRepository.save(submission)
         businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
 
-        logger.info("Submission created successfully with id = ${submission.id}")
+        metricsCollector.incrementSubmissionsCreated(contest.id)
+
         return submission.toWithCodeResponseDTO()
     }
 }

@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Submission
@@ -33,7 +34,9 @@ class CreateSubmissionServiceTest {
     private val submissions = mock<SubmissionRepository>()
     private val committer = mock<AttachmentCommiter>()
     private val events = mock<BusinessEventPublisher>()
-    private val service = CreateSubmissionService(contests, members, problems, submissions, committer, events)
+    private val metricsCollector = mock<MetricsCollector>()
+    private val service =
+        CreateSubmissionService(contests, members, problems, submissions, committer, events, metricsCollector)
 
     @AfterEach
     fun clearAuthentication() = TestAuthentication.clear()

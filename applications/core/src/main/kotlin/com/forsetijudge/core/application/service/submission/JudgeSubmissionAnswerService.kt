@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Submission
@@ -20,6 +21,7 @@ class JudgeSubmissionAnswerService(
     private val submissionRepository: SubmissionRepository,
     private val executionRepository: ExecutionRepository,
     private val businessEventPublisher: BusinessEventPublisher,
+    private val metricsCollector: MetricsCollector,
 ) : JudgeSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -53,10 +55,12 @@ class JudgeSubmissionAnswerService(
         submissionRepository.save(submission)
         businessEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
+        metricsCollector.incrementSubmissionsJudged(submission.contest.id)
+
         logger.info("Submission answer updated successfully")
     }
 
-    fun createExecution(
+    private fun createExecution(
         command: JudgeSubmissionUseCase.Command,
         submission: Submission,
         detailsId: UUID,

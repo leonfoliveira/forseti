@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
@@ -23,11 +24,13 @@ class JudgeSubmissionAnswerServiceTest {
     private val submissionRepository = mock<SubmissionRepository>()
     private val executionRepository = mock<ExecutionRepository>()
     private val businessEventPublisher = mock<BusinessEventPublisher>()
+    private val metricsCollector = mock<MetricsCollector>()
     private val service =
         JudgeSubmissionAnswerService(
             submissionRepository,
             executionRepository,
             businessEventPublisher,
+            metricsCollector,
         )
 
     val command =

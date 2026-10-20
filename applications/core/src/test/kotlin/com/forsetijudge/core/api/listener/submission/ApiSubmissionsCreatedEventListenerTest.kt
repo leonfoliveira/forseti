@@ -22,7 +22,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.UUID
 
-class ApiSubmissionCreatedEventListenerTest {
+class ApiSubmissionsCreatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
     private val producer = mock<SSEFanoutRedisMessageProducer>()
     private val listener = ApiSubmissionCreatedEventListener(submissions, producer)

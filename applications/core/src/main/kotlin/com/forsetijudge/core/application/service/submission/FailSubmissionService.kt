@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 class FailSubmissionService(
     private val submissionRepository: SubmissionRepository,
     private val businessEventPublisher: BusinessEventPublisher,
+    private val metricsCollector: MetricsCollector,
 ) : FailSubmissionUseCase {
     private val logger = SafeLogger(this::class)
 
@@ -37,6 +39,8 @@ class FailSubmissionService(
 
         submissionRepository.save(submission)
         businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
+
+        metricsCollector.incrementSubmissionsFailed(submission.contest.id)
 
         logger.info("Submission failed successfully")
     }

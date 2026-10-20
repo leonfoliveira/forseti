@@ -1,6 +1,7 @@
 package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
+import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
@@ -19,7 +20,8 @@ import org.mockito.kotlin.whenever
 class FailSubmissionServiceTest {
     private val submissions = mock<SubmissionRepository>()
     private val events = mock<BusinessEventPublisher>()
-    private val service = FailSubmissionService(submissions, events)
+    private val metricsCollector = mock<MetricsCollector>()
+    private val service = FailSubmissionService(submissions, events, metricsCollector)
 
     @Test
     fun `marks judging submission as failed`() {

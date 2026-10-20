@@ -14,7 +14,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.UUID
 
-class SubmissionCreatedEventListenerTest {
+class SubmissionsCreatedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
     private val producer = mock<SubmissionQueueProducer>()
     private val listener = SubmissionCreatedEventListener(submissions, producer)
