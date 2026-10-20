@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build test composition
         run: |
@@ -30,7 +30,7 @@ jobs:
           docker compose -f infrastructure/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp up -d --wait
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "22"
           cache: "npm"
