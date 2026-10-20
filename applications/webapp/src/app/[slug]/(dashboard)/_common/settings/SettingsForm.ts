@@ -136,36 +136,48 @@ export class SettingsForm {
               "End date must be after the start date",
           }),
         autoFreezeAt: Joi.string()
-          .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+          .allow("")
           .custom((value: string, helpers) => {
             try {
+              console.log("Auto-freeze value:", value);
+              if (value === "") {
+                return value;
+              }
+
+              const pattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+              if (!pattern.test(value)) {
+                return helpers.error("datetime-local.invalid");
+              }
+
               const autoFreezeDate = new Date(value);
               const startValue = helpers.state.ancestors[0].startAt as string;
               const endValue = helpers.state.ancestors[0].endAt as string;
+              const now = new Date();
 
               if (startValue) {
                 const startDate = new Date(startValue);
                 if (autoFreezeDate <= startDate) {
-                  return helpers.error("datetime-local.after-start");
+                  return helpers.error(
+                    "datetime-local.auto-freeze-after-start",
+                  );
                 }
               }
 
               if (endValue) {
                 const endDate = new Date(endValue);
                 if (autoFreezeDate >= endDate) {
-                  return helpers.error("datetime-local.before-end");
+                  return helpers.error("datetime-local.auto-freeze-before-end");
                 }
               }
 
-              const currentTime = new Date();
-              if (autoFreezeDate <= currentTime) {
+              if (autoFreezeDate <= now) {
                 return helpers.error("datetime-local.future");
               }
+
+              return value;
             } catch {
               return helpers.error("datetime-local.invalid");
             }
-
-            return value;
           })
           .optional()
           .messages({

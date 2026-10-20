@@ -87,9 +87,9 @@ export function SubmissionsPage({
   const memberSubmissionsMap = new Map(
     memberSubmissions?.map((s) => [s.id, s]) ?? [],
   );
-  const mergedSubmissions = submissions
-    .map((s) => memberSubmissionsMap.get(s.id) ?? s)
-    .toSorted((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const mergedSubmissions = submissions.map(
+    (s) => memberSubmissionsMap.get(s.id) ?? s,
+  );
 
   const hasCode = mergedSubmissions.some((s) => "code" in s && !!s.code);
   const hasAnyAction =
@@ -157,8 +157,12 @@ export function SubmissionsPage({
               </TableHeader>
               <TableBody>
                 {(isOnlyMine && memberSubmissions !== undefined
-                  ? memberSubmissions.toReversed()
-                  : mergedSubmissions.toReversed()
+                  ? memberSubmissions.toSorted((a, b) =>
+                      b.createdAt.localeCompare(a.createdAt),
+                    )
+                  : mergedSubmissions.toSorted((a, b) =>
+                      b.createdAt.localeCompare(a.createdAt),
+                    )
                 ).map((submission) => (
                   <TableRow
                     key={submission.id}
