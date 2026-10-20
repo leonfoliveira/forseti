@@ -769,8 +769,10 @@ Resources:
               Value: !Ref SubmissionQueue
             - Name: AWS_SQS_SUBMISSION_FAILED_QUEUE
               Value: !Ref SubmissionFailedQueue
-            - Name: AWS_SQS_JUDGE_QUEUE
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
               Value: !Ref SubmissionJudgedQueue
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE
+              Value: !Ref AutoFreezeQueue
             - Name: DB_URL
               Value: !Sub jdbc:postgresql://${CoreDb.Endpoint.Address}:5432/forseti
             - Name: DB_USER

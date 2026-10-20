@@ -8,6 +8,8 @@ export type UpdateContestRequestDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
+  autoFreezeAt?: string;
+  frozenAt?: string;
   members: {
     id?: string;
     type: MemberType;

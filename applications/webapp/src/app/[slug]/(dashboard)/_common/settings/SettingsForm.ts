@@ -17,6 +17,8 @@ export type SettingsFormType = {
     };
     startAt: string;
     endAt: string;
+    autoFreezeAt?: string;
+    frozenAt?: string;
   };
   problems: {
     _id?: string;
@@ -132,6 +134,48 @@ export class SettingsForm {
             "datetime-local.invalid": "End date is invalid",
             "datetime-local.after-start":
               "End date must be after the start date",
+          }),
+        autoFreezeAt: Joi.string()
+          .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
+          .custom((value: string, helpers) => {
+            try {
+              const autoFreezeDate = new Date(value);
+              const startValue = helpers.state.ancestors[0].startAt as string;
+              const endValue = helpers.state.ancestors[0].endAt as string;
+
+              if (startValue) {
+                const startDate = new Date(startValue);
+                if (autoFreezeDate <= startDate) {
+                  return helpers.error("datetime-local.after-start");
+                }
+              }
+
+              if (endValue) {
+                const endDate = new Date(endValue);
+                if (autoFreezeDate >= endDate) {
+                  return helpers.error("datetime-local.before-end");
+                }
+              }
+
+              const currentTime = new Date();
+              if (autoFreezeDate <= currentTime) {
+                return helpers.error("datetime-local.future");
+              }
+            } catch {
+              return helpers.error("datetime-local.invalid");
+            }
+
+            return value;
+          })
+          .optional()
+          .messages({
+            "string.pattern.base": "Freeze date is invalid",
+            "datetime-local.invalid": "Freeze date is invalid",
+            "datetime-local.after-start":
+              "Freeze date must be after the start date",
+            "datetime-local.before-end":
+              "Freeze date must be before the end date",
+            "datetime-local.future": "Freeze date must be in the future",
           }),
       }).required(),
       problems: Joi.array()
@@ -288,6 +332,10 @@ export class SettingsForm {
         languages,
         startAt: DateTimeUtil.toDatetimeLocal(contest.startAt),
         endAt: DateTimeUtil.toDatetimeLocal(contest.endAt),
+        autoFreezeAt: contest.autoFreezeAt
+          ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
+          : undefined,
+        frozenAt: contest.frozenAt,
       },
       members,
       problems,
@@ -303,6 +351,10 @@ export class SettingsForm {
       ) as SubmissionLanguage[],
       startAt: DateTimeUtil.fromDatetimeLocal(form.contest.startAt),
       endAt: DateTimeUtil.fromDatetimeLocal(form.contest.endAt),
+      autoFreezeAt: form.contest.autoFreezeAt
+        ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
+        : undefined,
+      frozenAt: form.contest.frozenAt,
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,

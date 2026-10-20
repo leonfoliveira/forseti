@@ -30,6 +30,22 @@ export class AxiosContestRepository implements ContestRepository {
     return response.data;
   }
 
+  async freeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+    const response =
+      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
+        `${this.basePath}/${contestId}:freeze`,
+      );
+    return response.data;
+  }
+
+  async unfreeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO> {
+    const response =
+      await this.axiosClient.patch<ContestWithMembersAndProblemsDTO>(
+        `${this.basePath}/${contestId}:unfreeze`,
+      );
+    return response.data;
+  }
+
   async forceStart(
     contestId: string,
   ): Promise<ContestWithMembersAndProblemsDTO> {

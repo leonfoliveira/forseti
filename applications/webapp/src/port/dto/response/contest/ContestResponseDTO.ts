@@ -9,6 +9,7 @@ export type ContestResponseDTO = {
   languages: SubmissionLanguage[];
   startAt: string;
   endAt: string;
-  isFrozen: boolean;
+  autoFreezeAt: string;
+  frozenAt: string;
   version: number;
 };

@@ -31,6 +31,22 @@ export interface ContestWritter {
   ): Promise<ContestWithMembersAndProblemsDTO>;
 
   /**
+   * Freeze the contest, preventing further submissions.
+   *
+   * @param contestId ID of the contest to freeze
+   * @return The updated contest
+   */
+  freeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+
+  /**
+   * Unfreeze the contest, allowing submissions again.
+   *
+   * @param contestId ID of the contest to unfreeze
+   * @return The updated contest
+   */
+  unfreeze(contestId: string): Promise<ContestWithMembersAndProblemsDTO>;
+
+  /**
    * Force start a contest immediately.
    *
    * @param contestId ID of the contest to start
