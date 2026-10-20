@@ -14,7 +14,6 @@ import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecution
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argumentCaptor
@@ -22,6 +21,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class ApiContestUnfrozenEventListenerTest {
     private val contestRepository = mock<ContestRepository>()

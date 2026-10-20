@@ -260,6 +260,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
         onCancel={forceConfirmationDialog.close}
         onConfirm={toggleFreeze}
         isLoading={forceState.isLoading}
+        data-testid="freeze-confirmation-dialog"
       />
 
       <ConfirmationDialog
@@ -280,6 +281,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
           force(contestStatus === ContestStatus.NOT_STARTED ? "start" : "end")
         }
         isLoading={forceState.isLoading}
+        data-testid="force-confirmation-dialog"
       />
     </>
   );

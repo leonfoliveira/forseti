@@ -23,8 +23,8 @@ jest.mock("@/app/_lib/component/form/ControlledField", () => ({
   ),
 }));
 jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
-  ConfirmationDialog: (props: { title: string }) => (
-    <div data-testid="force-dialog">{props.title}</div>
+  ConfirmationDialog: (props: { title: string; "data-testid"?: string }) => (
+    <div data-testid={props["data-testid"]}>{props.title}</div>
   ),
 }));
 jest.mock("@/app/_lib/component/shadcn/field", () => ({
@@ -67,7 +67,7 @@ describe("SettingsPageContestTab", () => {
     expect(screen.getByTestId("force-toggle-button")).toHaveTextContent(
       "Force Start",
     );
-    expect(screen.getByTestId("force-dialog")).toHaveTextContent(
+    expect(screen.getByTestId("force-confirmation-dialog")).toHaveTextContent(
       "Force Start Confirmation",
     );
   });

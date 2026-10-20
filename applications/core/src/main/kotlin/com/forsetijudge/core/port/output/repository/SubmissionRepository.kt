@@ -1,9 +1,9 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Submission
+import org.springframework.data.jpa.repository.Query
 import java.time.OffsetDateTime
 import java.util.UUID
-import org.springframework.data.jpa.repository.Query
 
 /**
  * Accessor for persistence operations related to Submission entity
