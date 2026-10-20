@@ -143,24 +143,4 @@ class FreezeContestServiceTest {
         verify(freezeQueueProducer).cancel(contestId = contest.id)
         verify(businessEventPublisher).publish(ContestEvent.Frozen(contestId = contest.id))
     }
-
-    @Test
-    fun `should freeze contest successfully when bypassing member authorization`() {
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(listOf(submission))
-
-        val result =
-            service.execute(FreezeContestUseCase.Command(contestId = contest.id, bypassMemberAuthorization = true))
-
-        assertEquals(contest.id, result.id)
-        assertNotNull(result.frozenAt)
-        verify(frozenSubmissionRepository).saveAll(
-            argThat<List<FrozenSubmission>> { it ->
-                it.size == 1 && it[0].id == submission.id
-            },
-        )
-        verify(contestRepository).save(contest)
-        verify(freezeQueueProducer).cancel(contestId = contest.id)
-        verify(businessEventPublisher).publish(ContestEvent.Frozen(contestId = contest.id))
-    }
 }

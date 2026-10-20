@@ -1,16 +1,16 @@
 package com.forsetijudge.core.worker.consumer
 
 import com.forsetijudge.core.domain.exception.ForbiddenException
-import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
+import com.forsetijudge.core.port.input.usecase.contest.AutoFreezeContestUseCase
 import com.forsetijudge.core.util.SafeLogger
 import io.awspring.cloud.sqs.annotation.SqsListener
-import org.springframework.stereotype.Component
 import java.util.UUID
+import org.springframework.stereotype.Component
 
 @Component
 @Suppress("unused")
-class FreezeSQSConsumer(
-    private val freezeContestUseCase: FreezeContestUseCase,
+class AutoFreezeSQSConsumer(
+    private val autoFreezeContestUseCase: AutoFreezeContestUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -20,15 +20,14 @@ class FreezeSQSConsumer(
      *
      * @param body The body of the message received from the SQS queue.
      */
-    @SqsListener($$"${spring.cloud.aws.sqs.freeze-queue}")
+    @SqsListener($$"${spring.cloud.aws.sqs.auto-freeze-queue}")
     fun listen(body: Body) {
         logger.info("Received freeze message for contestId = ${body.contestId}")
 
         try {
-            freezeContestUseCase.execute(
-                FreezeContestUseCase.Command(
+            autoFreezeContestUseCase.execute(
+                AutoFreezeContestUseCase.Command(
                     contestId = body.contestId,
-                    bypassMemberAuthorization = true,
                 ),
             )
         } catch (e: ForbiddenException) {

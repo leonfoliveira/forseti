@@ -19,7 +19,7 @@ import java.util.UUID
 @Component
 class FreezeQueueSQSProducer(
     private val schedulerClient: SchedulerClient,
-    @Value($$"${spring.cloud.aws.sqs.freeze-queue}")
+    @Value($$"${spring.cloud.aws.sqs.auto-freeze-queue}")
     private val queueName: String,
     private val objectMapper: ObjectMapper,
 ) : FreezeQueueProducer {
