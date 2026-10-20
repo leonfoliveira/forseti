@@ -18,7 +18,7 @@ import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProb
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.port.output.cryptography.Hasher
-import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
+import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
@@ -40,7 +40,7 @@ class UpdateContestService(
     private val hasher: Hasher,
     private val testCasesValidator: TestCasesValidator,
     private val attachmentCommiter: AttachmentCommiter,
-    private val freezeQueueProducer: FreezeQueueProducer,
+    private val autoFreezeQueueProducer: AutoFreezeQueueProducer,
     private val businessEventPublisher: BusinessEventPublisher,
 ) : UpdateContestUseCase {
     private val logger = SafeLogger(this::class)
@@ -115,11 +115,11 @@ class UpdateContestService(
             }
 
             if (contest.autoFreezeAt != null) {
-                freezeQueueProducer.cancel(contest.id)
+                autoFreezeQueueProducer.cancel(contest.id)
             }
             if (command.autoFreezeAt != null) {
-                freezeQueueProducer.produce(
-                    FreezeQueueProducer.Message(contestId = contest.id),
+                autoFreezeQueueProducer.produce(
+                    AutoFreezeQueueProducer.Message(contestId = contest.id),
                     command.autoFreezeAt,
                 )
             }

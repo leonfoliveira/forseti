@@ -3,7 +3,7 @@ package com.forsetijudge.core.port.output.queue
 import java.time.OffsetDateTime
 import java.util.UUID
 
-interface FreezeQueueProducer {
+interface AutoFreezeQueueProducer {
     /**
      * Produces a message to be sent to the freeze queue at a specified time.
      *

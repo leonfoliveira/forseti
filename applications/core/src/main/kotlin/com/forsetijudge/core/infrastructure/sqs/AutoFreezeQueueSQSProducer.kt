@@ -1,7 +1,9 @@
 package com.forsetijudge.core.infrastructure.sqs
 
-import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
+import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.scheduler.SchedulerClient
@@ -13,30 +15,28 @@ import software.amazon.awssdk.services.scheduler.model.FlexibleTimeWindowMode
 import software.amazon.awssdk.services.scheduler.model.ResourceNotFoundException
 import software.amazon.awssdk.services.scheduler.model.Target
 import tools.jackson.databind.ObjectMapper
-import java.time.OffsetDateTime
-import java.util.UUID
 
 @Component
-class FreezeQueueSQSProducer(
+class AutoFreezeQueueSQSProducer(
     private val schedulerClient: SchedulerClient,
-    @Value($$"${spring.cloud.aws.sqs.auto-freeze-queue}")
-    private val queueName: String,
+    @Value($$"${spring.cloud.aws.sqs.auto-freeze-queue-arn}")
+    private val queueArn: String,
     private val objectMapper: ObjectMapper,
-) : FreezeQueueProducer {
+) : AutoFreezeQueueProducer {
     private val logger = SafeLogger(this::class)
 
     override fun produce(
-        message: FreezeQueueProducer.Message,
+        message: AutoFreezeQueueProducer.Message,
         at: OffsetDateTime,
     ) {
-        logger.info("Producing message to SQS queue: $queueName, at: $at, message: $message")
+        logger.info("Producing message to SQS queue: $queueArn, at: $at, message: $message")
 
-        val scheduleName = "freeze-${message.contestId}"
+        val scheduleName = "auto-freeze-${message.contestId}"
 
         val sqsTarget =
             Target
                 .builder()
-                .arn(queueName)
+                .arn(queueArn)
                 .input(objectMapper.writeValueAsString(message))
                 .build()
 
@@ -60,7 +60,7 @@ class FreezeQueueSQSProducer(
     override fun cancel(contestId: UUID) {
         logger.info("Cancelling scheduled freeze event for contest: $contestId")
 
-        val scheduleName = "freeze-$contestId"
+        val scheduleName = "auto-freeze-$contestId"
 
         val deleteScheduleRequest =
             DeleteScheduleRequest
@@ -70,11 +70,11 @@ class FreezeQueueSQSProducer(
 
         try {
             schedulerClient.deleteSchedule(deleteScheduleRequest)
-            logger.info("Successfully cancelled scheduled freeze event for contest: $contestId")
+            logger.info("Successfully cancelled scheduled auto freeze event for contest: $contestId")
         } catch (_: ResourceNotFoundException) {
-            logger.info("No scheduled freeze event found for contest: $contestId, nothing to cancel")
+            logger.info("No scheduled auto freeze event found for contest: $contestId, nothing to cancel")
         } catch (e: Exception) {
-            logger.error("Failed to cancel scheduled freeze event for contest: $contestId", e)
+            logger.error("Failed to cancel scheduled auto freeze event for contest: $contestId", e)
             throw e
         }
     }

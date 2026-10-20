@@ -566,6 +566,24 @@ Resources:
       MessageRetentionPeriod: 86400
       SqsManagedSseEnabled: true
 
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-auto-freeze-queue
+      VisibilityTimeout: 900
+      ReceiveMessageWaitTimeSeconds: 20
+      SqsManagedSseEnabled: true
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AutoFreezeQueueDlq.Arn
+        maxReceiveCount: 3
+
+  AutoFreezeQueueDlq:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${Env}-auto-freeze-queue-dlq
+      MessageRetentionPeriod: 86400
+      SqsManagedSseEnabled: true
+
   # ==========================================
   # ECS Cluster
   # ==========================================
@@ -771,8 +789,8 @@ Resources:
               Value: !Ref SubmissionFailedQueue
             - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
               Value: !Ref SubmissionJudgedQueue
-            - Name: AWS_SQS_AUTO_FREEZE_QUEUE
-              Value: !Ref AutoFreezeQueue
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE_ARN
+              Value: !GetAtt AutoFreezeQueue.Arn
             - Name: DB_URL
               Value: !Sub jdbc:postgresql://${CoreDb.Endpoint.Address}:5432/forseti
             - Name: DB_USER

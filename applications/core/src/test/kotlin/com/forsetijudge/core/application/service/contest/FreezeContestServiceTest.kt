@@ -9,7 +9,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
-import com.forsetijudge.core.port.output.queue.FreezeQueueProducer
+import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
@@ -29,7 +29,7 @@ class FreezeContestServiceTest {
     private val memberRepository = mock<MemberRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
     private val frozenSubmissionRepository = mock<FrozenSubmissionRepository>()
-    private val freezeQueueProducer = mock<FreezeQueueProducer>()
+    private val autoFreezeQueueProducer = mock<AutoFreezeQueueProducer>()
     private val businessEventPublisher = mock<BusinessEventPublisher>()
     private val service =
         FreezeContestService(
@@ -37,7 +37,7 @@ class FreezeContestServiceTest {
             memberRepository,
             submissionRepository,
             frozenSubmissionRepository,
-            freezeQueueProducer,
+            autoFreezeQueueProducer,
             businessEventPublisher,
         )
 
@@ -140,7 +140,7 @@ class FreezeContestServiceTest {
             },
         )
         verify(contestRepository).save(contest)
-        verify(freezeQueueProducer).cancel(contestId = contest.id)
+        verify(autoFreezeQueueProducer).cancel(contestId = contest.id)
         verify(businessEventPublisher).publish(ContestEvent.Frozen(contestId = contest.id))
     }
 }

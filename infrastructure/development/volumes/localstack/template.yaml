@@ -51,3 +51,8 @@ Resources:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: dev-submission-queue
+
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-auto-freeze-queue
