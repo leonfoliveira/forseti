@@ -33,7 +33,7 @@ export function initializeCloudWatchRum(): void {
   };
 
   try {
-    new AwsRum(
+    rum = new AwsRum(
       env.cloudWatchRumAppId,
       env.version,
       env.cloudWatchRumRegion,
