@@ -1,0 +1,26 @@
+meta {
+  name: update_is_completed
+  type: http
+  seq: 2
+}
+
+patch {
+  url: {{api_url}}/v1/contests/{{contest_id}}/print-request/{{print_request_id}}/is-complete
+  body: json
+  auth: inherit
+}
+
+headers {
+  "{{csrf_token_header}}": {{csrf_token}}
+}
+
+body:json {
+    {
+      "isCompleted": true
+    }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

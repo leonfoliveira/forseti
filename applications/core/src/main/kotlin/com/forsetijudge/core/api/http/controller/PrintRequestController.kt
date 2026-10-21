@@ -37,7 +37,7 @@ class PrintRequestController(
         return ResponseEntity.ok(printRequest)
     }
 
-    @PatchMapping("/contests/{contestId}/print-requests/{printRequestId}/complete")
+    @PatchMapping("/contests/{contestId}/print-requests/{printRequestId}/is-complete")
     fun updateIsCompletedPrintRequest(
         @PathVariable contestId: UUID,
         @PathVariable printRequestId: UUID,

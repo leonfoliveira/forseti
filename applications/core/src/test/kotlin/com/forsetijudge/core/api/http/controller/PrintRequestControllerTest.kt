@@ -59,7 +59,7 @@ class PrintRequestControllerTest {
         val printRequestId = IdGenerator.getUUID()
         mvc
             .perform(
-                patch("/v1/contests/$contestId/print-requests/$printRequestId/complete")
+                patch("/v1/contests/$contestId/print-requests/$printRequestId/is-complete")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content("""{"isCompleted":true}"""),
             ).andExpect(status().isOk)
