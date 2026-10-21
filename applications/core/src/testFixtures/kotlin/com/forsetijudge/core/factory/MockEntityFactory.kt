@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.entity.Attachment
 import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import java.time.OffsetDateTime
@@ -131,5 +132,15 @@ object MockEntityFactory {
         text = questionText,
         answer = answer,
         isPublic = isPublic,
+    )
+
+    fun printRequest(
+        id: UUID = UUID.randomUUID(),
+        submission: Submission = submission(),
+        isCompleted: Boolean = false,
+    ) = PrintRequest(
+        id = id,
+        submission = submission,
+        isCompleted = isCompleted,
     )
 }
