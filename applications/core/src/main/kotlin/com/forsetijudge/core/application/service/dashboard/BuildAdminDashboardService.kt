@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUse
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class BuildAdminDashboardService(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
+    private val printRequestRepository: PrintRequestRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildAdminDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -55,6 +57,7 @@ class BuildAdminDashboardService(
         val leaderboard = leaderboardBuilder.build(contest = contest, shouldBypassFreeze = true)
         val submissions = submissionRepository.findAllByContestId(contest.id)
         val clarifications = clarificationRepository.findAllByContestId(contest.id)
+        val printRequests = printRequestRepository.findAllByContestId(contest.id)
 
         val dashboard =
             AdminDashboard(
@@ -65,6 +68,7 @@ class BuildAdminDashboardService(
                 submissions = submissions,
                 announcements = contest.announcements,
                 clarifications = clarifications,
+                printRequests = printRequests,
             )
 
         return dashboard.toResponseDTO()

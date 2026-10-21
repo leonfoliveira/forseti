@@ -10,7 +10,9 @@ import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -20,7 +22,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class BuildContestantDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -28,6 +29,7 @@ class BuildContestantDashboardServiceTest {
     private val submissionRepository = mock<SubmissionRepository>()
     private val frozenSubmissionRepository = mock<FrozenSubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
+    private val printRequestRepository = mock<PrintRequestRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
         BuildContestantDashboardService(
@@ -36,6 +38,7 @@ class BuildContestantDashboardServiceTest {
             submissionRepository,
             frozenSubmissionRepository,
             clarificationRepository,
+            printRequestRepository,
             leaderboardBuilder,
         )
 
@@ -56,6 +59,12 @@ class BuildContestantDashboardServiceTest {
         whenever(clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contestant.id)).thenReturn(
             emptyList(),
         )
+        whenever(
+            printRequestRepository.findAllByContestIdAndMemberId(
+                contest.id,
+                contestant.id,
+            ),
+        ).thenReturn(emptyList())
 
         val result = service.execute(BuildContestantDashboardUseCase.Command(contest.id))
 

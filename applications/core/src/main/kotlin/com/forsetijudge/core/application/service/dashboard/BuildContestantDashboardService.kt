@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
@@ -25,6 +26,7 @@ class BuildContestantDashboardService(
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
+    private val printRequestRepository: PrintRequestRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildContestantDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -65,6 +67,7 @@ class BuildContestantDashboardService(
         val memberSubmissions = submissionRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
         val clarifications =
             clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contextMemberId)
+        val printRequests = printRequestRepository.findAllByContestIdAndMemberId(contest.id, contextMemberId)
 
         val dashboard =
             ContestantDashboard(
@@ -76,6 +79,7 @@ class BuildContestantDashboardService(
                 memberSubmissions = memberSubmissions,
                 announcements = contest.announcements,
                 clarifications = clarifications,
+                printRequests = printRequests,
             )
 
         return dashboard.toResponseDTO()

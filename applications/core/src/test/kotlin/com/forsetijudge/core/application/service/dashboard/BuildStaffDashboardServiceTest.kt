@@ -9,6 +9,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUse
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -21,6 +22,7 @@ class BuildStaffDashboardServiceTest {
     private val memberRepository = mock<MemberRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
+    private val printRequestRepository = mock<PrintRequestRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
         BuildStaffDashboardService(
@@ -28,6 +30,7 @@ class BuildStaffDashboardServiceTest {
             memberRepository,
             submissionRepository,
             clarificationRepository,
+            printRequestRepository,
             leaderboardBuilder,
         )
 
@@ -52,6 +55,7 @@ class BuildStaffDashboardServiceTest {
         whenever(clarificationRepository.findAllByContestIdAndIsPublic(contest.id)).thenReturn(
             emptyList(),
         )
+        whenever(printRequestRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
         val result = service.execute(BuildStaffDashboardUseCase.Command(contest.id))
 

@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUse
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
@@ -23,6 +24,7 @@ class BuildStaffDashboardService(
     private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val clarificationRepository: ClarificationRepository,
+    private val printRequestRepository: PrintRequestRepository,
     private val leaderboardBuilder: LeaderboardBuilder,
 ) : BuildStaffDashboardUseCase {
     private val logger = SafeLogger(this::class)
@@ -56,6 +58,7 @@ class BuildStaffDashboardService(
         val submissions = submissionRepository.findAllByContestId(contest.id)
         val clarifications =
             clarificationRepository.findAllByContestIdAndIsPublic(contest.id)
+        val printRequests = printRequestRepository.findAllByContestId(contest.id)
 
         val dashboard =
             StaffDashboard(
@@ -66,6 +69,7 @@ class BuildStaffDashboardService(
                 submissions = submissions,
                 announcements = contest.announcements,
                 clarifications = clarifications,
+                printRequests = printRequests,
             )
 
         return dashboard.toResponseDTO()
