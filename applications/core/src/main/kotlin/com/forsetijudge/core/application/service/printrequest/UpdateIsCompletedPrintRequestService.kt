@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UpdateIsCompletedPrintRequestService(
@@ -24,6 +25,7 @@ class UpdateIsCompletedPrintRequestService(
 ) : UpdateIsCompletedPrintRequestUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional
     override fun execute(command: UpdateIsCompletedPrintRequestUseCase.Command): PrintRequestResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
@@ -33,7 +35,7 @@ class UpdateIsCompletedPrintRequestService(
             contestRepository.findById(command.contestId)
                 ?: throw NotFoundException("Contest with id ${command.contestId} not found")
         val member =
-            memberRepository.findByIdAndContestId(contextMemberId, command.contestId)
+            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
                 ?: throw NotFoundException("Member with id $contextMemberId not found")
         val printRequest =
             printRequestRepository.findByIdAndContestId(command.printRequestId, command.contestId)

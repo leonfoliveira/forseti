@@ -58,7 +58,7 @@ class UpdateIsCompletedPrintRequestServiceTest {
     fun `should throw NotFoundException when member does not exist`() {
         TestAuthentication.setMember(adminMember)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(adminMember.id, contest.id)).thenReturn(null)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(
@@ -75,7 +75,9 @@ class UpdateIsCompletedPrintRequestServiceTest {
     fun `should throw NotFoundException when print request does not exist`() {
         TestAuthentication.setMember(adminMember)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(adminMember.id, contest.id)).thenReturn(adminMember)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
+            adminMember,
+        )
         whenever(printRequestRepository.findByIdAndContestId(printRequest.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
@@ -95,7 +97,9 @@ class UpdateIsCompletedPrintRequestServiceTest {
         val contestantMember = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
 
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(adminMember.id, contest.id)).thenReturn(contestantMember)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
+            contestantMember,
+        )
         whenever(printRequestRepository.findByIdAndContestId(printRequest.id, contest.id)).thenReturn(printRequest)
 
         assertThrows<ForbiddenException> {
@@ -113,7 +117,9 @@ class UpdateIsCompletedPrintRequestServiceTest {
     fun `should update print request isCompleted successfully`() {
         TestAuthentication.setMember(adminMember)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(adminMember.id, contest.id)).thenReturn(adminMember)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
+            adminMember,
+        )
         whenever(printRequestRepository.findByIdAndContestId(printRequest.id, contest.id)).thenReturn(printRequest)
 
         val result =

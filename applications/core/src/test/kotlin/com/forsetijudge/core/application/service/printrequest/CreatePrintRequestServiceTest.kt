@@ -56,7 +56,7 @@ class CreatePrintRequestServiceTest {
     fun `should throw NotFoundException when member does not exist`() {
         TestAuthentication.setMember(member)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(null)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(CreatePrintRequestUseCase.Command(contestId = contest.id, submissionId = submission.id))
@@ -67,8 +67,8 @@ class CreatePrintRequestServiceTest {
     fun `should throw NotFoundException when submission does not exist`() {
         TestAuthentication.setMember(member)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(member)
-        whenever(submissionRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(null)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+        whenever(submissionRepository.findByIdAndContestId(submission.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(CreatePrintRequestUseCase.Command(contestId = contest.id, submissionId = submission.id))
@@ -80,10 +80,10 @@ class CreatePrintRequestServiceTest {
         TestAuthentication.setMember(member)
         val endedContest = MockEntityFactory.contest(endAt = OffsetDateTime.now().minusDays(1))
         whenever(contestRepository.findById(endedContest.id)).thenReturn(endedContest)
-        whenever(memberRepository.findByIdAndContestId(member.id, endedContest.id)).thenReturn(
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, endedContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = endedContest),
         )
-        whenever(submissionRepository.findByIdAndContestId(member.id, endedContest.id)).thenReturn(
+        whenever(submissionRepository.findByIdAndContestId(submission.id, endedContest.id)).thenReturn(
             MockEntityFactory.submission(member = member),
         )
 
@@ -104,8 +104,8 @@ class CreatePrintRequestServiceTest {
         val otherSubmission = MockEntityFactory.submission(member = otherMember)
 
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(member)
-        whenever(submissionRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(otherSubmission)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+        whenever(submissionRepository.findByIdAndContestId(submission.id, contest.id)).thenReturn(otherSubmission)
 
         assertThrows<ForbiddenException> {
             service.execute(
@@ -121,8 +121,8 @@ class CreatePrintRequestServiceTest {
     fun `should create print request successfully`() {
         TestAuthentication.setMember(member)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(member)
-        whenever(submissionRepository.findByIdAndContestId(member.id, contest.id)).thenReturn(submission)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+        whenever(submissionRepository.findByIdAndContestId(submission.id, contest.id)).thenReturn(submission)
 
         val result =
             service.execute(CreatePrintRequestUseCase.Command(contestId = contest.id, submissionId = submission.id))

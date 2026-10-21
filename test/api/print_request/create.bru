@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{api_url}}/v1/contests/{{contest_id}}/print-request
+  url: {{api_url}}/v1/contests/{{contest_id}}/print-requests
   body: json
   auth: inherit
 }
@@ -16,7 +16,7 @@ headers {
 
 body:json {
     {
-      "submission_id": {{submission_id}}
+      "submissionId": "{{submission_id}}"
     }
 }
 

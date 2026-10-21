@@ -17,6 +17,7 @@ import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CreatePrintRequestService(
@@ -28,6 +29,7 @@ class CreatePrintRequestService(
 ) : CreatePrintRequestUseCase {
     private val logger = SafeLogger(this::class)
 
+    @Transactional
     override fun execute(command: CreatePrintRequestUseCase.Command): PrintRequestResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
@@ -37,10 +39,10 @@ class CreatePrintRequestService(
             contestRepository.findById(command.contestId)
                 ?: throw NotFoundException("Contest with id ${command.contestId} not found")
         val member =
-            memberRepository.findByIdAndContestId(contextMemberId, command.contestId)
+            memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
                 ?: throw NotFoundException("Member with id $contextMemberId not found")
         val submission =
-            submissionRepository.findByIdAndContestId(contextMemberId, command.contestId)
+            submissionRepository.findByIdAndContestId(command.submissionId, command.contestId)
                 ?: throw NotFoundException("Submission with id ${command.submissionId} not found")
 
         ContestAuthorizer(contest, member)
