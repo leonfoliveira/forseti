@@ -8,17 +8,17 @@ interface PrintRequestRepository : BaseRepository<PrintRequest> {
     @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.deletedAt IS NULL")
     fun findById(id: UUID): PrintRequest?
 
-    @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.submission.contest.id = :contestId AND pr.deletedAt IS NULL")
+    @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.submission.problem.contest.id = :contestId AND pr.deletedAt IS NULL")
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,
     ): PrintRequest?
 
-    @Query("SELECT pr FROM PrintRequest pr WHERE pr.submission.contest.id = :contestId AND pr.deletedAt IS NULL")
+    @Query("SELECT pr FROM PrintRequest pr WHERE pr.submission.problem.contest.id = :contestId AND pr.deletedAt IS NULL")
     fun findAllByContestId(contestId: UUID): List<PrintRequest>
 
     @Query(
-        "SELECT pr FROM PrintRequest pr WHERE pr.submission.contest.id = :contestId AND pr.submission.member.id = :memberId AND pr.deletedAt IS NULL",
+        "SELECT pr FROM PrintRequest pr WHERE pr.submission.problem.contest.id = :contestId AND pr.submission.member.id = :memberId AND pr.deletedAt IS NULL",
     )
     fun findAllByContestIdAndMemberId(
         contestId: UUID,
