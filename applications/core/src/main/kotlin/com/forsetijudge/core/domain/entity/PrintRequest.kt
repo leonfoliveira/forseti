@@ -33,5 +33,5 @@ class PrintRequest(
      * The status of the print request.
      */
     @Column("is_completed", nullable = false)
-    val isCompleted: Boolean = false,
+    var isCompleted: Boolean = false,
 ) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
