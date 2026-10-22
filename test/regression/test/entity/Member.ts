@@ -9,5 +9,6 @@ export enum MemberType {
   ROOT = "Root",
   ADMIN = "Admin",
   JUDGE = "Judge",
+  STAFF = "Staff",
   CONTESTANT = "Contestant",
 }

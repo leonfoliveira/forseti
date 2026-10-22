@@ -13,6 +13,7 @@ import {
 } from "@/test/entity/Submission";
 import { Announcement } from "@/test/entity/Announcement";
 import { Clarification } from "@/test/entity/Clarification";
+import { PrintRequest, PrintRequestStatus } from "@/test/entity/PrintRequest";
 
 /**
  * This test covers the default behaviour of a contest
@@ -60,6 +61,12 @@ test("Default contest behaviour", async ({ page }) => {
     login: "judge",
     password: "judge",
   };
+  const staffMember: Member = {
+    type: MemberType.STAFF,
+    name: "Staff",
+    login: "staff",
+    password: "staff",
+  };
   const contestantMember: Member = {
     type: MemberType.CONTESTANT,
     name: "Contestant",
@@ -70,6 +77,7 @@ test("Default contest behaviour", async ({ page }) => {
   const rootActor = new Actor(page, rootMember);
   const adminActor = new Actor(page, adminMember);
   const judgeActor = new Actor(page, judgeMember);
+  const staffActor = new Actor(page, staffMember);
   const contestantActor = new Actor(page, contestantMember);
 
   const leaderboard: Leaderboard = {
@@ -139,6 +147,11 @@ test("Default contest behaviour", async ({ page }) => {
     text: "New clarification",
   };
 
+  const printRequest: PrintRequest = {
+    submission: acSubmission,
+    status: PrintRequestStatus.PENDING,
+  };
+
   // Step 1: Use CLI to create a contest
   await rootActor.createContest(contest);
 
@@ -175,7 +188,7 @@ test("Default contest behaviour", async ({ page }) => {
   contest.status = ContestStatus.IN_PROGRESS;
   await adminActor.signOut(contest);
 
-  // Step 5: Sign in as contestant, check problems, create submissions, create clarification, check announcements, check leaderboard
+  // Step 5: Sign in as contestant, check problems, create submissions, create print request, check leaderboard, create clarification, check announcements, check print requests,
   await contestantActor.signIn(contest);
   await contestantActor.checkHeader(contest);
   const contestantActonOnProblems =
@@ -188,16 +201,20 @@ test("Default contest behaviour", async ({ page }) => {
   await contestantActonOnSubmissions.createSubmission(meSubmission);
   await contestantActonOnSubmissions.createSubmission(waSubmission);
   await contestantActonOnSubmissions.createSubmission(acSubmission);
-  const contestantActonOnClarificationsPage =
-    await contestantActonOnSubmissions.navigateToClarificationsPage(contest);
-  await contestantActonOnClarificationsPage.createClarification(clarification);
+  await contestantActonOnSubmissions.createPrintRequest(0);
   const contestantActonOnLeaderboard =
-    await contestantActonOnClarificationsPage.navigateToLeaderboard(contest);
+    await contestantActonOnSubmissions.navigateToLeaderboard(contest);
   await contestantActonOnLeaderboard.checkLeaderboard(leaderboard);
+  const contestantActonOnClarificationsPage =
+    await contestantActonOnLeaderboard.navigateToClarificationsPage(contest);
+  await contestantActonOnClarificationsPage.createClarification(clarification);
   const contestantActonOnAnnouncements =
     await contestantActonOnLeaderboard.navigateToAnnouncements(contest);
   await contestantActonOnAnnouncements.checkAnnouncements([announcement]);
-  await contestantActonOnAnnouncements.signOut(contest);
+  const contestantActonOnPrintRequestsPage =
+    await contestantActonOnAnnouncements.navigateToPrintRequestsPage(contest);
+  await contestantActonOnPrintRequestsPage.checkPrintRequests([printRequest]);
+  await contestantActonOnPrintRequestsPage.signOut(contest);
 
   // Step 6: Sign in as judge, check submissions, judge a submission, resubmit a submission, answer a clarification, publish a clarification
   await judgeActor.signIn(contest);
@@ -225,6 +242,16 @@ test("Default contest behaviour", async ({ page }) => {
   await judgeActorOnClarificationsPage.answerClarification(0);
   await judgeActorOnClarificationsPage.publishClarification(0);
   await judgeActorOnClarificationsPage.signOut(contest);
+
+  // Step 7: Sign in as staff, check print requests, complete a print request
+  await staffActor.signIn(contest);
+  const staffActorOnPrintRequestsPage =
+    await staffActor.navigateToPrintRequestsPage(contest);
+  await staffActorOnPrintRequestsPage.checkPrintRequests([printRequest]);
+  await staffActorOnPrintRequestsPage.printPrintRequest(0);
+  await staffActorOnPrintRequestsPage.completePrintRequest(0);
+  printRequest.status = PrintRequestStatus.COMPLETED;
+  await staffActorOnPrintRequestsPage.signOut(contest);
 
   // Step 8: Sign in as admin, force end the contest
   await adminActor.signIn(contest);

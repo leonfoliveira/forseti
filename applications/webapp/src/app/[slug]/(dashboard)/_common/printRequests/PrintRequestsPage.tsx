@@ -50,31 +50,36 @@ export function PrintRequestsPage({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {printRequests.map((printRequest) => (
-                <TableRow key={printRequest.id} data-testid="print-request-row">
-                  <TableCell data-testid="print-request-timestamp">
-                    {printRequest.createdAt}
-                  </TableCell>
-                  <TableCell data-testid="print-request-contestant">
-                    {printRequest.submission.member.name}
-                  </TableCell>
-                  <TableCell data-testid="print-request-problem">
-                    {printRequest.submission.problem.letter}
-                  </TableCell>
-                  <TableCell data-testid="print-request-status">
-                    {EnumeratedTextUtil.getPrintRequestStatus(
-                      printRequest.status,
+              {printRequests
+                .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+                .map((printRequest) => (
+                  <TableRow
+                    key={printRequest.id}
+                    data-testid="print-request-row"
+                  >
+                    <TableCell data-testid="print-request-timestamp">
+                      {printRequest.createdAt}
+                    </TableCell>
+                    <TableCell data-testid="print-request-contestant">
+                      {printRequest.submission.member.name}
+                    </TableCell>
+                    <TableCell data-testid="print-request-problem">
+                      {printRequest.submission.problem.letter}
+                    </TableCell>
+                    <TableCell data-testid="print-request-status">
+                      {EnumeratedTextUtil.getPrintRequestStatus(
+                        printRequest.status,
+                      )}
+                    </TableCell>
+                    {canUpdate && (
+                      <PrintRequestsPageActions
+                        printRequest={printRequest}
+                        onUpdate={onUpdate}
+                        data-testid="print-request-actions"
+                      />
                     )}
-                  </TableCell>
-                  {canUpdate && (
-                    <PrintRequestsPageActions
-                      printRequest={printRequest}
-                      onUpdate={onUpdate}
-                      data-testid="print-request-actions"
-                    />
-                  )}
-                </TableRow>
-              ))}
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </CardContent>
