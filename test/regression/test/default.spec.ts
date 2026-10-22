@@ -161,6 +161,7 @@ test("Default contest behaviour", async ({ page }) => {
   await rootOnSettingsPage.openTab("members");
   await rootOnSettingsPage.fillMemberForm(adminMember);
   await rootOnSettingsPage.fillMemberForm(judgeMember);
+  await rootOnSettingsPage.fillMemberForm(staffMember);
   await rootOnSettingsPage.fillMemberForm(contestantMember);
   await rootOnSettingsPage.saveSettings();
   await rootOnSettingsPage.signOut(contest);
