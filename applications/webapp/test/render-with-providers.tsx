@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import { TooltipProvider } from "@/app/_lib/component/shadcn/tooltip";
 import { AppStore, makeStore, RootState } from "@/app/_lib/store/Store";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
+import { MemoryRouter } from "react-router-dom";
 
 interface WrapperProps {
   children: React.ReactNode;
@@ -13,9 +14,11 @@ interface WrapperProps {
 
 function Wrapper({ children, store }: WrapperProps) {
   return (
-    <TooltipProvider>
-      <Provider store={store}>{children}</Provider>
-    </TooltipProvider>
+    <MemoryRouter>
+      <TooltipProvider>
+        <Provider store={store}>{children}</Provider>
+      </TooltipProvider>
+    </MemoryRouter>
   );
 }
 

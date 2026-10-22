@@ -6,7 +6,7 @@ import { PrintRequestRepository } from "@/port/output/repository/PrintRequestRep
 
 export class AxiosPrintRequestRepository implements PrintRequestRepository {
   private basePath = (contestId: string) =>
-    `/contests/${contestId}/print-requests`;
+    `/v1/contests/${contestId}/print-requests`;
 
   constructor(private readonly axiosClient: AxiosClient) {}
 
@@ -27,7 +27,7 @@ export class AxiosPrintRequestRepository implements PrintRequestRepository {
     requestDTO: UpdateStatusPrintRequestRequestDTO,
   ): Promise<PrintRequestResponseDTO> {
     const response = await this.axiosClient.patch<PrintRequestResponseDTO>(
-      `${this.basePath(contestId)}/${printRequestId}`,
+      `${this.basePath(contestId)}/${printRequestId}/status`,
       { data: requestDTO },
     );
     return response.data;

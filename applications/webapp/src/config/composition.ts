@@ -45,6 +45,9 @@ import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoom
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
 import { SSEStaffDashboardRoomListener } from "@/infrastructure/sse/SSEStaffDashboardRoomListener";
 import { StaffDashboardRoomListener } from "@/port/output/sse/StaffDashboardRoomListener";
+import { PrintRequestWritter } from "@/port/input/usecase/printRequest/PrintRequestWritter";
+import { AxiosPrintRequestRepository } from "@/infrastructure/axios/repository/AxiosPrintRequestRepository";
+import { PrintRequestService } from "@/service/PrintRequestService";
 
 // Repositories
 const axiosClient = new AxiosClient(env.apiUrl);
@@ -59,6 +62,7 @@ const sessionRepository = new AxiosSessionRepository(axiosClient);
 const localStorageRepository = new LocalStorageRepositoryAdapter();
 const submissionRepository = new AxiosSubmissionRepository(axiosClient);
 const bucketRepository = new S3BucketRepository();
+const printRequestRepository = new AxiosPrintRequestRepository(axiosClient);
 
 // Services
 const attachmentService = new AttachmentService(
@@ -78,6 +82,7 @@ const submissionService = new SubmissionService(
   attachmentService,
 );
 const announcementService = new AnnouncementService(announcementRepository);
+const printRequestService = new PrintRequestService(printRequestRepository);
 
 // SSE Listeners
 const adminDashboardRoomListener = new SSEAdminDashboardRoomListener(
@@ -117,6 +122,7 @@ const Composition: {
   contestantDashboardRoomListener: ContestantDashboardRoomListener;
   spectatorDashboardRoomListener: SpectatorDashboardRoomListener;
   memberPrivateRoomListener: MemberPrivateRoomListener;
+  printRequestWritter: PrintRequestWritter;
 } = {
   attachmentReader: attachmentService,
   attachmentWritter: attachmentService,
@@ -137,6 +143,7 @@ const Composition: {
   contestantDashboardRoomListener: contestantDashboardRoomListener,
   spectatorDashboardRoomListener: spectatorDashboardRoomListener,
   memberPrivateRoomListener: memberPrivateRoomListener,
+  printRequestWritter: printRequestService,
 };
 
 export { Composition };

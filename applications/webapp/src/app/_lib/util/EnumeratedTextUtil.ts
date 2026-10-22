@@ -1,6 +1,7 @@
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 
 export class EnumeratedTextUtil {
   public static getMemberType(type: MemberType): string {
@@ -31,5 +32,13 @@ export class EnumeratedTextUtil {
       [SubmissionLanguage.PYTHON_312]: "Python 3.12",
       [SubmissionLanguage.NODE_22]: "Node 22",
     }[language];
+  }
+
+  public static getPrintRequestStatus(status: PrintRequestStatus): string {
+    return {
+      [PrintRequestStatus.PENDING]: "Pending",
+      [PrintRequestStatus.COMPLETED]: "Completed",
+      [PrintRequestStatus.REJECTED]: "Rejected",
+    }[status];
   }
 }

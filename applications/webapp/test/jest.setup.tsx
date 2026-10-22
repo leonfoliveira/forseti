@@ -37,15 +37,21 @@ global.EventSource = jest.fn(() => eventSource) as never;
 // Custom extensions for HTMLElement to support queries by test ID
 declare global {
   interface HTMLElement {
-    getByTestId(id: string): HTMLElement | null;
+    getByTestId(id: string): HTMLElement;
     getAllByTestId(id: string): HTMLElement[];
+    queryByTestId(id: string): HTMLElement | null;
   }
 }
 HTMLElement.prototype.getByTestId = function (id: string) {
-  return this.querySelector(`[data-testid="${id}"]`);
+  const element = this.querySelector(`[data-testid="${id}"]`);
+  if (!element) throw new Error(`No element found with test ID: ${id}`);
+  return element as HTMLElement;
 };
 HTMLElement.prototype.getAllByTestId = function (id: string) {
   return Array.from(this.querySelectorAll(`[data-testid="${id}"]`));
+};
+HTMLElement.prototype.queryByTestId = function (id: string) {
+  return this.querySelector(`[data-testid="${id}"]`);
 };
 
 // Mocking UUID generation as uuid module does not work well with jest
@@ -67,6 +73,7 @@ jest.mock("react-router-dom", () => ({
   useNavigate: jest.fn(() => navigate),
   useSearchParams: jest.fn(() => [getSearchParams] as never),
   useRevalidator: jest.fn(() => ({ revalidate })),
+  Navigate: jest.fn(() => <div data-testid="navigate" />),
 }));
 
 // Mocking shadcn UI components
