@@ -30,6 +30,7 @@ import { SubmissionResponseDTO } from "@/port/dto/response/submission/Submission
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 type Props = {
   submissions:
@@ -40,30 +41,10 @@ type Props = {
   problems: ProblemResponseDTO[];
   canDownloadAny?: boolean;
   canViewExecutions?: boolean;
-} & (
-  | {
-      canCreate: true;
-      onCreate: (submission: SubmissionWithCodeResponseDTO) => void;
-    }
-  | {
-      canCreate?: false;
-      onCreate?: (submission: SubmissionWithCodeResponseDTO) => void;
-    }
-) &
-  (
-    | {
-        canEdit: true;
-        onEdit: (
-          submission: SubmissionWithCodeAndExecutionsResponseDTO,
-        ) => void;
-      }
-    | {
-        canEdit?: false;
-        onEdit?: (
-          submission: SubmissionWithCodeAndExecutionsResponseDTO,
-        ) => void;
-      }
-  );
+  onCreate?: (submission: SubmissionWithCodeResponseDTO) => void;
+  onEdit?: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
+  onCreatePrintRequest?: (printRequest: PrintRequestResponseDTO) => void;
+};
 
 /**
  * A generic submissions page component for displaying contest submissions.
@@ -74,15 +55,17 @@ export function SubmissionsPage({
   problems,
   canDownloadAny,
   canViewExecutions,
-  canCreate,
   onCreate,
-  canEdit,
   onEdit,
+  onCreatePrintRequest,
 }: Props) {
   const session = useAppSelector((state) => state.session);
   const contestStatus = useContestStatusWatcher();
   const [isOnlyMine, setIsOnlyMine] = useState(false);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
+
+  const canCreate = !!onCreate;
+  const canEdit = !!onEdit;
 
   const memberSubmissionsMap = new Map(
     memberSubmissions?.map((s) => [s.id, s]) ?? [],
@@ -210,8 +193,12 @@ export function SubmissionsPage({
                           }
                           canDownloadAny={canDownloadAny}
                           canViewExecutions={canViewExecutions}
-                          canEdit={canEdit}
-                          onEdit={onEdit as any}
+                          onEdit={onEdit}
+                          onCreatePrintRequest={
+                            !!(submission as any).code
+                              ? onCreatePrintRequest
+                              : undefined
+                          }
                         />
                       </TableCell>
                     )}

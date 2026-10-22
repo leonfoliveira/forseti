@@ -42,6 +42,21 @@ export function DashboardLayout() {
 
   if (
     session &&
+    [
+      MemberType.ROOT,
+      MemberType.ADMIN,
+      MemberType.STAFF,
+      MemberType.CONTESTANT,
+    ].includes(session.member.type)
+  ) {
+    tabs.push({
+      title: "Print Requests",
+      path: routes.CONTEST_PRINT_REQUESTS(slug),
+    });
+  }
+
+  if (
+    session &&
     [MemberType.ROOT, MemberType.ADMIN].includes(session.member.type)
   ) {
     tabs.push({

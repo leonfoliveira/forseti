@@ -12,9 +12,8 @@ jest.mock(
       problems: unknown[];
       canDownloadAny?: boolean;
       canViewExecutions?: boolean;
-      canEdit?: boolean;
     }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}:${Boolean(props.canDownloadAny)}:${Boolean(props.canViewExecutions)}:${Boolean(props.canEdit)}`}</div>
+      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}:${Boolean(props.canDownloadAny)}:${Boolean(props.canViewExecutions)}`}</div>
     ),
   }),
 );
@@ -25,7 +24,7 @@ describe("AdminSubmissionsPage", () => {
       adminDashboard: MockAdminDashboardResponseDTO() as never,
     });
     expect(screen.getByTestId("submission-props")).toHaveTextContent(
-      "1:1:true:true:true",
+      "1:1:true:true",
     );
   });
 });

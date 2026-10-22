@@ -20,7 +20,6 @@ export function ContestantSubmissionsPage() {
       submissions={submissions}
       memberSubmissions={memberSubmissions}
       problems={problems}
-      canCreate
       onCreate={(submission: SubmissionWithCodeResponseDTO) => {
         dispatch(ContestantDashboardSlice.actions.mergeSubmission(submission));
       }}
