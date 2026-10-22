@@ -6,12 +6,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/app/_lib/component/shadcn/table";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { ArrowUp10Icon } from "lucide-react";
 import { PrintRequestsPageActions } from "@/app/[slug]/(dashboard)/_common/printRequests/PrintRequestsPageActions";
 import { PrintRequestStatusBadge } from "@/app/_lib/component/display/badge/PrintRequestStatusBadge";
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
+import clsx from "clsx";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 
 type Props = {
   printRequests: PrintRequestResponseDTO[];
@@ -57,6 +58,10 @@ export function PrintRequestsPage({
                 .map((printRequest) => (
                   <TableRow
                     key={printRequest.id}
+                    className={clsx(
+                      printRequest.status !== PrintRequestStatus.PENDING &&
+                        "opacity-50",
+                    )}
                     data-testid="print-request-row"
                   >
                     <TableCell data-testid="print-request-timestamp">
