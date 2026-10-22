@@ -1,4 +1,3 @@
-import { TableCell } from "@/app/_lib/component/shadcn/table";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import {
   Tooltip,
@@ -58,7 +57,7 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
   }
 
   return (
-    <TableCell>
+    <>
       <Tooltip>
         <TooltipTrigger asChild>
           <AsyncButton
@@ -105,6 +104,6 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
         </TooltipTrigger>
         <TooltipContent>Reject</TooltipContent>
       </Tooltip>
-    </TableCell>
+    </>
   );
 }

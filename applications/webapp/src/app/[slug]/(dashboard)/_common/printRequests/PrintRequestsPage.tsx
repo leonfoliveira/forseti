@@ -34,7 +34,7 @@ export function PrintRequestsPage({
       title="Forseti - Print Requests"
       description="View and manage print requests."
     >
-      <Card className="w-full">
+      <Card className="my-5 w-full">
         <CardContent>
           <Table className="border-b" data-testid="print-requests-table">
             <TableHeader className="bg-muted">
@@ -45,7 +45,7 @@ export function PrintRequestsPage({
                 </TableHead>
                 <TableHead>Contestant</TableHead>
                 <TableHead>Problem</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Status</TableHead>
                 {canUpdate && <TableHead></TableHead>}
               </TableRow>
             </TableHeader>
@@ -66,17 +66,22 @@ export function PrintRequestsPage({
                     <TableCell data-testid="print-request-problem">
                       {printRequest.submission.problem.letter}
                     </TableCell>
-                    <TableCell data-testid="print-request-status">
+                    <TableCell
+                      className="text-right"
+                      data-testid="print-request-status"
+                    >
                       {EnumeratedTextUtil.getPrintRequestStatus(
                         printRequest.status,
                       )}
                     </TableCell>
                     {canUpdate && (
-                      <PrintRequestsPageActions
-                        printRequest={printRequest}
-                        onUpdate={onUpdate}
-                        data-testid="print-request-actions"
-                      />
+                      <TableCell className="text-right">
+                        <PrintRequestsPageActions
+                          printRequest={printRequest}
+                          onUpdate={onUpdate}
+                          data-testid="print-request-actions"
+                        />
+                      </TableCell>
                     )}
                   </TableRow>
                 ))}
