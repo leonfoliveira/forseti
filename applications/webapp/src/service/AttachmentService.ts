@@ -69,16 +69,13 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
     iframe.src = url;
 
     iframe.onload = () => {
-      // Give the browser a moment to render before triggering print
       setTimeout(() => {
         iframe.contentWindow?.focus();
         iframe.contentWindow?.print();
-
-        // Clean up after printing dialog closes / handling delay
         setTimeout(() => {
           document.body.removeChild(iframe);
           URL.revokeObjectURL(url);
-        }, 1000); // 1-second buffer ensures the print job has grabbed the resource
+        }, 1000);
       }, 500);
     };
 

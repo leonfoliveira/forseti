@@ -13,7 +13,6 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertThrows
@@ -21,6 +20,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class CreatePrintRequestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -105,7 +105,7 @@ class CreatePrintRequestServiceTest {
 
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
-        whenever(submissionRepository.findByIdAndContestId(submission.id, contest.id)).thenReturn(otherSubmission)
+        whenever(submissionRepository.findByIdAndContestId(otherSubmission.id, contest.id)).thenReturn(otherSubmission)
 
         assertThrows<ForbiddenException> {
             service.execute(

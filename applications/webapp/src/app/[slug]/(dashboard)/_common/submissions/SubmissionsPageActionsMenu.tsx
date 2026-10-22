@@ -52,6 +52,18 @@ export function SubmissionsPageActionsMenu({
     );
   }
 
+  if (canViewExecutions) {
+    items.push(
+      <SubmissionsPageActionExecutions
+        key="executions"
+        executions={
+          (submission as SubmissionWithCodeAndExecutionsResponseDTO).executions
+        }
+        onClose={close}
+      />,
+    );
+  }
+
   if (canEdit) {
     if (submission.status != SubmissionStatus.JUDGING) {
       items.push(

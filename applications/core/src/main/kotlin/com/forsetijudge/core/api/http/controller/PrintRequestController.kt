@@ -6,7 +6,6 @@ import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponse
 import com.forsetijudge.core.port.input.usecase.printrequest.CreatePrintRequestUseCase
 import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRequestUseCase
 import com.forsetijudge.core.util.SafeLogger
-import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
