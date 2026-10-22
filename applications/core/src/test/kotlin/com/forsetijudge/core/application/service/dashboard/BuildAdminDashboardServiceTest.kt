@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildAdminDashboardUse
 import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -27,6 +28,7 @@ class BuildAdminDashboardServiceTest {
     private val memberRepository = mock<MemberRepository>()
     private val submissionRepository = mock<SubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
+    private val printRequestRepository = mock<PrintRequestRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
         BuildAdminDashboardService(
@@ -34,6 +36,7 @@ class BuildAdminDashboardServiceTest {
             memberRepository,
             submissionRepository,
             clarificationRepository,
+            printRequestRepository,
             leaderboardBuilder,
         )
 
@@ -55,6 +58,7 @@ class BuildAdminDashboardServiceTest {
         ).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
         whenever(clarificationRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
+        whenever(printRequestRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
 
         val result = service.execute(BuildAdminDashboardUseCase.Command(contest.id))
 

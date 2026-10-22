@@ -4,6 +4,7 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
@@ -16,4 +17,5 @@ export type ContestantDashboardResponseDTO = {
   memberSubmissions: SubmissionWithCodeResponseDTO[];
   announcements: AnnouncementResponseDTO[];
   clarifications: ClarificationResponseDTO[];
+  printRequests: PrintRequestResponseDTO[];
 };

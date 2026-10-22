@@ -4,6 +4,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export interface AdminDashboardRoomListener {
   /**
@@ -41,6 +42,8 @@ export interface AdminDashboardRoomListener {
         leaderboard: LeaderboardResponseDTO;
         submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
       }) => void;
+      PRINT_REQUEST_CREATED: (printRequest: PrintRequestResponseDTO) => void;
+      PRINT_REQUEST_UPDATED: (printRequest: PrintRequestResponseDTO) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

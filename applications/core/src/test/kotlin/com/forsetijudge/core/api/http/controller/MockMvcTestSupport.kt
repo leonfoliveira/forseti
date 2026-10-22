@@ -2,6 +2,7 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
@@ -13,6 +14,7 @@ import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardRespo
 import com.forsetijudge.core.port.dto.response.dashboard.StaffDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
+import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponseDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
@@ -85,6 +87,7 @@ internal object MockMvcTestSupport {
             submissions = emptyList(),
             announcements = emptyList(),
             clarifications = emptyList(),
+            printRequests = emptyList(),
         )
 
     fun contestantDashboardResponse(id: UUID = UUID.randomUUID()) =
@@ -97,6 +100,7 @@ internal object MockMvcTestSupport {
             memberSubmissions = emptyList(),
             announcements = emptyList(),
             clarifications = emptyList(),
+            printRequests = emptyList(),
         )
 
     fun spectatorDashboardResponse(id: UUID = UUID.randomUUID()) =
@@ -130,9 +134,32 @@ internal object MockMvcTestSupport {
             submissions = emptyList(),
             announcements = emptyList(),
             clarifications = emptyList(),
+            printRequests = emptyList(),
         )
 
     fun submissionResponse(
+        id: UUID = UUID.randomUUID(),
+        contestId: UUID = UUID.randomUUID(),
+        memberId: UUID = UUID.randomUUID(),
+        problemId: UUID = UUID.randomUUID(),
+        codeId: UUID = UUID.randomUUID(),
+    ): SubmissionWithCodeResponseDTO {
+        val common = submissionFields(contestId, memberId, problemId, codeId)
+        return SubmissionWithCodeResponseDTO(
+            id = id,
+            createdAt = timestamp,
+            updatedAt = timestamp,
+            member = common.first,
+            problem = common.second,
+            language = Submission.Language.CPP_17,
+            status = Submission.Status.JUDGING,
+            answer = null,
+            code = common.third,
+            version = 1,
+        )
+    }
+
+    fun submissionWithCodeResponse(
         id: UUID = UUID.randomUUID(),
         contestId: UUID = UUID.randomUUID(),
         memberId: UUID = UUID.randomUUID(),
@@ -176,6 +203,18 @@ internal object MockMvcTestSupport {
             version = 1,
         )
     }
+
+    fun printRequestResponse(
+        id: UUID = UUID.randomUUID(),
+        submission: SubmissionWithCodeResponseDTO = submissionWithCodeResponse(),
+    ) = PrintRequestResponseDTO(
+        id = id,
+        createdAt = timestamp,
+        updatedAt = timestamp,
+        submission = submission,
+        status = PrintRequest.Status.COMPLETED,
+        version = 1,
+    )
 
     private fun submissionFields(
         contestId: UUID,

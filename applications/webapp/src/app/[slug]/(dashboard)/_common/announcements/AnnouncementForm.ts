@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { CreateAnnouncementRequestDTO } from "@/port/dto/request/CreateAnnouncementRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
 
 export type AnnouncementFormType = {
   text: string;

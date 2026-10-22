@@ -13,7 +13,7 @@ type Props = React.ComponentProps<typeof Button> & {
  */
 export function AsyncButton({ icon, isLoading, children, ...props }: Props) {
   return (
-    <Button {...props} disabled={isLoading}>
+    <Button {...props} disabled={isLoading || props.disabled}>
       {children}
       {icon && !isLoading && icon}
       {isLoading && <Spinner data-icon="inline-start" data-testid="spinner" />}

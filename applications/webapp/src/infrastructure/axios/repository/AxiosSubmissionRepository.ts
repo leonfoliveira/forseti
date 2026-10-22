@@ -1,6 +1,6 @@
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/port/output/repository/SubmissionRepository";
-import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
+import { CreateSubmissionRequestDTO } from "@/port/dto/request/submission/CreateSubmissionRequestDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";

@@ -76,6 +76,10 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `answer`: The answer or result of the submission (e.g., ACCEPTED, WRONG_ANSWER, TIME_LIMIT_EXCEEDED, MEMORY_LIMIT_EXCEEDED, RUNTIME_ERROR, COMPILATION_ERROR).
 - `code_id`: The UUIDv7 of the code attachment associated with the submission.
 
+### frozen_submission
+
+The same fields as `submission`, but representing a frozen snapshot of the submission at a specific point in time.
+
 ### execution
 
 - `id`: A unique UUIDv7 identifying the execution.
@@ -118,6 +122,16 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `answer_text`: The text content of the answer to the clarification, if applicable.
 - `answer_created_at`: The timestamp when the answer to the clarification was created, if applicable.
 - `is_public`: A boolean indicating whether the clarification is public.
+
+### print_request
+
+- `id`: A unique UUIDv7 identifying the print request.
+- `created_at`: The timestamp when the print request was created.
+- `updated_at`: The timestamp when the print request was last updated.
+- `deleted_at`: The timestamp when the print request was deleted, if applicable.
+- `version`: The version number of the print request record, used for optimistic locking.
+- `submission_id`: The UUIDv7 of the original submission that this print request represents.
+- `is_completed`: A boolean indicating whether the print request has been completed.
 
 ## Audit Tables
 

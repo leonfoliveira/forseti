@@ -9,6 +9,8 @@ describe("SSEMemberPrivateRoomListener", () => {
     const listeners = {
       SUBMISSION_UPDATED: jest.fn(),
       CLARIFICATION_ANSWERED: jest.fn(),
+      PRINT_REQUEST_CREATED: jest.fn(),
+      PRINT_REQUEST_UPDATED: jest.fn(),
     };
     const onDisconnect = jest.fn();
     const onReconnect = jest.fn();

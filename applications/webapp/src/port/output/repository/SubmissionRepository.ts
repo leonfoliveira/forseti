@@ -1,5 +1,5 @@
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
+import { CreateSubmissionRequestDTO } from "@/port/dto/request/submission/CreateSubmissionRequestDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 

@@ -14,6 +14,8 @@ describe("SSEStaffDashboardRoomListener", () => {
       CLARIFICATION_PUBLISHED: jest.fn(),
       CONTEST_FROZEN: jest.fn(),
       CONTEST_UNFROZEN: jest.fn(),
+      PRINT_REQUEST_CREATED: jest.fn(),
+      PRINT_REQUEST_UPDATED: jest.fn(),
     };
     const onDisconnect = jest.fn();
     const onReconnect = jest.fn();

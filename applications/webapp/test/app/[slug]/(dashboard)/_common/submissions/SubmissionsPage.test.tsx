@@ -101,7 +101,6 @@ describe("SubmissionsPage", () => {
         ]}
         memberSubmissions={[own as never]}
         problems={[]}
-        canCreate
         onCreate={jest.fn()}
       />,
       { session: MockSessionResponseDTO() },

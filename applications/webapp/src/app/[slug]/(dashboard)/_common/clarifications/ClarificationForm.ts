@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { CreateClarificationRequestDTO } from "@/port/dto/request/CreateClarificationRequestDTO";
+import { CreateClarificationRequestDTO } from "@/port/dto/request/clarification/CreateClarificationRequestDTO";
 
 export type ClarificationFormType = {
   problemId: string;

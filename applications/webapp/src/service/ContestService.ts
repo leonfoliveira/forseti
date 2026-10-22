@@ -6,7 +6,7 @@ import {
   ContestWritter,
   UpdateContestInputDTO,
 } from "@/port/input/usecase/contest/ContestWritter";
-import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
+import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";

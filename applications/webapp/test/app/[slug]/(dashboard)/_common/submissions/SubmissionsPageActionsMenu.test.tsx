@@ -65,7 +65,6 @@ describe("SubmissionsPageActionsMenu", () => {
       <SubmissionsPageActionsMenu
         submission={MockSubmissionWithCodeAndExecutionsResponseDTO()}
         canViewExecutions
-        canEdit
         onEdit={jest.fn()}
       />,
     );
@@ -84,7 +83,6 @@ describe("SubmissionsPageActionsMenu", () => {
         submission={MockSubmissionWithCodeResponseDTO({
           status: SubmissionStatus.JUDGING,
         })}
-        canEdit
         onEdit={jest.fn()}
       />,
     );

@@ -10,6 +10,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export type StaffDashboardState = StaffDashboardResponseDTO;
 
@@ -77,6 +78,12 @@ export const StaffDashboardSlice = createSlice({
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,
         action.payload.submissions,
+      );
+    },
+    mergePrintRequest(state, action: { payload: PrintRequestResponseDTO }) {
+      state.printRequests = EntityUtil.merge(
+        state.printRequests,
+        action.payload,
       );
     },
   },

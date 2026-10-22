@@ -10,6 +10,7 @@ import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -28,6 +29,7 @@ class BuildContestantDashboardServiceTest {
     private val submissionRepository = mock<SubmissionRepository>()
     private val frozenSubmissionRepository = mock<FrozenSubmissionRepository>()
     private val clarificationRepository = mock<ClarificationRepository>()
+    private val printRequestRepository = mock<PrintRequestRepository>()
     private val leaderboardBuilder = mock<LeaderboardBuilder>()
     private val service =
         BuildContestantDashboardService(
@@ -36,6 +38,7 @@ class BuildContestantDashboardServiceTest {
             submissionRepository,
             frozenSubmissionRepository,
             clarificationRepository,
+            printRequestRepository,
             leaderboardBuilder,
         )
 
@@ -56,6 +59,12 @@ class BuildContestantDashboardServiceTest {
         whenever(clarificationRepository.findAllByContestIdAndMemberIdOrIsPublic(contest.id, contestant.id)).thenReturn(
             emptyList(),
         )
+        whenever(
+            printRequestRepository.findAllByContestIdAndMemberId(
+                contest.id,
+                contestant.id,
+            ),
+        ).thenReturn(emptyList())
 
         val result = service.execute(BuildContestantDashboardUseCase.Command(contest.id))
 

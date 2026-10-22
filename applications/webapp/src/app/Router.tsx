@@ -24,6 +24,9 @@ const DashboardClarificationsPage = React.lazy(
 const DashboardLeaderboardPage = React.lazy(
   () => import("./[slug]/(dashboard)/leaderboard/LeaderboardPage"),
 );
+const DashboardPrintRequestsPage = React.lazy(
+  () => import("./[slug]/(dashboard)/printRequests/PrintRequestsPage"),
+);
 const DashboardProblemsPage = React.lazy(
   () => import("./[slug]/(dashboard)/problems/ProblemsPage"),
 );
@@ -79,6 +82,10 @@ export function Router() {
               <Route
                 path="/:slug/submissions"
                 element={<DashboardSubmissionsPage />}
+              />
+              <Route
+                path="/:slug/print-requests"
+                element={<DashboardPrintRequestsPage />}
               />
             </Route>
           </Route>

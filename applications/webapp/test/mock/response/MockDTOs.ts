@@ -4,11 +4,12 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { AuthenticateRequestDTO } from "@/port/dto/request/AuthenticateRequestDTO";
-import { CreateAnnouncementRequestDTO } from "@/port/dto/request/CreateAnnouncementRequestDTO";
-import { CreateSubmissionRequestDTO } from "@/port/dto/request/CreateSubmissionRequestDTO";
-import { GetUploadSignedUrlRequest } from "@/port/dto/request/GetUploadSignedUrlRequest";
-import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
+import { CreateSubmissionRequestDTO } from "@/port/dto/request/submission/CreateSubmissionRequestDTO";
+import { GetUploadSignedUrlRequest } from "@/port/dto/request/attachment/GetUploadSignedUrlRequest";
+import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
@@ -32,6 +33,9 @@ import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseD
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
+import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/CreatePrintRequestRequestDTO";
+import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
 
@@ -287,6 +291,7 @@ export const MockAdminDashboardResponseDTO = (
   submissions: [MockSubmissionWithCodeAndExecutionsResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
+  printRequests: [MockPrintRequestResponseDTO()],
   ...overrides,
 });
 
@@ -301,6 +306,7 @@ export const MockContestantDashboardResponseDTO = (
   memberSubmissions: [MockSubmissionWithCodeResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
+  printRequests: [MockPrintRequestResponseDTO()],
   ...overrides,
 });
 
@@ -340,6 +346,19 @@ export const MockStaffDashboardResponseDTO = (
   submissions: [MockSubmissionWithCodeResponseDTO()],
   announcements: [MockAnnouncementResponseDTO()],
   clarifications: [MockClarificationResponseDTO()],
+  printRequests: [MockPrintRequestResponseDTO()],
+  ...overrides,
+});
+
+export const MockPrintRequestResponseDTO = (
+  overrides: Partial<PrintRequestResponseDTO> = {},
+): PrintRequestResponseDTO => ({
+  id: randomUUID(),
+  createdAt,
+  updatedAt: createdAt,
+  submission: MockSubmissionWithCodeResponseDTO(),
+  status: PrintRequestStatus.PENDING,
+  version: 1,
   ...overrides,
 });
 
@@ -398,5 +417,19 @@ export const MockUpdateContestRequestDTO = (
       testCases: MockAttachmentResponseDTO({ id: "test-cases-1" }),
     },
   ],
+  ...overrides,
+});
+
+export const MockCreatePrintRequestRequestDTO = (
+  overrides: Partial<CreatePrintRequestRequestDTO> = {},
+): CreatePrintRequestRequestDTO => ({
+  submissionId: "submission-1",
+  ...overrides,
+});
+
+export const MockUpdateStatusPrintRequestRequestDTO = (
+  overrides: Partial<UpdateStatusPrintRequestRequestDTO> = {},
+): UpdateStatusPrintRequestRequestDTO => ({
+  status: PrintRequestStatus.PENDING,
   ...overrides,
 });

@@ -231,7 +231,11 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
           variant="secondary"
           onClick={freezeConfirmationDialog.open}
           data-testid="freeze-toggle-button"
-          disabled={isDisabled && !isContestFrozen}
+          disabled={
+            isDisabled ||
+            freezeState.isLoading ||
+            contestStatus !== ContestStatus.IN_PROGRESS
+          }
         >
           {isContestFrozen ? "Unfreeze" : "Freeze"}
         </Button>

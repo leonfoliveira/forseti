@@ -1,5 +1,5 @@
 import { ContestRepository } from "@/port/output/repository/ContestRepository";
-import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
+import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";

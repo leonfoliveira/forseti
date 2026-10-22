@@ -11,9 +11,8 @@ jest.mock(
       submissions: unknown[];
       problems: unknown[];
       memberSubmissions?: unknown[];
-      canCreate?: boolean;
     }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.memberSubmissions?.length}:${props.problems.length}:${Boolean(props.canCreate)}`}</div>
+      <div data-testid="submission-props">{`${props.submissions.length}:${props.memberSubmissions?.length}:${props.problems.length}`}</div>
     ),
   }),
 );
@@ -23,8 +22,6 @@ describe("ContestantSubmissionsPage", () => {
     await renderWithProviders(<ContestantSubmissionsPage />, {
       contestantDashboard: MockContestantDashboardResponseDTO() as never,
     });
-    expect(screen.getByTestId("submission-props")).toHaveTextContent(
-      "1:1:1:true",
-    );
+    expect(screen.getByTestId("submission-props")).toHaveTextContent("1:1:1");
   });
 });

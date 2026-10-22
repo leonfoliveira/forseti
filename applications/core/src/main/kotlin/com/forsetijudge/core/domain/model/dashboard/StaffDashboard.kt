@@ -4,6 +4,7 @@ import com.forsetijudge.core.domain.entity.Announcement
 import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
@@ -18,6 +19,7 @@ import com.forsetijudge.core.domain.model.Leaderboard
  * @property submissions The list of submissions in the contest.
  * @property announcements The list of announcements related to the contest.
  * @property clarifications The list of clarifications related to the contest.
+ * @property printRequests The list of print requests related to the contest.
  */
 data class StaffDashboard(
     val contest: Contest,
@@ -27,4 +29,5 @@ data class StaffDashboard(
     val submissions: List<Submission>,
     val announcements: List<Announcement>,
     val clarifications: List<Clarification>,
+    val printRequests: List<PrintRequest>,
 )

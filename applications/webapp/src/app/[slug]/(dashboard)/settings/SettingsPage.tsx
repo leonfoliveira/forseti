@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/AdminSettingsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
+import { routes } from "@/config/routes";
 
 /**
  * Page displaying the settings for the contest.
@@ -14,7 +15,7 @@ export default function SettingsPage() {
     !session ||
     ![MemberType.ROOT, MemberType.ADMIN].includes(session?.member.type)
   ) {
-    return <Navigate to="/forbidden" />;
+    return <Navigate to={routes.FORBIDDEN} />;
   }
 
   return <AdminSettingsPage />;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { SubmissionsPageActionDownload } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionDownload";
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionJudge";
 import { SubmissionsPageActionResubmit } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionResubmit";
@@ -15,29 +15,23 @@ import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionExecutions";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { SubmissionsPageActionCreatePrintRequest } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionCreatePrintRequest";
 
 type Props = {
   submission:
     SubmissionWithCodeResponseDTO | SubmissionWithCodeAndExecutionsResponseDTO;
   canDownloadAny?: boolean;
   canViewExecutions?: boolean;
-} & (
-  | {
-      canEdit: true;
-      onEdit: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
-    }
-  | {
-      canEdit?: false;
-      onEdit?: (submission: SubmissionWithCodeResponseDTO) => void;
-    }
-);
+  onEdit?: (submission: SubmissionWithCodeAndExecutionsResponseDTO) => void;
+  onCreatePrintRequest?: (printRequest: PrintRequestResponseDTO) => void;
+};
 
 export function SubmissionsPageActionsMenu({
   submission,
   canDownloadAny,
   canViewExecutions,
-  canEdit,
   onEdit,
+  onCreatePrintRequest,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -45,11 +39,26 @@ export function SubmissionsPageActionsMenu({
 
   const items: React.ReactNode[] = [];
 
+  const canEdit = !!onEdit;
+  const canCreatePrintRequest = !!onCreatePrintRequest;
+
   if (canDownloadAny || submission.code) {
     items.push(
       <SubmissionsPageActionDownload
         key="download"
         submission={submission as SubmissionWithCodeResponseDTO}
+        onClose={close}
+      />,
+    );
+  }
+
+  if (canViewExecutions) {
+    items.push(
+      <SubmissionsPageActionExecutions
+        key="executions"
+        executions={
+          (submission as SubmissionWithCodeAndExecutionsResponseDTO).executions
+        }
         onClose={close}
       />,
     );
@@ -76,6 +85,17 @@ export function SubmissionsPageActionsMenu({
     );
   }
 
+  if (canCreatePrintRequest) {
+    items.push(
+      <SubmissionsPageActionCreatePrintRequest
+        key="create-print-request"
+        submission={submission as SubmissionWithCodeResponseDTO}
+        onClose={close}
+        onCreatePrintRequest={onCreatePrintRequest}
+      />,
+    );
+  }
+
   if (items.length === 0) {
     return null;
   }
@@ -95,43 +115,7 @@ export function SubmissionsPageActionsMenu({
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {(canDownloadAny || submission.code) && (
-              <SubmissionsPageActionDownload
-                submission={submission}
-                onClose={close}
-              />
-            )}
-
-            {canViewExecutions && (
-              <SubmissionsPageActionExecutions
-                executions={
-                  (submission as SubmissionWithCodeAndExecutionsResponseDTO)
-                    .executions
-                }
-                onClose={close}
-              />
-            )}
-
-            {canEdit && (
-              <>
-                {submission.status != SubmissionStatus.JUDGING && (
-                  <SubmissionsPageActionResubmit
-                    submission={
-                      submission as SubmissionWithCodeAndExecutionsResponseDTO
-                    }
-                    onClose={close}
-                    onResubmit={onEdit}
-                  />
-                )}
-                <SubmissionsPageActionJudge
-                  submission={
-                    submission as SubmissionWithCodeAndExecutionsResponseDTO
-                  }
-                  onClose={close}
-                  onJudge={onEdit}
-                />
-              </>
-            )}
+            {items}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

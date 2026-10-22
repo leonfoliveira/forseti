@@ -18,6 +18,7 @@ import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/Leaderbo
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 /**
  * Provider component for fetching staff dashboard data and setting up sse listeners.
@@ -54,6 +55,8 @@ export function StaffDashboardProvider({
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
             CONTEST_FROZEN: receiveContestFrozen,
             CONTEST_UNFROZEN: receiveContestUnfrozen,
+            PRINT_REQUEST_CREATED: receivePrintRequest,
+            PRINT_REQUEST_UPDATED: receivePrintRequest,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -139,6 +142,11 @@ export function StaffDashboardProvider({
     console.debug("Received contest unfrozen");
     dispatch(StaffDashboardSlice.actions.unfreeze(data));
     toast.info("The contest has been unfrozen");
+  }
+
+  function receivePrintRequest(printRequest: PrintRequestResponseDTO) {
+    console.debug("Received print request:", printRequest);
+    dispatch(StaffDashboardSlice.actions.mergePrintRequest(printRequest));
   }
 
   if (state.isLoading) {

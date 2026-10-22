@@ -11,6 +11,8 @@ import com.forsetijudge.core.port.dto.response.leaderboard.LeaderboardResponseDT
 import com.forsetijudge.core.port.dto.response.leaderboard.toResponseDTO
 import com.forsetijudge.core.port.dto.response.member.MemberResponseDTO
 import com.forsetijudge.core.port.dto.response.member.toResponseDTO
+import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponseDTO
+import com.forsetijudge.core.port.dto.response.printrequest.toResponseDTO
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
 import com.forsetijudge.core.port.dto.response.problem.toResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionResponseDTO
@@ -27,6 +29,7 @@ data class ContestantDashboardResponseDTO(
     val memberSubmissions: List<SubmissionWithCodeResponseDTO>,
     val announcements: List<AnnouncementResponseDTO>,
     val clarifications: List<ClarificationResponseDTO>,
+    val printRequests: List<PrintRequestResponseDTO>,
 )
 
 fun ContestantDashboard.toResponseDTO(): ContestantDashboardResponseDTO =
@@ -39,4 +42,5 @@ fun ContestantDashboard.toResponseDTO(): ContestantDashboardResponseDTO =
         memberSubmissions = memberSubmissions.map { it.toWithCodeResponseDTO() },
         announcements = announcements.map { it.toResponseDTO() },
         clarifications = clarifications.map { it.toResponseDTO() },
+        printRequests = printRequests.map { it.toResponseDTO() },
     )

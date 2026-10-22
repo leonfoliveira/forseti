@@ -71,9 +71,13 @@ describe("AttachmentService", () => {
       }),
     );
     bucket.download.mockResolvedValue(file);
-    const click = jest.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation();
+    const click = jest
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation();
 
-    await expect(service.download("contest-42", attachment)).resolves.toBe(file);
+    await expect(service.download("contest-42", attachment)).resolves.toBe(
+      file,
+    );
 
     expect(bucket.download).toHaveBeenCalledWith(
       "https://bucket.test/download",
@@ -84,10 +88,15 @@ describe("AttachmentService", () => {
     click.mockRestore();
   });
 
-  it("prints an attachment after the hidden frame loads", async () => {
-    const file = new File(["document"], attachment.filename);
-    const createObjectURL = jest.fn(() => "blob:print");
+  it("downloads an attachment, creates a hidden iframe, and triggers print", async () => {
+    jest.useFakeTimers();
+
+    const file = new File(["document content"], attachment.filename, {
+      type: "application/pdf",
+    });
+    const createObjectURL = jest.fn(() => "blob:print-url");
     const revokeObjectURL = jest.fn();
+
     Object.defineProperty(URL, "createObjectURL", {
       configurable: true,
       value: createObjectURL,
@@ -96,28 +105,61 @@ describe("AttachmentService", () => {
       configurable: true,
       value: revokeObjectURL,
     });
+
     repository.getDownloadSignedUrl.mockResolvedValue(
       MockSignedDownloadAttachmentResponseDTO({
         attachment,
-        downloadUrl: "https://bucket.test/print",
+        downloadUrl: "https://bucket.test/download-print",
       }),
     );
     bucket.download.mockResolvedValue(file);
 
-    await service.print("contest-42", attachment);
-    const iframe = document.querySelector("iframe");
-    const focus = jest.fn();
-    const print = jest.fn();
-    expect(iframe).not.toBeNull();
-    Object.defineProperty(iframe, "contentWindow", {
-      configurable: true,
-      value: { focus, print },
-    });
-    iframe?.dispatchEvent(new Event("load"));
+    const focusSpy = jest.fn();
+    const printSpy = jest.fn();
 
-    expect(focus).toHaveBeenCalled();
-    expect(print).toHaveBeenCalled();
-    expect(revokeObjectURL).toHaveBeenCalledWith("blob:print");
-    expect(document.querySelector("iframe")).toBeNull();
+    const originalCreateElement = document.createElement.bind(document);
+    jest
+      .spyOn(document, "createElement")
+      .mockImplementation((tagName: string) => {
+        const element = originalCreateElement(tagName);
+        if (tagName === "iframe") {
+          setTimeout(() => {
+            Object.defineProperty(element, "contentWindow", {
+              value: {
+                focus: focusSpy,
+                print: printSpy,
+              },
+              configurable: true,
+            });
+            if (element.onload) {
+              (element.onload as any)(new Event("load"));
+            }
+          }, 0);
+        }
+        return element;
+      });
+
+    const removeChildSpy = jest.spyOn(document.body, "removeChild");
+
+    const printPromise = service.print("contest-42", attachment);
+
+    await jest.runAllTimersAsync();
+    await printPromise;
+
+    jest.advanceTimersByTime(500);
+    expect(focusSpy).toHaveBeenCalled();
+    expect(printSpy).toHaveBeenCalled();
+
+    jest.advanceTimersByTime(1000);
+
+    expect(bucket.download).toHaveBeenCalledWith(
+      "https://bucket.test/download-print",
+      attachment,
+    );
+    expect(createObjectURL).toHaveBeenCalledWith(file);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:print-url");
+    expect(removeChildSpy).toHaveBeenCalled();
+
+    jest.restoreAllMocks();
   });
 });

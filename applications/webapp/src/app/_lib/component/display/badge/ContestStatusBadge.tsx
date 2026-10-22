@@ -1,5 +1,5 @@
 import React from "react";
-
+import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 
@@ -11,11 +11,7 @@ type Props = React.ComponentProps<typeof Badge> & {
  * Displays a badge component styled according to the contest status.
  */
 export function ContestStatusBadge({ status, ...props }: Props) {
-  const text = {
-    [ContestStatus.IN_PROGRESS]: "In Progress",
-    [ContestStatus.ENDED]: "Ended",
-    [ContestStatus.NOT_STARTED]: "Not Started",
-  }[status];
+  const text = EnumeratedTextUtil.getContestStatus(status);
 
   switch (status) {
     case ContestStatus.IN_PROGRESS:

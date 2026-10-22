@@ -10,6 +10,7 @@ import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDa
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export type AdminDashboardState = AdminDashboardResponseDTO;
 
@@ -82,6 +83,12 @@ export const AdminDashboardSlice = createSlice({
       state.submissions = EntityUtil.mergeBatch(
         state.submissions,
         action.payload.submissions,
+      );
+    },
+    mergePrintRequest(state, action: { payload: PrintRequestResponseDTO }) {
+      state.printRequests = EntityUtil.merge(
+        state.printRequests,
+        action.payload,
       );
     },
   },

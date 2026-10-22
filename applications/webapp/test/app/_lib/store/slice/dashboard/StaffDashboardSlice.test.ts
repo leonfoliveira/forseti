@@ -5,7 +5,7 @@ import {
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
-  MockJudgeDashboardResponseDTO,
+  MockStaffDashboardResponseDTO,
   MockContestWithMembersAndProblemsDTO,
   MockLeaderboardResponseDTO,
   MockLeaderboardCellResponseDTO,
@@ -14,9 +14,7 @@ import {
 } from "@/test/mock/response/MockDTOs";
 
 describe("StaffDashboardSlice", () => {
-  const stateWithData: StaffDashboardState = {
-    ...MockJudgeDashboardResponseDTO(),
-  };
+  const stateWithData: StaffDashboardState = MockStaffDashboardResponseDTO();
 
   it("should set the initial state correctly", () => {
     const state = StaffDashboardSlice.reducer(

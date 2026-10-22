@@ -105,6 +105,26 @@ export class ActorOnSubmissionsPage extends Actor {
     await expect(answerCell).toHaveText(answer);
   }
 
+  async createPrintRequest(index: number) {
+    const submissionsTable = this.page.getByTestId("submissions-table");
+
+    const submissionRows = submissionsTable.getByTestId("submission-row");
+    const submissionRow = submissionRows.nth(index);
+    await submissionRow.scrollIntoViewIfNeeded();
+
+    const actionsButton = submissionRow.getByTestId(
+      "submission-actions-button",
+    );
+    await actionsButton.click();
+
+    const createPrintRequestActionButton = this.page.getByTestId(
+      "submissions-page-action-create-print-request",
+    );
+    await createPrintRequestActionButton.click();
+    await this.confirmDialog();
+    await this.closeToasts();
+  }
+
   async createSubmission(submission: Submission) {
     const submissionsTable = this.page.getByTestId("submissions-table");
     const submissionRowsBefore = submissionsTable.getByTestId("submission-row");

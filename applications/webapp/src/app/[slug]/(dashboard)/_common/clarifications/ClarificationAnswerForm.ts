@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { AnswerClarificationRequestDTO } from "@/port/dto/request/AnswerClarificationRequestDTO";
+import { AnswerClarificationRequestDTO } from "@/port/dto/request/clarification/AnswerClarificationRequestDTO";
 
 export type ClarificationAnswerFormType = {
   text: string;
