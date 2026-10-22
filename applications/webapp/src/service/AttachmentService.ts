@@ -64,14 +64,24 @@ export class AttachmentService implements AttachmentReader, AttachmentWritter {
 
     const url = URL.createObjectURL(file);
     const iframe = document.createElement("iframe");
+
     iframe.style.display = "none";
     iframe.src = url;
-    document.body.appendChild(iframe);
+
     iframe.onload = () => {
-      iframe.contentWindow?.focus();
-      iframe.contentWindow?.print();
-      document.body.removeChild(iframe);
-      URL.revokeObjectURL(url);
+      // Give the browser a moment to render before triggering print
+      setTimeout(() => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+
+        // Clean up after printing dialog closes / handling delay
+        setTimeout(() => {
+          document.body.removeChild(iframe);
+          URL.revokeObjectURL(url);
+        }, 1000); // 1-second buffer ensures the print job has grabbed the resource
+      }, 500);
     };
+
+    document.body.appendChild(iframe);
   }
 }

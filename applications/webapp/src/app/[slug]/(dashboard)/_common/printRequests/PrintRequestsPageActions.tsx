@@ -20,7 +20,8 @@ type Props = {
 export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const printLoadableState = useLoadableState();
-  const updateStatusLoadableState = useLoadableState();
+  const completeLoadableState = useLoadableState();
+  const rejectLoadableState = useLoadableState();
   const toast = useToast();
 
   async function print() {
@@ -39,8 +40,13 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
   }
 
   async function updateStatus(status: PrintRequestStatus) {
+    const loadableState =
+      status === PrintRequestStatus.COMPLETED
+        ? completeLoadableState
+        : rejectLoadableState;
+
     try {
-      updateStatusLoadableState.start();
+      loadableState.start();
       const updatedPrintRequest =
         await Composition.printRequestWritter.updateStatus(
           contestId,
@@ -48,16 +54,19 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
           { status },
         );
       onUpdate(updatedPrintRequest);
-      updateStatusLoadableState.finish();
+      loadableState.finish();
     } catch (error) {
-      await updateStatusLoadableState.fail(error, {
+      await loadableState.fail(error, {
         default: () => toast.error("Failed to update print request status."),
       });
     }
   }
 
+  const isAnyUpdateStatusLoadableStateLoading =
+    completeLoadableState.isLoading || rejectLoadableState.isLoading;
+
   return (
-    <>
+    <div className="flex justify-end space-x-2">
       <Tooltip>
         <TooltipTrigger asChild>
           <AsyncButton
@@ -80,8 +89,11 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
             size="xs"
             data-testid="complete-print-request-button"
             onClick={() => updateStatus(PrintRequestStatus.COMPLETED)}
-            isLoading={updateStatusLoadableState.isLoading}
-            disabled={printRequest.status !== PrintRequestStatus.PENDING}
+            isLoading={completeLoadableState.isLoading}
+            disabled={
+              printRequest.status !== PrintRequestStatus.PENDING ||
+              isAnyUpdateStatusLoadableStateLoading
+            }
           >
             <CheckIcon />
           </AsyncButton>
@@ -95,15 +107,18 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
             type="button"
             size="xs"
             data-testid="reject-print-request-button"
-            onClick={() => updateStatus(PrintRequestStatus.REJECTED)}
-            isLoading={updateStatusLoadableState.isLoading}
-            disabled={printRequest.status !== PrintRequestStatus.PENDING}
+            onClick={() => updateStatus(PrintRequestStatus.REFUSED)}
+            isLoading={rejectLoadableState.isLoading}
+            disabled={
+              printRequest.status !== PrintRequestStatus.PENDING ||
+              isAnyUpdateStatusLoadableStateLoading
+            }
           >
             <XIcon />
           </AsyncButton>
         </TooltipTrigger>
         <TooltipContent>Reject</TooltipContent>
       </Tooltip>
-    </>
+    </div>
   );
 }

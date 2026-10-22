@@ -8,5 +8,5 @@ export type PrintRequest = {
 export enum PrintRequestStatus {
   PENDING = "Pending",
   COMPLETED = "Completed",
-  REJECTED = "Rejected",
+  REFUSED = "Refused",
 }

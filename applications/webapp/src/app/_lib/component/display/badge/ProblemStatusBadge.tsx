@@ -43,7 +43,7 @@ export function ProblemStatusBadge({
   } else if (wrongSubmissions > 0) {
     return (
       <Badge
-        data-testid="badge-rejected"
+        data-testid="badge-refused"
         variant="ghost"
         {...props}
         className="text-sm text-red-600"

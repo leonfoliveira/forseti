@@ -10,6 +10,8 @@ import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { ArrowUp10Icon } from "lucide-react";
 import { PrintRequestsPageActions } from "@/app/[slug]/(dashboard)/_common/printRequests/PrintRequestsPageActions";
+import { PrintRequestStatusBadge } from "@/app/_lib/component/display/badge/PrintRequestStatusBadge";
+import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
 
 type Props = {
   printRequests: PrintRequestResponseDTO[];
@@ -64,15 +66,15 @@ export function PrintRequestsPage({
                       {printRequest.submission.member.name}
                     </TableCell>
                     <TableCell data-testid="print-request-problem">
-                      {printRequest.submission.problem.letter}
+                      <ProblemLetterBadge
+                        problem={printRequest.submission.problem}
+                      />
                     </TableCell>
                     <TableCell
                       className="text-right"
                       data-testid="print-request-status"
                     >
-                      {EnumeratedTextUtil.getPrintRequestStatus(
-                        printRequest.status,
-                      )}
+                      <PrintRequestStatusBadge status={printRequest.status} />
                     </TableCell>
                     {canUpdate && (
                       <TableCell className="text-right">

@@ -2,8 +2,17 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 
 export class EnumeratedTextUtil {
+  public static getContestStatus(status: ContestStatus): string {
+    return {
+      [ContestStatus.NOT_STARTED]: "Not Started",
+      [ContestStatus.IN_PROGRESS]: "In Progress",
+      [ContestStatus.ENDED]: "Ended",
+    }[status];
+  }
+
   public static getMemberType(type: MemberType): string {
     return {
       [MemberType.ROOT]: "Root",
@@ -38,7 +47,7 @@ export class EnumeratedTextUtil {
     return {
       [PrintRequestStatus.PENDING]: "Pending",
       [PrintRequestStatus.COMPLETED]: "Completed",
-      [PrintRequestStatus.REJECTED]: "Rejected",
+      [PrintRequestStatus.REFUSED]: "Refused",
     }[status];
   }
 }

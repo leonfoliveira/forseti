@@ -2,6 +2,7 @@ import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/Su
 import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export function ContestantSubmissionsPage() {
   const submissions = useAppSelector(
@@ -22,6 +23,11 @@ export function ContestantSubmissionsPage() {
       problems={problems}
       onCreate={(submission: SubmissionWithCodeResponseDTO) => {
         dispatch(ContestantDashboardSlice.actions.mergeSubmission(submission));
+      }}
+      onCreatePrintRequest={(printRequest: PrintRequestResponseDTO) => {
+        dispatch(
+          ContestantDashboardSlice.actions.mergePrintRequest(printRequest),
+        );
       }}
     />
   );

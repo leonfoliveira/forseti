@@ -65,7 +65,7 @@ export function SubmissionsPageActionCreatePrintRequest({
         data-testid="submissions-page-action-create-print-request"
       >
         <RefreshCwIcon />
-        Create Print Request
+        Request Print
       </DropdownMenuItem>
 
       <ConfirmationDialog

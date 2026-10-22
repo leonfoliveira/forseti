@@ -103,43 +103,7 @@ export function SubmissionsPageActionsMenu({
         <DropdownMenuContent className="w-40" align="start">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            {(canDownloadAny || submission.code) && (
-              <SubmissionsPageActionDownload
-                submission={submission}
-                onClose={close}
-              />
-            )}
-
-            {canViewExecutions && (
-              <SubmissionsPageActionExecutions
-                executions={
-                  (submission as SubmissionWithCodeAndExecutionsResponseDTO)
-                    .executions
-                }
-                onClose={close}
-              />
-            )}
-
-            {canEdit && (
-              <>
-                {submission.status != SubmissionStatus.JUDGING && (
-                  <SubmissionsPageActionResubmit
-                    submission={
-                      submission as SubmissionWithCodeAndExecutionsResponseDTO
-                    }
-                    onClose={close}
-                    onResubmit={onEdit}
-                  />
-                )}
-                <SubmissionsPageActionJudge
-                  submission={
-                    submission as SubmissionWithCodeAndExecutionsResponseDTO
-                  }
-                  onClose={close}
-                  onJudge={onEdit}
-                />
-              </>
-            )}
+            {items}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
