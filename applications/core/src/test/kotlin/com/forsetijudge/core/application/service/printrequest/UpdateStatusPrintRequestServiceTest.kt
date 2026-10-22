@@ -3,11 +3,12 @@ package com.forsetijudge.core.application.service.printrequest
 import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.event.PrintRequestEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
-import com.forsetijudge.core.port.input.usecase.printrequest.UpdateIsCompletedPrintRequestUseCase
+import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRequestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
@@ -20,13 +21,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class UpdateIsCompletedPrintRequestServiceTest {
+class UpdateStatusPrintRequestServiceTest {
     private val contestRepository = mock<ContestRepository>()
     private val memberRepository = mock<MemberRepository>()
     private val printRequestRepository = mock<PrintRequestRepository>()
     private val businessEventPublisher = mock<BusinessEventPublisher>()
     private val service =
-        UpdateIsCompletedPrintRequestService(
+        UpdateStatusPrintRequestService(
             contestRepository,
             memberRepository,
             printRequestRepository,
@@ -45,10 +46,10 @@ class UpdateIsCompletedPrintRequestServiceTest {
 
         assertThrows<NotFoundException> {
             service.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contest.id,
                     printRequestId = printRequest.id,
-                    isCompleted = true,
+                    status = PrintRequest.Status.COMPLETED,
                 ),
             )
         }
@@ -62,10 +63,10 @@ class UpdateIsCompletedPrintRequestServiceTest {
 
         assertThrows<NotFoundException> {
             service.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contest.id,
                     printRequestId = printRequest.id,
-                    isCompleted = true,
+                    status = PrintRequest.Status.COMPLETED,
                 ),
             )
         }
@@ -82,10 +83,10 @@ class UpdateIsCompletedPrintRequestServiceTest {
 
         assertThrows<NotFoundException> {
             service.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contest.id,
                     printRequestId = printRequest.id,
-                    isCompleted = true,
+                    status = PrintRequest.Status.COMPLETED,
                 ),
             )
         }
@@ -104,17 +105,60 @@ class UpdateIsCompletedPrintRequestServiceTest {
 
         assertThrows<ForbiddenException> {
             service.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contest.id,
                     printRequestId = printRequest.id,
-                    isCompleted = true,
+                    status = PrintRequest.Status.COMPLETED,
                 ),
             )
         }
     }
 
     @Test
-    fun `should update print request isCompleted successfully`() {
+    fun `should throw ForbiddenException when trying to change status to PENDING`() {
+        TestAuthentication.setMember(adminMember)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
+            adminMember,
+        )
+        whenever(printRequestRepository.findByIdAndContestId(printRequest.id, contest.id)).thenReturn(printRequest)
+
+        assertThrows<ForbiddenException> {
+            service.execute(
+                UpdateStatusPrintRequestUseCase.Command(
+                    contestId = contest.id,
+                    printRequestId = printRequest.id,
+                    status = PrintRequest.Status.PENDING,
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `should throw ForbiddenException when trying to change status of a PrintRequest that is not PENDING`() {
+        TestAuthentication.setMember(adminMember)
+        val completedPrintRequest = MockEntityFactory.printRequest(status = PrintRequest.Status.COMPLETED)
+        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
+            adminMember,
+        )
+        whenever(printRequestRepository.findByIdAndContestId(completedPrintRequest.id, contest.id)).thenReturn(
+            completedPrintRequest,
+        )
+
+        assertThrows<ForbiddenException> {
+            service.execute(
+                UpdateStatusPrintRequestUseCase.Command(
+                    contestId = contest.id,
+                    printRequestId = completedPrintRequest.id,
+                    status = PrintRequest.Status.COMPLETED,
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `should update print request status successfully`() {
         TestAuthentication.setMember(adminMember)
         whenever(contestRepository.findById(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
@@ -124,15 +168,15 @@ class UpdateIsCompletedPrintRequestServiceTest {
 
         val result =
             service.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contest.id,
                     printRequestId = printRequest.id,
-                    isCompleted = true,
+                    status = PrintRequest.Status.COMPLETED,
                 ),
             )
 
         assertEquals(printRequest.id, result.id)
-        assertEquals(true, printRequest.isCompleted)
+        assertEquals(PrintRequest.Status.COMPLETED, printRequest.status)
         verify(printRequestRepository).save(printRequest)
         verify(businessEventPublisher).publish(any<PrintRequestEvent.Updated>())
     }

@@ -1,10 +1,10 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.printrequest.CreatePrintRequestRequestBodyDTO
-import com.forsetijudge.core.api.http.dto.request.printrequest.UpdateIsCompletedPrintRequestRequestBodyDTO
+import com.forsetijudge.core.api.http.dto.request.printrequest.UpdateStatusPrintRequestRequestBodyDTO
 import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponseDTO
 import com.forsetijudge.core.port.input.usecase.printrequest.CreatePrintRequestUseCase
-import com.forsetijudge.core.port.input.usecase.printrequest.UpdateIsCompletedPrintRequestUseCase
+import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRequestUseCase
 import com.forsetijudge.core.util.SafeLogger
 import java.util.UUID
 import org.springframework.http.ResponseEntity
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 @Suppress("unused")
 class PrintRequestController(
     private val createPrintRequestUseCase: CreatePrintRequestUseCase,
-    private val updateIsCompletedPrintRequestUseCase: UpdateIsCompletedPrintRequestUseCase,
+    private val updateStatusPrintRequestUseCase: UpdateStatusPrintRequestUseCase,
 ) {
     private val logger = SafeLogger(this::class)
 
@@ -37,19 +37,19 @@ class PrintRequestController(
         return ResponseEntity.ok(printRequest)
     }
 
-    @PatchMapping("/contests/{contestId}/print-requests/{printRequestId}/is-complete")
-    fun updateIsCompletedPrintRequest(
+    @PatchMapping("/contests/{contestId}/print-requests/{printRequestId}/status")
+    fun updateStatusPrintRequest(
         @PathVariable contestId: UUID,
         @PathVariable printRequestId: UUID,
-        @RequestBody body: UpdateIsCompletedPrintRequestRequestBodyDTO,
+        @RequestBody body: UpdateStatusPrintRequestRequestBodyDTO,
     ): ResponseEntity<PrintRequestResponseDTO> {
-        logger.info("[PATCH] /v1/contests/$contestId/print-requests/$printRequestId/is-completed")
+        logger.info("[PATCH] /v1/contests/$contestId/print-requests/$printRequestId/status")
         val printRequest =
-            updateIsCompletedPrintRequestUseCase.execute(
-                UpdateIsCompletedPrintRequestUseCase.Command(
+            updateStatusPrintRequestUseCase.execute(
+                UpdateStatusPrintRequestUseCase.Command(
                     contestId = contestId,
                     printRequestId = printRequestId,
-                    isCompleted = body.isCompleted,
+                    status = body.status,
                 ),
             )
         return ResponseEntity.ok(printRequest)

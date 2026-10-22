@@ -1,11 +1,11 @@
 meta {
-  name: update_is_completed
+  name: update_status
   type: http
   seq: 2
 }
 
 patch {
-  url: {{api_url}}/v1/contests/{{contest_id}}/print-requests/{{print_request_id}}/is-complete
+  url: {{api_url}}/v1/contests/{{contest_id}}/print-requests/{{print_request_id}}/status
   body: json
   auth: inherit
 }
@@ -16,7 +16,7 @@ headers {
 
 body:json {
     {
-      "isCompleted": true
+      "status": "COMPLETED"
     }
 }
 

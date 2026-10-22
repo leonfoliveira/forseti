@@ -11,7 +11,7 @@ data class PrintRequestResponseDTO(
     val createdAt: OffsetDateTime,
     val updatedAt: OffsetDateTime,
     val submission: SubmissionWithCodeResponseDTO,
-    val isCompleted: Boolean,
+    val status: PrintRequest.Status,
     val version: Long,
 )
 
@@ -21,6 +21,6 @@ fun PrintRequest.toResponseDTO(): PrintRequestResponseDTO =
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
         submission = this.submission.toWithCodeResponseDTO(),
-        isCompleted = this.isCompleted,
+        status = this.status,
         version = this.version,
     )

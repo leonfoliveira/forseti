@@ -32,6 +32,23 @@ class PrintRequest(
     /**
      * The status of the print request.
      */
-    @Column("is_completed", nullable = false)
-    var isCompleted: Boolean = false,
-) : BaseEntity(id, createdAt, updatedAt, deletedAt, version)
+    @Column("status", nullable = false)
+    var status: Status = Status.PENDING,
+) : BaseEntity(id, createdAt, updatedAt, deletedAt, version) {
+    enum class Status {
+        /**
+         * The print request is pending and has not been processed yet.
+         */
+        PENDING,
+
+        /**
+         * The print request has been completed successfully.
+         */
+        COMPLETED,
+
+        /**
+         * The print request has been refused and will not be processed.
+         */
+        REFUSED,
+    }
+}

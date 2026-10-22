@@ -137,10 +137,10 @@ object MockEntityFactory {
     fun printRequest(
         id: UUID = UUID.randomUUID(),
         submission: Submission = submission(),
-        isCompleted: Boolean = false,
+        status: PrintRequest.Status = PrintRequest.Status.PENDING,
     ) = PrintRequest(
         id = id,
         submission = submission,
-        isCompleted = isCompleted,
+        status = status,
     )
 }

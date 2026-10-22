@@ -4,11 +4,13 @@ import com.forsetijudge.core.application.helper.AuthenticationHelper
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.event.PrintRequestEvent
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponseDTO
 import com.forsetijudge.core.port.dto.response.printrequest.toResponseDTO
-import com.forsetijudge.core.port.input.usecase.printrequest.UpdateIsCompletedPrintRequestUseCase
+import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRequestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
@@ -17,19 +19,21 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-class UpdateIsCompletedPrintRequestService(
+class UpdateStatusPrintRequestService(
     private val contestRepository: ContestRepository,
     private val memberRepository: MemberRepository,
     private val printRequestRepository: PrintRequestRepository,
     private val businessEventPublisher: BusinessEventPublisher,
-) : UpdateIsCompletedPrintRequestUseCase {
+) : UpdateStatusPrintRequestUseCase {
     private val logger = SafeLogger(this::class)
 
     @Transactional
-    override fun execute(command: UpdateIsCompletedPrintRequestUseCase.Command): PrintRequestResponseDTO {
+    override fun execute(command: UpdateStatusPrintRequestUseCase.Command): PrintRequestResponseDTO {
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
-        logger.info("Updating isCompleted for PrintRequest with id: ${command.printRequestId} by member with id: $contextMemberId")
+        logger.info(
+            "Updating status for PrintRequest with id: ${command.printRequestId} by member with id: $contextMemberId to ${command.status}",
+        )
 
         val contest =
             contestRepository.findById(command.contestId)
@@ -46,7 +50,14 @@ class UpdateIsCompletedPrintRequestService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
             .throwIfErrors()
 
-        printRequest.isCompleted = command.isCompleted
+        if (command.status == PrintRequest.Status.PENDING) {
+            throw ForbiddenException("Cannot change status to PENDING")
+        }
+        if (printRequest.status != PrintRequest.Status.PENDING) {
+            throw ForbiddenException("Cannot change status of a PrintRequest that is not PENDING")
+        }
+
+        printRequest.status = command.status
 
         printRequestRepository.save(printRequest)
         businessEventPublisher.publish(PrintRequestEvent.Updated(printRequest.id))

@@ -2,6 +2,7 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.config.JacksonConfig
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.domain.entity.PrintRequest
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.dto.response.attachment.AttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
@@ -211,7 +212,7 @@ internal object MockMvcTestSupport {
         createdAt = timestamp,
         updatedAt = timestamp,
         submission = submission,
-        isCompleted = false,
+        status = PrintRequest.Status.COMPLETED,
         version = 1,
     )
 
