@@ -83,7 +83,6 @@ describe("SubmissionsPageActionsMenu", () => {
         submission={MockSubmissionWithCodeResponseDTO({
           status: SubmissionStatus.JUDGING,
         })}
-        canEdit
         onEdit={jest.fn()}
       />,
     );
