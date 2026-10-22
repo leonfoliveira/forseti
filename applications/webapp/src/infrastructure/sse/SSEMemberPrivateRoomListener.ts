@@ -3,6 +3,7 @@ import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export class SSEMemberPrivateRoomListener
   extends SSERoomListener
@@ -19,6 +20,8 @@ export class SSEMemberPrivateRoomListener
     listeners: {
       SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
       CLARIFICATION_ANSWERED: (clarification: ClarificationResponseDTO) => void;
+      PRINT_REQUEST_CREATED: (printRequest: PrintRequestResponseDTO) => void;
+      PRINT_REQUEST_UPDATED: (printRequest: PrintRequestResponseDTO) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

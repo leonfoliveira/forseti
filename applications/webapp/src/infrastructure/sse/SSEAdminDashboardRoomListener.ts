@@ -6,6 +6,7 @@ import { AdminDashboardRoomListener } from "@/port/output/sse/AdminDashboardRoom
 import { SSERoomListener } from "@/infrastructure/sse/SSERoomListener";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export class SSEAdminDashboardRoomListener
   extends SSERoomListener
@@ -44,6 +45,8 @@ export class SSEAdminDashboardRoomListener
         leaderboard: LeaderboardResponseDTO;
         submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
       }) => void;
+      PRINT_REQUEST_CREATED: (printRequest: PrintRequestResponseDTO) => void;
+      PRINT_REQUEST_UPDATED: (printRequest: PrintRequestResponseDTO) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

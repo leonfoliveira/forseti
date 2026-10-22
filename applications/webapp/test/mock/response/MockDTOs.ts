@@ -34,6 +34,8 @@ import { SubmissionResponseDTO } from "@/port/dto/response/submission/Submission
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
+import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/CreatePrintRequestRequestDTO";
+import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
 
@@ -348,6 +350,18 @@ export const MockStaffDashboardResponseDTO = (
   ...overrides,
 });
 
+export const MockPrintRequestResponseDTO = (
+  overrides: Partial<PrintRequestResponseDTO> = {},
+): PrintRequestResponseDTO => ({
+  id: randomUUID(),
+  createdAt,
+  updatedAt: createdAt,
+  submission: MockSubmissionWithCodeResponseDTO(),
+  status: PrintRequestStatus.PENDING,
+  version: 1,
+  ...overrides,
+});
+
 export const MockAuthenticateRequestDTO = (
   overrides: Partial<AuthenticateRequestDTO> = {},
 ): AuthenticateRequestDTO => ({
@@ -406,14 +420,16 @@ export const MockUpdateContestRequestDTO = (
   ...overrides,
 });
 
-export const MockPrintRequestResponseDTO = (
-  overrides: Partial<PrintRequestResponseDTO> = {},
-): PrintRequestResponseDTO => ({
-  id: randomUUID(),
-  createdAt,
-  updatedAt: createdAt,
-  submission: MockSubmissionWithCodeResponseDTO(),
+export const MockCreatePrintRequestRequestDTO = (
+  overrides: Partial<CreatePrintRequestRequestDTO> = {},
+): CreatePrintRequestRequestDTO => ({
+  submissionId: "submission-1",
+  ...overrides,
+});
+
+export const MockUpdateStatusPrintRequestRequestDTO = (
+  overrides: Partial<UpdateStatusPrintRequestRequestDTO> = {},
+): UpdateStatusPrintRequestRequestDTO => ({
   status: PrintRequestStatus.PENDING,
-  version: 1,
   ...overrides,
 });
