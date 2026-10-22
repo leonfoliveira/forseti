@@ -1,4 +1,5 @@
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export interface MemberPrivateRoomListener {
@@ -16,6 +17,8 @@ export interface MemberPrivateRoomListener {
     listeners: {
       SUBMISSION_UPDATED: (submission: SubmissionWithCodeResponseDTO) => void;
       CLARIFICATION_ANSWERED: (clarification: ClarificationResponseDTO) => void;
+      PRINT_REQUEST_CREATED: (printRequest: PrintRequestResponseDTO) => void;
+      PRINT_REQUEST_UPDATED: (printRequest: PrintRequestResponseDTO) => void;
     },
     onDisconnect?: () => void,
     onReconnect?: () => void,

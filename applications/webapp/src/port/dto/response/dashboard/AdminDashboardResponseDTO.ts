@@ -5,6 +5,7 @@ import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/Pro
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 export type AdminDashboardResponseDTO = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -14,4 +15,5 @@ export type AdminDashboardResponseDTO = {
   submissions: SubmissionWithCodeAndExecutionsResponseDTO[];
   announcements: AnnouncementResponseDTO[];
   clarifications: ClarificationResponseDTO[];
+  printRequests: PrintRequestResponseDTO[];
 };

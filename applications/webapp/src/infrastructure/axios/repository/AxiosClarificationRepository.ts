@@ -1,6 +1,6 @@
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
-import { AnswerClarificationRequestDTO } from "@/port/dto/request/AnswerClarificationRequestDTO";
-import { CreateClarificationRequestDTO } from "@/port/dto/request/CreateClarificationRequestDTO";
+import { AnswerClarificationRequestDTO } from "@/port/dto/request/clarification/AnswerClarificationRequestDTO";
+import { CreateClarificationRequestDTO } from "@/port/dto/request/clarification/CreateClarificationRequestDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ClarificationRepository } from "@/port/output/repository/ClarificationRepository";
 

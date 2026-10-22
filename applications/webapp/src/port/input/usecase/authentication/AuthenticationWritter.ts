@@ -1,4 +1,4 @@
-import { AuthenticateRequestDTO } from "@/port/dto/request/AuthenticateRequestDTO";
+import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 
 export interface AuthenticationWritter {

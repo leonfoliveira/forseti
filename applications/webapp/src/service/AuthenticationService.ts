@@ -1,6 +1,6 @@
 import { AuthenticationRepository } from "@/port/output/repository/AuthenticationRepository";
 import { AuthenticationWritter } from "@/port/input/usecase/authentication/AuthenticationWritter";
-import { AuthenticateRequestDTO } from "@/port/dto/request/AuthenticateRequestDTO";
+import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 
 export class AuthenticationService implements AuthenticationWritter {

@@ -1,4 +1,4 @@
-import { UpdateContestRequestDTO } from "@/port/dto/request/UpdateContestRequestDTO";
+import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 

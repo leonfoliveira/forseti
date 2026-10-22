@@ -1,4 +1,4 @@
-import { GetUploadSignedUrlRequest } from "@/port/dto/request/GetUploadSignedUrlRequest";
+import { GetUploadSignedUrlRequest } from "@/port/dto/request/attachment/GetUploadSignedUrlRequest";
 import { AttachmentRepository } from "@/port/output/repository/AttachmentRepository";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";

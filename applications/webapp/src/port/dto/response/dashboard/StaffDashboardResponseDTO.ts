@@ -3,6 +3,7 @@ import { ClarificationResponseDTO } from "@/port/dto/response/clarification/Clar
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
@@ -14,4 +15,5 @@ export type StaffDashboardResponseDTO = {
   submissions: SubmissionWithCodeResponseDTO[];
   announcements: AnnouncementResponseDTO[];
   clarifications: ClarificationResponseDTO[];
+  printRequests: PrintRequestResponseDTO[];
 };

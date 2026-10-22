@@ -1,4 +1,4 @@
-import { CreateAnnouncementRequestDTO } from "@/port/dto/request/CreateAnnouncementRequestDTO";
+import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export interface AnnouncementRepository {
