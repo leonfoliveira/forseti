@@ -24,6 +24,7 @@ import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 
 /**
  * Provider component for fetching admin dashboard data and setting up sse listeners.
@@ -63,6 +64,8 @@ export function AdminDashboardProvider({
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
             CONTEST_FROZEN: receiveContestFrozen,
             CONTEST_UNFROZEN: receiveContestUnfrozen,
+            PRINT_REQUEST_CREATED: receivePrintRequest,
+            PRINT_REQUEST_UPDATED: receivePrintRequest,
           },
           () => setListenerStatus(ListenerStatus.FAILURE),
           () => setListenerStatus(ListenerStatus.CONNECTED),
@@ -171,6 +174,11 @@ export function AdminDashboardProvider({
     dispatch(AdminDashboardSlice.actions.unfreeze(data));
     dispatch(ContestSlice.actions.set(data.contest));
     toast.info("The contest has been unfrozen");
+  }
+
+  function receivePrintRequest(printRequest: PrintRequestResponseDTO) {
+    console.debug("Received print request:", printRequest);
+    dispatch(AdminDashboardSlice.actions.mergePrintRequest(printRequest));
   }
 
   if (state.isLoading) {
