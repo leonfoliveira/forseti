@@ -10,7 +10,15 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
-  esbuild: {
-    drop: ["console", "debugger"],
-  } as any,
+  build: {
+    rolldownOptions: {
+      output: {
+        minify: {
+          compress: {
+            dropConsole: true,
+          },
+        },
+      },
+    },
+  },
 });
