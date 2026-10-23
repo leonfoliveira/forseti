@@ -27,8 +27,7 @@ export class ActorOnSettingsPage extends Actor {
     const languageCheckboxes = contest.languages.map((lang) =>
       settingsContestTab.getByLabel(lang),
     );
-    const isAutoJudgeEnabledCheckbox =
-      settingsContestTab.getByLabel("Auto Judge");
+    const ipCIDRsInput = settingsContestTab.getByLabel("IP CIDRs (optional)");
 
     await slugInput.fill(contest.slug);
     await titleInput.fill(contest.title);
@@ -37,7 +36,7 @@ export class ActorOnSettingsPage extends Actor {
     for (const checkbox of languageCheckboxes) {
       await checkbox.check();
     }
-    await isAutoJudgeEnabledCheckbox.check();
+    await ipCIDRsInput.fill(contest.ipCIDRs);
   }
 
   async fillProblemForm(problem: Problem) {

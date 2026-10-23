@@ -7,6 +7,7 @@ export type Contest = {
   startAt: string;
   endAt: string;
   languages: SubmissionLanguage[];
+  ipCIDRs: string;
 };
 
 export enum ContestStatus {
