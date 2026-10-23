@@ -36,7 +36,7 @@ export class EnumeratedTextUtil {
 
   public static getSubmissionLanguage(language: SubmissionLanguage): string {
     return {
-      [SubmissionLanguage.CPP_17]: "C++17",
+      [SubmissionLanguage.CPP_17]: "C++ 17",
       [SubmissionLanguage.JAVA_21]: "Java 21",
       [SubmissionLanguage.PYTHON_312]: "Python 3.12",
       [SubmissionLanguage.NODE_22]: "Node 22",
