@@ -38,6 +38,7 @@ export type SettingsFormType = {
     name: string;
     login: string;
     password?: string;
+    ip?: string;
   }[];
 };
 
@@ -316,6 +317,9 @@ export class SettingsForm {
                 "string.min": "Member password is required",
                 "string.max": "Member password is too long",
               }),
+            ip: Joi.string().allow("").ip().messages({
+              "string.ip": "Member IP must be a valid IP address",
+            }),
           }).unknown(),
         )
         .required(),
@@ -348,6 +352,7 @@ export class SettingsForm {
       name: member.name,
       login: member.login,
       password: undefined,
+      ip: member.ip ?? "",
     }));
 
     const languages = Object.values(SubmissionLanguage).reduce(
@@ -399,6 +404,7 @@ export class SettingsForm {
           member.password && member.password.length > 0
             ? member.password
             : undefined,
+        ip: member.ip ?? undefined,
       })),
       problems: form.problems.map((problem, idx) => ({
         id: problem._id,

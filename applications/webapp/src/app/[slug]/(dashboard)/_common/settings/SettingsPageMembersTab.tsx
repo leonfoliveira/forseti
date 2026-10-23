@@ -102,6 +102,7 @@ export function SettingsPageMembersTab({
               <TableHead>Type</TableHead>
               <TableHead>Login</TableHead>
               <TableHead>Password</TableHead>
+              <TableHead>{"IP (optional)"}</TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -159,6 +160,14 @@ export function SettingsPageMembersTab({
                     }
                   />
                 </TableCell>
+                <TableCell>
+                  <ControlledField
+                    className="gap-0"
+                    form={form}
+                    name={`members.${index}.ip`}
+                    field={<Input data-testid="member-ip" />}
+                  />
+                </TableCell>
                 <TableCell className="text-right">
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -188,6 +197,7 @@ export function SettingsPageMembersTab({
               type: "" as MemberType,
               login: "",
               password: "",
+              ip: "",
             })
           }
           data-testid="add-member-button"

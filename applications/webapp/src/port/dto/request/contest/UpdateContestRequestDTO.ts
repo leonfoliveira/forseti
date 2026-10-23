@@ -17,6 +17,7 @@ export type UpdateContestRequestDTO = {
     name: string;
     login: string;
     password?: string;
+    ip?: string;
   }[];
   problems: {
     id?: string;

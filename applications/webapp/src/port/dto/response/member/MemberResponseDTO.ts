@@ -7,5 +7,6 @@ export type MemberResponseDTO = {
   contestId?: string;
   type: MemberType;
   name: string;
+  ip?: string;
   version: number;
 };
