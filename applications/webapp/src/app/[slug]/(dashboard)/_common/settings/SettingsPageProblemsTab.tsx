@@ -35,10 +35,16 @@ import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/co
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
   form: UseFormReturn<SettingsFormType>;
-  isDisabled?: boolean;
+  isUpdateLoading?: boolean;
+  isContestEnded?: boolean;
 };
 
-export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
+export function SettingsPageProblemsTab({
+  contest,
+  form,
+  isUpdateLoading,
+  isContestEnded,
+}: Props) {
   const errorHandler = useErrorHandler();
   const toast = useToast();
 
@@ -62,7 +68,7 @@ export function SettingsPageProblemsTab({ contest, form, isDisabled }: Props) {
   }
 
   return (
-    <FieldSet disabled={isDisabled}>
+    <FieldSet disabled={isUpdateLoading || isContestEnded}>
       <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
         {fields.map((field, index) => (
           <Item key={field.id} variant="outline" data-testid="problem-item">

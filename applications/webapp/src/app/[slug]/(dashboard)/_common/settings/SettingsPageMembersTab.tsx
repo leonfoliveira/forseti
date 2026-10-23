@@ -34,10 +34,15 @@ import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 type Props = {
   form: UseFormReturn<SettingsFormType>;
-  isDisabled?: boolean;
+  isUpdateLoading?: boolean;
+  isContestEnded?: boolean;
 };
 
-export function SettingsPageMembersTab({ form, isDisabled }: Props) {
+export function SettingsPageMembersTab({
+  form,
+  isUpdateLoading,
+  isContestEnded,
+}: Props) {
   const loadCsvState = useLoadableState();
   const memberFileInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
@@ -67,7 +72,7 @@ export function SettingsPageMembersTab({ form, isDisabled }: Props) {
   }
 
   return (
-    <FieldSet disabled={isDisabled}>
+    <FieldSet disabled={isUpdateLoading || isContestEnded}>
       <div className="flex flex-col gap-4" data-testid="settings-members-tab">
         <div className="flex justify-end">
           <Input

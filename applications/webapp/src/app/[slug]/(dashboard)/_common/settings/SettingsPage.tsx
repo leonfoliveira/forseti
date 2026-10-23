@@ -113,8 +113,8 @@ export function SettingsPage({ contest, leaderboard }: Props) {
   const hasProblemsValidationError = !!form.formState.errors.problems;
   const hasMembersValidationError = !!form.formState.errors.members;
 
-  const isDisabled =
-    updateContestState.isLoading || contestStatus === ContestStatus.ENDED;
+  const isUpdateLoading = updateContestState.isLoading;
+  const isContestEnded = contestStatus === ContestStatus.ENDED;
 
   return (
     <Page title="Settings" description="Manage contest settings">
@@ -182,7 +182,8 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   contest={contest}
                   leaderboard={leaderboard}
                   form={form}
-                  isDisabled={isDisabled}
+                  isUpdateLoading={isUpdateLoading}
+                  isContestEnded={isContestEnded}
                 />
               )}
 
@@ -190,12 +191,17 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                 <SettingsPageProblemsTab
                   contest={contest}
                   form={form}
-                  isDisabled={isDisabled}
+                  isUpdateLoading={isUpdateLoading}
+                  isContestEnded={isContestEnded}
                 />
               )}
 
               {selectedTab === TabKey.MEMBERS && (
-                <SettingsPageMembersTab form={form} isDisabled={isDisabled} />
+                <SettingsPageMembersTab
+                  form={form}
+                  isUpdateLoading={isUpdateLoading}
+                  isContestEnded={isContestEnded}
+                />
               )}
             </CardContent>
 

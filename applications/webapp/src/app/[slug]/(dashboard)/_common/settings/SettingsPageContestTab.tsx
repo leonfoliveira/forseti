@@ -39,10 +39,16 @@ type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
-  isDisabled?: boolean;
+  isUpdateLoading?: boolean;
+  isContestEnded?: boolean;
 };
 
-export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
+export function SettingsPageContestTab({
+  contest,
+  form,
+  isUpdateLoading,
+  isContestEnded,
+}: Props) {
   const freezeState = useLoadableState();
   const forceState = useLoadableState();
   const contestStatus = useContestStatusWatcher();
@@ -125,7 +131,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
 
   return (
     <>
-      <FieldSet disabled={isDisabled}>
+      <FieldSet disabled={isUpdateLoading || isContestEnded}>
         <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
           <div className="grid grid-cols-2 gap-6">
             <ControlledField
@@ -232,9 +238,10 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
           onClick={freezeConfirmationDialog.open}
           data-testid="freeze-toggle-button"
           disabled={
-            isDisabled ||
+            isUpdateLoading ||
             freezeState.isLoading ||
-            contestStatus !== ContestStatus.IN_PROGRESS
+            (isContestFrozen && contestStatus === ContestStatus.NOT_STARTED) ||
+            (!isContestFrozen && contestStatus !== ContestStatus.IN_PROGRESS)
           }
         >
           {isContestFrozen ? "Unfreeze" : "Freeze"}
@@ -245,7 +252,7 @@ export function SettingsPageContestTab({ contest, form, isDisabled }: Props) {
           variant="secondary"
           data-testid="force-toggle-button"
           onClick={forceConfirmationDialog.open}
-          disabled={isDisabled || forceState.isLoading}
+          disabled={isUpdateLoading || isContestEnded || forceState.isLoading}
         >
           {contestStatus === ContestStatus.NOT_STARTED
             ? "Force Start"
