@@ -16,13 +16,6 @@ Please refer to the full documentation for detailed information about the platfo
 
 📚 **[View Full Documentation](https://leonfoliveira.github.io/forseti/)**
 
-## Next Steps
-
-The following features are planned for future releases:
-
-- Ticketing system for managing participant support and print requests.
-- IP restriction by contest or participant for enhanced security.
-
 ## Contributions
 
 Community contributions are highly welcome! Feel free to open issues and submit **Pull Requests (PRs)** to help improve the platform.
