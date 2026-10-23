@@ -1,8 +1,8 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.PrintRequest
-import java.util.UUID
 import org.springframework.data.jpa.repository.Query
+import java.util.UUID
 
 interface PrintRequestRepository : BaseRepository<PrintRequest> {
     @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.deletedAt IS NULL")

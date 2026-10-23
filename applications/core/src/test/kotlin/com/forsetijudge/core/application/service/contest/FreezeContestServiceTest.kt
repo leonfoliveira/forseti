@@ -14,7 +14,6 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
@@ -23,6 +22,7 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class FreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -134,7 +134,7 @@ class FreezeContestServiceTest {
 
         assertEquals(contest.id, result.id)
         assertNotNull(result.frozenAt)
-        verify(frozenSubmissionRepository).saveAll(
+        verify(frozenSubmissionRepository).saveAllAndFlush(
             argThat<List<FrozenSubmission>> { it ->
                 it.size == 1 && it[0].id == submission.id
             },

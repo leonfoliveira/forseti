@@ -9,9 +9,9 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
-import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.OffsetDateTime
 
 @Service
 class AutoFreezeContestService(
@@ -44,7 +44,7 @@ class AutoFreezeContestService(
             submissionRepository
                 .findAllByContestId(contest.id)
                 .map { submission -> submission.freeze() }
-        frozenSubmissionRepository.saveAll(frozenSubmissions)
+        frozenSubmissionRepository.saveAllAndFlush(frozenSubmissions)
 
         contest.frozenAt = OffsetDateTime.now()
         contestRepository.saveAndFlush(contest)

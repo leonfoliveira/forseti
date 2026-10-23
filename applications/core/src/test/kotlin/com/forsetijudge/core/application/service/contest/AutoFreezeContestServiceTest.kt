@@ -8,7 +8,6 @@ import com.forsetijudge.core.port.input.usecase.contest.AutoFreezeContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -17,6 +16,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class AutoFreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -40,7 +40,7 @@ class AutoFreezeContestServiceTest {
 
         service.execute(AutoFreezeContestUseCase.Command(contestId = contest.id))
 
-        verify(frozenSubmissionRepository, never()).saveAll(any())
+        verify(frozenSubmissionRepository, never()).saveAllAndFlush(any<List<FrozenSubmission>>())
         verify(contestRepository, never()).saveAndFlush(any())
         verify(businessEventPublisher, never()).publish(any())
     }
@@ -54,7 +54,7 @@ class AutoFreezeContestServiceTest {
         service.execute(AutoFreezeContestUseCase.Command(contestId = contest.id))
 
         val frozenSubmissionsCaptor = argumentCaptor<List<FrozenSubmission>>()
-        verify(frozenSubmissionRepository).saveAll(frozenSubmissionsCaptor.capture())
+        verify(frozenSubmissionRepository).saveAllAndFlush(frozenSubmissionsCaptor.capture())
         assertEquals(submissions[0].id, frozenSubmissionsCaptor.firstValue[0].id)
         verify(contestRepository).saveAndFlush(contest)
         verify(businessEventPublisher).publish(ContestEvent.Frozen(contestId = contest.id))

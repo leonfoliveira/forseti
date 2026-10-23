@@ -299,7 +299,7 @@ class UpdateContestService(
         val now = OffsetDateTime.now()
 
         members.forEach { it.deletedAt = now }
-        memberRepository.saveAll(members)
+        memberRepository.saveAllAndFlush(members)
     }
 
     /**
@@ -316,6 +316,6 @@ class UpdateContestService(
             it.description.isCommited = false
             it.testCases.isCommited = false
         }
-        problemRepository.saveAll(problems)
+        problemRepository.saveAllAndFlush(problems)
     }
 }

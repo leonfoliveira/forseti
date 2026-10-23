@@ -2,7 +2,6 @@ package com.forsetijudge.core.application.service.submission
 
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.MetricsCollector
-import com.forsetijudge.core.domain.entity.Execution
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -49,8 +48,6 @@ class JudgeSubmissionAnswerServiceTest {
     fun `judges a pending submission and publishes update`() {
         val submission = MockEntityFactory.submission(status = Submission.Status.JUDGING, answer = null)
         whenever(submissionRepository.findByIdNullable(command.submissionId)).thenReturn(submission)
-        whenever { executionRepository.saveAndFlush(any()) }
-            .thenAnswer { invocation -> invocation.arguments[0] as Execution }
 
         service.execute(command)
 
