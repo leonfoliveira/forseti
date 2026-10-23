@@ -80,6 +80,7 @@ export const MockContestResponseDTO = (
   endAt: "2026-01-01T02:00:00.000Z",
   autoFreezeAt: "2026-01-01T01:00:00.000Z",
   frozenAt: "2026-01-01T01:30:00.000Z",
+  ipCIDRs: ["0.0.0.0/0"],
   version: 1,
   ...overrides,
 });
@@ -403,6 +404,7 @@ export const MockUpdateContestRequestDTO = (
   languages: [SubmissionLanguage.CPP_17],
   startAt: "2026-01-01T00:00:00.000Z",
   endAt: "2026-01-01T02:00:00.000Z",
+  ipCIDRs: ["0.0.0.0/0"],
   members: [
     { type: MemberType.CONTESTANT, name: "Ada Lovelace", login: "ada" },
   ],
