@@ -2,6 +2,7 @@ package com.forsetijudge.core.api.http.middleware
 
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
 import com.forsetijudge.core.api.util.SessionCookieBuilder
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
@@ -59,12 +60,6 @@ class AuthenticationFilter(
             val sessionId = WebUtils.getCookie(request, SessionCookieBuilder.SESSION_COOKIE_NAME)?.value
             val ip = request.getHeader("X-Forwarded-For") ?: request.remoteAddr
 
-            val contest = extractContest(request)
-            logger.info("Extracted contest from request: ${contest?.id ?: "No contest found"}")
-            if (contest != null) {
-                authorizeIp(contest, ip)
-            }
-
             if (sessionId != null) {
                 safeLogger.info("Found session cookie with ID: $sessionId, attempting to resolve session.")
 
@@ -76,6 +71,16 @@ class AuthenticationFilter(
                     }
                 val session = findSessionByIdUseCase.execute(FindSessionByIdUseCase.Command(sessionId = sessionUuid))
 
+                if (session.member.type != Member.Type.ROOT) {
+                    val contest = extractContest(request)
+                    logger.info("Extracted contest from request: ${contest?.id ?: "No contest found"}")
+                    if (contest != null) {
+                        authorizeIp(contest, ip)
+                    }
+                } else {
+                    logger.info("Session belongs to ROOT member, skipping IP authorization.")
+                }
+
                 val authentication =
                     SessionAuthentication(
                         session = session,
@@ -86,6 +91,12 @@ class AuthenticationFilter(
                 SecurityContextHolder.getContext().authentication = authentication
             } else {
                 safeLogger.info("No session cookie found, proceeding without authentication.")
+
+                val contest = extractContest(request)
+                logger.info("Extracted contest from request: ${contest?.id ?: "No contest found"}")
+                if (contest != null) {
+                    authorizeIp(contest, ip)
+                }
             }
 
             filterChain.doFilter(request, response)

@@ -7,6 +7,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.SessionAuthentication
 import com.forsetijudge.core.factory.MockEntityFactory
+import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.FindContestByIdUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
@@ -74,7 +75,7 @@ class AuthenticationFilterTest {
         val filterChain = mock<FilterChain>()
         var authenticationDuringChain: Authentication? = null
 
-        whenever(findSessionByIdUseCase.execute(any())).thenReturn(mock())
+        whenever(findSessionByIdUseCase.execute(any())).thenReturn(MockModelFactory.session())
 
         doAnswer {
             authenticationDuringChain =
