@@ -17,6 +17,7 @@ import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -26,7 +27,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class UpdateContestServiceTest {
     private val contests = mock<ContestRepository>()
@@ -62,6 +62,7 @@ class UpdateContestServiceTest {
                 startAt = startAt,
                 endAt = endAt,
                 autoFreezeAt = contest.autoFreezeAt,
+                ipCIDRs = listOf("192.168.0.1/24"),
                 members = emptyList(),
                 problems = emptyList(),
             )
@@ -92,6 +93,7 @@ class UpdateContestServiceTest {
                 startAt = contest.startAt,
                 endAt = contest.endAt,
                 autoFreezeAt = contest.autoFreezeAt,
+                ipCIDRs = listOf("192.168.0.1/24"),
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
@@ -127,6 +129,7 @@ class UpdateContestServiceTest {
                 OffsetDateTime.now().plusHours(1),
                 OffsetDateTime.now().plusHours(2),
                 null,
+                emptyList(),
                 emptyList(),
                 emptyList(),
             )

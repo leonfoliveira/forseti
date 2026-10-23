@@ -18,6 +18,8 @@ import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponse
 import com.forsetijudge.core.port.dto.response.problem.ProblemResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
@@ -25,8 +27,6 @@ import tools.jackson.databind.DeserializationFeature
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.databind.module.SimpleModule
 import tools.jackson.module.kotlin.KotlinModule
-import java.time.OffsetDateTime
-import java.util.UUID
 
 internal object MockMvcTestSupport {
     private val messageConverter =
@@ -73,6 +73,7 @@ internal object MockMvcTestSupport {
             endAt = timestamp.plusHours(2),
             autoFreezeAt = timestamp.plusHours(1).plusMinutes(30),
             frozenAt = null,
+            ipCIDRs = listOf("192.168.0.1/24"),
             members = emptyList(),
             problems = emptyList(),
             version = 1,

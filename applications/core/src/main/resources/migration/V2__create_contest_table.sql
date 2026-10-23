@@ -12,7 +12,8 @@ create table contest
     end_at         timestamp not null,
     auto_freeze_at timestamp,
     frozen_at      timestamp,
-    unfrozen_at    timestamp
+    unfrozen_at    timestamp,
+    ip_cidrs       text[] not null
 );
 
 create unique index idx_contest_slug_unique_active on contest (slug) where deleted_at is null;
@@ -43,6 +44,8 @@ create table contest_aud
     frozen_at_mod      boolean   not null default false,
     unfrozen_at        timestamp,
     unfrozen_at_mod    boolean   not null default false,
+    ip_cidrs           text[]    not null,
+    ip_cidrs_mod       boolean   not null default false,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );
