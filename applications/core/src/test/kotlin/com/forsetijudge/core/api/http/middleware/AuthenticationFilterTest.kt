@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.input.usecase.contest.FindContestByIdUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import jakarta.servlet.FilterChain
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -27,7 +28,6 @@ import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.UUID
 
 class AuthenticationFilterTest {
     private val findContestBySlugUseCase = mock<FindContestBySlugUseCase>()
@@ -44,8 +44,6 @@ class AuthenticationFilterTest {
             sessionCookieBuilder,
             csrfCookieBuilder,
         )
-
-    private val contest = MockEntityFactory.contest()
 
     @BeforeEach
     fun setUp() {
