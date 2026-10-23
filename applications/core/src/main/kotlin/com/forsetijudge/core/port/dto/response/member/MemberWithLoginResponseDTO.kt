@@ -12,6 +12,7 @@ data class MemberWithLoginResponseDTO(
     val type: Member.Type,
     val name: String,
     val login: String,
+    val ip: String?,
     val version: Long,
 ) : Serializable
 
@@ -23,5 +24,6 @@ fun Member.toWithLoginResponseDTO(): MemberWithLoginResponseDTO =
         type = type,
         name = name,
         login = login,
+        ip = ip,
         version = version,
     )

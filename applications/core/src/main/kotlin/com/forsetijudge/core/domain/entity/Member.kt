@@ -12,10 +12,10 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "member")
@@ -55,6 +55,11 @@ class Member(
      */
     @Column(nullable = false)
     var password: String,
+    /**
+     * The IP address restriction for the member.
+     */
+    @Column
+    var ip: String? = null,
     /**
      * The submissions made by this member in the contest.
      */

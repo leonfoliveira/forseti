@@ -26,6 +26,7 @@ data class UpdateContestRequestBodyDTO(
         val name: String,
         val login: String,
         val password: String? = null,
+        val ip: String? = null,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

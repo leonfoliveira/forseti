@@ -88,6 +88,13 @@ interface UpdateContestUseCase {
             val login: String,
             @field:Size(max = 30, message = "'members.password' must be at most 30 characters long")
             val password: String? = null,
+            @field:Pattern(
+                regexp =
+                    "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" +
+                        "\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+                message = "'members.ip' must be a valid IPv4 address",
+            )
+            val ip: String? = null,
         ) {
             @get:JsonIgnore
             @get:AssertFalse(message = "'members.password' is required when creating a member")

@@ -24,12 +24,12 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
 @Validated
@@ -187,6 +187,7 @@ class UpdateContestService(
                 name = memberDTO.name,
                 login = memberDTO.login,
                 password = hashedPassword,
+                ip = memberDTO.ip,
                 contest = contest,
             )
 
