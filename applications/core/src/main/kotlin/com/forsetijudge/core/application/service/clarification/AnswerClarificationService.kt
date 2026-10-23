@@ -47,7 +47,7 @@ class AnswerClarificationService(
         )
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -72,7 +72,7 @@ class AnswerClarificationService(
                 member = member,
                 text = command.text,
             )
-        clarificationRepository.save(clarification)
+        clarificationRepository.saveAndFlush(clarification)
         businessEventPublisher.publish(ClarificationEvent.Answered(clarification.id))
 
         logger.info("Answered clarification with id: ${command.clarificationId}")

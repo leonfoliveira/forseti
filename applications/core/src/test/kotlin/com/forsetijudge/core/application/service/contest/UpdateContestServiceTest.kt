@@ -50,7 +50,7 @@ class UpdateContestServiceTest {
         val contest = MockEntityFactory.contest(startAt = startAt, endAt = endAt)
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
         whenever(contests.existsBySlugAndIdNot("updated", contest.id)).thenReturn(false)
         val command =
@@ -72,7 +72,7 @@ class UpdateContestServiceTest {
         assertEquals("updated", contest.slug)
         assertEquals("Updated title", contest.title)
         assertEquals(listOf(Submission.Language.JAVA_21), contest.languages)
-        verify(contests).save(contest)
+        verify(contests).saveAndFlush(contest)
         verify(events).publish(ContestEvent.Updated(contest.id))
     }
 
@@ -81,7 +81,7 @@ class UpdateContestServiceTest {
         val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         TestAuthentication.setMember(root)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(root.id, contest.id)).thenReturn(root)
         val command =
             UpdateContestUseCase.Command(
@@ -109,7 +109,7 @@ class UpdateContestServiceTest {
         assertThrows<ConflictException> {
             service.execute(command.copy(members = emptyList()))
         }
-        verify(contests, never()).save(any())
+        verify(contests, never()).saveAndFlush(any())
     }
 
     @Test
@@ -117,7 +117,7 @@ class UpdateContestServiceTest {
         val contestId = java.util.UUID.randomUUID()
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         TestAuthentication.setMember(root)
-        whenever(contests.findById(contestId)).thenReturn(null)
+        whenever(contests.findByIdNullable(contestId)).thenReturn(null)
         val command =
             UpdateContestUseCase.Command(
                 contestId,

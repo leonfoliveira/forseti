@@ -12,6 +12,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.CreateContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -21,7 +22,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class CreateContestServiceTest {
     private val contests = mock<ContestRepository>()
@@ -36,7 +36,7 @@ class CreateContestServiceTest {
     fun `creates contest and publishes created event for root`() {
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         TestAuthentication.setMember(root)
-        whenever(members.findById(root.id)).thenReturn(root)
+        whenever(members.findByIdNullable(root.id)).thenReturn(root)
         whenever(contests.existsBySlug("spring-cup")).thenReturn(false)
         val command =
             CreateContestUseCase.Command(
@@ -51,7 +51,7 @@ class CreateContestServiceTest {
 
         assertEquals(command.slug, result.slug)
         assertEquals(command.title, result.title)
-        verify(contests).save(any())
+        verify(contests).saveAndFlush(any())
         verify(events).publish(
             org.mockito.kotlin.check { event ->
                 assertEquals(ContestEvent.Created(result.id), event)
@@ -63,19 +63,19 @@ class CreateContestServiceTest {
     fun `requires existing root and unused slug`() {
         val user = MockEntityFactory.member(type = Member.Type.CONTESTANT)
         TestAuthentication.setMember(user)
-        whenever(members.findById(user.id)).thenReturn(user)
+        whenever(members.findByIdNullable(user.id)).thenReturn(user)
         val command = createCommand()
         assertThrows(ForbiddenException::class.java) { service.execute(command) }
 
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         TestAuthentication.setMember(root)
-        whenever(members.findById(root.id)).thenReturn(null)
+        whenever(members.findByIdNullable(root.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) { service.execute(command) }
 
-        whenever(members.findById(root.id)).thenReturn(root)
+        whenever(members.findByIdNullable(root.id)).thenReturn(root)
         whenever(contests.existsBySlug(command.slug)).thenReturn(true)
         assertThrows(ConflictException::class.java) { service.execute(command) }
-        verify(contests, never()).save(any())
+        verify(contests, never()).saveAndFlush(any())
     }
 
     private fun createCommand() =

@@ -42,7 +42,7 @@ class SignInService(
 
         val contest =
             command.contestId?.let {
-                contestRepository.findById(command.contestId)
+                contestRepository.findByIdNullable(command.contestId)
                     ?: throw NotFoundException("Invalid login or password")
             }
 

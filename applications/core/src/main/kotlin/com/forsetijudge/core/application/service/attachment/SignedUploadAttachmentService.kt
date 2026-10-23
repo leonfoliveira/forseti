@@ -56,7 +56,7 @@ class SignedUploadAttachmentService(
         logger.info("Creating attachment for contest with id = ${command.contestId} by member with id = $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -80,7 +80,7 @@ class SignedUploadAttachmentService(
                 contentType = command.contentType,
                 context = command.context,
             )
-        attachmentRepository.save(attachment)
+        attachmentRepository.saveAndFlush(attachment)
         val uploadUrl = attachmentBucket.getUploadUrl(attachment)
 
         logger.info("Attachment created successfully with id = ${attachment.id}")

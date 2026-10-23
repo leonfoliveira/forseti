@@ -48,31 +48,31 @@ class JudgeSubmissionAnswerServiceTest {
     @Test
     fun `judges a pending submission and publishes update`() {
         val submission = MockEntityFactory.submission(status = Submission.Status.JUDGING, answer = null)
-        whenever(submissionRepository.findById(command.submissionId)).thenReturn(submission)
-        whenever { executionRepository.save(any()) }
+        whenever(submissionRepository.findByIdNullable(command.submissionId)).thenReturn(submission)
+        whenever { executionRepository.saveAndFlush(any()) }
             .thenAnswer { invocation -> invocation.arguments[0] as Execution }
 
         service.execute(command)
 
         assertEquals(Submission.Status.JUDGED, submission.status)
         assertEquals(Submission.Answer.ACCEPTED, submission.answer)
-        verify(submissionRepository).save(submission)
+        verify(submissionRepository).saveAndFlush(submission)
         verify(businessEventPublisher).publish(SubmissionEvent.Updated(submission.id))
-        verify(executionRepository).save(any())
+        verify(executionRepository).saveAndFlush(any())
     }
 
     @Test
     fun `rejects missing or already judged submission`() {
-        whenever(submissionRepository.findById(command.submissionId)).thenReturn(null)
+        whenever(submissionRepository.findByIdNullable(command.submissionId)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {
             service.execute(command)
         }
 
         val judged = MockEntityFactory.submission(status = Submission.Status.JUDGED)
-        whenever(submissionRepository.findById(command.submissionId)).thenReturn(judged)
+        whenever(submissionRepository.findByIdNullable(command.submissionId)).thenReturn(judged)
         assertThrows(ForbiddenException::class.java) {
             service.execute(command)
         }
-        verify(submissionRepository, never()).save(any())
+        verify(submissionRepository, never()).saveAndFlush(any())
     }
 }

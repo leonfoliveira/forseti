@@ -26,7 +26,7 @@ class DeleteAllSessionsByContextMemberService(
         logger.info("Deleting all sessions for member with id: $contextMemberId")
 
         val member =
-            memberRepository.findById(contextMemberId)
+            memberRepository.findByIdNullable(contextMemberId)
                 ?: throw NotFoundException("Member with id $contextMemberId not found")
 
         sessionDeleter.deleteByMember(member)

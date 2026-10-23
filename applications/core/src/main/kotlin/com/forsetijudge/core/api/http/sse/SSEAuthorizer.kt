@@ -7,9 +7,9 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class SSEAuthorizer(
@@ -28,7 +28,7 @@ class SSEAuthorizer(
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository.findByIdNullable(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, contestId)
@@ -52,7 +52,7 @@ class SSEAuthorizer(
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository.findByIdNullable(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")
         val member =
             memberRepository.findByIdAndContestId(contextMemberId, contestId)
@@ -76,7 +76,7 @@ class SSEAuthorizer(
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository.findByIdNullable(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")
         val member =
             memberRepository.findByIdAndContestId(contextMemberId, contestId)
@@ -100,7 +100,7 @@ class SSEAuthorizer(
         val contextMemberId = AuthenticationHelper.getCurrentMemberId()
 
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository.findByIdNullable(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")
         val member =
             memberRepository.findByIdAndContestId(contextMemberId, contestId)
@@ -123,7 +123,7 @@ class SSEAuthorizer(
     @Transactional(readOnly = true)
     fun authorizeToSpectatorDashboardRoom(contestId: UUID) {
         val contest =
-            contestRepository.findById(contestId)
+            contestRepository.findByIdNullable(contestId)
                 ?: throw NotFoundException("Could not find contest with id: $contestId")
 
         ContestAuthorizer(contest, null)

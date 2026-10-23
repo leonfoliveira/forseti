@@ -45,12 +45,12 @@ class CreateAnnouncementServiceTest {
         val contest = MockEntityFactory.contest(id = command.contestId)
         val member = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
 
         val response = service.execute(command)
 
-        verify(announcementRepository).save(any())
+        verify(announcementRepository).saveAndFlush(any())
         verify(businessEventPublisher).publish(
             org.mockito.kotlin.check { event ->
                 assertEquals(AnnouncementEvent.Created(response.id), event)
@@ -63,7 +63,7 @@ class CreateAnnouncementServiceTest {
     fun `throws NotFoundException when contest does not exist`() {
         val member = MockEntityFactory.member(type = Member.Type.ADMIN)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(null)
 
         val exception =
             assertThrows<NotFoundException> {
@@ -78,7 +78,7 @@ class CreateAnnouncementServiceTest {
         val contest = MockEntityFactory.contest(id = command.contestId)
         val member = MockEntityFactory.member(type = Member.Type.ADMIN)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         val exception =
@@ -94,7 +94,7 @@ class CreateAnnouncementServiceTest {
         val contest = MockEntityFactory.contest(id = command.contestId)
         val member = MockEntityFactory.member(type = Member.Type.ADMIN)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         val exception =
@@ -113,7 +113,7 @@ class CreateAnnouncementServiceTest {
         val contest = MockEntityFactory.contest(id = command.contestId)
         val member = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
 
         val exception =

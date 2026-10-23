@@ -9,7 +9,7 @@ import java.util.UUID
  */
 interface MemberRepository : BaseRepository<Member> {
     @Query("SELECT m FROM Member m WHERE m.id = ?1 AND m.deletedAt IS NULL")
-    fun findById(id: UUID): Member?
+    fun findByIdNullable(id: UUID): Member?
 
     @Query("SELECT m FROM Member m WHERE m.id = ?1 AND m.contest.id = ?2 AND m.deletedAt IS NULL")
     fun findByIdAndContestId(

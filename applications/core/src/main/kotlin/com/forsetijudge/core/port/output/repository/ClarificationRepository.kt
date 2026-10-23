@@ -1,12 +1,12 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Clarification
-import org.springframework.data.jpa.repository.Query
 import java.util.UUID
+import org.springframework.data.jpa.repository.Query
 
 interface ClarificationRepository : BaseRepository<Clarification> {
     @Query("SELECT c FROM Clarification c WHERE c.id = ?1 AND deletedAt IS NULL")
-    fun findById(id: UUID): Clarification?
+    fun findByIdNullable(id: UUID): Clarification?
 
     @Query("SELECT c FROM Clarification c WHERE c.id = ?1 AND c.contest.id = ?2 AND deletedAt IS NULL")
     fun findByIdAndContestId(

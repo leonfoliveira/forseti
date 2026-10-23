@@ -36,7 +36,7 @@ class UpdateStatusPrintRequestService(
         )
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Contest with id ${command.contestId} not found")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -59,7 +59,7 @@ class UpdateStatusPrintRequestService(
 
         printRequest.status = command.status
 
-        printRequestRepository.save(printRequest)
+        printRequestRepository.saveAndFlush(printRequest)
         businessEventPublisher.publish(PrintRequestEvent.Updated(printRequest.id))
 
         logger.info("Successfully updated PrintRequest with id: ${command.printRequestId}")

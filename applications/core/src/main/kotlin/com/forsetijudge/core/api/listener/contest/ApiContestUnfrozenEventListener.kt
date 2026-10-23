@@ -37,7 +37,7 @@ class ApiContestUnfrozenEventListener(
         logger.info("Handling contest unfrozen event for contest with id: ${event.contestId}")
 
         val contest =
-            contestRepository.findById(event.contestId)
+            contestRepository.findByIdNullable(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${event.contestId}")
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =

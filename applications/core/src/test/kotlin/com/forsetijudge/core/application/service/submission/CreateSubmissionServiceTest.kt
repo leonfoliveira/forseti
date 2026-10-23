@@ -16,6 +16,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.util.UUID
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -25,7 +26,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class CreateSubmissionServiceTest {
     private val contests = mock<ContestRepository>()
@@ -54,7 +54,7 @@ class CreateSubmissionServiceTest {
             )
         val command = command(contest.id, problem.id, code.id)
         TestAuthentication.setMember(member)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(problem)
         whenever(committer.commit(code.id, contest.id, Attachment.Context.SUBMISSION_CODE)).thenReturn(code)
@@ -64,7 +64,7 @@ class CreateSubmissionServiceTest {
         assertEquals(member.id, response.member.id)
         assertEquals(problem.id, response.problem.id)
         assertEquals(Submission.Status.JUDGING, response.status)
-        verify(submissions).save(any())
+        verify(submissions).saveAndFlush(any())
         verify(events).publish(
             org.mockito.kotlin.check { event ->
                 assertEquals(SubmissionEvent.Created(response.id), event)
@@ -79,7 +79,7 @@ class CreateSubmissionServiceTest {
         val problem = MockEntityFactory.problem(contest = contest)
         val code = MockEntityFactory.attachment(contest = contest, member = member)
         TestAuthentication.setMember(member)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(problem)
         whenever(committer.commit(code.id, contest.id, Attachment.Context.SUBMISSION_CODE)).thenReturn(code)
@@ -87,7 +87,7 @@ class CreateSubmissionServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(command(contest.id, problem.id, code.id, Submission.Language.JAVA_21))
         }
-        verify(submissions, never()).save(any())
+        verify(submissions, never()).saveAndFlush(any())
 
         whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

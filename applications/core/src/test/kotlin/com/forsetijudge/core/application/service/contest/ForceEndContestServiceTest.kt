@@ -34,14 +34,14 @@ class ForceEndContestServiceTest {
         val contest = MockEntityFactory.contest()
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
 
         val response = service.execute(ForceEndContestUseCase.Command(contest.id))
 
         assertEquals(contest.id, response.id)
         assertTrue(contest.hasEnded())
-        verify(contests).save(contest)
+        verify(contests).saveAndFlush(contest)
         verify(events).publish(ContestEvent.Updated(contest.id))
     }
 
@@ -50,12 +50,12 @@ class ForceEndContestServiceTest {
         val contest = MockEntityFactory.contest()
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
 
         assertThrows(ForbiddenException::class.java) {
             service.execute(ForceEndContestUseCase.Command(contest.id))
         }
-        verify(contests, never()).save(any())
+        verify(contests, never()).saveAndFlush(any())
     }
 }

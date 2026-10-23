@@ -28,7 +28,7 @@ class ApiAnnouncementCreatedEventListener(
         logger.info("Handling announcement created event for announcement with id: ${event.announcementId}")
 
         val announcement =
-            announcementRepository.findById(event.announcementId)
+            announcementRepository.findByIdNullable(event.announcementId)
                 ?: throw NotFoundException("Could not find announcement with id: ${event.announcementId}")
         val contest = announcement.contest
 

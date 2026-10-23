@@ -22,7 +22,7 @@ class SubmissionResubmittedEventListener(
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     fun handle(event: SubmissionEvent.Resubmitted) {
         val submission =
-            submissionRepository.findById(event.submissionId)
+            submissionRepository.findByIdNullable(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
         val contest = submission.contest
 

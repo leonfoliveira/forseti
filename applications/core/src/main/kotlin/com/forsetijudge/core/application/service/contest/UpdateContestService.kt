@@ -62,7 +62,7 @@ class UpdateContestService(
 
         val contest =
             contestRepository
-                .findById(command.contestId)
+                .findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -158,7 +158,7 @@ class UpdateContestService(
 
         contest.members = createdMembers + updatedMembers
         contest.problems = createdProblems + updatedProblems
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest updated successfully with id: ${contest.id}")

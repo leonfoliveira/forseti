@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -21,7 +22,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class BuildContestantDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -50,7 +50,7 @@ class BuildContestantDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
         whenever(leaderboardBuilder.build(contest)).thenReturn(MockModelFactory.leaderboard(contestId = contest.id))
         whenever(submissionRepository.findAllByContestId(contest.id)).thenReturn(emptyList())
@@ -78,7 +78,7 @@ class BuildContestantDashboardServiceTest {
         val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
 
         assertThrows(ForbiddenException::class.java) {

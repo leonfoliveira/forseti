@@ -44,8 +44,6 @@ export function ContestantDashboardProvider({
   );
 
   useEffect(() => {
-    let cancelled = false;
-
     async function fetchDashboardData() {
       console.debug("Fetching dashboard data");
       const data = await Composition.dashboardReader.getContestantDashboard(
@@ -110,9 +108,6 @@ export function ContestantDashboardProvider({
         dashboardReseter.reset();
         await fetchDashboardData();
         await connectBroadcastListeners();
-        if (cancelled) {
-          await disconnectBroadcastListeners();
-        }
         state.finish();
         console.debug("Successfully initialized dashboard");
       } catch (error) {
@@ -124,7 +119,6 @@ export function ContestantDashboardProvider({
     init();
 
     return () => {
-      cancelled = true;
       disconnectBroadcastListeners();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };

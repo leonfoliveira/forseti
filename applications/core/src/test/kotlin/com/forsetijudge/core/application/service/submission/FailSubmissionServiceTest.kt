@@ -26,25 +26,25 @@ class FailSubmissionServiceTest {
     @Test
     fun `marks judging submission as failed`() {
         val submission = MockEntityFactory.submission(status = Submission.Status.JUDGING, answer = null)
-        whenever(submissions.findById(submission.id)).thenReturn(submission)
+        whenever(submissions.findByIdNullable(submission.id)).thenReturn(submission)
 
         service.execute(FailSubmissionUseCase.Command(submission.id))
 
         assertEquals(Submission.Status.FAILED, submission.status)
-        verify(submissions).save(submission)
+        verify(submissions).saveAndFlush(submission)
         verify(events).publish(SubmissionEvent.Created(submission.id))
     }
 
     @Test
     fun `does nothing if submission is not judging and errors when missing`() {
         val judged = MockEntityFactory.submission(status = Submission.Status.JUDGED)
-        whenever(submissions.findById(judged.id)).thenReturn(judged)
+        whenever(submissions.findByIdNullable(judged.id)).thenReturn(judged)
         service.execute(FailSubmissionUseCase.Command(judged.id))
-        verify(submissions, never()).save(any())
+        verify(submissions, never()).saveAndFlush(any())
         verify(events, never()).publish(any())
 
         val missingId = java.util.UUID.randomUUID()
-        whenever(submissions.findById(missingId)).thenReturn(null)
+        whenever(submissions.findByIdNullable(missingId)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {
             service.execute(FailSubmissionUseCase.Command(missingId))
         }

@@ -51,7 +51,7 @@ class ApiSubmissionUpdatedEventListenerTest {
                 answer = Submission.Answer.ACCEPTED,
             )
         val memberSubmissions = listOf(submission)
-        whenever(submissions.findById(submission.id)).thenReturn(submission)
+        whenever(submissions.findByIdNullable(submission.id)).thenReturn(submission)
         whenever(
             submissions.findAllByMemberIdAndProblemIdAndStatus(
                 memberId = member.id,
@@ -113,7 +113,7 @@ class ApiSubmissionUpdatedEventListenerTest {
     @Test
     fun `throws for missing submission without fanout or cache update`() {
         val submissionId = UUID.randomUUID()
-        whenever(submissions.findById(submissionId)).thenReturn(null)
+        whenever(submissions.findByIdNullable(submissionId)).thenReturn(null)
 
         assertThrows(NotFoundException::class.java) {
             listener.handle(SubmissionEvent.Updated(submissionId))

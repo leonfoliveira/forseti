@@ -10,9 +10,9 @@ import com.forsetijudge.core.port.input.usecase.contest.DeleteContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 
 @Service
 class DeleteContestService(
@@ -34,7 +34,7 @@ class DeleteContestService(
         logger.info("Deleting contest with id: ${command.contestId} by member with id: $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = $contextMemberId")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -46,7 +46,7 @@ class DeleteContestService(
             .throwIfErrors()
 
         contest.deletedAt = OffsetDateTime.now()
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         businessEventPublisher.publish(ContestEvent.Deleted(command.contestId))
 
         logger.info("Contest deleted successfully")

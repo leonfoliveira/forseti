@@ -29,7 +29,7 @@ class FindAllContestServiceTest {
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         val all = listOf(MockEntityFactory.contest(), MockEntityFactory.contest())
         TestAuthentication.setMember(root)
-        whenever(members.findById(root.id)).thenReturn(root)
+        whenever(members.findByIdNullable(root.id)).thenReturn(root)
         whenever(contests.findAllOrdersByCreatedAt()).thenReturn(all)
 
         assertEquals(all.map { it.id }, service.execute().map { it.id })
@@ -39,13 +39,13 @@ class FindAllContestServiceTest {
     fun `rejects non-root or missing member`() {
         val admin = MockEntityFactory.member(type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(members.findById(admin.id)).thenReturn(admin)
+        whenever(members.findByIdNullable(admin.id)).thenReturn(admin)
 
         assertThrows(ForbiddenException::class.java) { service.execute() }
         verify(contests, never()).findAllOrdersByCreatedAt()
 
         TestAuthentication.setMember(admin)
-        whenever(members.findById(admin.id)).thenReturn(null)
+        whenever(members.findByIdNullable(admin.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) { service.execute() }
     }
 }

@@ -44,7 +44,7 @@ class CreateAnnouncementService(
         logger.info("Creating new announcement for contest with id: ${command.contestId} by member with id: $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -61,7 +61,7 @@ class CreateAnnouncementService(
                 member = member,
                 text = command.text,
             )
-        announcementRepository.save(announcement)
+        announcementRepository.saveAndFlush(announcement)
         businessEventPublisher.publish(AnnouncementEvent.Created(announcement.id))
 
         logger.info("Created announcement with id: ${command.contestId}")

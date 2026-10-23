@@ -28,7 +28,7 @@ class ApiClarificationAnsweredEventListener(
         logger.info("Handling clarification answered event for clarification with id: ${event.clarificationId}")
 
         val clarification =
-            clarificationRepository.findById(event.clarificationId)
+            clarificationRepository.findByIdNullable(event.clarificationId)
                 ?: throw NotFoundException("Could not find clarification with id: ${event.clarificationId}")
         val contest = clarification.contest
         val member = clarification.member

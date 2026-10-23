@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
@@ -19,7 +20,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class UnfreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -36,7 +36,7 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should throw NotFoundException when contest does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(UnfreezeContestUseCase.Command(contestId = contest.id))
@@ -46,7 +46,7 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should throw NotFoundException when member does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
@@ -57,7 +57,7 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when member does not belongs to contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = MockEntityFactory.contest()),
         )
@@ -70,7 +70,7 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when member is not admin or root`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest),
         )
@@ -84,7 +84,7 @@ class UnfreezeContestServiceTest {
     fun `should throw ForbiddenException when contest is not frozen`() {
         TestAuthentication.setMember(member)
         val unfrozenContest = MockEntityFactory.contest(frozenAt = null)
-        whenever(contestRepository.findById(unfrozenContest.id)).thenReturn(unfrozenContest)
+        whenever(contestRepository.findByIdNullable(unfrozenContest.id)).thenReturn(unfrozenContest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, unfrozenContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = unfrozenContest),
         )
@@ -97,14 +97,14 @@ class UnfreezeContestServiceTest {
     @Test
     fun `should unfreeze contest successfully`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
 
         val result = service.execute(UnfreezeContestUseCase.Command(contestId = contest.id))
 
         assertEquals(contest.id, result.id)
         assertFalse(contest.isFrozen())
-        verify(contestRepository).save(contest)
+        verify(contestRepository).saveAndFlush(contest)
         verify(autoFreezeQueueProducer).cancel(contestId = contest.id)
         verify(businessEventPublisher).publish(
             argThat {

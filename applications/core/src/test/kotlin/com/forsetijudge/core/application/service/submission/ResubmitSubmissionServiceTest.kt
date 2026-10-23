@@ -50,7 +50,7 @@ class ResubmitSubmissionServiceTest {
         assertEquals(Submission.Status.JUDGING, submission.status)
         assertNull(submission.answer)
         assertEquals(submission.id, response.id)
-        verify(submissions).save(submission)
+        verify(submissions).saveAndFlush(submission)
         verify(events).publish(SubmissionEvent.Resubmitted(submission.id))
     }
 
@@ -65,7 +65,7 @@ class ResubmitSubmissionServiceTest {
         assertThrows(ForbiddenException::class.java) {
             service.execute(ResubmitSubmissionUseCase.Command(contest.id, submission.id))
         }
-        verify(submissions, never()).save(any())
+        verify(submissions, never()).saveAndFlush(any())
 
         whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

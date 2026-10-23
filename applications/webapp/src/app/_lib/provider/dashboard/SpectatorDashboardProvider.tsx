@@ -41,8 +41,6 @@ export function SpectatorDashboardProvider({
   );
 
   useEffect(() => {
-    let cancelled = false;
-
     async function fetchDashboardData() {
       console.debug("Fetching dashboard data");
       const data = await Composition.dashboardReader.getSpectatorDashboard(
@@ -95,9 +93,6 @@ export function SpectatorDashboardProvider({
         dashboardReseter.reset();
         await fetchDashboardData();
         await connectBroadcastListeners();
-        if (cancelled) {
-          await disconnectBroadcastListeners();
-        }
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -107,7 +102,6 @@ export function SpectatorDashboardProvider({
     init();
 
     return () => {
-      cancelled = true;
       disconnectBroadcastListeners();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };

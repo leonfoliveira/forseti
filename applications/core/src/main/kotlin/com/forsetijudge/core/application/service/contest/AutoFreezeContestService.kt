@@ -9,9 +9,9 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 
 @Service
 class AutoFreezeContestService(
@@ -32,7 +32,7 @@ class AutoFreezeContestService(
         logger.info("Auto freezing contest with id: ${command.contestId}")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id ${command.contestId}")
 
         if (contest.isFrozen()) {
@@ -47,7 +47,7 @@ class AutoFreezeContestService(
         frozenSubmissionRepository.saveAll(frozenSubmissions)
 
         contest.frozenAt = OffsetDateTime.now()
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         businessEventPublisher.publish(ContestEvent.Frozen(contestId = contest.id))
 
         logger.info("Auto frozen contest with id: ${command.contestId}")

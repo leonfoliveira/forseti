@@ -1,15 +1,15 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Contest
-import org.springframework.data.jpa.repository.Query
 import java.util.UUID
+import org.springframework.data.jpa.repository.Query
 
 /**
  * Accessor for persistence operations related to Contest entity
  */
 interface ContestRepository : BaseRepository<Contest> {
     @Query("SELECT c FROM Contest c WHERE c.id = ?1 AND c.deletedAt IS NULL")
-    fun findById(id: UUID): Contest?
+    fun findByIdNullable(id: UUID): Contest?
 
     @Query("SELECT c FROM Contest c WHERE c.slug = ?1 AND c.deletedAt IS NULL")
     fun findBySlug(slug: String): Contest?

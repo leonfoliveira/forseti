@@ -47,7 +47,7 @@ class PublishClarificationServiceTest {
     @Test
     fun `throws NotFoundException when contest does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(null)
 
         val exception =
             assertThrows<NotFoundException> {
@@ -60,7 +60,7 @@ class PublishClarificationServiceTest {
     @Test
     fun `throws NotFoundException when member does not exist in contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(null)
 
         val exception =
@@ -74,7 +74,7 @@ class PublishClarificationServiceTest {
     @Test
     fun `throws NotFoundException when clarification does not exist in contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, command.contestId)).thenReturn(
             null,
@@ -95,7 +95,7 @@ class PublishClarificationServiceTest {
     fun `throws ForbiddenException when member is not ROOT or ADMIN`() {
         val nonAdminMember = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
         TestAuthentication.setMember(nonAdminMember)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(nonAdminMember.id, command.contestId)).thenReturn(
             nonAdminMember,
         )
@@ -115,7 +115,7 @@ class PublishClarificationServiceTest {
     fun `throws ForbiddenException when clarification has not been answered yet`() {
         val unansweredClarification = MockEntityFactory.clarification(answer = null)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, command.contestId)).thenReturn(
             unansweredClarification,
@@ -135,7 +135,7 @@ class PublishClarificationServiceTest {
     @Test
     fun `saves clarification and publishes event when member is ROOT or ADMIN`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, command.contestId)).thenReturn(
             clarification,
@@ -144,7 +144,7 @@ class PublishClarificationServiceTest {
         service.execute(command)
 
         assertEquals(true, clarification.isPublic)
-        verify(clarificationRepository).save(clarification)
+        verify(clarificationRepository).saveAndFlush(clarification)
         verify(businessEventPublisher).publish(ClarificationEvent.Published(clarification.id))
     }
 }

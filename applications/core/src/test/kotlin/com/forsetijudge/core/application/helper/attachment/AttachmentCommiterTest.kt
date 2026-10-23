@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -14,7 +15,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class AttachmentCommiterTest {
     private val repository = mock<AttachmentRepository>()
@@ -37,7 +37,7 @@ class AttachmentCommiterTest {
 
         assertSame(attachment, result)
         assertTrue(attachment.isCommited)
-        verify(repository).save(attachment)
+        verify(repository).saveAndFlush(attachment)
     }
 
     @Test
@@ -49,7 +49,7 @@ class AttachmentCommiterTest {
         assertThrows(NotFoundException::class.java) {
             committer.commit(attachmentId, contestId, Attachment.Context.PROBLEM_DESCRIPTION)
         }
-        verify(repository, never()).save(org.mockito.kotlin.any())
+        verify(repository, never()).saveAndFlush(org.mockito.kotlin.any())
     }
 
     @Test
@@ -67,6 +67,6 @@ class AttachmentCommiterTest {
             committer.commit(wrongContext.id, wrongContext.contest.id, Attachment.Context.SUBMISSION_CODE)
         }
         assertFalse(wrongContext.isCommited)
-        verify(repository, never()).save(wrongContext)
+        verify(repository, never()).saveAndFlush(wrongContext)
     }
 }

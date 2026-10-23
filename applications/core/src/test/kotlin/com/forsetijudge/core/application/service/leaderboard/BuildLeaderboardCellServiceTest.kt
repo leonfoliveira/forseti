@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -19,7 +20,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class BuildLeaderboardCellServiceTest {
     private val contests = mock<ContestRepository>()
@@ -49,7 +49,7 @@ class BuildLeaderboardCellServiceTest {
                 penalty = 10,
             )
         TestAuthentication.setMember(judge)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
         whenever(members.findByIdAndContestId(targetMember.id, contest.id)).thenReturn(targetMember)
         whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(problem)
@@ -79,7 +79,7 @@ class BuildLeaderboardCellServiceTest {
         val targetId = java.util.UUID.randomUUID()
         val problemId = java.util.UUID.randomUUID()
         TestAuthentication.setMember(admin)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
         whenever(members.findByIdAndContestId(targetId, contest.id)).thenReturn(null)
 

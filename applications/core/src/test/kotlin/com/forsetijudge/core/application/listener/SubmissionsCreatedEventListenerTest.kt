@@ -25,7 +25,7 @@ class SubmissionsCreatedEventListenerTest {
         val member = MockEntityFactory.member(contest = contest)
         val problem = MockEntityFactory.problem(contest = contest)
         val submission = MockEntityFactory.submission(member = member, problem = problem)
-        whenever(submissions.findById(submission.id)).thenReturn(submission)
+        whenever(submissions.findByIdNullable(submission.id)).thenReturn(submission)
 
         listener.handle(SubmissionEvent.Created(submission.id))
 
@@ -46,7 +46,7 @@ class SubmissionsCreatedEventListenerTest {
     @Test
     fun `throws when submission does not exist`() {
         val submissionId = UUID.randomUUID()
-        whenever(submissions.findById(submissionId)).thenReturn(null)
+        whenever(submissions.findByIdNullable(submissionId)).thenReturn(null)
 
         assertThrows(NotFoundException::class.java) {
             listener.handle(SubmissionEvent.Created(submissionId))

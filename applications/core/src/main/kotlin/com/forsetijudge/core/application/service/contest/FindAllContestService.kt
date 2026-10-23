@@ -32,7 +32,7 @@ class FindAllContestService(
         logger.info("Finding all contests")
 
         val member =
-            memberRepository.findById(contextMemberId)
+            memberRepository.findByIdNullable(contextMemberId)
                 ?: throw NotFoundException("Could not find member with id: $contextMemberId")
 
         if (member.type != Member.Type.ROOT) {

@@ -29,7 +29,7 @@ class ApiContestFrozenEventListener(
         logger.info("Handling contest frozen event for contest with id: ${event.contestId}")
 
         val contest =
-            contestRepository.findById(event.contestId)
+            contestRepository.findByIdNullable(event.contestId)
                 ?: throw NotFoundException("Could not find contest with id ${event.contestId}")
 
         sseFanoutRedisMessageProducer.produce(

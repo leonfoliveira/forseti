@@ -46,7 +46,7 @@ class UpdateSubmissionAnswerServiceTest {
 
         assertEquals(Submission.Status.JUDGED, submission.status)
         assertEquals(Submission.Answer.ACCEPTED, response.answer)
-        verify(submissions).save(submission)
+        verify(submissions).saveAndFlush(submission)
         verify(events).publish(SubmissionEvent.Updated(submission.id))
     }
 
@@ -63,7 +63,7 @@ class UpdateSubmissionAnswerServiceTest {
                 UpdateSubmissionAnswerUseCase.Command(contest.id, submission.id, Submission.Answer.ACCEPTED),
             )
         }
-        verify(submissions, never()).save(any())
+        verify(submissions, never()).saveAndFlush(any())
 
         whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {

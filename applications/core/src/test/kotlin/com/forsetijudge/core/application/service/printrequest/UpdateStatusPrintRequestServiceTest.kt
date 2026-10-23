@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRe
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,7 +20,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class UpdateStatusPrintRequestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -42,7 +42,7 @@ class UpdateStatusPrintRequestServiceTest {
     @Test
     fun `should throw NotFoundException when contest does not exist`() {
         TestAuthentication.setMember(adminMember)
-        whenever(contestRepository.findById(contest.id)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(
@@ -58,7 +58,7 @@ class UpdateStatusPrintRequestServiceTest {
     @Test
     fun `should throw NotFoundException when member does not exist`() {
         TestAuthentication.setMember(adminMember)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
@@ -75,7 +75,7 @@ class UpdateStatusPrintRequestServiceTest {
     @Test
     fun `should throw NotFoundException when print request does not exist`() {
         TestAuthentication.setMember(adminMember)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
             adminMember,
         )
@@ -97,7 +97,7 @@ class UpdateStatusPrintRequestServiceTest {
         TestAuthentication.setMember(adminMember)
         val contestantMember = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
 
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
             contestantMember,
         )
@@ -117,7 +117,7 @@ class UpdateStatusPrintRequestServiceTest {
     @Test
     fun `should throw ForbiddenException when trying to change status to PENDING`() {
         TestAuthentication.setMember(adminMember)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
             adminMember,
         )
@@ -138,7 +138,7 @@ class UpdateStatusPrintRequestServiceTest {
     fun `should throw ForbiddenException when trying to change status of a PrintRequest that is not PENDING`() {
         TestAuthentication.setMember(adminMember)
         val completedPrintRequest = MockEntityFactory.printRequest(status = PrintRequest.Status.COMPLETED)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
             adminMember,
         )
@@ -160,7 +160,7 @@ class UpdateStatusPrintRequestServiceTest {
     @Test
     fun `should update print request status successfully`() {
         TestAuthentication.setMember(adminMember)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(adminMember.id, contest.id)).thenReturn(
             adminMember,
         )
@@ -177,7 +177,7 @@ class UpdateStatusPrintRequestServiceTest {
 
         assertEquals(printRequest.id, result.id)
         assertEquals(PrintRequest.Status.COMPLETED, printRequest.status)
-        verify(printRequestRepository).save(printRequest)
+        verify(printRequestRepository).saveAndFlush(printRequest)
         verify(businessEventPublisher).publish(any<PrintRequestEvent.Updated>())
     }
 }

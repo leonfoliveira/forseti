@@ -41,8 +41,6 @@ export function JudgeDashboardProvider({
   );
 
   useEffect(() => {
-    let cancelled = false;
-
     async function fetchDashboardData() {
       console.debug("Fetching dashboard data");
       const data = await Composition.dashboardReader.getJudgeDashboard(
@@ -97,9 +95,6 @@ export function JudgeDashboardProvider({
         dashboardReseter.reset();
         await fetchDashboardData();
         await connectBroadcastListeners();
-        if (cancelled) {
-          await disconnectBroadcastListeners();
-        }
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -109,7 +104,6 @@ export function JudgeDashboardProvider({
     init();
 
     return () => {
-      cancelled = true;
       disconnectBroadcastListeners();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };

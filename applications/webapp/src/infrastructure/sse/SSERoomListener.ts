@@ -24,6 +24,10 @@ export abstract class SSERoomListener {
     return new Promise<void>((resolve, reject) => {
       console.debug("Connecting to:", path);
 
+      if (this.eventSource) {
+        this.unsubscribe();
+      }
+
       this.eventSource = new EventSource(`${this.apiUrl}${path}`, {
         withCredentials: true,
       });

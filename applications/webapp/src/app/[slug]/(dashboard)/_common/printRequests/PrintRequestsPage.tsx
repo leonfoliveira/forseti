@@ -32,6 +32,8 @@ export function PrintRequestsPage({
   canUpdate,
   onUpdate,
 }: Props) {
+  console.debug("Current print request: ", printRequests);
+
   return (
     <Page
       title="Forseti - Print Requests"

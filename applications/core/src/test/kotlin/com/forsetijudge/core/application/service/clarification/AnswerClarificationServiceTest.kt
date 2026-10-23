@@ -45,7 +45,7 @@ class AnswerClarificationServiceTest {
     fun `throws NotFoundException when contest does not exist`() {
         val member = MockEntityFactory.member()
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(null)
 
         val exception =
             assertThrows<NotFoundException> {
@@ -60,7 +60,7 @@ class AnswerClarificationServiceTest {
         val member = MockEntityFactory.member()
         TestAuthentication.setMember(member)
         val contest = MockEntityFactory.contest(id = command.contestId)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         val exception =
@@ -76,7 +76,7 @@ class AnswerClarificationServiceTest {
         val member = MockEntityFactory.member()
         TestAuthentication.setMember(member)
         val contest = MockEntityFactory.contest(id = command.contestId)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, contest.id)).thenReturn(null)
 
@@ -96,7 +96,7 @@ class AnswerClarificationServiceTest {
         val contest = MockEntityFactory.contest(id = command.contestId)
         val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, contest.id)).thenReturn(
             MockEntityFactory.clarification(contest = contest),
@@ -123,7 +123,7 @@ class AnswerClarificationServiceTest {
                 answer = Clarification.Answer(member = member, text = "Already answered"),
             )
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, contest.id)).thenReturn(
             clarification,
@@ -146,7 +146,7 @@ class AnswerClarificationServiceTest {
         val member = MockEntityFactory.member(type = Member.Type.ADMIN, contest = contest)
         val clarification = MockEntityFactory.clarification(contest = contest, answer = null)
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, contest.id)).thenReturn(
             clarification,

@@ -5,6 +5,7 @@ import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.queue.SubmissionQueueProducer
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -12,7 +13,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class SubmissionResubmittedEventListenerTest {
     private val submissions = mock<SubmissionRepository>()
@@ -25,7 +25,7 @@ class SubmissionResubmittedEventListenerTest {
         val member = MockEntityFactory.member(contest = contest)
         val problem = MockEntityFactory.problem(contest = contest)
         val submission = MockEntityFactory.submission(member = member, problem = problem)
-        whenever(submissions.findById(submission.id)).thenReturn(submission)
+        whenever(submissions.findByIdNullable(submission.id)).thenReturn(submission)
 
         listener.handle(SubmissionEvent.Resubmitted(submission.id))
 
@@ -46,7 +46,7 @@ class SubmissionResubmittedEventListenerTest {
     @Test
     fun `does not queue a missing submission`() {
         val submissionId = UUID.randomUUID()
-        whenever(submissions.findById(submissionId)).thenReturn(null)
+        whenever(submissions.findByIdNullable(submissionId)).thenReturn(null)
 
         assertThrows(NotFoundException::class.java) {
             listener.handle(SubmissionEvent.Resubmitted(submissionId))

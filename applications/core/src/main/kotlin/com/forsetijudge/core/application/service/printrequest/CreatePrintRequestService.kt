@@ -36,7 +36,7 @@ class CreatePrintRequestService(
         logger.info("Creating PrintRequest for submission with id: ${command.submissionId} by member with id: $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Contest with id ${command.contestId} not found")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -60,7 +60,7 @@ class CreatePrintRequestService(
                 submission = submission,
             )
 
-        printRequestRepository.save(printRequest)
+        printRequestRepository.saveAndFlush(printRequest)
         businessEventPublisher.publish(PrintRequestEvent.Created(printRequest.id))
 
         logger.info("Successfully created PrintRequest with id: ${printRequest.id}")

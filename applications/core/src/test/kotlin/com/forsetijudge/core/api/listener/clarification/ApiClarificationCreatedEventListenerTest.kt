@@ -26,7 +26,7 @@ class ApiClarificationCreatedEventListenerTest {
     fun `fans out clarification answered event to all dashboard rooms`() {
         val contest = MockEntityFactory.contest()
         val clarification = MockEntityFactory.clarification(contest = contest)
-        whenever(clarificationRepository.findById(clarification.id)).thenReturn(clarification)
+        whenever(clarificationRepository.findByIdNullable(clarification.id)).thenReturn(clarification)
 
         listener.handle(ClarificationEvent.Created(clarification.id))
 
@@ -49,7 +49,7 @@ class ApiClarificationCreatedEventListenerTest {
     @Test
     fun `throws NotFoundException when clarification does not exist`() {
         val clarificationId = MockEntityFactory.clarification().id
-        whenever(clarificationRepository.findById(clarificationId)).thenReturn(null)
+        whenever(clarificationRepository.findByIdNullable(clarificationId)).thenReturn(null)
 
         val exception =
             assertThrows<NotFoundException> {

@@ -24,7 +24,7 @@ class SubmissionCreatedEventListener(
         logger.info("Handling submission created event for submission with id: ${event.submissionId}")
 
         val submission =
-            submissionRepository.findById(event.submissionId)
+            submissionRepository.findByIdNullable(event.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
         val contest = submission.contest
 

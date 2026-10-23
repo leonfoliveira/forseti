@@ -53,7 +53,7 @@ class UpdateSubmissionAnswerService(
         submission.status = Submission.Status.JUDGED
         submission.answer = command.answer
 
-        submissionRepository.save(submission)
+        submissionRepository.saveAndFlush(submission)
         businessEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
         logger.info("Submission answer updated successfully")

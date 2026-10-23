@@ -39,7 +39,7 @@ class UnfreezeContestService(
         logger.info("Unfreezing contest with id: ${command.contestId} by member with id: $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -56,7 +56,7 @@ class UnfreezeContestService(
 
         val currentFrozenAt = contest.frozenAt!!
         contest.frozenAt = null
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         autoFreezeQueueProducer.cancel(contestId = contest.id)
         businessEventPublisher.publish(ContestEvent.Unfrozen(contestId = contest.id, frozenAt = currentFrozenAt))
 

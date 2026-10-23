@@ -28,7 +28,7 @@ class ApiPrintRequestCreatedEventListener(
         logger.info("Handling print request created event for print request with id: ${event.printRequestId}")
 
         val printRequest =
-            printRequestRepository.findById(event.printRequestId)
+            printRequestRepository.findByIdNullable(event.printRequestId)
                 ?: throw NotFoundException("Could not find print request with id: ${event.printRequestId}")
         val member = printRequest.submission.member
 

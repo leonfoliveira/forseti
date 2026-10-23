@@ -10,6 +10,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -20,7 +21,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class ForceStartContestServiceTest {
     private val contests = mock<ContestRepository>()
@@ -36,14 +36,14 @@ class ForceStartContestServiceTest {
         val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
 
         val response = service.execute(ForceStartContestUseCase.Command(contest.id))
 
         assertEquals(contest.id, response.id)
         assertTrue(contest.hasStarted())
-        verify(contests).save(contest)
+        verify(contests).saveAndFlush(contest)
         verify(events).publish(ContestEvent.Updated(contest.id))
     }
 
@@ -52,15 +52,15 @@ class ForceStartContestServiceTest {
         val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusHours(1))
         val contestant = MockEntityFactory.member(contest = contest)
         TestAuthentication.setMember(contestant)
-        whenever(contests.findById(contest.id)).thenReturn(contest)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
 
         assertThrows(ForbiddenException::class.java) {
             service.execute(ForceStartContestUseCase.Command(contest.id))
         }
-        verify(contests, never()).save(any())
+        verify(contests, never()).saveAndFlush(any())
 
-        whenever(contests.findById(contest.id)).thenReturn(null)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(null)
         assertThrows(NotFoundException::class.java) {
             service.execute(ForceStartContestUseCase.Command(contest.id))
         }

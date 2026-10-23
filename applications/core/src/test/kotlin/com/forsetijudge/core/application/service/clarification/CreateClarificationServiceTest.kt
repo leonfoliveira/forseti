@@ -13,6 +13,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -22,7 +23,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class CreateClarificationServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -54,7 +54,7 @@ class CreateClarificationServiceTest {
     @Test
     fun `throws NotFoundException when contest does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(null)
 
         val exception =
             assertThrows<NotFoundException> {
@@ -67,7 +67,7 @@ class CreateClarificationServiceTest {
     @Test
     fun `throws NotFoundException when member does not exist in contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         val exception =
@@ -81,7 +81,7 @@ class CreateClarificationServiceTest {
     @Test
     fun `throws NotFoundException when problem does not exist in contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, command.contestId)).thenReturn(member)
         whenever(problemRepository.findByIdAndContestId(command.problemId!!, contest.id)).thenReturn(null)
 
@@ -97,7 +97,7 @@ class CreateClarificationServiceTest {
     fun `throws ForbiddenException when member is not CONTESTANT`() {
         val nonContestantMember = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(nonContestantMember)
-        whenever(contestRepository.findById(command.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contest)
         whenever(
             memberRepository.findByIdAndContestIdOrContestIsNull(
                 nonContestantMember.id,
@@ -127,7 +127,7 @@ class CreateClarificationServiceTest {
             )
         val memberInInactiveContest = MockEntityFactory.member(contest = inactiveContest, type = Member.Type.CONTESTANT)
         TestAuthentication.setMember(memberInInactiveContest)
-        whenever(contestRepository.findById(any())).thenReturn(inactiveContest)
+        whenever(contestRepository.findByIdNullable(any())).thenReturn(inactiveContest)
         whenever(
             memberRepository.findByIdAndContestIdOrContestIsNull(
                 memberInInactiveContest.id,
@@ -151,7 +151,7 @@ class CreateClarificationServiceTest {
     @Test
     fun `saves clarification and publishes event when all conditions are met`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(any())).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(any())).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(any(), any())).thenReturn(member)
         whenever(problemRepository.findByIdAndContestId(any(), any())).thenReturn(
             MockEntityFactory.problem(id = command.problemId!!, contest = contest),
@@ -160,7 +160,7 @@ class CreateClarificationServiceTest {
         service.execute(command)
 
         val savedClarificationCaptor = argumentCaptor<Clarification>()
-        verify(clarificationRepository).save(savedClarificationCaptor.capture())
+        verify(clarificationRepository).saveAndFlush(savedClarificationCaptor.capture())
         val savedClarification = savedClarificationCaptor.firstValue
         assertEquals(command.text, savedClarification.text)
         assertEquals(contest, savedClarification.contest)

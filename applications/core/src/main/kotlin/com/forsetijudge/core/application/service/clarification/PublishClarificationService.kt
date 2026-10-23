@@ -41,7 +41,7 @@ class PublishClarificationService(
         )
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id = ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -62,7 +62,7 @@ class PublishClarificationService(
         }
 
         clarification.isPublic = true
-        clarificationRepository.save(clarification)
+        clarificationRepository.saveAndFlush(clarification)
         businessEventPublisher.publish(ClarificationEvent.Published(clarification.id))
 
         logger.info("Clarification with id: ${clarification.id} has been published by member with id: $contextMemberId")

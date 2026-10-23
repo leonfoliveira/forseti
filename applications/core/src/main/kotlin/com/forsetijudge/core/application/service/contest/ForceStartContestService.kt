@@ -13,9 +13,9 @@ import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 
 @Service
 class ForceStartContestService(
@@ -38,7 +38,7 @@ class ForceStartContestService(
         logger.info("Force starting contest with id: ${command.contestId} by member with id: $contextMemberId")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest with id: ${command.contestId}")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -55,7 +55,7 @@ class ForceStartContestService(
         }
 
         contest.startAt = OffsetDateTime.now()
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         businessEventPublisher.publish(ContestEvent.Updated(contest.id))
 
         logger.info("Contest force started successfully")

@@ -14,6 +14,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertNotNull
@@ -22,7 +23,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class FreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -49,7 +49,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should throw NotFoundException when contest does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             service.execute(FreezeContestUseCase.Command(contestId = contest.id))
@@ -59,7 +59,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should throw NotFoundException when member does not exist`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
 
         assertThrows<NotFoundException> {
@@ -70,7 +70,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when member does not belongs to contest`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = MockEntityFactory.contest()),
         )
@@ -83,7 +83,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should throw ForbiddenException when member is not admin or root`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest),
         )
@@ -97,7 +97,7 @@ class FreezeContestServiceTest {
     fun `should throw ForbiddenException when contest has ended`() {
         TestAuthentication.setMember(member)
         val endedContest = MockEntityFactory.contest(endAt = OffsetDateTime.now().minusDays(1))
-        whenever(contestRepository.findById(endedContest.id)).thenReturn(endedContest)
+        whenever(contestRepository.findByIdNullable(endedContest.id)).thenReturn(endedContest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, endedContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = endedContest),
         )
@@ -111,7 +111,7 @@ class FreezeContestServiceTest {
     fun `should throw ForbiddenException when contest is already frozen`() {
         TestAuthentication.setMember(member)
         val frozenContest = MockEntityFactory.contest(frozenAt = OffsetDateTime.now().minusDays(1))
-        whenever(contestRepository.findById(frozenContest.id)).thenReturn(frozenContest)
+        whenever(contestRepository.findByIdNullable(frozenContest.id)).thenReturn(frozenContest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, frozenContest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = frozenContest),
         )
@@ -124,7 +124,7 @@ class FreezeContestServiceTest {
     @Test
     fun `should freeze contest successfully`() {
         TestAuthentication.setMember(member)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(
             MockEntityFactory.member(type = Member.Type.ADMIN, contest = contest),
         )
@@ -139,7 +139,7 @@ class FreezeContestServiceTest {
                 it.size == 1 && it[0].id == submission.id
             },
         )
-        verify(contestRepository).save(contest)
+        verify(contestRepository).saveAndFlush(contest)
         verify(autoFreezeQueueProducer).cancel(contestId = contest.id)
         verify(businessEventPublisher).publish(ContestEvent.Frozen(contestId = contest.id))
     }

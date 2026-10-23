@@ -27,7 +27,7 @@ class FailSubmissionService(
         logger.info("Failing submission with id: ${command.submissionId}")
 
         val submission =
-            submissionRepository.findById(command.submissionId)
+            submissionRepository.findByIdNullable(command.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${command.submissionId} in this contest")
 
         if (submission.status != Submission.Status.JUDGING) {
@@ -37,7 +37,7 @@ class FailSubmissionService(
 
         submission.status = Submission.Status.FAILED
 
-        submissionRepository.save(submission)
+        submissionRepository.saveAndFlush(submission)
         businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
 
         metricsCollector.incrementSubmissionsFailed(submission.contest.id)

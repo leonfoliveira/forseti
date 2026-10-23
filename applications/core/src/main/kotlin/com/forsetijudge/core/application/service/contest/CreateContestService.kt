@@ -43,7 +43,7 @@ class CreateContestService(
         logger.info("Creating contest with slug: ${command.slug}")
 
         val member =
-            memberRepository.findById(contextMemberId)
+            memberRepository.findByIdNullable(contextMemberId)
                 ?: throw NotFoundException("Could not find member with id: $contextMemberId")
 
         if (member.type != Member.Type.ROOT) {
@@ -62,7 +62,7 @@ class CreateContestService(
                 startAt = command.startAt,
                 endAt = command.endAt,
             )
-        contestRepository.save(contest)
+        contestRepository.saveAndFlush(contest)
         businessEventPublisher.publish(ContestEvent.Created(contest.id))
 
         logger.info("Contest created successfully with id = ${contest.id}")

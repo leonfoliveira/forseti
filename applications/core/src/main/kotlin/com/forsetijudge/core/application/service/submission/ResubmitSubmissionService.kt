@@ -51,7 +51,7 @@ class ResubmitSubmissionService(
         submission.status = Submission.Status.JUDGING
         submission.answer = null
 
-        submissionRepository.save(submission)
+        submissionRepository.saveAndFlush(submission)
         businessEventPublisher.publish(SubmissionEvent.Resubmitted(submission.id))
 
         logger.info("Submission reset successfully")

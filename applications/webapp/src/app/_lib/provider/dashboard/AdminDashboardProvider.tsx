@@ -48,8 +48,6 @@ export function AdminDashboardProvider({
   );
 
   useEffect(() => {
-    let cancelled = false;
-
     async function fetchDashboardData() {
       console.debug("Fetching dashboard data");
       const data = await Composition.dashboardReader.getAdminDashboard(
@@ -106,9 +104,6 @@ export function AdminDashboardProvider({
         dashboardReseter.reset();
         await fetchDashboardData();
         await connectBroadcastListeners();
-        if (cancelled) {
-          await disconnectBroadcastListeners();
-        }
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -118,7 +113,6 @@ export function AdminDashboardProvider({
     init();
 
     return () => {
-      cancelled = true;
       disconnectBroadcastListeners();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };

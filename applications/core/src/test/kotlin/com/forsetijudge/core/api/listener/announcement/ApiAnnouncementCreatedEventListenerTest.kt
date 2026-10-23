@@ -29,7 +29,7 @@ class ApiAnnouncementCreatedEventListenerTest {
     fun `fans out announcement created event to all dashboard rooms`() {
         val contest = MockEntityFactory.contest()
         val announcement = MockEntityFactory.announcement(contest = contest)
-        whenever(announcementRepository.findById(announcement.id)).thenReturn(announcement)
+        whenever(announcementRepository.findByIdNullable(announcement.id)).thenReturn(announcement)
 
         listener.handle(AnnouncementEvent.Created(announcement.id))
 
@@ -56,7 +56,7 @@ class ApiAnnouncementCreatedEventListenerTest {
     @Test
     fun `throws NotFoundException when announcement does not exist`() {
         val announcementId = IdGenerator.getUUID()
-        whenever(announcementRepository.findById(announcementId)).thenReturn(null)
+        whenever(announcementRepository.findByIdNullable(announcementId)).thenReturn(null)
 
         val exception =
             assertThrows(NotFoundException::class.java) {

@@ -25,7 +25,7 @@ class DeleteAllSessionsByContextMemberServiceTest {
     fun `deletes sessions belonging to the authenticated member`() {
         val member = MockEntityFactory.member(type = Member.Type.ADMIN)
         TestAuthentication.setMember(member)
-        whenever(members.findById(member.id)).thenReturn(member)
+        whenever(members.findByIdNullable(member.id)).thenReturn(member)
 
         service.execute()
 
@@ -36,7 +36,7 @@ class DeleteAllSessionsByContextMemberServiceTest {
     fun `fails when authenticated member no longer exists`() {
         val member = MockEntityFactory.member()
         TestAuthentication.setMember(member)
-        whenever(members.findById(member.id)).thenReturn(null)
+        whenever(members.findByIdNullable(member.id)).thenReturn(null)
 
         assertThrows(NotFoundException::class.java) { service.execute() }
         verify(deleter, org.mockito.kotlin.never()).deleteByMember(org.mockito.kotlin.any())

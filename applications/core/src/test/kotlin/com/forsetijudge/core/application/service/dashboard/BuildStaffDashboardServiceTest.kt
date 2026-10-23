@@ -42,7 +42,7 @@ class BuildStaffDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val staff = MockEntityFactory.member(contest = contest, type = Member.Type.STAFF)
         TestAuthentication.setMember(staff)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(staff.id, contest.id)).thenReturn(staff)
         whenever(
             leaderboardBuilder.build(

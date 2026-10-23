@@ -52,7 +52,7 @@ class CreateSubmissionService(
         logger.info("Creating submission for member with id: $contextMemberId and problem with id: ${command.problemId}")
 
         val contest =
-            contestRepository.findById(command.contestId)
+            contestRepository.findByIdNullable(command.contestId)
                 ?: throw NotFoundException("Could not find contest for member with id = $contextMemberId")
         val member =
             memberRepository.findByIdAndContestIdOrContestIsNull(contextMemberId, command.contestId)
@@ -86,7 +86,7 @@ class CreateSubmissionService(
                 status = Submission.Status.JUDGING,
                 code = code,
             )
-        submissionRepository.save(submission)
+        submissionRepository.saveAndFlush(submission)
         businessEventPublisher.publish(SubmissionEvent.Created(submission.id))
 
         metricsCollector.incrementSubmissionsCreated(contest.id)

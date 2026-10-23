@@ -12,9 +12,9 @@ import com.forsetijudge.core.port.input.usecase.submission.JudgeSubmissionUseCas
 import com.forsetijudge.core.port.output.repository.ExecutionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class JudgeSubmissionAnswerService(
@@ -38,7 +38,7 @@ class JudgeSubmissionAnswerService(
         )
 
         val submission =
-            submissionRepository.findById(command.submissionId)
+            submissionRepository.findByIdNullable(command.submissionId)
                 ?: throw NotFoundException("Could not find submission with id: ${command.submissionId}")
 
         if (submission.status != Submission.Status.JUDGING) {
@@ -52,7 +52,7 @@ class JudgeSubmissionAnswerService(
             createExecution(command, submission, command.detailsId)
         }
 
-        submissionRepository.save(submission)
+        submissionRepository.saveAndFlush(submission)
         businessEventPublisher.publish(SubmissionEvent.Updated(submission.id))
 
         metricsCollector.incrementSubmissionsJudged(submission.contest.id)
@@ -88,6 +88,6 @@ class JudgeSubmissionAnswerService(
                 details = detailsAttachment,
             )
 
-        executionRepository.save(execution)
+        executionRepository.saveAndFlush(execution)
     }
 }

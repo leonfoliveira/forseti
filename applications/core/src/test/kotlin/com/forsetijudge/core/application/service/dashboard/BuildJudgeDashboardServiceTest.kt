@@ -44,7 +44,7 @@ class BuildJudgeDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val judge = MockEntityFactory.member(contest = contest, type = Member.Type.JUDGE)
         TestAuthentication.setMember(judge)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
         whenever(
             leaderboardBuilder.build(
@@ -64,7 +64,7 @@ class BuildJudgeDashboardServiceTest {
         val contest = MockEntityFactory.contest()
         val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
         TestAuthentication.setMember(admin)
-        whenever(contestRepository.findById(contest.id)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(memberRepository.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
 
         assertThrows(ForbiddenException::class.java) {

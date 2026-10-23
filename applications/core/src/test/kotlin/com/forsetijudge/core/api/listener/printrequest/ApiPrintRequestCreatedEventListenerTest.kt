@@ -27,7 +27,7 @@ class ApiPrintRequestCreatedEventListenerTest {
     @Test
     fun `should throw NotFoundException when print request does not exist`() {
         val event = PrintRequestEvent.Created(printRequestId = IdGenerator.getUUID())
-        whenever(printRequestRepository.findById(event.printRequestId)).thenReturn(null)
+        whenever(printRequestRepository.findByIdNullable(event.printRequestId)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             listener.handle(event)
@@ -38,7 +38,7 @@ class ApiPrintRequestCreatedEventListenerTest {
     fun `should produce SSEFanoutMessage for all dashboard rooms when print request is created`() {
         val printRequest = MockEntityFactory.printRequest()
         val event = PrintRequestEvent.Created(printRequestId = printRequest.id)
-        whenever(printRequestRepository.findById(event.printRequestId)).thenReturn(printRequest)
+        whenever(printRequestRepository.findByIdNullable(event.printRequestId)).thenReturn(printRequest)
 
         listener.handle(event)
 

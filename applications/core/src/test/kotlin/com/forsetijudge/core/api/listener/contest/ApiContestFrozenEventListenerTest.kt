@@ -28,7 +28,7 @@ class ApiContestFrozenEventListenerTest {
     @Test
     fun `should throw NotFoundException when contest does not exist`() {
         val event = ContestEvent.Frozen(contestId = IdGenerator.getUUID())
-        whenever(contestRepository.findById(event.contestId)).thenReturn(null)
+        whenever(contestRepository.findByIdNullable(event.contestId)).thenReturn(null)
 
         assertThrows<NotFoundException> {
             listener.handle(event)
@@ -39,7 +39,7 @@ class ApiContestFrozenEventListenerTest {
     fun `should produce SSEFanoutMessage for all dashboard rooms when contest is frozen`() {
         val contest = MockEntityFactory.contest()
         val event = ContestEvent.Frozen(contestId = contest.id)
-        whenever(contestRepository.findById(event.contestId)).thenReturn(contest)
+        whenever(contestRepository.findByIdNullable(event.contestId)).thenReturn(contest)
 
         listener.handle(event)
 

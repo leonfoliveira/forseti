@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class SSEAuthorizerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -32,7 +32,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.ADMIN)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(null)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
                 service.authorizeToAdminDashboardRoom(contestId)
@@ -44,7 +44,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.ADMIN)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(MockEntityFactory.contest())
             whenever(memberResponseDTO.findByIdAndContestIdOrContestIsNull(any(), any())).thenReturn(null)
 
             assertThrows<NotFoundException> {
@@ -58,7 +58,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.ADMIN, contest = MockEntityFactory.contest())
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestIdOrContestIsNull(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -72,7 +72,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestIdOrContestIsNull(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -88,7 +88,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.JUDGE)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(null)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
                 service.authorizeToJudgeDashboardRoom(contestId)
@@ -100,7 +100,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.JUDGE)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(MockEntityFactory.contest())
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
 
             assertThrows<NotFoundException> {
@@ -114,7 +114,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.JUDGE, contest = MockEntityFactory.contest())
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -128,7 +128,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -144,7 +144,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.STAFF)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(null)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
                 service.authorizeToStaffDashboardRoom(contestId)
@@ -156,7 +156,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.STAFF)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(MockEntityFactory.contest())
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(MockEntityFactory.contest())
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
 
             assertThrows<NotFoundException> {
@@ -170,7 +170,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.STAFF, contest = MockEntityFactory.contest())
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -184,7 +184,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest()
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -200,7 +200,7 @@ class SSEAuthorizerTest {
             val contestId = IdGenerator.getUUID()
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(null)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
                 service.authorizeToContestantDashboardRoom(contestId)
@@ -213,7 +213,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(null)
 
             assertThrows<NotFoundException> {
@@ -231,7 +231,7 @@ class SSEAuthorizerTest {
                     contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1)),
                 )
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -245,7 +245,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
             val member = MockEntityFactory.member(type = Member.Type.JUDGE, contest = contest)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -259,7 +259,7 @@ class SSEAuthorizerTest {
             val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusDays(1))
             val member = MockEntityFactory.member(type = Member.Type.CONTESTANT)
             TestAuthentication.setMember(member)
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
             whenever(memberResponseDTO.findByIdAndContestId(any(), any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
@@ -273,7 +273,7 @@ class SSEAuthorizerTest {
         @Test
         fun `should throw NotFoundException when contest is not found`() {
             val contestId = IdGenerator.getUUID()
-            whenever(contestRepository.findById(contestId)).thenReturn(null)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(null)
 
             assertThrows<NotFoundException> {
                 service.authorizeToSpectatorDashboardRoom(contestId)
@@ -284,7 +284,7 @@ class SSEAuthorizerTest {
         fun `should throw ForbiddenException when contest has not started`() {
             val contestId = IdGenerator.getUUID()
             val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusDays(1))
-            whenever(contestRepository.findById(contestId)).thenReturn(contest)
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
 
             assertThrows<ForbiddenException> {
                 service.authorizeToSpectatorDashboardRoom(contestId)
@@ -298,7 +298,7 @@ class SSEAuthorizerTest {
         fun `should throw ForbiddenException when member is not authorized`() {
             val member = MockEntityFactory.member()
             TestAuthentication.setMember(member)
-            whenever(memberResponseDTO.findById(any())).thenReturn(member)
+            whenever(memberResponseDTO.findByIdNullable(any())).thenReturn(member)
 
             assertThrows<ForbiddenException> {
                 service.authorizeToMemberPrivateRoom(IdGenerator.getUUID())
