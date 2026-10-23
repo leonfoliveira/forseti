@@ -10,10 +10,10 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "contest")
@@ -65,6 +65,7 @@ class Contest(
      * The IP CIDRs that are allowed to access the contest.
      */
     @Column(name = "ip_cidrs", nullable = false)
+    @Audited(modifiedColumnName = "ip_cidrs_mod")
     var ipCIDRs: List<String> = mutableListOf(),
     /**
      * The members of the contest, which can include contestants, judges, and other roles.
