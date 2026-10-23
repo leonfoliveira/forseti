@@ -44,8 +44,8 @@ class AuthenticationFilter(
     val safeLogger = SafeLogger(this::class)
 
     companion object {
-        private val CONTEST_SLUG_PATTERN = Pattern.compile("^/v1/contests/slug/([^/]+).*$")
-        private val CONTEST_ID_PATTERN = Pattern.compile("^/v1/contests/([^/]+).*$")
+        private val CONTEST_SLUG_PATTERN = Pattern.compile("^/v1/contests/slug/([^/:]+).*$")
+        private val CONTEST_ID_PATTERN = Pattern.compile("^/v1/contests/([^/:]+).*$")
     }
 
     @Transactional(readOnly = true)
