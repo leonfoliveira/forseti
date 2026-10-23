@@ -11,5 +11,6 @@ export type ContestResponseDTO = {
   endAt: string;
   autoFreezeAt?: string;
   frozenAt?: string;
+  ipCIDRs: string[];
   version: number;
 };

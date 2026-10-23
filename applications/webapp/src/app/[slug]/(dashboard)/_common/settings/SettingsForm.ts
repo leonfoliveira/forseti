@@ -19,6 +19,7 @@ export type SettingsFormType = {
     endAt: string;
     autoFreezeAt?: string;
     frozenAt?: string;
+    ipCIDRs: string;
   };
   problems: {
     _id?: string;
@@ -139,7 +140,6 @@ export class SettingsForm {
           .allow("")
           .custom((value: string, helpers) => {
             try {
-              console.log("Auto-freeze value:", value);
               if (value === "") {
                 return value;
               }
@@ -191,6 +191,25 @@ export class SettingsForm {
           }),
         frozenAt: Joi.optional(),
         unfrozenAt: Joi.optional(),
+        ipCIDRs: Joi.string()
+          .custom((value: string, helpers) => {
+            if (value === "") {
+              return value;
+            }
+
+            const cidrs = value.split(",").map((cidr) => cidr.trim());
+            const cidrRegex =
+              /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$/;
+            for (const cidr of cidrs) {
+              if (!cidrRegex.test(cidr)) {
+                return helpers.error("ipCIDRs.invalid");
+              }
+            }
+            return value;
+          })
+          .messages({
+            "ipCIDRs.invalid": "IP CIDRs are invalid",
+          }),
       }).required(),
       problems: Joi.array()
         .items(
@@ -350,6 +369,7 @@ export class SettingsForm {
           ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
           : "",
         frozenAt: contest.frozenAt,
+        ipCIDRs: contest.ipCIDRs.join(",") ?? "",
       },
       members,
       problems,
@@ -369,6 +389,7 @@ export class SettingsForm {
         ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
         : undefined,
       frozenAt: form.contest.frozenAt,
+      ipCIDRs: form.contest.ipCIDRs.split(",").map((cidr) => cidr.trim()),
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,
