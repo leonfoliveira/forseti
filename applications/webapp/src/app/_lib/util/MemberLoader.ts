@@ -34,7 +34,7 @@ export class MemberLoader {
           for (let i = 0; i < data.length; i++) {
             const line = data[i];
 
-            let [name, type, login, password] = line;
+            let [name, type, login, password, ip] = line;
 
             if (!name) {
               name = "";
@@ -56,7 +56,17 @@ export class MemberLoader {
               password = "";
             }
 
-            members.push({ name, type: type as MemberType, login, password });
+            if (!ip) {
+              ip = "";
+            }
+
+            members.push({
+              name,
+              type: type as MemberType,
+              login,
+              password,
+              ip,
+            });
           }
 
           resolve(members);

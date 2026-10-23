@@ -7,6 +7,7 @@ import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWritter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ArrayUtil } from "@/util/ArrayUtil";
 
 export type SettingsFormType = {
   contest: {
@@ -193,12 +194,9 @@ export class SettingsForm {
         frozenAt: Joi.optional(),
         unfrozenAt: Joi.optional(),
         ipCIDRs: Joi.string()
+          .allow("")
           .custom((value: string, helpers) => {
-            if (value === "") {
-              return value;
-            }
-
-            const cidrs = value.split(",").map((cidr) => cidr.trim());
+            const cidrs = ArrayUtil.fromString(value);
             const cidrRegex =
               /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$/;
             for (const cidr of cidrs) {
@@ -374,7 +372,7 @@ export class SettingsForm {
           ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
           : "",
         frozenAt: contest.frozenAt,
-        ipCIDRs: contest.ipCIDRs.join(",") ?? "",
+        ipCIDRs: ArrayUtil.toString(contest.ipCIDRs),
       },
       members,
       problems,
@@ -394,7 +392,7 @@ export class SettingsForm {
         ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
         : undefined,
       frozenAt: form.contest.frozenAt,
-      ipCIDRs: form.contest.ipCIDRs.split(",").map((cidr) => cidr.trim()),
+      ipCIDRs: ArrayUtil.fromString(form.contest.ipCIDRs),
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,
