@@ -41,7 +41,18 @@ export function JudgeDashboardProvider({
   );
 
   useEffect(() => {
-    async function setupBroadcastListeners() {
+    let cancelled = false;
+
+    async function fetchDashboardData() {
+      console.debug("Fetching dashboard data");
+      const data = await Composition.dashboardReader.getJudgeDashboard(
+        contest.id,
+      );
+      dispatch(JudgeDashboardSlice.actions.set(data));
+      console.debug("Successfully fetched dashboard data");
+    }
+
+    async function connectBroadcastListeners() {
       console.debug("Setting up sse listeners");
 
       try {
@@ -70,21 +81,25 @@ export function JudgeDashboardProvider({
       }
     }
 
-    async function fetch() {
-      console.debug("Fetching dashboard data");
-      const data = await Composition.dashboardReader.getJudgeDashboard(
-        contest.id,
-      );
-      dispatch(JudgeDashboardSlice.actions.set(data));
-      console.debug("Successfully fetched dashboard data");
+    async function disconnectBroadcastListeners() {
+      console.debug("Disconnecting sse listeners");
+      try {
+        await Composition.judgeDashboardRoomListener.unsubscribe();
+        console.debug("Successfully disconnected sse listeners");
+      } catch (error) {
+        console.error("Failed to disconnect sse listeners:", error);
+      }
     }
 
     async function init() {
       state.start();
       try {
         dashboardReseter.reset();
-        await fetch();
-        await setupBroadcastListeners();
+        await fetchDashboardData();
+        await connectBroadcastListeners();
+        if (cancelled) {
+          await disconnectBroadcastListeners();
+        }
         state.finish();
       } catch (error) {
         await state.fail(error as Error);
@@ -94,7 +109,8 @@ export function JudgeDashboardProvider({
     init();
 
     return () => {
-      Composition.judgeDashboardRoomListener.unsubscribe();
+      cancelled = true;
+      disconnectBroadcastListeners();
       setListenerStatus(ListenerStatus.DISCONNECTED);
     };
   }, [session, contest.id]);
