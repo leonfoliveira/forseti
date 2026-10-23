@@ -187,6 +187,14 @@ export function SettingsPageContestTab({
               }
               description="The date and time when the contest will automatically freeze."
             />
+
+            <ControlledField
+              form={form}
+              name="contest.ipCIDRs"
+              label="IP CIDRs (optional)"
+              field={<Input data-testid="contest-ip-cidrs" />}
+              description="The IP CIDRs allowed for the contest separated by commas."
+            />
           </div>
 
           <div className="flex flex-col gap-3">

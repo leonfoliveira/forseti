@@ -34,6 +34,7 @@ test("Default contest behaviour", async ({ page }) => {
       SubmissionLanguage.PYTHON_312,
       SubmissionLanguage.NODE_22,
     ],
+    ipCIDRs: "0.0.0.0/0",
   };
   const problem: Problem = {
     letter: "A",
@@ -158,6 +159,7 @@ test("Default contest behaviour", async ({ page }) => {
   // Step 2: Sign in as root and add members
   await rootActor.signIn(contest);
   const rootOnSettingsPage = await rootActor.navigateToSettings(contest);
+  await rootOnSettingsPage.fillContestForm(contest);
   await rootOnSettingsPage.openTab("members");
   await rootOnSettingsPage.fillMemberForm(adminMember);
   await rootOnSettingsPage.fillMemberForm(judgeMember);

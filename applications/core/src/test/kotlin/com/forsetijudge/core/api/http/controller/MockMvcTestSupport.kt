@@ -58,6 +58,7 @@ internal object MockMvcTestSupport {
             endAt = timestamp.plusHours(2),
             autoFreezeAt = timestamp.plusHours(1).plusMinutes(30),
             frozenAt = null,
+            ipCIDRs = listOf("192.168.0.1/24"),
             version = 1,
         )
 
@@ -73,6 +74,7 @@ internal object MockMvcTestSupport {
             endAt = timestamp.plusHours(2),
             autoFreezeAt = timestamp.plusHours(1).plusMinutes(30),
             frozenAt = null,
+            ipCIDRs = listOf("192.168.0.1/24"),
             members = emptyList(),
             problems = emptyList(),
             version = 1,
@@ -240,6 +242,7 @@ internal object MockMvcTestSupport {
                 contestId = contestId,
                 type = Member.Type.CONTESTANT,
                 name = "Sample member",
+                ip = "0.0.0.0",
                 version = 1,
             ),
             ProblemResponseDTO(

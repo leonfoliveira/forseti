@@ -10,6 +10,6 @@ describe("AboutPage", () => {
       contest: MockContestResponseDTO({ title: "Spring contest" }),
     });
     expect(screen.getByTestId("title")).toHaveTextContent("Spring contest");
-    expect(screen.getByTestId("language-CPP_17")).toHaveTextContent("C++17");
+    expect(screen.getByTestId("language-CPP_17")).toHaveTextContent("C++ 17");
   });
 });

@@ -16,4 +16,6 @@ data class Session(
         val type: Member.Type,
         val name: String,
     )
+
+    fun isExpired(): Boolean = expiresAt.isBefore(OffsetDateTime.now())
 }

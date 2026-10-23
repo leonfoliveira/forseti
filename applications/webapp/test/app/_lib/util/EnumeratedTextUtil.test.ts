@@ -58,7 +58,7 @@ describe("EnumeratedTextUtil", () => {
   it("maps submission languages to labels", () => {
     expect(
       EnumeratedTextUtil.getSubmissionLanguage(SubmissionLanguage.CPP_17),
-    ).toBe("C++17");
+    ).toBe("C++ 17");
     expect(
       EnumeratedTextUtil.getSubmissionLanguage(SubmissionLanguage.JAVA_21),
     ).toBe("Java 21");

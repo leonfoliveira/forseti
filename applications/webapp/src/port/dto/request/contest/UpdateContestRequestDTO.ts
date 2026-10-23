@@ -10,12 +10,14 @@ export type UpdateContestRequestDTO = {
   endAt: string;
   autoFreezeAt?: string;
   frozenAt?: string;
+  ipCIDRs: string[];
   members: {
     id?: string;
     type: MemberType;
     name: string;
     login: string;
     password?: string;
+    ip?: string;
   }[];
   problems: {
     id?: string;

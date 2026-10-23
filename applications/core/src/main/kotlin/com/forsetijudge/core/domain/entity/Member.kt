@@ -56,6 +56,11 @@ class Member(
     @Column(nullable = false)
     var password: String,
     /**
+     * The IP address restriction for the member.
+     */
+    @Column
+    var ip: String? = null,
+    /**
      * The submissions made by this member in the contest.
      */
     @Audited(withModifiedFlag = false)

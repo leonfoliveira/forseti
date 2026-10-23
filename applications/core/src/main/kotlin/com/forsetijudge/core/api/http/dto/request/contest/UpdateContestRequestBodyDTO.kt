@@ -15,6 +15,7 @@ data class UpdateContestRequestBodyDTO(
     val startAt: OffsetDateTime,
     val endAt: OffsetDateTime,
     val autoFreezeAt: OffsetDateTime?,
+    val ipCIDRs: List<String>,
     val members: List<Member>,
     val problems: List<Problem>,
 ) {
@@ -25,6 +26,7 @@ data class UpdateContestRequestBodyDTO(
         val name: String,
         val login: String,
         val password: String? = null,
+        val ip: String? = null,
     )
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -54,6 +54,15 @@ interface UpdateContestUseCase {
         val startAt: OffsetDateTime,
         val endAt: OffsetDateTime,
         val autoFreezeAt: OffsetDateTime?,
+        val ipCIDRs: List<
+            @Pattern(
+                regexp =
+                    "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}" +
+                        "([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])/([0-9]|[1-2][0-9]|3[0-2])$",
+                message = "Invalid IPv4 CIDR format (expected format: xxx.xxx.xxx.xxx/xx)",
+            )
+            String,
+        >,
         @field:Valid
         val members: List<Member>,
         @field:Valid
@@ -79,6 +88,13 @@ interface UpdateContestUseCase {
             val login: String,
             @field:Size(max = 30, message = "'members.password' must be at most 30 characters long")
             val password: String? = null,
+            @field:Pattern(
+                regexp =
+                    "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)" +
+                        "\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$",
+                message = "'members.ip' must be a valid IPv4 address",
+            )
+            val ip: String? = null,
         ) {
             @get:JsonIgnore
             @get:AssertFalse(message = "'members.password' is required when creating a member")

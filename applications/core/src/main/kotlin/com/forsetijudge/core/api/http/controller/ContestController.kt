@@ -100,6 +100,7 @@ class ContestController(
                     startAt = body.startAt,
                     endAt = body.endAt,
                     autoFreezeAt = body.autoFreezeAt,
+                    ipCIDRs = body.ipCIDRs,
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(
@@ -108,6 +109,7 @@ class ContestController(
                                 name = it.name,
                                 login = it.login,
                                 password = it.password,
+                                ip = it.ip,
                             )
                         },
                     problems =

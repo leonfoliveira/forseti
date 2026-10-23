@@ -13,11 +13,15 @@ Forseti uses a PostgreSQL database to store its core data. The database schema i
 - `updated_at`: The timestamp when the contest was last updated.
 - `deleted_at`: The timestamp when the contest was deleted, if applicable.
 - `version`: The version number of the contest record, used for optimistic locking.
-- `title`: The title of the contest.
 - `slug`: The URL-friendly unique identifier for the contest.
+- `title`: The title of the contest.
 - `languages`: The programming languages supported in the contest (e.g., PYTHON_312, CPP_17, JAVA_21, NODE_22).
 - `start_at`: The timestamp when the contest is scheduled to start.
 - `end_at`: The timestamp when the contest is scheduled to end.
+- `auto_freeze_at`: The timestamp when the contest is scheduled to automatically freeze, if applicable.
+- `frozen_at`: The timestamp when the contest was frozen, if applicable.
+- `unfrozen_at`: The timestamp when the contest was unfrozen, if applicable.
+- `ip_cidrs`: The IP CIDRs allowed to access the contest.
 
 ### member
 

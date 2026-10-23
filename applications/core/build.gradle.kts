@@ -22,6 +22,7 @@ plugins {
 dependencies {
     implementation(libs.awsSdkScheduler)
     implementation(libs.bcrypt)
+    implementation(libs.commonsNet)
     implementation(libs.hibernateEnvers)
     implementation(libs.hypersistenceUtilsHibernate70)
     implementation(libs.jacksonModuleKotlin)

@@ -7,6 +7,7 @@ import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWritter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ArrayUtil } from "@/util/ArrayUtil";
 
 export type SettingsFormType = {
   contest: {
@@ -19,6 +20,7 @@ export type SettingsFormType = {
     endAt: string;
     autoFreezeAt?: string;
     frozenAt?: string;
+    ipCIDRs: string;
   };
   problems: {
     _id?: string;
@@ -37,6 +39,7 @@ export type SettingsFormType = {
     name: string;
     login: string;
     password?: string;
+    ip?: string;
   }[];
 };
 
@@ -139,7 +142,6 @@ export class SettingsForm {
           .allow("")
           .custom((value: string, helpers) => {
             try {
-              console.log("Auto-freeze value:", value);
               if (value === "") {
                 return value;
               }
@@ -191,6 +193,22 @@ export class SettingsForm {
           }),
         frozenAt: Joi.optional(),
         unfrozenAt: Joi.optional(),
+        ipCIDRs: Joi.string()
+          .allow("")
+          .custom((value: string, helpers) => {
+            const cidrs = ArrayUtil.fromString(value);
+            const cidrRegex =
+              /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\/([0-9]|[1-2][0-9]|3[0-2])$/;
+            for (const cidr of cidrs) {
+              if (!cidrRegex.test(cidr)) {
+                return helpers.error("ipCIDRs.invalid");
+              }
+            }
+            return value;
+          })
+          .messages({
+            "ipCIDRs.invalid": "IP CIDRs are invalid",
+          }),
       }).required(),
       problems: Joi.array()
         .items(
@@ -297,6 +315,9 @@ export class SettingsForm {
                 "string.min": "Member password is required",
                 "string.max": "Member password is too long",
               }),
+            ip: Joi.string().allow("").ip().messages({
+              "string.ip": "Member IP must be a valid IP address",
+            }),
           }).unknown(),
         )
         .required(),
@@ -329,6 +350,7 @@ export class SettingsForm {
       name: member.name,
       login: member.login,
       password: undefined,
+      ip: member.ip ?? "",
     }));
 
     const languages = Object.values(SubmissionLanguage).reduce(
@@ -350,6 +372,7 @@ export class SettingsForm {
           ? DateTimeUtil.toDatetimeLocal(contest.autoFreezeAt)
           : "",
         frozenAt: contest.frozenAt,
+        ipCIDRs: ArrayUtil.toString(contest.ipCIDRs),
       },
       members,
       problems,
@@ -369,6 +392,7 @@ export class SettingsForm {
         ? DateTimeUtil.fromDatetimeLocal(form.contest.autoFreezeAt)
         : undefined,
       frozenAt: form.contest.frozenAt,
+      ipCIDRs: ArrayUtil.fromString(form.contest.ipCIDRs),
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,
@@ -378,6 +402,7 @@ export class SettingsForm {
           member.password && member.password.length > 0
             ? member.password
             : undefined,
+        ip: member.ip ?? undefined,
       })),
       problems: form.problems.map((problem, idx) => ({
         id: problem._id,

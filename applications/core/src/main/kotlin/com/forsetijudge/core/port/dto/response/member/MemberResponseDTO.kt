@@ -12,6 +12,7 @@ data class MemberResponseDTO(
     val contestId: UUID?,
     val type: Member.Type,
     val name: String,
+    val ip: String?,
     val version: Long,
 ) : Serializable
 
@@ -23,5 +24,6 @@ fun Member.toResponseDTO(): MemberResponseDTO =
         contestId = contest?.id,
         type = type,
         name = name,
+        ip = ip,
         version = version,
     )

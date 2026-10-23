@@ -62,6 +62,7 @@ class UpdateContestServiceTest {
                 startAt = startAt,
                 endAt = endAt,
                 autoFreezeAt = contest.autoFreezeAt,
+                ipCIDRs = listOf("192.168.0.1/24"),
                 members = emptyList(),
                 problems = emptyList(),
             )
@@ -92,6 +93,7 @@ class UpdateContestServiceTest {
                 startAt = contest.startAt,
                 endAt = contest.endAt,
                 autoFreezeAt = contest.autoFreezeAt,
+                ipCIDRs = listOf("192.168.0.1/24"),
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
@@ -127,6 +129,7 @@ class UpdateContestServiceTest {
                 OffsetDateTime.now().plusHours(1),
                 OffsetDateTime.now().plusHours(2),
                 null,
+                emptyList(),
                 emptyList(),
                 emptyList(),
             )

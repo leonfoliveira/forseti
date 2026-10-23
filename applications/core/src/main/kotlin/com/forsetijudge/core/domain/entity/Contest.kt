@@ -62,6 +62,12 @@ class Contest(
     @Column(name = "frozen_at", nullable = false)
     var frozenAt: OffsetDateTime? = null,
     /**
+     * The IP CIDRs that are allowed to access the contest.
+     */
+    @Column(name = "ip_cidrs", nullable = false)
+    @Audited(modifiedColumnName = "ip_cidrs_mod")
+    var ipCIDRs: List<String> = mutableListOf(),
+    /**
      * The members of the contest, which can include contestants, judges, and other roles.
      */
     @Audited(withModifiedFlag = false)

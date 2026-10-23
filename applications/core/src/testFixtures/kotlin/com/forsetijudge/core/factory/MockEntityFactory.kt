@@ -18,6 +18,7 @@ object MockEntityFactory {
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         autoFreezeAt: OffsetDateTime? = null,
         frozenAt: OffsetDateTime? = null,
+        ipCIDRs: List<String> = emptyList(),
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
@@ -28,6 +29,7 @@ object MockEntityFactory {
         endAt = endAt,
         autoFreezeAt = autoFreezeAt,
         frozenAt = frozenAt,
+        ipCIDRs = ipCIDRs,
         problems = problems,
     )
 
@@ -36,6 +38,7 @@ object MockEntityFactory {
         contest: Contest? = null,
         type: Member.Type = Member.Type.CONTESTANT,
         name: String = "Sample member",
+        ip: String? = null,
     ) = Member(
         id = id,
         contest = contest,
@@ -43,6 +46,7 @@ object MockEntityFactory {
         name = name,
         login = "sample-login",
         password = "sample-password",
+        ip = ip,
     )
 
     fun attachment(

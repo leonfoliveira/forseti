@@ -136,6 +136,7 @@ class UpdateContestService(
         contest.startAt = command.startAt
         contest.endAt = command.endAt
         contest.autoFreezeAt = command.autoFreezeAt
+        contest.ipCIDRs = command.ipCIDRs
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }
@@ -186,6 +187,7 @@ class UpdateContestService(
                 name = memberDTO.name,
                 login = memberDTO.login,
                 password = hashedPassword,
+                ip = memberDTO.ip,
                 contest = contest,
             )
 
