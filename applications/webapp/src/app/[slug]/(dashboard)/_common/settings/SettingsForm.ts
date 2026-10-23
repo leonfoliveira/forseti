@@ -402,7 +402,7 @@ export class SettingsForm {
           member.password && member.password.length > 0
             ? member.password
             : undefined,
-        ip: member.ip ?? undefined,
+        ip: member.ip !== "" ? member.ip : undefined,
       })),
       problems: form.problems.map((problem, idx) => ({
         id: problem._id,
