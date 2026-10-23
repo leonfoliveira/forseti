@@ -9,8 +9,10 @@ import com.forsetijudge.core.domain.model.SessionAuthentication
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
+import com.forsetijudge.core.port.dto.response.member.toResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.FindContestByIdUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
+import com.forsetijudge.core.port.input.usecase.member.FindMemberByIdUseCase
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import jakarta.servlet.FilterChain
 import java.util.UUID
@@ -34,6 +36,7 @@ class AuthenticationFilterTest {
     private val findContestBySlugUseCase = mock<FindContestBySlugUseCase>()
     private val findContestByIdUseCase = mock<FindContestByIdUseCase>()
     private val findSessionByIdUseCase = mock<FindSessionByIdUseCase>()
+    private val findMemberByIdUseCase = mock<FindMemberByIdUseCase>()
     private val sessionCookieBuilder = mock<SessionCookieBuilder>()
     private val csrfCookieBuilder = mock<CsrfCookieBuilder>()
 
@@ -42,6 +45,7 @@ class AuthenticationFilterTest {
             findContestBySlugUseCase,
             findContestByIdUseCase,
             findSessionByIdUseCase,
+            findMemberByIdUseCase,
             sessionCookieBuilder,
             csrfCookieBuilder,
         )
@@ -76,6 +80,7 @@ class AuthenticationFilterTest {
         var authenticationDuringChain: Authentication? = null
 
         whenever(findSessionByIdUseCase.execute(any())).thenReturn(MockModelFactory.session())
+        whenever(findMemberByIdUseCase.execute(any())).thenReturn(MockEntityFactory.member().toResponseDTO())
 
         doAnswer {
             authenticationDuringChain =

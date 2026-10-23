@@ -10,6 +10,7 @@ import com.forsetijudge.core.domain.model.SessionAuthentication
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import com.forsetijudge.core.port.input.usecase.contest.FindContestByIdUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FindContestBySlugUseCase
+import com.forsetijudge.core.port.input.usecase.member.FindMemberByIdUseCase
 import com.forsetijudge.core.port.input.usecase.session.FindSessionByIdUseCase
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.servlet.FilterChain
@@ -38,6 +39,7 @@ class AuthenticationFilter(
     private val findContestBySlugUseCase: FindContestBySlugUseCase,
     private val findContestByIdUseCase: FindContestByIdUseCase,
     private val findSessionByIdUseCase: FindSessionByIdUseCase,
+    private val findMemberByIdUseCase: FindMemberByIdUseCase,
     private val sessionCookieBuilder: SessionCookieBuilder,
     private val csrfCookieBuilder: CsrfCookieBuilder,
 ) : OncePerRequestFilter() {
@@ -76,6 +78,15 @@ class AuthenticationFilter(
                     logger.info("Extracted contest from request: ${contest?.id ?: "No contest found"}")
                     if (contest != null) {
                         authorizeIp(contest, ip)
+                    }
+
+                    val member =
+                        findMemberByIdUseCase.execute(FindMemberByIdUseCase.Command(memberId = session.member.id))
+                    if (member.ip != null && member.ip != ip) {
+                        logger.info(
+                            "Unauthorized IP access attempt: Member ID ${member.id} is trying to access from IP $ip, but is restricted to IP ${member.ip}.",
+                        )
+                        throw ForbiddenException("Cannot access from this IP")
                     }
                 } else {
                     logger.info("Session belongs to ROOT member, skipping IP authorization.")

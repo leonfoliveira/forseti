@@ -38,6 +38,7 @@ object MockEntityFactory {
         contest: Contest? = null,
         type: Member.Type = Member.Type.CONTESTANT,
         name: String = "Sample member",
+        ip: String? = null,
     ) = Member(
         id = id,
         contest = contest,
@@ -45,6 +46,7 @@ object MockEntityFactory {
         name = name,
         login = "sample-login",
         password = "sample-password",
+        ip = ip,
     )
 
     fun attachment(
