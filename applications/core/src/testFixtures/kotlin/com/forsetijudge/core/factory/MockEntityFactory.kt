@@ -18,6 +18,7 @@ object MockEntityFactory {
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         autoFreezeAt: OffsetDateTime? = null,
         frozenAt: OffsetDateTime? = null,
+        ipCIDRs: List<String> = emptyList(),
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
@@ -28,6 +29,7 @@ object MockEntityFactory {
         endAt = endAt,
         autoFreezeAt = autoFreezeAt,
         frozenAt = frozenAt,
+        ipCIDRs = ipCIDRs,
         problems = problems,
     )
 
