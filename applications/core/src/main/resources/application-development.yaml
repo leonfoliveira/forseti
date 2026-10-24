@@ -39,8 +39,11 @@ spring:
 aws:
   region: ${AWS_REGION:us-east-1}
   endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+  access-key-id: ${AWS_ACCESS_KEY_ID:accessKey}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY:secretKey}
   s3:
     bucket: ${AWS_S3_BUCKET:dev-core-bucket}
+    endpoint-override: ${AWS_S3_ENDPOINT_OVERRIDE:}
     signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
     signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
   sqs:

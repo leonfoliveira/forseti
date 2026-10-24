@@ -72,7 +72,7 @@ abstract class SQSConsumer(
             )
         } catch (e: Exception) {
             logger.error(
-                "Failed to process message with id: ${message.messageId()}; leaving it for retry",
+                "Failed to process message with id: ${message.messageId()}",
                 e,
             )
         }

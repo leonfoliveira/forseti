@@ -14,6 +14,10 @@ class AttachmentS3Bucket(
     s3Client: S3Client,
     @Value($$"${aws.s3.bucket}")
     private val bucketName: String,
+    @Value($$"${aws.endpoint}")
+    private val endpoint: String,
+    @Value($$"${aws.s3.endpoint-override:}")
+    private val endpointOverride: String,
     @Value($$"${aws.s3.signed-download-url-expiration-seconds}")
     private val signedDownloadUrlExpirationSeconds: Long,
     @Value($$"${aws.s3.signed-upload-url-expiration-seconds}")
@@ -32,13 +36,29 @@ class AttachmentS3Bucket(
         const val PREFIX = "attachments/"
     }
 
-    override fun getDownloadUrl(attachment: Attachment): String = s3Bucket.getDownloadUrl("$PREFIX${attachment.id}")
+    override fun getDownloadUrl(attachment: Attachment): String {
+        val url = s3Bucket.getDownloadUrl("$PREFIX${attachment.id}")
 
-    override fun getUploadUrl(attachment: Attachment): String =
-        s3Bucket.getUploadUrl(
-            key = "$PREFIX${attachment.id}",
-            contentType = attachment.contentType,
-        )
+        return if (endpointOverride.isNotBlank()) {
+            url.replace(endpoint, endpointOverride)
+        } else {
+            endpoint
+        }
+    }
+
+    override fun getUploadUrl(attachment: Attachment): String {
+        val url =
+            s3Bucket.getUploadUrl(
+                key = "$PREFIX${attachment.id}",
+                contentType = attachment.contentType,
+            )
+
+        return if (endpointOverride.isNotBlank()) {
+            url.replace(endpoint, endpointOverride)
+        } else {
+            endpoint
+        }
+    }
 
     override fun download(attachment: Attachment): ByteArray = s3Bucket.download("$PREFIX${attachment.id}")
 

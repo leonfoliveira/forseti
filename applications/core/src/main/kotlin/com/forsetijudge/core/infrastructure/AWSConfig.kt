@@ -1,12 +1,10 @@
 package com.forsetijudge.core.infrastructure
 
-import com.forsetijudge.core.util.SafeLogger
-import io.awspring.cloud.sqs.listener.errorhandler.ErrorHandler
 import java.net.URI
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.messaging.Message
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
 import software.amazon.awssdk.regions.Region
 import software.amazon.awssdk.services.s3.S3Client
 import software.amazon.awssdk.services.s3.S3Configuration
@@ -17,13 +15,15 @@ import software.amazon.awssdk.services.sqs.SqsClient
 
 @Configuration
 class AWSConfig(
-    @Value($$"${spring.cloud.aws.region.static}")
+    @Value($$"${aws.region}")
     private val region: String,
-    @Value($$"${spring.cloud.aws.endpoint:}")
+    @Value($$"${aws.endpoint:}")
     private val endpoint: String,
+    @Value($$"${aws.access-key-id:}")
+    private val accessKeyId: String,
+    @Value($$"${aws.secret-access-key:}")
+    private val secretAccessKey: String,
 ) {
-    private val logger = SafeLogger(this::class)
-
     private val s3CServiceConfiguration = S3Configuration.builder().pathStyleAccessEnabled(true).build()
 
     @Bean
@@ -35,7 +35,20 @@ class AWSConfig(
                 .serviceConfiguration(s3CServiceConfiguration)
 
         if (endpoint.isNotBlank()) {
-            builder.endpointOverride(URI.create(endpoint))
+            builder
+                .endpointOverride(URI.create(endpoint))
+                .serviceConfiguration(
+                    S3Configuration
+                        .builder()
+                        .pathStyleAccessEnabled(true)
+                        .build(),
+                )
+        }
+
+        if (accessKeyId.isNotBlank() && secretAccessKey.isNotBlank()) {
+            builder.credentialsProvider {
+                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+            }
         }
 
         return builder.build()
@@ -53,6 +66,12 @@ class AWSConfig(
             builder.endpointOverride(URI.create(endpoint))
         }
 
+        if (accessKeyId.isNotBlank() && secretAccessKey.isNotBlank()) {
+            builder.credentialsProvider {
+                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+            }
+        }
+
         return builder.build()
     }
 
@@ -65,6 +84,12 @@ class AWSConfig(
 
         if (endpoint.isNotBlank()) {
             builder.endpointOverride(URI.create(endpoint))
+        }
+
+        if (accessKeyId.isNotBlank() && secretAccessKey.isNotBlank()) {
+            builder.credentialsProvider {
+                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+            }
         }
 
         return builder.build()
@@ -81,6 +106,12 @@ class AWSConfig(
             builder.endpointOverride(URI.create(endpoint))
         }
 
+        if (accessKeyId.isNotBlank() && secretAccessKey.isNotBlank()) {
+            builder.credentialsProvider {
+                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
+            }
+        }
+
         return builder.build()
     }
 
@@ -95,18 +126,12 @@ class AWSConfig(
             builder.endpointOverride(URI.create(endpoint))
         }
 
-        return builder.build()
-    }
-
-    @Bean
-    fun globalSqsErrorHandler(): ErrorHandler<Any> =
-        object : ErrorHandler<Any> {
-            override fun handle(
-                message: Message<Any>,
-                t: Throwable,
-            ) {
-                logger.error("Error processing SQS message with payload: ${message.payload}", t)
-                throw t
+        if (accessKeyId.isNotBlank() && secretAccessKey.isNotBlank()) {
+            builder.credentialsProvider {
+                AwsBasicCredentials.create(accessKeyId, secretAccessKey)
             }
         }
+
+        return builder.build()
+    }
 }

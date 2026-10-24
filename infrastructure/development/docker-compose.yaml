@@ -104,10 +104,10 @@ services:
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
       AWS_REGION: us-east-1
+      AWS_ENDPOINT: http://localstack:4566
       AWS_ACCESS_KEY_ID: forsetijudge
       AWS_SECRET_ACCESS_KEY: forsetijudge
-      AWS_ENDPOINT: http://localstack:4566
-      AWS_S3_PUBLIC_ENDPOINT: http://localhost:4566
+      AWS_S3_ENDPOINT_OVERRIDE: http://localhost:4566
       AWS_S3_BUCKET: dev-core-bucket
       AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS: 3600
       AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS: 3600
