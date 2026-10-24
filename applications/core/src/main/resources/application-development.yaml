@@ -1,28 +1,4 @@
 spring:
-  # AWS configuration
-  cloud:
-    aws:
-      region:
-        static: ${AWS_REGION:us-east-1}
-      credentials:
-        access-key: ${AWS_ACCESS_KEY_ID:forsetijudge}
-        secret-key: ${AWS_SECRET_ACCESS_KEY:forsetijudge}
-      endpoint: ${AWS_ENDPOINT:http://localhost:4566}
-      s3:
-        public-endpoint: ${AWS_S3_PUBLIC_ENDPOINT:http://localhost:4566}
-        bucket: ${AWS_S3_BUCKET:dev-core-bucket}
-        path-style-access-enabled: true
-        signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
-        signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
-      sqs:
-        submission-queue: ${AWS_SQS_SUBMISSION_QUEUE:dev-submission-queue}
-        submission-failed-queue: ${AWS_SQS_SUBMISSION_FAILED_QUEUE:dev-submission-failed-queue}
-        submission-judged-queue: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE:dev-submission-judged-queue}
-        auto-freeze-queue: ${AWS_SQS_AUTO_FREEZE_QUEUE:dev-auto-freeze-queue}
-        auto-freeze-queue-arn: ${AWS_SQS_AUTO_FREEZE_QUEUE_ARN:arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue}
-      scheduler:
-        auto-freeze-scheduler-role-arn: ${AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN:arn:aws:iam::000000000000:role/dev-auto-freeze-scheduler-role}
-
   # PostgreSQL database configuration
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -56,6 +32,25 @@ spring:
       port: ${REDIS_PORT:6379}
       password: ${REDIS_PASSWORD:forsetijudge}
       sse_ttl_seconds: ${SSE_TTL_SECONDS:600}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:false}
+
+# AWS configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  endpoint: ${AWS_ENDPOINT:http://localhost:4566}
+  s3:
+    bucket: ${AWS_S3_BUCKET:dev-core-bucket}
+    signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
+    signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
+  sqs:
+    submission-queue-url: ${AWS_SQS_SUBMISSION_QUEUE_URL:http://localhost:4566/queue/us-east-1/000000000000/dev-submission-queue}
+    submission-failed-queue-url: ${AWS_SQS_SUBMISSION_FAILED_QUEUE_URL:http://localhost:4566/queue/us-east-1/000000000000/dev-submission-failed-queue}
+    submission-judged-queue-url: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL:http://localhost:4566/queue/us-east-1/000000000000/dev-submission-judged-queue}
+    auto-freeze-queue-url: ${AWS_SQS_AUTO_FREEZE_QUEUE_URL:http://localhost:4566/queue/us-east-1/000000000000/dev-auto-freeze-queue}
+    auto-freeze-queue-arn: ${AWS_SQS_AUTO_FREEZE_QUEUE_ARN:arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue}
+  scheduler:
+    auto-freeze-scheduler-role-arn: ${AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN:arn:aws:iam::000000000000:role/dev-auto-freeze-scheduler-role}
 
 # Security configuration
 security:

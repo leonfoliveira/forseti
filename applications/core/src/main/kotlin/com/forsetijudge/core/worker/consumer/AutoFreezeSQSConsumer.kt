@@ -1,37 +1,39 @@
 package com.forsetijudge.core.worker.consumer
 
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.infrastructure.sqs.adapter.SQSConsumer
 import com.forsetijudge.core.port.input.usecase.contest.AutoFreezeContestUseCase
 import com.forsetijudge.core.util.SafeLogger
-import io.awspring.cloud.sqs.annotation.SqsListener
-import org.springframework.stereotype.Component
 import java.util.UUID
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import software.amazon.awssdk.services.sqs.SqsClient
+import tools.jackson.databind.ObjectMapper
 
 @Component
 @Suppress("unused")
 class AutoFreezeSQSConsumer(
+    sqsClient: SqsClient,
+    @Value($$"${aws.sqs.auto-freeze-queue-url}")
+    queueUrl: String,
     private val autoFreezeContestUseCase: AutoFreezeContestUseCase,
-) {
+    private val objectMapper: ObjectMapper,
+) : SQSConsumer(sqsClient, queueUrl) {
     private val logger = SafeLogger(this::class)
 
-    /**
-     * Listens for messages from the freeze SQS queue and processes them.
-     * This queue is used to notify the system that a contest has been frozen.
-     *
-     * @param body The body of the message received from the SQS queue.
-     */
-    @SqsListener($$"${spring.cloud.aws.sqs.auto-freeze-queue}")
-    fun listen(body: Body) {
-        logger.info("Received freeze message for contestId = ${body.contestId}")
+    override fun handle(body: String) {
+        val parsedBody = objectMapper.readValue(body, Body::class.java)
+
+        logger.info("Received freeze message for contestId = ${parsedBody.contestId}")
 
         try {
             autoFreezeContestUseCase.execute(
                 AutoFreezeContestUseCase.Command(
-                    contestId = body.contestId,
+                    contestId = parsedBody.contestId,
                 ),
             )
         } catch (e: ForbiddenException) {
-            logger.warn("ForbiddenException while freezing contest with id ${body.contestId}: ${e.message}")
+            logger.warn("ForbiddenException while freezing contest with id ${parsedBody.contestId}: ${e.message}")
         }
     }
 

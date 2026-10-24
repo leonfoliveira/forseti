@@ -1,5 +1,6 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -11,8 +12,8 @@ class Settings(BaseSettings):
 
 
 class AWSCredentials(Settings):
-    access_key: str = Field(validation_alias="AWS_ACCESS_KEY_ID")
-    secret_key: str = Field(validation_alias="AWS_SECRET_ACCESS_KEY")
+    access_key: Optional[str] = Field(default=None, validation_alias="AWS_ACCESS_KEY_ID")
+    secret_key: Optional[str] = Field(default=None, validation_alias="AWS_SECRET_ACCESS_KEY")
 
 
 class S3Config(Settings):

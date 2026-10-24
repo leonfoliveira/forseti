@@ -133,7 +133,6 @@ services:
       SESSION_EXPIRATION_SECONDS: 86400
       SESSION_ROOT_EXPIRATION_SECONDS: 86400
       API_PORT: 8080
-      WS_PORT: 8081
     healthcheck:
       test:
         ["CMD-SHELL", "wget --spider -q http://localhost:8080/actuator/health"]

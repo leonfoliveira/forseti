@@ -1,31 +1,33 @@
 package com.forsetijudge.core.worker.consumer
 
+import com.forsetijudge.core.infrastructure.sqs.adapter.SQSConsumer
 import com.forsetijudge.core.port.input.usecase.submission.FailSubmissionUseCase
 import com.forsetijudge.core.util.SafeLogger
-import io.awspring.cloud.sqs.annotation.SqsListener
-import org.springframework.stereotype.Component
 import java.util.UUID
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
+import software.amazon.awssdk.services.sqs.SqsClient
+import tools.jackson.databind.ObjectMapper
 
 @Component
 @Suppress("unused")
 class SubmissionFailedSQSConsumer(
+    sqsClient: SqsClient,
+    @Value($$"${aws.sqs.submission-failed-queue-url}")
+    queueUrl: String,
     private val failSubmissionUseCase: FailSubmissionUseCase,
-) {
+    private val objectMapper: ObjectMapper,
+) : SQSConsumer(sqsClient, queueUrl) {
     private val logger = SafeLogger(this::class)
 
-    /**
-     * Listens for messages from the submission failed SQS queue and processes them.
-     * This queue is the DLQ for the submission queue, and messages in this queue indicate that a submission has failed to be processed.
-     *
-     * @param body The body of the message received from the SQS queue.
-     */
-    @SqsListener($$"${spring.cloud.aws.sqs.submission-failed-queue}")
-    fun listen(body: Body) {
-        logger.info("Received submission failed message for submissionId = ${body.submissionId}")
+    override fun handle(body: String) {
+        val parsedBody = objectMapper.readValue(body, Body::class.java)
+
+        logger.info("Received submission failed message for submissionId = ${parsedBody.submissionId}")
 
         failSubmissionUseCase.execute(
             FailSubmissionUseCase.Command(
-                submissionId = body.submissionId,
+                submissionId = parsedBody.submissionId,
             ),
         )
     }

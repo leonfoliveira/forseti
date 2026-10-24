@@ -1,5 +1,5 @@
 [versions]
-awsSdk = "2.56.0"
+awsSdk = "2.57.3"
 bcrypt = "0.10.2"
 commonsNet = "3.13.0"
 flyway = "13.8.0"
@@ -25,7 +25,10 @@ springBoot = "4.1.1"
 testcontainers = "1.21.4"
 
 [libraries]
+aswSdkS3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
 awsSdkScheduler = { module = "software.amazon.awssdk:scheduler", version.ref = "awsSdk" }
+awsSdkSecretsManager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "awsSdk" }
+awsSdkSqs = { module = "software.amazon.awssdk:sqs", version.ref = "awsSdk" }
 bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" }
 commonsNet = { module = "commons-net:commons-net", version.ref = "commonsNet" }
 flyway = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
@@ -54,11 +57,9 @@ springBootStarterDataRedis = { module = "org.springframework.boot:spring-boot-st
 springBootStarterSecurity = { module = "org.springframework.boot:spring-boot-starter-security", version.ref = "springBoot" }
 springBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBoot" }
 springBootStarterValidation = { module = "org.springframework.boot:spring-boot-starter-validation", version.ref = "springBoot" }
+springBootStarterValkey = { module = "org.springframework.boot:spring-boot-starter-valkey", version.ref = "springBoot" }
 springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 springBootTestcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "springBoot" }
-springCloudAwsStarterS3 = { module = "io.awspring.cloud:spring-cloud-aws-starter-s3", version.ref = "springBoot" }
-springCloudAwsStarterSecretsManager = { module = "io.awspring.cloud:spring-cloud-aws-starter-secrets-manager", version.ref = "springBoot" }
-springCloudAwsStarterSQS = { module = "io.awspring.cloud:spring-cloud-aws-starter-sqs", version.ref = "springBoot" }
 testcontainersLocalstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
 testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
