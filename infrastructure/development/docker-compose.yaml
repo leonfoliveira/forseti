@@ -111,10 +111,10 @@ services:
       AWS_S3_BUCKET: dev-core-bucket
       AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS: 3600
       AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS: 3600
-      AWS_SQS_SUBMISSION_QUEUE: dev-submission-queue
-      AWS_SQS_SUBMISSION_FAILED_QUEUE: dev-submission-failed-queue
-      AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
-      AWS_SQS_AUTO_FREEZE_QUEUE: dev-auto-freeze-queue
+      AWS_SQS_SUBMISSION_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-queue
+      AWS_SQS_SUBMISSION_FAILED_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-failed-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-judged-queue
+      AWS_SQS_AUTO_FREEZE_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-auto-freeze-queue
       AWS_SQS_AUTO_FREEZE_QUEUE_ARN: arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue
       AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN: arn:aws:iam::000000000000:role/dev-auto-freeze-scheduler-role
       DB_URL: jdbc:postgresql://postgres:5432/forseti
@@ -145,7 +145,6 @@ services:
       - dev-forseti-network
     ports:
       - 8080:8080
-      - 8081:8081
     profiles:
       - core
 
@@ -170,9 +169,9 @@ services:
       AWS_S3_BUCKET: dev-core-bucket
       AWS_SQS_SUBMISSION_QUEUE: dev-submission-queue
       AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
-      PORT: 8082
+      PORT: 8081
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8082/health"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/health"]
       timeout: 5s
       interval: 15s
       retries: 5
@@ -181,7 +180,7 @@ services:
     networks:
       - dev-forseti-network
     ports:
-      - 8082:8082
+      - 8081:8081
     profiles:
       - autojudge
     volumes:
