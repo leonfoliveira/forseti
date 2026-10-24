@@ -56,7 +56,7 @@ export function ClarificationsPageForm({
     createClarificationState.start();
 
     try {
-      const newClarification = await Composition.clarificationWritter.create(
+      const newClarification = await Composition.clarificationWriter.create(
         contestId,
         ClarificationForm.toInputDTO(data),
       );

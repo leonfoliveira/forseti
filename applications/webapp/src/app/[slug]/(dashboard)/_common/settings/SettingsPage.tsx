@@ -82,7 +82,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
       if (contestStatus !== ContestStatus.NOT_STARTED) {
         inputDTO.startAt = contest.startAt;
       }
-      const updatedContest = await Composition.contestWritter.update(
+      const updatedContest = await Composition.contestWriter.update(
         contest.id,
         inputDTO,
       );

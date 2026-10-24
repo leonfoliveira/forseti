@@ -144,7 +144,7 @@ describe("ClarificationsPageCard", () => {
     it("should create answer when form is submitted", async () => {
       const newClarification = MockClarificationResponseDTO({});
       (
-        Composition.clarificationWritter.answer as jest.Mock
+        Composition.clarificationWriter.answer as jest.Mock
       ).mockResolvedValueOnce(newClarification);
       const clarification = MockClarificationResponseDTO({ answer: undefined });
       const onAnswer = jest.fn();
@@ -170,7 +170,7 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(Composition.clarificationWritter.answer).toHaveBeenCalledWith(
+      expect(Composition.clarificationWriter.answer).toHaveBeenCalledWith(
         "test-contest",
         clarification.id,
         ClarificationAnswerForm.toInputDTO({
@@ -183,7 +183,7 @@ describe("ClarificationsPageCard", () => {
 
     it("should show error toast when creating answer fails", async () => {
       (
-        Composition.clarificationWritter.answer as jest.Mock
+        Composition.clarificationWriter.answer as jest.Mock
       ).mockRejectedValueOnce(new Error("Failed to create answer"));
       const clarification = MockClarificationResponseDTO({ answer: undefined });
       await renderWithProviders(
@@ -208,7 +208,7 @@ describe("ClarificationsPageCard", () => {
         );
       });
 
-      expect(Composition.clarificationWritter.answer).toHaveBeenCalledWith(
+      expect(Composition.clarificationWriter.answer).toHaveBeenCalledWith(
         "test-contest",
         clarification.id,
         ClarificationAnswerForm.toInputDTO({
@@ -223,7 +223,7 @@ describe("ClarificationsPageCard", () => {
     const clarification = MockClarificationResponseDTO({ isPublic: false });
     const onPublish = jest.fn();
     (
-      Composition.clarificationWritter.publish as jest.Mock
+      Composition.clarificationWriter.publish as jest.Mock
     ).mockResolvedValueOnce(clarification);
     await renderWithProviders(
       <ClarificationsPageCard
@@ -239,7 +239,7 @@ describe("ClarificationsPageCard", () => {
     await act(async () => {
       fireEvent.click(screen.getByTestId("confirmation-confirm-button"));
     });
-    expect(Composition.clarificationWritter.publish).toHaveBeenCalledWith(
+    expect(Composition.clarificationWriter.publish).toHaveBeenCalledWith(
       "test-contest",
       clarification.id,
     );
@@ -250,7 +250,7 @@ describe("ClarificationsPageCard", () => {
     const clarification = MockClarificationResponseDTO({ isPublic: false });
     const onPublish = jest.fn();
     (
-      Composition.clarificationWritter.publish as jest.Mock
+      Composition.clarificationWriter.publish as jest.Mock
     ).mockRejectedValueOnce(new Error("Failed to publish"));
     await renderWithProviders(
       <ClarificationsPageCard
@@ -267,7 +267,7 @@ describe("ClarificationsPageCard", () => {
       fireEvent.click(screen.getByTestId("confirmation-confirm-button"));
     });
 
-    expect(Composition.clarificationWritter.publish).toHaveBeenCalledWith(
+    expect(Composition.clarificationWriter.publish).toHaveBeenCalledWith(
       "test-contest",
       clarification.id,
     );

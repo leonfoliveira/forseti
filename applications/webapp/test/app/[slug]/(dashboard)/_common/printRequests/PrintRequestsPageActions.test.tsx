@@ -58,7 +58,7 @@ describe("PrintRequestsPageActions", () => {
   it("should show error on complete error", async () => {
     const printRequest = MockPrintRequestResponseDTO();
     (
-      Composition.printRequestWritter.updateStatus as jest.Mock
+      Composition.printRequestWriter.updateStatus as jest.Mock
     ).mockRejectedValueOnce(new Error("Complete error"));
 
     await renderWithProviders(
@@ -77,7 +77,7 @@ describe("PrintRequestsPageActions", () => {
   it("should complete successfully", async () => {
     const printRequest = MockPrintRequestResponseDTO();
     (
-      Composition.printRequestWritter.updateStatus as jest.Mock
+      Composition.printRequestWriter.updateStatus as jest.Mock
     ).mockResolvedValueOnce(printRequest);
     const onUpdate = jest.fn();
 
@@ -97,7 +97,7 @@ describe("PrintRequestsPageActions", () => {
   it("should show error on reject error", async () => {
     const printRequest = MockPrintRequestResponseDTO();
     (
-      Composition.printRequestWritter.updateStatus as jest.Mock
+      Composition.printRequestWriter.updateStatus as jest.Mock
     ).mockRejectedValueOnce(new Error("Reject error"));
 
     await renderWithProviders(
@@ -116,7 +116,7 @@ describe("PrintRequestsPageActions", () => {
   it("should reject successfully", async () => {
     const printRequest = MockPrintRequestResponseDTO();
     (
-      Composition.printRequestWritter.updateStatus as jest.Mock
+      Composition.printRequestWriter.updateStatus as jest.Mock
     ).mockResolvedValueOnce(printRequest);
     const onUpdate = jest.fn();
 

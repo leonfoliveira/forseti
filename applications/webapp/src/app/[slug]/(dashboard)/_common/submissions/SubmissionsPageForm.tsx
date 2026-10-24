@@ -56,7 +56,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
     createSubmissionState.start();
 
     try {
-      const newSubmission = await Composition.submissionWritter.create(
+      const newSubmission = await Composition.submissionWriter.create(
         contest.id,
         SubmissionForm.toInputDTO(data),
       );

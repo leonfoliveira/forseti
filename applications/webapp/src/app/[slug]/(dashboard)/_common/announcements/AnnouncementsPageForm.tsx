@@ -45,7 +45,7 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
     createAnnouncementState.start();
 
     try {
-      const newAnnouncement = await Composition.announcementWritter.create(
+      const newAnnouncement = await Composition.announcementWriter.create(
         contestId,
         AnnouncementForm.toInputDTO(data),
       );

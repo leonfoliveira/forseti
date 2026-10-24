@@ -68,7 +68,7 @@ export function ClarificationsPageCard({
     answerState.start();
 
     try {
-      const newClarification = await Composition.clarificationWritter.answer(
+      const newClarification = await Composition.clarificationWriter.answer(
         contestId,
         clarification.id,
         ClarificationAnswerForm.toInputDTO(data),
@@ -92,7 +92,7 @@ export function ClarificationsPageCard({
 
     try {
       const publishedClarification =
-        await Composition.clarificationWritter.publish(
+        await Composition.clarificationWriter.publish(
           contestId,
           clarification.id,
         );

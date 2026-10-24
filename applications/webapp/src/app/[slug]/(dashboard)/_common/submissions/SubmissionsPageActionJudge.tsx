@@ -50,7 +50,7 @@ export function SubmissionsPageActionJudge({
     judgeState.start();
 
     try {
-      await Composition.submissionWritter.updateAnswer(
+      await Composition.submissionWriter.updateAnswer(
         contestId,
         submission.id,
         data.answer,

@@ -31,7 +31,7 @@ export function SubmissionsPageActionResubmit({
     resubmitState.start();
 
     try {
-      await Composition.submissionWritter.resubmit(contestId, submissionId);
+      await Composition.submissionWriter.resubmit(contestId, submissionId);
 
       toast.success("Submission resubmitted successfully");
       onResubmit({

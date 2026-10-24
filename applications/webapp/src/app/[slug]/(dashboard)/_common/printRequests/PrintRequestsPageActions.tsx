@@ -48,7 +48,7 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
     try {
       loadableState.start();
       const updatedPrintRequest =
-        await Composition.printRequestWritter.updateStatus(
+        await Composition.printRequestWriter.updateStatus(
           contestId,
           printRequest.id,
           { status },

@@ -47,9 +47,9 @@ describe("ClarificationsPageForm", () => {
 
   it("should create clarification when submit button is clicked", async () => {
     const newClarification = MockClarificationResponseDTO();
-    (
-      Composition.clarificationWritter.create as jest.Mock
-    ).mockResolvedValueOnce(newClarification);
+    (Composition.clarificationWriter.create as jest.Mock).mockResolvedValueOnce(
+      newClarification,
+    );
 
     const onClose = jest.fn();
     const onCreate = jest.fn();
@@ -73,7 +73,7 @@ describe("ClarificationsPageForm", () => {
       fireEvent.click(screen.getByTestId("clarification-form-submit"));
     });
 
-    expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+    expect(Composition.clarificationWriter.create).toHaveBeenCalledWith(
       "test-contest",
       {
         text: "Test clarification",
@@ -86,9 +86,9 @@ describe("ClarificationsPageForm", () => {
   });
 
   it("should show error toast when clarification creation fails", async () => {
-    (
-      Composition.clarificationWritter.create as jest.Mock
-    ).mockRejectedValueOnce(new Error("Creation failed"));
+    (Composition.clarificationWriter.create as jest.Mock).mockRejectedValueOnce(
+      new Error("Creation failed"),
+    );
 
     const onClose = jest.fn();
     await renderWithProviders(
@@ -111,7 +111,7 @@ describe("ClarificationsPageForm", () => {
       fireEvent.click(screen.getByTestId("clarification-form-submit"));
     });
 
-    expect(Composition.clarificationWritter.create).toHaveBeenCalledWith(
+    expect(Composition.clarificationWriter.create).toHaveBeenCalledWith(
       "test-contest",
       {
         text: "Test clarification",

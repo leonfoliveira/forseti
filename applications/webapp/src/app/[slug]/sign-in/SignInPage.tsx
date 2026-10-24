@@ -56,7 +56,7 @@ export default function SignInPage() {
   async function signIn(data: SignInFormType) {
     signInState.start();
     try {
-      const session = await Composition.authenticationWritter.authenticate(
+      const session = await Composition.authenticationWriter.authenticate(
         contest.id,
         data,
       );
@@ -84,7 +84,7 @@ export default function SignInPage() {
     try {
       if (!!session) {
         dispatch(SessionSlice.actions.clear());
-        await Composition.sessionWritter.deleteCurrent();
+        await Composition.sessionWriter.deleteCurrent();
       }
     } catch (error) {
       console.error(

@@ -32,7 +32,7 @@ jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
 describe("SubmissionsPageActionCreatePrintRequest", () => {
   it("should create print request successfully", async () => {
     const printRequest = MockPrintRequestResponseDTO();
-    (Composition.printRequestWritter.create as jest.Mock).mockResolvedValueOnce(
+    (Composition.printRequestWriter.create as jest.Mock).mockResolvedValueOnce(
       printRequest,
     );
     const submission = MockSubmissionWithCodeResponseDTO();
@@ -65,7 +65,7 @@ describe("SubmissionsPageActionCreatePrintRequest", () => {
       fireEvent.click(screen.getByTestId("confirmation"));
     });
 
-    expect(Composition.printRequestWritter.create).toHaveBeenCalledWith(
+    expect(Composition.printRequestWriter.create).toHaveBeenCalledWith(
       contest.id,
       {
         submissionId: submission.id,

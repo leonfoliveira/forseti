@@ -64,8 +64,8 @@ export function SettingsPageContestTab({
 
   async function toggleFreeze() {
     const method = isContestFrozen
-      ? Composition.contestWritter.unfreeze.bind(Composition.contestWritter)
-      : Composition.contestWritter.freeze.bind(Composition.contestWritter);
+      ? Composition.contestWriter.unfreeze.bind(Composition.contestWriter)
+      : Composition.contestWriter.freeze.bind(Composition.contestWriter);
     const successMessage = isContestFrozen
       ? "Contest has been unfrozen successfully."
       : "Contest has been frozen successfully.";
@@ -97,8 +97,8 @@ export function SettingsPageContestTab({
   async function force(mode: "start" | "end") {
     const method =
       mode === "start"
-        ? Composition.contestWritter.forceStart.bind(Composition.contestWritter)
-        : Composition.contestWritter.forceEnd.bind(Composition.contestWritter);
+        ? Composition.contestWriter.forceStart.bind(Composition.contestWriter)
+        : Composition.contestWriter.forceEnd.bind(Composition.contestWriter);
     const successMessage =
       mode === "start"
         ? "Contest has been force started."

@@ -35,7 +35,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const htmlElement = document.documentElement;
     htmlElement.classList.add(theme);
-    Composition.localStorageWritter.setKey(THEME_STORAGE_KEY, theme);
+    Composition.localStorageWriter.setKey(THEME_STORAGE_KEY, theme);
     setTheme(theme);
   }, []);
 
@@ -49,7 +49,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const newTheme = theme === Theme.DARK ? Theme.LIGHT : Theme.DARK;
     htmlElement.classList.add(newTheme);
-    Composition.localStorageWritter.setKey(THEME_STORAGE_KEY, newTheme);
+    Composition.localStorageWriter.setKey(THEME_STORAGE_KEY, newTheme);
     setTheme(newTheme);
   }
 

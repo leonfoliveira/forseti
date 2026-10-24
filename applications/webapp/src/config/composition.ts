@@ -17,22 +17,22 @@ import { DashboardService } from "@/service/DashboardService";
 import { SessionService } from "@/service/SessionService";
 import { LocalStorageService } from "@/service/LocalStorageService";
 import { SubmissionService } from "@/service/SubmissionService";
-import { AnnouncementWritter } from "@/port/input/usecase/announcement/AnnouncementWritter";
+import { AnnouncementWriter } from "@/port/input/usecase/announcement/AnnouncementWriter";
 import { AttachmentReader } from "@/port/input/usecase/attachment/AttachmentReader";
-import { AttachmentWritter } from "@/port/input/usecase/attachment/AttachmentWritter";
-import { LocalStorageWritter } from "@/port/input/usecase/localstorage/LocalStorageWritter";
-import { AuthenticationWritter } from "@/port/input/usecase/authentication/AuthenticationWritter";
+import { AttachmentWriter } from "@/port/input/usecase/attachment/AttachmentWriter";
+import { LocalStorageWriter } from "@/port/input/usecase/localstorage/LocalStorageWriter";
+import { AuthenticationWriter } from "@/port/input/usecase/authentication/AuthenticationWriter";
 import { ContestReader } from "@/port/input/usecase/contest/ContestReader";
-import { ContestWritter } from "@/port/input/usecase/contest/ContestWritter";
+import { ContestWriter } from "@/port/input/usecase/contest/ContestWriter";
 import { DashboardReader } from "@/port/input/usecase/dashboard/DashboardReader";
 import { SessionReader } from "@/port/input/usecase/session/SessionReader";
-import { SessionWritter } from "@/port/input/usecase/session/SessionWritter";
+import { SessionWriter } from "@/port/input/usecase/session/SessionWriter";
 import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
-import { SubmissionWritter } from "@/port/input/usecase/submission/SubmissionWritter";
+import { SubmissionWriter } from "@/port/input/usecase/submission/SubmissionWriter";
 import { S3BucketRepository } from "@/infrastructure/axios/bucket/S3BucketRepository";
 import { AxiosClarificationRepository } from "@/infrastructure/axios/repository/AxiosClarificationRepository";
 import { ClarificationService } from "@/service/ClarificationService";
-import { ClarificationWritter } from "@/port/input/usecase/clarification/ClarificationWritter";
+import { ClarificationWriter } from "@/port/input/usecase/clarification/ClarificationWriter";
 import { SSEAdminDashboardRoomListener } from "@/infrastructure/sse/SSEAdminDashboardRoomListener";
 import { SSEMemberPrivateRoomListener } from "@/infrastructure/sse/SSEMemberPrivateRoomListener";
 import { SSEJudgeDashboardRoomListener } from "@/infrastructure/sse/SSEJudgeDashboardRoomListener";
@@ -45,7 +45,7 @@ import { JudgeDashboardRoomListener } from "@/port/output/sse/JudgeDashboardRoom
 import { MemberPrivateRoomListener } from "@/port/output/sse/MemberPrivateRoomListener";
 import { SSEStaffDashboardRoomListener } from "@/infrastructure/sse/SSEStaffDashboardRoomListener";
 import { StaffDashboardRoomListener } from "@/port/output/sse/StaffDashboardRoomListener";
-import { PrintRequestWritter } from "@/port/input/usecase/printRequest/PrintRequestWritter";
+import { PrintRequestWriter } from "@/port/input/usecase/printRequest/PrintRequestWriter";
 import { AxiosPrintRequestRepository } from "@/infrastructure/axios/repository/AxiosPrintRequestRepository";
 import { PrintRequestService } from "@/service/PrintRequestService";
 
@@ -104,46 +104,46 @@ const memberPrivateRoomListener = new SSEMemberPrivateRoomListener(env.apiUrl);
 
 const Composition: {
   attachmentReader: AttachmentReader;
-  attachmentWritter: AttachmentWritter;
-  authenticationWritter: AuthenticationWritter;
+  attachmentWriter: AttachmentWriter;
+  authenticationWriter: AuthenticationWriter;
   contestReader: ContestReader;
-  contestWritter: ContestWritter;
+  contestWriter: ContestWriter;
   dashboardReader: DashboardReader;
   sessionReader: SessionReader;
-  sessionWritter: SessionWritter;
+  sessionWriter: SessionWriter;
   localStorageReader: LocalStorageReader;
-  localStorageWritter: LocalStorageWritter;
-  submissionWritter: SubmissionWritter;
-  clarificationWritter: ClarificationWritter;
-  announcementWritter: AnnouncementWritter;
+  localStorageWriter: LocalStorageWriter;
+  submissionWriter: SubmissionWriter;
+  clarificationWriter: ClarificationWriter;
+  announcementWriter: AnnouncementWriter;
   adminDashboardRoomListener: AdminDashboardRoomListener;
   judgeDashboardRoomListener: JudgeDashboardRoomListener;
   staffDashboardRoomListener: StaffDashboardRoomListener;
   contestantDashboardRoomListener: ContestantDashboardRoomListener;
   spectatorDashboardRoomListener: SpectatorDashboardRoomListener;
   memberPrivateRoomListener: MemberPrivateRoomListener;
-  printRequestWritter: PrintRequestWritter;
+  printRequestWriter: PrintRequestWriter;
 } = {
   attachmentReader: attachmentService,
-  attachmentWritter: attachmentService,
-  authenticationWritter: authenticationService,
+  attachmentWriter: attachmentService,
+  authenticationWriter: authenticationService,
   contestReader: contestService,
-  contestWritter: contestService,
+  contestWriter: contestService,
   dashboardReader: dashboardService,
   sessionReader: sessionService,
-  sessionWritter: sessionService,
+  sessionWriter: sessionService,
   localStorageReader: localStorageService,
-  localStorageWritter: localStorageService,
-  submissionWritter: submissionService,
-  clarificationWritter: clarificationService,
-  announcementWritter: announcementService,
+  localStorageWriter: localStorageService,
+  submissionWriter: submissionService,
+  clarificationWriter: clarificationService,
+  announcementWriter: announcementService,
   adminDashboardRoomListener: adminDashboardRoomListener,
   judgeDashboardRoomListener: judgeDashboardRoomListener,
   staffDashboardRoomListener: staffDashboardRoomListener,
   contestantDashboardRoomListener: contestantDashboardRoomListener,
   spectatorDashboardRoomListener: spectatorDashboardRoomListener,
   memberPrivateRoomListener: memberPrivateRoomListener,
-  printRequestWritter: printRequestService,
+  printRequestWriter: printRequestService,
 };
 
 export { Composition };

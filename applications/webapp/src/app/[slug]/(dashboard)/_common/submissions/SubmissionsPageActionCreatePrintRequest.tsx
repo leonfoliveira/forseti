@@ -34,7 +34,7 @@ export function SubmissionsPageActionCreatePrintRequest({
     createPrintRequestState.start();
 
     try {
-      const printRequest = await Composition.printRequestWritter.create(
+      const printRequest = await Composition.printRequestWriter.create(
         contestId,
         {
           submissionId: submission.id,

@@ -32,7 +32,7 @@ export function Header() {
   const { theme, toggleTheme } = useTheme();
 
   async function handleSignOut() {
-    await Composition.sessionWritter.deleteCurrent();
+    await Composition.sessionWriter.deleteCurrent();
     navigate(routes.CONTEST_SIGN_IN(contest.slug));
   }
 

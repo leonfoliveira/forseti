@@ -42,7 +42,7 @@ describe("AnnouncementsPageForm", () => {
 
   it("should create announcement when submit button is clicked", async () => {
     const newAnnouncement = MockAnnouncementResponseDTO();
-    (Composition.announcementWritter.create as jest.Mock).mockResolvedValueOnce(
+    (Composition.announcementWriter.create as jest.Mock).mockResolvedValueOnce(
       newAnnouncement,
     );
 
@@ -63,7 +63,7 @@ describe("AnnouncementsPageForm", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(Composition.announcementWritter.create).toHaveBeenCalledWith(
+    expect(Composition.announcementWriter.create).toHaveBeenCalledWith(
       "test-contest",
       {
         text: "Test announcement",
@@ -75,7 +75,7 @@ describe("AnnouncementsPageForm", () => {
   });
 
   it("should show error toast when announcement creation fails", async () => {
-    (Composition.announcementWritter.create as jest.Mock).mockRejectedValueOnce(
+    (Composition.announcementWriter.create as jest.Mock).mockRejectedValueOnce(
       new Error("Creation failed"),
     );
 
@@ -96,7 +96,7 @@ describe("AnnouncementsPageForm", () => {
       fireEvent.click(screen.getByTestId("announcement-form-submit"));
     });
 
-    expect(Composition.announcementWritter.create).toHaveBeenCalledWith(
+    expect(Composition.announcementWriter.create).toHaveBeenCalledWith(
       "test-contest",
       {
         text: "Test announcement",
