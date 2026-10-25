@@ -42,7 +42,7 @@ class AttachmentS3Bucket(
         return if (endpointOverride.isNotBlank()) {
             url.replace(endpoint, endpointOverride)
         } else {
-            endpoint
+            url
         }
     }
 
@@ -56,7 +56,7 @@ class AttachmentS3Bucket(
         return if (endpointOverride.isNotBlank()) {
             url.replace(endpoint, endpointOverride)
         } else {
-            endpoint
+            url
         }
     }
 

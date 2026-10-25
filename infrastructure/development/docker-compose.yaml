@@ -124,9 +124,7 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: forsetijudge
       REDIS_SSE_TTL_SECONDS: 600
-      OTEL_TRACES_EXPORTER: none
-      OTEL_METRICS_EXPORTER: none
-      OTEL_LOGS_EXPORTER: none
+      OTEL_SDK_DISABLED: true
       COOKIE_DOMAIN: "*"
       COOKIE_SECURE: false
       ALLOWED_ORIGINS: http://localhost:3000

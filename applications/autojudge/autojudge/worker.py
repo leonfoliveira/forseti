@@ -1,12 +1,14 @@
 import json
 import logging
+from opentelemetry import context, propagate, trace
 
 from autojudge.config.aws_config import sqs_client
 from autojudge.config.env import env
 from autojudge.judge import Judge
 from autojudge.schema.submission_schema import SubmissionSchema
 
-logging.getLogger("werkzeug").setLevel(logging.WARNING)
+logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
 
 
 class Worker:
@@ -15,17 +17,17 @@ class Worker:
         self.judge = Judge()
 
     def start(self):
-        logging.info("Worker started")
+        logger.info("Worker started")
         while self.is_active:
             self._receive_messages()
-        logging.info("Worker stopped")
+        logger.info("Worker stopped")
 
     def stop(self):
         self.is_active = False
-        logging.info("Graceously stopping worker...")
+        logger.info("Graceously stopping worker...")
 
     def _receive_messages(self):
-        logging.info("Receiving messages from SQS")
+        logger.info("Receiving messages from SQS")
         response = sqs_client.receive_message(
             QueueUrl=env.aws.sqs.submission_queue,
             MaxNumberOfMessages=10,
@@ -34,15 +36,27 @@ class Worker:
         )
         messages = response.get("Messages", [])
 
-        logging.info(f"Received {len(messages)} messages from SQS")
+        logger.info(f"Received {len(messages)} messages from SQS")
         for message in messages:
-            try:
-                body = json.loads(message["Body"])
-                logging.info(f"Handling body: {body}")
-                self._handle_body(body)
-                self._delete_message(message["ReceiptHandle"])
-            except Exception as e:
-                logging.error(f"Failed to process message: {e}")
+            message_context = propagate.extract({
+                key: attribute["StringValue"]
+                for key, attribute in message.get(
+                    "MessageAttributes", {}
+                ).items()
+            })
+            token = context.attach(message_context)
+            with trace.get_tracer("forseti.autojudge").start_as_current_span("process_message") as span:
+                try:
+                    body = json.loads(message["Body"])
+                    logger.info(f"Handling body: {body}")
+                    self._handle_body(body)
+                    self._delete_message(message["ReceiptHandle"])
+                except Exception as e:
+                    logger.error(f"Failed to process message: {e}")
+                    span.record_exception(e)
+                    span.set_status(trace.Status(trace.StatusCode.ERROR, str(e)))
+                finally:
+                    context.detach(token)
 
     def _handle_body(self, body):
         submission = SubmissionSchema(**body)

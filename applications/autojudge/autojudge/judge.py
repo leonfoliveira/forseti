@@ -6,8 +6,10 @@ import logging
 import os
 import io
 import tempfile
+import time
 from typing import List, Optional
 from uuid_v7.base import uuid7
+from opentelemetry.propagate import inject
 
 from pydantic import BaseModel
 
@@ -15,6 +17,12 @@ from autojudge.config.aws_config import s3_client, sqs_client
 from autojudge.config.env import env
 from autojudge.sandbox.docker_sandbox_container import DockerSandboxContainer, RunResult
 from autojudge.schema.submission_schema import SubmissionSchema
+from autojudge.observability.metrics import (
+    submissions_received,
+    submissions_judged,
+    submissions_failed,
+    submissions_duration,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -59,44 +67,62 @@ class Judge:
     def judge(self, submission: SubmissionSchema):
         """Download a submission and its test cases, then publish the result."""
 
-        logger.info(f"Judging submission {submission.submission_id}")
+        try:
+            logger.info(f"Judging submission {submission.submission_id}")
+            submissions_received.add(1)
+            started_at = time.perf_counter()
 
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            code_file_path = f"{tmp_dir}/{submission.code_id}"
-            s3_client.download_file(
-                Bucket=env.aws.s3.bucket,
-                Key=f"{self.S3_ATTACHMENTS_PREFIX}{submission.code_id}",
-                Filename=code_file_path,
-            )
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                code_file_path = f"{tmp_dir}/{submission.code_id}"
+                s3_client.download_file(
+                    Bucket=env.aws.s3.bucket,
+                    Key=f"{self.S3_ATTACHMENTS_PREFIX}{submission.code_id}",
+                    Filename=code_file_path,
+                )
 
-            test_case_file_path = f"{tmp_dir}/{submission.test_cases_id}"
-            s3_client.download_file(
-                Bucket=env.aws.s3.bucket,
-                Key=f"{self.S3_ATTACHMENTS_PREFIX}{submission.test_cases_id}",
-                Filename=test_case_file_path,
-            )
-            test_cases = self._read_test_cases(test_case_file_path)
+                test_case_file_path = f"{tmp_dir}/{submission.test_cases_id}"
+                s3_client.download_file(
+                    Bucket=env.aws.s3.bucket,
+                    Key=f"{self.S3_ATTACHMENTS_PREFIX}{submission.test_cases_id}",
+                    Filename=test_case_file_path,
+                )
+                test_cases = self._read_test_cases(test_case_file_path)
 
-            result = self._run(submission, code_file_path, test_cases)
+                result = self._run(submission, code_file_path, test_cases)
 
-        logger.info(f"Submission {submission.submission_id} judged as {result.answer}")
+            ended_at = time.perf_counter()
+            logger.info(f"Submission {submission.submission_id} judged as {result.answer} in {ended_at - started_at:.2f} seconds")
+            submissions_judged.add(1, {"answer": result.answer})
+            submissions_duration.record(ended_at - started_at, {"answer": result.answer})
 
-        logger.info("Publishing result")
-        sqs_client.send_message(
-            QueueUrl=env.aws.sqs.submission_judged_queue,
-            MessageBody=json.dumps(
-                {
-                    "submissionId": submission.submission_id,
-                    "answer": result.answer,
-                    "totalTestCases": result.total_test_cases,
-                    "approvedTestCases": result.approved_test_cases,
-                    "maxCpuTimeMs": result.max_cpu_time_ms,
-                    "maxClockTimeMs": result.max_clock_time_ms,
-                    "maxPeakMemoryKb": result.max_peak_memory_kb,
-                    "detailsId": result.details_id,
+            logger.info("Publishing result")
+            trace_attributes = {}
+            inject(trace_attributes)
+            sqs_client.send_message(
+                QueueUrl=env.aws.sqs.submission_judged_queue,
+                MessageBody=json.dumps(
+                    {
+                        "submissionId": submission.submission_id,
+                        "answer": result.answer,
+                        "totalTestCases": result.total_test_cases,
+                        "approvedTestCases": result.approved_test_cases,
+                        "maxCpuTimeMs": result.max_cpu_time_ms,
+                        "maxClockTimeMs": result.max_clock_time_ms,
+                        "maxPeakMemoryKb": result.max_peak_memory_kb,
+                        "detailsId": result.details_id,
+                    }
+                ),
+                MessageAttributes={
+                    key: {
+                        "DataType": "String",
+                        "StringValue": value,
+                    }
+                    for key, value in trace_attributes.items()
                 }
-            ),
-        )
+            )
+        except Exception as ex:
+            logger.error(f"Error while judging submission: {ex}")
+            submissions_failed.add(1)
 
     def _run(
         self,

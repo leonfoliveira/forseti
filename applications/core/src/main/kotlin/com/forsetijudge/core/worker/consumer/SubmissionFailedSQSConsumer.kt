@@ -3,11 +3,11 @@ package com.forsetijudge.core.worker.consumer
 import com.forsetijudge.core.infrastructure.sqs.adapter.SQSConsumer
 import com.forsetijudge.core.port.input.usecase.submission.FailSubmissionUseCase
 import com.forsetijudge.core.util.SafeLogger
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import tools.jackson.databind.ObjectMapper
+import java.util.UUID
 
 @Component
 @Suppress("unused")

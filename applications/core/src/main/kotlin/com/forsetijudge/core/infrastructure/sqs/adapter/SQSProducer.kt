@@ -2,6 +2,7 @@ package com.forsetijudge.core.infrastructure.sqs.adapter
 
 import com.forsetijudge.core.util.SafeLogger
 import software.amazon.awssdk.services.sqs.SqsClient
+import software.amazon.awssdk.services.sqs.model.MessageAttributeValue
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
 import tools.jackson.databind.ObjectMapper
 
@@ -18,14 +19,27 @@ class SQSProducer(
      * @param message The message to be sent to the SQS queue.
      */
     fun produce(message: Any) {
-        logger.info("Producing message to SQS url: $queueUrl, message: $message")
+        logger.info("Producing message to SQS url: $queueUrl")
 
-        sqsClient.sendMessage(
+        val traceAttributes =
+            SQSTraceContext
+                .inject()
+                .mapValues { (_, value) ->
+                    MessageAttributeValue
+                        .builder()
+                        .dataType("String")
+                        .stringValue(value)
+                        .build()
+                }
+
+        val request =
             SendMessageRequest
                 .builder()
                 .queueUrl(queueUrl)
                 .messageBody(objectMapper.writeValueAsString(message))
-                .build(),
-        )
+                .messageAttributes(traceAttributes)
+                .build()
+
+        sqsClient.sendMessage(request)
     }
 }

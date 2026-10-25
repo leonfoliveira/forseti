@@ -3,15 +3,16 @@ package com.forsetijudge.core.infrastructure.sqs
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.output.queue.SubmissionQueueProducer
 import com.forsetijudge.core.testcontainer.TestContainerLocalStack
-import io.awspring.cloud.sqs.operations.SqsTemplate
-import java.util.UUID
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import tools.jackson.module.kotlin.jacksonObjectMapper
+import java.util.UUID
 
 class SubmissionQueueSQSProducerIntegrationTest : TestContainerLocalStack() {
     private val queueName = "test-submission-queue"
-    private val producer = SubmissionQueueSQSProducer(SqsTemplate.newTemplate(sqsAsyncClient), queueName)
+    private val objectMapper = jacksonObjectMapper()
+    private val producer = SubmissionQueueSQSProducer(sqsClient, objectMapper, queueName)
 
     @Test
     fun `sends the message to the queue`() {

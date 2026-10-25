@@ -2,12 +2,12 @@ package com.forsetijudge.core.infrastructure.sqs
 
 import com.forsetijudge.core.infrastructure.sqs.adapter.SQSScheduler
 import com.forsetijudge.core.port.output.queue.AutoFreezeQueueProducer
-import java.time.OffsetDateTime
-import java.util.UUID
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.scheduler.SchedulerClient
 import tools.jackson.databind.ObjectMapper
+import java.time.OffsetDateTime
+import java.util.UUID
 
 @Component
 class AutoFreezeQueueSQSProducer(

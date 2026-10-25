@@ -19,6 +19,11 @@ Parameters:
     Type: String
     Description: Domain name for the application (e.g., forsetijudge.com)
     Default: forsetijudge.com
+
+  CertificateArn:
+    Type: String
+    Description: ACM Certificate ARN for the application
+    Default: arn:aws:acm:us-east-2:170825161826:certificate/12903c58-5da2-49db-b901-333824f0b72c
   
   HostedZoneId:
     Type: String
@@ -170,6 +175,7 @@ Resources:
   WebAppBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketNamespace: account-regional
       BucketName: !Sub "${Env}-webapp-bucket-${AWS::AccountId}-${AWS::Region}-an"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
@@ -183,10 +189,11 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub "${Env}-webapp-bucket-${AWS::AccountId}-${AWS::Region}-an"
-  
+
   CoreBucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketNamespace: account-regional
       BucketName: !Sub "${Env}-core-bucket-${AWS::AccountId}-${AWS::Region}-an"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
@@ -229,31 +236,20 @@ Resources:
         - Key: Name
           Value: !Sub "${Env}-core-db-sg"
 
-  CoreDatabaseSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      Name: !Sub "${Env}-core-db-secret"
-      Description: Secret for the core database master user
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "forseti"}'
-        GenerateStringKey: "password"
-        ExcludeCharacters: '"@/\'
-        PasswordLength: 16
-
   CoreDatabase:
     Type: AWS::RDS::DBInstance
     Properties:
       AllocatedStorage: "20"
       StorageType: gp3
-      DBInstanceClass: db.t2.micro
+      DBInstanceClass: db.t4g.micro
       DBInstanceIdentifier: !Sub "${Env}-core-db"
       DBSubnetGroupName: !Ref CoreDatabaseSubnetGroup
       VPCSecurityGroups:
         - !Ref CoreDatabaseSecurityGroup
       Engine: postgres
       DBName: forseti
-      MasterUsername: !Sub "${CoreDatabaseSecret.SecretString.username}"
-      MasterUserPassword: !Sub "${CoreDatabaseSecret.SecretString.password}"
+      MasterUsername: forseti
+      ManageMasterUserPassword: true
       Tags:
         - Key: Name
           Value: !Sub "${Env}-core-db"
@@ -412,7 +408,7 @@ Resources:
     Properties:
       LaunchTemplateName: !Sub "${Env}-ecs-launch-template"
       LaunchTemplateData:
-        InstanceType: "t2.micro"
+        InstanceType: "t3.micro"
         ImageId: !Sub "{{resolve:ssm:/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id}}"
         IamInstanceProfile:
           Arn: !GetAtt ECSIAMInstanceProfile.Arn
@@ -422,10 +418,7 @@ Resources:
         UserData:
           Fn::Base64: !Sub |
             #!/bin/bash
-            mkdir -p /etc/ecs
             echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
-            systemctl restart docker
-            systemctl restart ecs
 
   ECSAutoScalingGroup:
     Type: AWS::AutoScaling::AutoScalingGroup
@@ -519,13 +512,15 @@ Resources:
       ContainerDefinitions:
         - Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/autojudge:${Version}"
           Name: !Sub "${Env}-auto-judge-container"
-          Cpu: 256
-          Memory: 512
+          Cpu: 512
+          Memory: 1024
           HealthCheck:
             Command: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
           Environment:
-            - Name: Version
+            - Name: VERSION
               Value: !Ref Version
+            - Name: ENV
+              Value: !Ref Env
             - Name: AWS_REGION
               Value: !Ref AWS::Region
             - Name: AWS_S3_BUCKET
@@ -534,6 +529,8 @@ Resources:
               Value: !Ref SubmissionQueue
             - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
               Value: !Ref SubmissionJudgedQueue
+            - Name: OTEL_SDK_DISABLED
+              Value: "true"
             - Name: PORT
               Value: "8081"
           MountPoints:
@@ -630,7 +627,6 @@ Resources:
                 Action: 
                   - secretsmanager:GetSecretValue
                 Resource: 
-                  - !Ref CoreDatabaseSecret
                   - !Ref RootPasswordSecret
         - PolicyName: !Sub "${Env}-core-read-write-bucket"
           PolicyDocument:
@@ -695,10 +691,13 @@ Resources:
       ContainerDefinitions:
         - Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/core:${Version}"
           Name: !Sub "${Env}-core-container"
-          Cpu: 256
-          Memory: 512
+          Cpu: 512
+          Memory: 1024
           HealthCheck:
             Command: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+          PortMappings:
+            - ContainerPort: 8080
+              Protocol: tcp
           Environment:
             - Name: SPRING_PROFILES_ACTIVE
               Value: !Ref Env
@@ -725,7 +724,7 @@ Resources:
             - Name: AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN
               Value: !GetAtt AutoFreezeSchedulerRole.Arn
             - Name: DB_URL
-              Value: !Sub "jdbc:postgresql://${CoreDatabase.Endpoint.Address}:${CoreDatabase.Endpoint.Port}/forseti"
+              Value: !Sub "jdbc:postgresql://${CoreDatabase.Endpoint.Address}:${CoreDatabase.Endpoint.Port}/forseti?user=forseti"
             - Name: DB_PASSWORD_FILE
               Value: /secrets/db_password
             - Name: REDIS_HOST
@@ -734,12 +733,8 @@ Resources:
               Value: !GetAtt CoreCache.ConfigurationEndpoint.Port
             - Name: REDIS_SSE_TTL_SECONDS
               Value: "600"
-            - Name: OTEL_TRACES_EXPORTER
-              Value: "none"
-            - Name: OTEL_METRICS_EXPORTER
-              Value: "none"
-            - Name: OTEL_LOGS_EXPORTER
-              Value: "none"
+            - Name: OTEL_SDK_DISABLED
+              Value: "true"
             - Name: COOKIE_DOMAIN
               Value: !Ref Domain
             - Name: COOKIE_SECURE
@@ -754,7 +749,7 @@ Resources:
               Value: "8080"
           Secrets:
             - Name: db_password
-              ValueFrom: !Sub "{{resolve:secretsmanager:${CoreDatabaseSecret}:SecretString:password}}"
+              ValueFrom: !GetAtt CoreDatabase.MasterUserSecret.SecretArn
 
   CoreService:
     Type: AWS::ECS::Service
@@ -802,15 +797,6 @@ Resources:
       Protocol: HTTP
 
   # Distributions
-  Certificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Ref Domain
-      ValidationMethod: DNS
-      DomainValidationOptions:
-        - DomainName: !Ref Domain
-          HostedZoneId: !Ref HostedZoneId
-
   CoreDistribution:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -830,7 +816,7 @@ Resources:
           ViewerProtocolPolicy: redirect-to-https
           AllowedMethods: [GET, HEAD, OPTIONS, POST, PUT, PATCH, DELETE]
         ViewerCertificate:
-          AcmCertificateArn: !Ref Certificate
+          AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
 
   WebAppOAI:
@@ -864,7 +850,7 @@ Resources:
             ResponsePagePath: "/index.html"
             ResponseCode: 200
         ViewerCertificate:
-          AcmCertificateArn: !Ref Certificate
+          AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
 
   CoreRecordSet:

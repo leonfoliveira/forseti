@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.S3Configuration
 import software.amazon.awssdk.services.s3.presigner.S3Presigner
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient
 import software.amazon.awssdk.services.sqs.SqsAsyncClient
+import software.amazon.awssdk.services.sqs.SqsClient
 
 /**
  * Base class for tests that run against a real LocalStack (S3, Secrets Manager and SQS) started by Testcontainers.
@@ -48,6 +49,14 @@ abstract class TestContainerLocalStack {
 
         val secretsManagerClient: SecretsManagerClient =
             SecretsManagerClient
+                .builder()
+                .endpointOverride(localStack.endpoint)
+                .credentialsProvider(credentials)
+                .region(Region.of(localStack.region))
+                .build()
+
+        val sqsClient: SqsClient =
+            SqsClient
                 .builder()
                 .endpointOverride(localStack.endpoint)
                 .credentialsProvider(credentials)
