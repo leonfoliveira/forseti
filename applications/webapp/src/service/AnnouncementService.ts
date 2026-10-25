@@ -1,8 +1,8 @@
-import type { AnnouncementWritter } from "@/port/input/usecase/announcement/AnnouncementWritter";
+import type { AnnouncementWriter } from "@/port/input/usecase/announcement/AnnouncementWriter";
 import type { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
 import { AnnouncementRepository } from "@/port/output/repository/AnnouncementRepository";
 
-export class AnnouncementService implements AnnouncementWritter {
+export class AnnouncementService implements AnnouncementWriter {
   constructor(
     private readonly announcementRepository: AnnouncementRepository,
   ) {}

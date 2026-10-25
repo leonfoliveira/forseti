@@ -4,12 +4,12 @@ import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionRepository } from "@/port/output/repository/SubmissionRepository";
 import {
   CreateSubmissionInputDTO,
-  SubmissionWritter,
-} from "@/port/input/usecase/submission/SubmissionWritter";
+  SubmissionWriter,
+} from "@/port/input/usecase/submission/SubmissionWriter";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 
-export class SubmissionService implements SubmissionWritter {
+export class SubmissionService implements SubmissionWriter {
   constructor(
     private readonly submissionRepository: SubmissionRepository,
     private readonly attachmentService: AttachmentService,

@@ -17,7 +17,7 @@ export type UpdateContestInputDTO = Omit<
   })[];
 };
 
-export interface ContestWritter {
+export interface ContestWriter {
   /**
    * Update contest details.
    *

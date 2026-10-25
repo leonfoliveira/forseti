@@ -3,15 +3,15 @@ import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { ContestRepository } from "@/port/output/repository/ContestRepository";
 import { ContestReader } from "@/port/input/usecase/contest/ContestReader";
 import {
-  ContestWritter,
+  ContestWriter,
   UpdateContestInputDTO,
-} from "@/port/input/usecase/contest/ContestWritter";
+} from "@/port/input/usecase/contest/ContestWriter";
 import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 
-export class ContestService implements ContestWritter, ContestReader {
+export class ContestService implements ContestWriter, ContestReader {
   constructor(
     private readonly contestRepository: ContestRepository,
     private readonly attachmentService: AttachmentService,

@@ -4,7 +4,7 @@ import { DateTimeUtil } from "@/app/_lib/util/DateTimeUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
-import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWritter";
+import { UpdateContestInputDTO } from "@/port/input/usecase/contest/ContestWriter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { ArrayUtil } from "@/util/ArrayUtil";

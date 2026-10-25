@@ -1,4 +1,4 @@
-export interface SessionWritter {
+export interface SessionWriter {
   /**
    * Delete the current session.
    */

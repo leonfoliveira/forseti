@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
-import { CreateSubmissionInputDTO } from "@/port/input/usecase/submission/SubmissionWritter";
+import { CreateSubmissionInputDTO } from "@/port/input/usecase/submission/SubmissionWriter";
 
 export type SubmissionFormType = {
   problemId: string;

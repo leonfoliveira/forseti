@@ -2,7 +2,7 @@ import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/Cr
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
 
-export interface PrintRequestWritter {
+export interface PrintRequestWriter {
   /**
    * Creates a new print request for a given contest.
    *

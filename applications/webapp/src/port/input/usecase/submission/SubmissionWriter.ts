@@ -9,7 +9,7 @@ export type CreateSubmissionInputDTO = {
   code: File;
 };
 
-export interface SubmissionWritter {
+export interface SubmissionWriter {
   /**
    * Create a submission for a contest.
    *

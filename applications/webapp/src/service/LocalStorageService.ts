@@ -1,9 +1,9 @@
 import { LocalStorageRepository } from "@/port/output/repository/LocalStorageRepository";
 import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
-import { LocalStorageWritter } from "@/port/input/usecase/localstorage/LocalStorageWritter";
+import { LocalStorageWriter } from "@/port/input/usecase/localstorage/LocalStorageWriter";
 
 export class LocalStorageService
-  implements LocalStorageReader, LocalStorageWritter
+  implements LocalStorageReader, LocalStorageWriter
 {
   constructor(private readonly storageRepository: LocalStorageRepository) {}
 

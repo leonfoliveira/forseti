@@ -1,4 +1,4 @@
-export interface LocalStorageWritter {
+export interface LocalStorageWriter {
   /**
    * Store a value associated with a key.
    *

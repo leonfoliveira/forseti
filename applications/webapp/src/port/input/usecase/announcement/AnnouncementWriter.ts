@@ -1,7 +1,7 @@
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import type { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
 
-export interface AnnouncementWritter {
+export interface AnnouncementWriter {
   /**
    * Creates a new announcement for a specific contest.
    *

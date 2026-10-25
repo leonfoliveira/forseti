@@ -1,11 +1,11 @@
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { AttachmentRepository } from "@/port/output/repository/AttachmentRepository";
 import { AttachmentReader } from "@/port/input/usecase/attachment/AttachmentReader";
-import { AttachmentWritter } from "@/port/input/usecase/attachment/AttachmentWritter";
+import { AttachmentWriter } from "@/port/input/usecase/attachment/AttachmentWriter";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { BucketRepository } from "@/port/output/bucket/BucketRepository";
 
-export class AttachmentService implements AttachmentReader, AttachmentWritter {
+export class AttachmentService implements AttachmentReader, AttachmentWriter {
   constructor(
     private attachmentRepository: AttachmentRepository,
     private bucketRepository: BucketRepository,

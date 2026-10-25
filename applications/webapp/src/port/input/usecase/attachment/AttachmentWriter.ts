@@ -1,7 +1,7 @@
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 
-export interface AttachmentWritter {
+export interface AttachmentWriter {
   /**
    * Upload a file as an attachment.
    *

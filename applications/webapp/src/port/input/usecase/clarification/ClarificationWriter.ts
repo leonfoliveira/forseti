@@ -2,7 +2,7 @@ import { CreateClarificationRequestDTO } from "@/port/dto/request/clarification/
 import { AnswerClarificationRequestDTO } from "@/port/dto/request/clarification/AnswerClarificationRequestDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 
-export interface ClarificationWritter {
+export interface ClarificationWriter {
   /**
    * Creates a new clarification for the specified contest.
    *

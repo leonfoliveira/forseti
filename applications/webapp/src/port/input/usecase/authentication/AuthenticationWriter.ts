@@ -1,7 +1,7 @@
 import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 
-export interface AuthenticationWritter {
+export interface AuthenticationWriter {
   /**
    * Authenticate a user for a contest.
    *

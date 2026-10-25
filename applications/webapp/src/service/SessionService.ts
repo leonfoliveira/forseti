@@ -1,10 +1,10 @@
 import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
 import { SessionRepository } from "@/port/output/repository/SessionRepository";
 import { SessionReader } from "@/port/input/usecase/session/SessionReader";
-import { SessionWritter } from "@/port/input/usecase/session/SessionWritter";
+import { SessionWriter } from "@/port/input/usecase/session/SessionWriter";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 
-export class SessionService implements SessionReader, SessionWritter {
+export class SessionService implements SessionReader, SessionWriter {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
   async getCurrent(): Promise<SessionResponseDTO | null> {
