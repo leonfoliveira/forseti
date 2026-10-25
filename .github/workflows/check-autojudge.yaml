@@ -26,7 +26,7 @@ jobs:
               - 'applications/autojudge/**'
               - '.github/workflows/check-autojudge.yaml'
 
-      - name: Set up Python 3.12
+      - name: Set up Python
         if: steps.changes.outputs.autojudge == 'true'
         uses: actions/setup-python@v5
         with:

@@ -1,0 +1,78 @@
+name: Build and Deploy Staging
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # - name: Set up Python
+      #   uses: actions/setup-python@v5
+      #   with:
+      #     python-version: "3.12"
+      #     cache: "pip"
+
+      # - name: Set up JDK
+      #   uses: actions/setup-java@v4
+      #   with:
+      #     distribution: temurin
+      #     java-version: 21
+      #     cache: gradle
+      
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v5
+      #   with:
+      #     node-version: 22
+      #     cache: "npm"
+      #     cache-dependency-path: applications/webapp/package-lock.json
+      
+      # - name: Build autojudge
+      #   working-directory: applications/autojudge
+      #   run: docker build -t forseti/autojudge .
+      
+      # - name: Build core
+      #   working-directory: applications/core
+      #   run: ./gradlew build -x check
+      
+      # - name: Build webapp
+      #   working-directory: applications/webapp
+      #   run: npm ci && npm run build
+
+      # - name: Configure AWS credentials
+      #   uses: aws-actions/configure-aws-credentials@v4
+      #   with:
+      #     role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+      #     aws-region: us-east-2
+      
+      # - name: Push docker images
+      #   run: |
+      #     docker tag forseti/autojudge 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/autojudge:latest
+      #     docker push 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/autojudge:latest
+      #     docker tag forseti/core 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/core:latest
+      #     docker push 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/core:latest
+
+      # - name: Deploy CloudFormation Stack
+      #   uses: aws-actions/aws-cloudformation-github-deploy@v2
+      #   with:
+      #     name: staging-forseti-stack
+      #     template: applications/template/dist/template.yaml
+      #     parameter-overrides: ENV=staging,Version=latest
+      #     no-fail-on-empty-changeset: true
+      #     capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
+      
+      # - name: Upload webapp artifact
+      #   run: |
+      #     aws s3 sync applications/webapp/dist/ s3://${{ secrets.AWS_S3_STAGING_WEBAPP_BUCKET }} --delete

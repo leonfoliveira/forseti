@@ -23,6 +23,7 @@ Parameters:
   HostedZoneId:
     Type: String
     Description: Hosted Zone ID for the domain
+    Default: "Z2FDTNDATAQYW2"
 
 Resources:
   # Network
