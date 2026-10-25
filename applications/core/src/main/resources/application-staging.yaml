@@ -1,0 +1,72 @@
+spring:
+  # PostgreSQL database configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_MAX_POOL_SIZE:20}
+      minimum-idle: ${DB_MIN_IDLE:10}
+      idle-timeout: ${DB_IDLE_TIMEOUT_MS:30000}
+      max-lifetime: ${DB_MAX_LIFETIME_MS:1800000}
+      connection-timeout: ${DB_CONNECTION_TIMEOUT_MS:30000}
+  jpa:
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        ddl-auto: validate
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
+
+  # Redis configuration
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD:}
+      sse_ttl_seconds: ${SSE_TTL_SECONDS:600}
+      ssl:
+        enabled: ${REDIS_SSL_ENABLED:true}
+
+# AWS configuration
+aws:
+  region: ${AWS_REGION:us-east-1}
+  endpoint: ${AWS_ENDPOINT:}
+  access-key-id: ${AWS_ACCESS_KEY_ID:}
+  secret-access-key: ${AWS_SECRET_ACCESS_KEY:}
+  s3:
+    bucket: ${AWS_S3_BUCKET:prod-core-bucket}
+    endpoint-override: ${AWS_S3_ENDPOINT_OVERRIDE:}
+    signed-download-url-expiration-seconds: ${AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS:3600}
+    signed-upload-url-expiration-seconds: ${AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS:3600}
+  sqs:
+    submission-queue-url: ${AWS_SQS_SUBMISSION_QUEUE_URL}
+    submission-failed-queue-url: ${AWS_SQS_SUBMISSION_FAILED_QUEUE_URL}
+    submission-judged-queue-url: ${AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL}
+    auto-freeze-queue-url: ${AWS_SQS_AUTO_FREEZE_QUEUE_URL}
+    auto-freeze-queue-arn: ${AWS_SQS_AUTO_FREEZE_QUEUE_ARN}
+  scheduler:
+    auto-freeze-scheduler-role-arn: ${AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN}
+
+# Security configuration
+security:
+  cookie:
+    domain: ${COOKIE_DOMAIN:forsetijudge.com}
+    secure: ${COOKIE_SECURE:true}
+  session:
+    expiration:
+      default_seconds: ${SESSION_EXPIRATION_SECONDS:21600}
+      root_seconds: ${SESSION_ROOT_EXPIRATION_SECONDS:900}
+
+# API server configuration
+server:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:forsetijudge.com}
+  port: ${API_PORT:8080}

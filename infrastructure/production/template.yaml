@@ -1,0 +1,883 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Forseti Stack - Optimized & Secured
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name (e.g., production, staging)
+    Default: production
+    AllowedValues:
+      - production
+      - staging
+  
+  Version:
+    Type: String
+    Description: Version of the stack
+    Default: latest
+  
+  Domain:
+    Type: String
+    Description: Domain name for the application (e.g., forsetijudge.com)
+    Default: forsetijudge.com
+  
+  HostedZoneId:
+    Type: String
+    Description: Hosted Zone ID for the domain
+
+Resources:
+  # Network
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-vpc"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-igw"
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  
+  NatEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatEIP.AllocationId
+      SubnetId: !Ref PublicSubnetA
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-nat-gw"
+
+  PublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-public-subnet-a"
+
+  PublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-public-subnet-b"
+
+  PrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.3.0/24
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-private-subnet-a"
+
+  PrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.4.0/24
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-private-subnet-b"
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-public-rt"
+  
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetA
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetRouteTableAssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetB
+      RouteTableId: !Ref PublicRouteTable
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-private-rt"
+  
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetA
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateRouteTableAssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetB
+      RouteTableId: !Ref PrivateRouteTable
+  
+  # Buckets
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${Env}-webapp-bucket"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-webapp-bucket"
+  
+  CoreBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${Env}-core-bucket"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-bucket"
+  
+  CoreBucketVPCEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      VpcId: !Ref VPC
+      ServiceName: !Sub "com.amazonaws.${AWS::Region}.s3"
+      VpcEndpointType: Gateway
+      RouteTableIds:
+        - !Ref PrivateRouteTable
+        - !Ref PublicRouteTable
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-bucket-vpc-endpoint"
+
+  # Database
+  CoreDatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for the core database
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !Ref CoreSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db-sg"
+
+  CoreDatabaseSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${Env}-core-db-secret"
+      Description: Secret for the core database master user
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "forseti"}'
+        GenerateStringKey: "password"
+        ExcludeCharacters: '"@/\'
+        PasswordLength: 16
+
+  CoreDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: "20"
+      StorageType: gp3
+      DBInstanceClass: db.t2.micro
+      DBInstanceIdentifier: !Sub "${Env}-core-db"
+      DBSubnetGroupName: !Ref CoreDatabaseSubnetGroup
+      VPCSecurityGroups:
+        - !Ref CoreDatabaseSecurityGroup
+      Engine: postgres
+      DBName: forseti
+      MasterUsername: !Sub "${CoreDatabaseSecret.SecretString.username}"
+      MasterUserPassword: !Sub "${CoreDatabaseSecret.SecretString.password}"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db"
+
+  CoreDatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for the core database
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db-subnet-group"
+  
+  # Cache
+  CacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for the cache
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 6379
+          ToPort: 6379
+          SourceSecurityGroupId: !Ref CoreSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-cache-sg"
+
+  CoreCache:
+    Type: AWS::ElastiCache::CacheCluster
+    Properties:
+      ClusterName: !Sub "${Env}-core-cache"
+      CacheNodeType: cache.t3.micro
+      CacheSubnetGroupName: !Ref CoreCacheSubnetGroup
+      Engine: redis
+      NumCacheNodes: 1
+      VpcSecurityGroupIds:
+        - !Ref CacheSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cache"
+
+  CoreCacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Subnet group for the core cache
+      SubnetIds:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cache-subnet-group"
+
+  # Queues
+  SubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-queue"
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-queue"
+  
+  SubmissionFailedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-failed-queue"
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-failed-queue"
+  
+  SubmissionFailedDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-failed-dlq"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-failed-dlq"
+  
+  SubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-judged-queue"
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionJudgedDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-judged-queue"
+  
+  SubmissionJudgedDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-judged-dlq"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-judged-dlq"
+  
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-auto-freeze-queue"
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AutoFreezeDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-auto-freeze-queue"
+  
+  AutoFreezeDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-auto-freeze-dlq"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-auto-freeze-dlq"
+
+  # Cluster
+  ECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${Env}-ecs-cluster"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-ecs-cluster"
+
+  ECSIAMInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref ECSIAMRole
+
+  ECSIAMRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role
+
+  ECSLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateName: !Sub "${Env}-ecs-launch-template"
+      LaunchTemplateData:
+        InstanceType: "t2.micro"
+        ImageId: !Sub "{{resolve:ssm:/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id}}"
+        IamInstanceProfile:
+          Arn: !GetAtt ECSIAMInstanceProfile.Arn
+        SecurityGroupIds:
+          - !Ref CoreSecurityGroup
+          - !Ref AutoJudgeSecurityGroup
+        UserData:
+          Fn::Base64: !Sub |
+            #!/bin/bash
+            echo ECS_CLUSTER=${ECSCluster} >> /etc/ecs/ecs.config
+            systemctl restart docker
+            systemctl restart ecs
+
+  ECSAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+        - !Ref PrivateSubnetA
+        - !Ref PrivateSubnetB
+      LaunchTemplate:
+        LaunchTemplateId: !Ref ECSLaunchTemplate
+        Version: !GetAtt ECSLaunchTemplate.LatestVersionNumber
+      MinSize: "1"
+      MaxSize: "2"
+      DesiredCapacity: "1"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-ecs-instance"
+          PropagateAtLaunch: true
+
+  # Auto Judge Service & Task
+  AutoJudgeSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for the AutoJudge service
+      VpcId: !Ref VPC
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-auto-judge-sg"
+          
+  AutoJudgeExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-auto-judge-execution-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: !Sub "${Env}-auto-judge-read-bucket"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - s3:GetObject
+                Resource: 
+                  - !Sub "arn:aws:s3:::${CoreBucket}/*"
+        - PolicyName: !Sub "${Env}-auto-judge-consume-queues"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource: 
+                  - !GetAtt SubmissionQueue.Arn
+        - PolicyName: !Sub "${Env}-auto-judge-produce-consume-queues"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - sqs:SendMessage
+                Resource: 
+                  - !GetAtt SubmissionJudgedQueue.Arn
+
+  AutoJudgeTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Env}-auto-judge-task"
+      ExecutionRoleArn: !GetAtt AutoJudgeExecutionRole.Arn
+      NetworkMode: host
+      Cpu: "256"
+      Memory: "512"
+      Volumes:
+        - Name: docker-sock
+          Host:
+            SourcePath: /var/run/docker.sock
+        - Name: tmp
+          Host:
+            SourcePath: /tmp
+      ContainerDefinitions:
+        - Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/autojudge:${Version}"
+          Name: !Sub "${Env}-auto-judge-container"
+          Cpu: 256
+          Memory: 512
+          HealthCheck:
+            Command: ["CMD-SHELL", "curl -f http://localhost:8081/health || exit 1"]
+          Environment:
+            - Name: Version
+              Value: !Ref Version
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_BUCKET
+              Value: !Ref CoreBucket
+            - Name: AWS_SQS_SUBMISSION_QUEUE
+              Value: !Ref SubmissionQueue
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
+              Value: !Ref SubmissionJudgedQueue
+            - Name: PORT
+              Value: "8081"
+          MountPoints:
+            - SourceVolume: docker-sock
+              ContainerPath: /var/run/docker.sock
+            - SourceVolume: tmp
+              ContainerPath: /tmp
+
+  AutoJudgeService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub "${Env}-auto-judge-service"
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref AutoJudgeTask
+      DesiredCount: 1
+      LaunchType: EC2
+
+  # Core Service & Load Balancer
+  CoreSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for ALB and Core service
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+        - IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-sg"
+
+  AutoFreezeSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-auto-freeze-scheduler-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref "AWS::AccountId"
+      Policies:
+        - PolicyName: !Sub "${Env}-auto-freeze-scheduler-produce-queues"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt AutoFreezeQueue.Arn
+
+  RootPasswordSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub "${Env}-root-password-secret"
+      Description: Secret for the root password
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "root"}'
+        GenerateStringKey: "password"
+        ExcludeCharacters: '"@/\'
+        PasswordLength: 16
+
+  CoreExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-core-execution-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+      Policies:
+        - PolicyName: !Sub "${Env}-core-read-secrets"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - secretsmanager:GetSecretValue
+                Resource: 
+                  - !Ref CoreDatabaseSecret
+                  - !Ref RootPasswordSecret
+        - PolicyName: !Sub "${Env}-core-read-write-bucket"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource: 
+                  - !Sub "arn:aws:s3:::${CoreBucket}/*"
+        - PolicyName: !Sub "${Env}-core-consume-queues"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - !GetAtt SubmissionFailedQueue.Arn
+                  - !GetAtt SubmissionJudgedQueue.Arn
+                  - !GetAtt AutoFreezeQueue.Arn
+        - PolicyName: !Sub "${Env}-core-produce-queues"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - sqs:SendMessage
+                Resource:
+                  - !GetAtt SubmissionQueue.Arn
+                  - !GetAtt AutoFreezeQueue.Arn
+        - PolicyName: !Sub "${Env}-core-read-write-scheduler"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - scheduler:CreateSchedule
+                  - scheduler:UpdateSchedule
+                  - scheduler:DeleteSchedule
+                  - scheduler:GetSchedule
+                Resource: !Sub "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/${Env}-auto-freeze-*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !GetAtt AutoFreezeSchedulerRole.Arn
+                Condition:
+                  StringEquals:
+                    iam:PassedToService: scheduler.amazonaws.com
+
+  CoreTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ExecutionRoleArn: !GetAtt CoreExecutionRole.Arn
+      Family: !Sub "${Env}-core-task"
+      NetworkMode: host
+      Cpu: "256"
+      Memory: "512"
+      ContainerDefinitions:
+        - Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/core:${Version}"
+          Name: !Sub "${Env}-core-container"
+          Cpu: 256
+          Memory: 512
+          HealthCheck:
+            Command: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+          Environment:
+            - Name: SPRING_PROFILES_ACTIVE
+              Value: !Ref Env
+            - Name: Version
+              Value: !Ref Version
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_BUCKET
+              Value: !Ref CoreBucket
+            - Name: AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_SQS_SUBMISSION_QUEUE_URL
+              Value: !GetAtt SubmissionQueue.QueueUrl
+            - Name: AWS_SQS_SUBMISSION_FAILED_QUEUE_URL
+              Value: !GetAtt SubmissionFailedQueue.QueueUrl
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL
+              Value: !GetAtt SubmissionJudgedQueue.QueueUrl
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE_URL
+              Value: !GetAtt AutoFreezeQueue.QueueUrl
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE_ARN
+              Value: !GetAtt AutoFreezeQueue.Arn
+            - Name: AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN
+              Value: !GetAtt AutoFreezeSchedulerRole.Arn
+            - Name: DB_URL
+              Value: !Sub "jdbc:postgresql://${CoreDatabase.Endpoint.Address}:${CoreDatabase.Endpoint.Port}/forseti"
+            - Name: DB_PASSWORD_FILE
+              Value: /secrets/db_password
+            - Name: REDIS_HOST
+              Value: !GetAtt CoreCache.ConfigurationEndpoint.Address
+            - Name: REDIS_PORT
+              Value: !GetAtt CoreCache.ConfigurationEndpoint.Port
+            - Name: REDIS_SSE_TTL_SECONDS
+              Value: "600"
+            - Name: OTEL_TRACES_EXPORTER
+              Value: "none"
+            - Name: OTEL_METRICS_EXPORTER
+              Value: "none"
+            - Name: OTEL_LOGS_EXPORTER
+              Value: "none"
+            - Name: COOKIE_DOMAIN
+              Value: !Ref Domain
+            - Name: COOKIE_SECURE
+              Value: "true"
+            - Name: ALLOWED_ORIGINS
+              Value: !Sub "https://${Domain}"
+            - Name: SESSION_EXPIRATION_SECONDS
+              Value: "21600"
+            - Name: SESSION_ROOT_EXPIRATION_SECONDS
+              Value: "900"
+            - Name: PORT
+              Value: "8080"
+          Secrets:
+            - Name: db_password
+              ValueFrom: !Sub "{{resolve:secretsmanager:${CoreDatabaseSecret}:SecretString:password}}"
+
+  CoreService:
+    Type: AWS::ECS::Service
+    Properties:
+      ServiceName: !Sub "${Env}-core-service"
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref CoreTask
+      DesiredCount: 1
+      LaunchType: EC2
+      LoadBalancers:
+        - ContainerName: !Sub "${Env}-core-container"
+          ContainerPort: 8080
+          TargetGroupArn: !Ref CoreTargetGroup
+
+  CoreLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Sub "${Env}-core-lb"
+      Subnets:
+        - !Ref PublicSubnetA
+        - !Ref PublicSubnetB
+      SecurityGroups:
+        - !Ref CoreSecurityGroup
+      Scheme: internet-facing
+      Type: application
+
+  CoreTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      Name: !Sub "${Env}-core-tg"
+      Port: 8080
+      Protocol: HTTP
+      VpcId: !Ref VPC
+      TargetType: instance
+      HealthCheckPath: /actuator/health
+
+  CoreListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref CoreTargetGroup
+      LoadBalancerArn: !Ref CoreLoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  # Distributions
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref Domain
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref Domain
+          HostedZoneId: !Ref HostedZoneId
+
+  CoreDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Aliases:
+          - !Sub "api.${Domain}"
+        Origins:
+          - Id: core-origin
+            DomainName: !GetAtt CoreLoadBalancer.DNSName
+            CustomOriginConfig:
+              HTTPPort: 80
+              HTTPSPort: 443
+              OriginProtocolPolicy: http-only
+        DefaultCacheBehavior:
+          TargetOriginId: core-origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS, POST, PUT, PATCH, DELETE]
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          SslSupportMethod: sni-only
+
+  WebAppOAI:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: !Sub "OAI for ${Env}-webapp"
+
+  WebAppDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Aliases:
+          - !Ref Domain
+        Origins:
+          - Id: webapp-origin
+            DomainName: !GetAtt WebAppBucket.RegionalDomainName
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${WebAppOAI}"
+        DefaultRootObject: "index.html"
+        DefaultCacheBehavior:
+          TargetOriginId: webapp-origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD, OPTIONS]
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponsePagePath: "/index.html"
+            ResponseCode: 200
+          - ErrorCode: 404
+            ResponsePagePath: "/index.html"
+            ResponseCode: 200
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          SslSupportMethod: sni-only
+
+  CoreRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub "${Domain}."
+      Name: !Sub "api.${Domain}"
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt CoreDistribution.DomainName
+        HostedZoneId: !GetAtt CoreDistribution.HostedZoneId
+
+  WebAppRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub "${Domain}."
+      Name: !Ref Domain
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebAppDistribution.DomainName
+        HostedZoneId: !GetAtt WebAppDistribution.HostedZoneId
