@@ -170,7 +170,7 @@ Resources:
   WebAppBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${Env}-webapp-bucket"
+      BucketName: !Sub "${Env}-webapp-bucket-${AWS::AccountId}-${AWS::Region}-an"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -182,12 +182,12 @@ Resources:
         RestrictPublicBuckets: true
       Tags:
         - Key: Name
-          Value: !Sub "${Env}-webapp-bucket"
+          Value: !Sub "${Env}-webapp-bucket-${AWS::AccountId}-${AWS::Region}-an"
   
   CoreBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "${Env}-core-bucket"
+      BucketName: !Sub "${Env}-core-bucket-${AWS::AccountId}-${AWS::Region}-an"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
@@ -199,7 +199,7 @@ Resources:
         RestrictPublicBuckets: true
       Tags:
         - Key: Name
-          Value: !Sub "${Env}-core-bucket"
+          Value: !Sub "${Env}-core-bucket-${AWS::AccountId}-${AWS::Region}-an"
   
   CoreBucketVPCEndpoint:
     Type: AWS::EC2::VPCEndpoint
