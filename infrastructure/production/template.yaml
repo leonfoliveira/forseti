@@ -25,6 +25,9 @@ Parameters:
     Description: Hosted Zone ID for the domain
     Default: "Z2FDTNDATAQYW2"
 
+Conditions:
+  IsProduction: !Equals [!Ref Env, "production"]
+
 Resources:
   # Network
   VPC:
@@ -867,8 +870,14 @@ Resources:
   CoreRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: !Sub "${Domain}."
-      Name: !Sub "api.${Domain}"
+      HostedZoneName: !If 
+        - IsProduction
+        - "${Domain}."
+        - "staging.${Domain}."
+      Name: !If
+        - IsProduction
+        - "api.${Domain}"
+        - "api.staging.${Domain}."
       Type: A
       AliasTarget:
         DNSName: !GetAtt CoreDistribution.DomainName
@@ -877,8 +886,14 @@ Resources:
   WebAppRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
-      HostedZoneName: !Sub "${Domain}."
-      Name: !Ref Domain
+      HostedZoneName: !If 
+        - IsProduction
+        - "${Domain}."
+        - "staging.${Domain}."
+      Name: !If
+        - IsProduction
+        - "${Domain}"
+        - "staging.${Domain}"
       Type: A
       AliasTarget:
         DNSName: !GetAtt WebAppDistribution.DomainName

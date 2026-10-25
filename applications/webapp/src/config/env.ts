@@ -1,24 +1,6 @@
-type RuntimeEnv = {
-  VERSION?: string;
-  API_URL?: string;
-  OTEL_URL?: string;
-  CLOUDWATCH_RUM_APP_ID?: string;
-  CLOUDWATCH_RUM_REGION?: string;
-};
-
-declare global {
-  interface Window {
-    __ENV__?: RuntimeEnv;
-  }
-}
-
-// In the browser, values come from /config.js, generated at container start.
-const runtimeEnv: RuntimeEnv =
-  typeof window !== "undefined" ? (window.__ENV__ ?? {}) : {};
-
 export const env = {
-  version: runtimeEnv.VERSION || "latest",
-  apiUrl: runtimeEnv.API_URL || "http://localhost:8080",
-  cloudWatchRumAppId: runtimeEnv.CLOUDWATCH_RUM_APP_ID,
-  cloudWatchRumRegion: runtimeEnv.CLOUDWATCH_RUM_REGION,
+  version: import.meta.env.VERSION || "latest",
+  apiUrl: import.meta.env.API_URL || "http://localhost:8080",
+  cloudWatchRumAppId: import.meta.env.CLOUDWATCH_RUM_APP_ID,
+  cloudWatchRumRegion: import.meta.env.CLOUDWATCH_RUM_REGION,
 };
