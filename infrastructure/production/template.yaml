@@ -171,6 +171,179 @@ Resources:
       SubnetId: !Ref PrivateSubnetB
       RouteTableId: !Ref PrivateRouteTable
   
+  # Telemetry
+  OTelApplicationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/otel/${Env}/application"
+      RetentionInDays: 14
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-otel-application-logs"
+
+  OTelApplicationLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref OTelApplicationLogGroup
+      LogStreamName: otlp
+
+  OTelCollectorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${Env}-otel-collector"
+      RetentionInDays: 14
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-otel-collector-logs"
+  
+  OTelCollectorExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-otel-collector-execution-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+  OTelCollectorTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-otel-collector-task-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: !Sub "${Env}-otel-export-telemetry"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: WriteOtelApplicationLogs
+                Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/otel/${Env}/application:*"
+              - Sid: WriteOtelMetrics
+                Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                Resource: "*"
+              - Sid: WriteOtelTraces
+                Effect: Allow
+                Action:
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                Resource: "*"
+
+  OTelCollectorTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Env}-otel-collector-task"
+      ExecutionRoleArn: !GetAtt OTelCollectorExecutionRole.Arn
+      TaskRoleArn: !GetAtt OTelCollectorTaskRole.Arn
+      NetworkMode: host
+      Cpu: "128"
+      Memory: "256"
+      ContainerDefinitions:
+        - Name: !Sub "${Env}-otel-collector"
+          Image: public.ecr.aws/aws-observability/aws-otel-collector:latest
+          Essential: true
+          Cpu: 128
+          MemoryReservation: 128
+          PortMappings:
+            - ContainerPort: 4317
+              Protocol: tcp
+            - ContainerPort: 4318
+              Protocol: tcp
+          Environment:
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AOT_CONFIG_CONTENT
+              Value: !Sub |
+                extensions:
+                  sigv4auth/logs:
+                    region: "${AWS::Region}"
+                    service: "logs"
+                  sigv4auth/metrics:
+                    region: "${AWS::Region}"
+                    service: "monitoring"
+                  sigv4auth/traces:
+                    region: "${AWS::Region}"
+                    service: "xray"
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+                      http:
+                        endpoint: 0.0.0.0:4318
+                processors:
+                  memory_limiter:
+                    check_interval: 1s
+                    limit_mib: 160
+                    spike_limit_mib: 32
+                  batch:
+                    timeout: 5s
+                    send_batch_size: 200
+                exporters:
+                  otlphttp/logs:
+                    logs_endpoint: "https://logs.${AWS::Region}.amazonaws.com/v1/logs"
+                    compression: gzip
+                    headers:
+                      x-aws-log-group: "/aws/otel/${Env}/application"
+                      x-aws-log-stream: "otlp"
+                    auth:
+                      authenticator: sigv4auth/logs
+                  otlphttp/metrics:
+                    metrics_endpoint: "https://monitoring.${AWS::Region}.amazonaws.com/v1/metrics"
+                    compression: gzip
+                    auth:
+                      authenticator: sigv4auth/metrics
+                  otlphttp/traces:
+                    traces_endpoint: "https://xray.${AWS::Region}.amazonaws.com/v1/traces"
+                    compression: gzip
+                    auth:
+                      authenticator: sigv4auth/traces
+                service:
+                  extensions: [sigv4auth/logs, sigv4auth/metrics, sigv4auth/traces]
+                  pipelines:
+                    logs:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/logs]
+                    metrics:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/metrics]
+                    traces:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/traces]
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref OTelCollectorLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: collector
+
+  OTelCollectorService:
+    Type: AWS::ECS::Service
+    DependsOn: OTelApplicationLogStream
+    Properties:
+      ServiceName: !Sub "${Env}-otel-collector-service"
+      Cluster: !Ref ECSCluster
+      TaskDefinition: !Ref OTelCollectorTask
+      LaunchType: EC2
+      SchedulingStrategy: DAEMON
+  
   # Buckets
   WebAppBucket:
     Type: AWS::S3::Bucket
@@ -222,6 +395,18 @@ Resources:
           Value: !Sub "${Env}-core-bucket-vpc-endpoint"
 
   # Database
+  CoreDatabasePostgresqlLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/rds/instance/${Env}-core-db/postgresql"
+      RetentionInDays: 14
+
+  CoreDatabaseUpgradeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/rds/instance/${Env}-core-db/upgrade"
+      RetentionInDays: 14
+
   CoreDatabaseSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -238,6 +423,9 @@ Resources:
 
   CoreDatabase:
     Type: AWS::RDS::DBInstance
+    DependsOn:
+      - CoreDatabasePostgresqlLogGroup
+      - CoreDatabaseUpgradeLogGroup
     Properties:
       AllocatedStorage: "20"
       StorageType: gp3
@@ -247,6 +435,9 @@ Resources:
       VPCSecurityGroups:
         - !Ref CoreDatabaseSecurityGroup
       Engine: postgres
+      EnableCloudwatchLogsExports:
+        - postgresql
+        - upgrade
       DBName: forseti
       MasterUsername: forseti
       ManageMasterUserPassword: true
@@ -266,6 +457,12 @@ Resources:
           Value: !Sub "${Env}-core-db-subnet-group"
   
   # Cache
+  CoreCacheSlowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/elasticache/${Env}/core-cache/slow-log"
+      RetentionInDays: 14
+
   CacheSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -288,6 +485,13 @@ Resources:
       CacheSubnetGroupName: !Ref CoreCacheSubnetGroup
       Engine: redis
       NumCacheNodes: 1
+      LogDeliveryConfigurations:
+        - DestinationDetails:
+            CloudWatchLogsDetails:
+              LogGroup: !Ref CoreCacheSlowLogGroup
+          DestinationType: cloudwatch-logs
+          LogFormat: json
+          LogType: slow-log
       VpcSecurityGroupIds:
         - !Ref CacheSecurityGroup
       Tags:
@@ -437,7 +641,7 @@ Resources:
           Value: !Sub "${Env}-ecs-instance"
           PropagateAtLaunch: true
 
-  # Auto Judge Service & Task
+  # Auto Judge
   AutoJudgeSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -530,7 +734,21 @@ Resources:
             - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
               Value: !Ref SubmissionJudgedQueue
             - Name: OTEL_SDK_DISABLED
-              Value: "true"
+              Value: "false"
+            - Name: OTEL_SERVICE_NAME
+              Value: !Sub "${Env}-autojudge"
+            - Name: OTEL_RESOURCE_ATTRIBUTES
+              Value: !Sub "deployment.environment.name=${Env},service.namespace=forseti"
+            - Name: OTEL_EXPORTER_OTLP_ENDPOINT
+              Value: http://127.0.0.1:4318
+            - Name: OTEL_EXPORTER_OTLP_PROTOCOL
+              Value: http/protobuf
+            - Name: OTEL_TRACES_EXPORTER
+              Value: otlp
+            - Name: OTEL_METRICS_EXPORTER
+              Value: otlp
+            - Name: OTEL_LOGS_EXPORTER
+              Value: otlp
             - Name: PORT
               Value: "8081"
           MountPoints:
@@ -541,6 +759,7 @@ Resources:
 
   AutoJudgeService:
     Type: AWS::ECS::Service
+    DependsOn: OTelCollectorService
     Properties:
       ServiceName: !Sub "${Env}-auto-judge-service"
       Cluster: !Ref ECSCluster
@@ -548,7 +767,7 @@ Resources:
       DesiredCount: 1
       LaunchType: EC2
 
-  # Core Service & Load Balancer
+  # Core
   CoreSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -734,7 +953,21 @@ Resources:
             - Name: REDIS_SSE_TTL_SECONDS
               Value: "600"
             - Name: OTEL_SDK_DISABLED
-              Value: "true"
+              Value: "false"
+            - Name: OTEL_SERVICE_NAME
+              Value: !Sub "${Env}-core"
+            - Name: OTEL_RESOURCE_ATTRIBUTES
+              Value: !Sub "deployment.environment.name=${Env},service.namespace=forseti"
+            - Name: OTEL_EXPORTER_OTLP_ENDPOINT
+              Value: http://127.0.0.1:4318
+            - Name: OTEL_EXPORTER_OTLP_PROTOCOL
+              Value: http/protobuf
+            - Name: OTEL_TRACES_EXPORTER
+              Value: otlp
+            - Name: OTEL_METRICS_EXPORTER
+              Value: otlp
+            - Name: OTEL_LOGS_EXPORTER
+              Value: otlp
             - Name: COOKIE_DOMAIN
               Value: !Ref Domain
             - Name: COOKIE_SECURE
@@ -753,6 +986,7 @@ Resources:
 
   CoreService:
     Type: AWS::ECS::Service
+    DependsOn: OTelCollectorService
     Properties:
       ServiceName: !Sub "${Env}-core-service"
       Cluster: !Ref ECSCluster
@@ -853,6 +1087,71 @@ Resources:
           AcmCertificateArn: !Ref CertificateArn
           SslSupportMethod: sni-only
 
+  WebAppRumIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: !Sub "${Env}-webapp-rum-identity-pool"
+      AllowUnauthenticatedIdentities: true
+      AllowClassicFlow: false
+
+  WebAppRumGuestRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${Env}-webapp-rum-guest-role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref WebAppRumIdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: !Sub "${Env}-webapp-rum-put-events"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - rum:PutRumEvents
+                Resource: !Sub "arn:${AWS::Partition}:rum:${AWS::Region}:${AWS::AccountId}:appmonitor/${Env}-webapp"
+
+  WebAppRumIdentityPoolRoleAttachment:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref WebAppRumIdentityPool
+      Roles:
+        unauthenticated: !GetAtt WebAppRumGuestRole.Arn
+
+  WebAppRumMonitor:
+    Type: AWS::RUM::AppMonitor
+    DependsOn: WebAppRumIdentityPoolRoleAttachment
+    Properties:
+      Name: !Sub "${Env}-webapp"
+      Domain: !If
+        - IsProduction
+        - !Ref Domain
+        - !Sub "staging.${Domain}"
+      Platform: Web
+      CwLogEnabled: false
+      AppMonitorConfiguration:
+        AllowCookies: false
+        EnableXRay: true
+        GuestRoleArn: !GetAtt WebAppRumGuestRole.Arn
+        IdentityPoolId: !Ref WebAppRumIdentityPool
+        SessionSampleRate: 0.1
+        Telemetries:
+          - errors
+          - performance
+          - http
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-webapp-rum"
+
   CoreRecordSet:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -884,3 +1183,12 @@ Resources:
       AliasTarget:
         DNSName: !GetAtt WebAppDistribution.DomainName
         HostedZoneId: !GetAtt WebAppDistribution.HostedZoneId
+
+Outputs:
+  CloudWatchRumAppId:
+    Description: "CloudWatch RUM App ID"
+    Value: !GetAtt WebAppRumMonitor.Id
+
+  CloudWatchRumIdentityPoolId:
+    Description: "CloudWatch RUM Identity Pool ID"
+    Value: !Ref WebAppRumIdentityPool
