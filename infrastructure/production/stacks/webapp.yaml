@@ -1,0 +1,281 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti webapp. The static single-page app: a private S3 bucket served through CloudFront (origin access
+  control), its DNS records, and the CloudWatch RUM app monitor that collects browser telemetry.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  AppDomain:
+    Type: String
+    Description: Domain the webapp is served from (e.g. forsetijudge.com)
+
+  HostedZoneId:
+    Type: String
+    Description: ID of the Route 53 hosted zone that contains AppDomain
+
+  CloudFrontCertificateArn:
+    Type: String
+    Description: >-
+      ARN of an ACM certificate that covers AppDomain. It has to live in us-east-1, whatever the region of the stack:
+      CloudFront only accepts certificates from there (see shared/certificate.yaml).
+
+  PriceClass:
+    Type: String
+    Description: >-
+      Edge locations used. PriceClass_100 is the cheapest but only covers North America and Europe, so users in
+      South America, Asia or Oceania would be served from farther away.
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+    Default: PriceClass_All
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # Hosting
+  # ---------------------------------------------------------------------------
+  WebAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketNamespace: account-regional
+      BucketName: !Sub "${Env}-webapp-bucket-${AWS::AccountId}-${AWS::Region}-an"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      LifecycleConfiguration:
+        Rules:
+          - Id: abort-incomplete-multipart-uploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-webapp-bucket"
+
+  WebAppOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${Env}-webapp-oac"
+        Description: !Sub "${Env} webapp bucket access"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # Objects are cached as long as their Cache-Control header says (up to a year, for the hashed build assets).
+  # Without the header the default is five minutes, so a missing header only delays a deployment a little.
+  WebAppCachePolicy:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        Name: !Sub "${Env}-webapp-cache-policy"
+        Comment: Honours the Cache-Control of the S3 objects, 5 minutes when missing
+        MinTTL: 0
+        DefaultTTL: 300
+        MaxTTL: 31536000
+        ParametersInCacheKeyAndForwardedToOrigin:
+          EnableAcceptEncodingGzip: true
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: none
+          CookiesConfig:
+            CookieBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
+
+  WebAppDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub "${Env} Forseti webapp"
+        Aliases:
+          - !Ref AppDomain
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: !Ref PriceClass
+        Origins:
+          - Id: webapp-bucket
+            DomainName: !GetAtt WebAppBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt WebAppOriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          TargetOriginId: webapp-bucket
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          CachePolicyId: !Ref WebAppCachePolicy
+          # Managed SecurityHeadersPolicy: HSTS, X-Content-Type-Options, X-Frame-Options, Referrer-Policy
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03
+        # Client-side routing: unknown paths are served by the single page app
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CloudFrontCertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+
+  # Only this distribution can read the bucket
+  WebAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebAppBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontRead
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${WebAppBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${WebAppDistribution}"
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource:
+              - !GetAtt WebAppBucket.Arn
+              - !Sub "${WebAppBucket.Arn}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+
+  # Z2FDTNDATAQYW2 is the fixed hosted zone ID of every CloudFront distribution
+  WebAppRecordSetIPv4:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "${AppDomain}."
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt WebAppDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  WebAppRecordSetIPv6:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "${AppDomain}."
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt WebAppDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  # ---------------------------------------------------------------------------
+  # Real user monitoring
+  # ---------------------------------------------------------------------------
+  WebAppRumIdentityPool:
+    Type: AWS::Cognito::IdentityPool
+    Properties:
+      IdentityPoolName: !Sub "${Env}-webapp-rum-identity-pool"
+      AllowUnauthenticatedIdentities: true
+      AllowClassicFlow: false
+
+  WebAppRumGuestRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: cognito-identity.amazonaws.com
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref WebAppRumIdentityPool
+              ForAnyValue:StringLike:
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: put-rum-events
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - rum:PutRumEvents
+                Resource: !Sub "arn:${AWS::Partition}:rum:${AWS::Region}:${AWS::AccountId}:appmonitor/${Env}-webapp"
+
+  WebAppRumIdentityPoolRoleAttachment:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties:
+      IdentityPoolId: !Ref WebAppRumIdentityPool
+      Roles:
+        unauthenticated: !GetAtt WebAppRumGuestRole.Arn
+
+  # The sampling and cookie settings of the web client come from its own code (initializeCloudWatchRum.ts)
+  WebAppRumMonitor:
+    Type: AWS::RUM::AppMonitor
+    DependsOn: WebAppRumIdentityPoolRoleAttachment
+    Properties:
+      Name: !Sub "${Env}-webapp"
+      Domain: !Ref AppDomain
+      Platform: Web
+      CwLogEnabled: false
+      AppMonitorConfiguration:
+        AllowCookies: false
+        EnableXRay: true
+        GuestRoleArn: !GetAtt WebAppRumGuestRole.Arn
+        IdentityPoolId: !Ref WebAppRumIdentityPool
+        SessionSampleRate: 0.1
+        Telemetries:
+          - errors
+          - performance
+          - http
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-webapp-rum"
+
+Outputs:
+  WebAppUrl:
+    Description: Public URL of the webapp
+    Value: !Sub "https://${AppDomain}"
+
+  WebAppBucketName:
+    Description: Bucket the build output (dist/) is synced to
+    Value: !Ref WebAppBucket
+
+  WebAppDistributionId:
+    Description: ID of the webapp CloudFront distribution (for cache invalidations after a deployment)
+    Value: !Ref WebAppDistribution
+
+  CloudWatchRumAppId:
+    Description: CloudWatch RUM App ID (VITE_CLOUDWATCH_RUM_APP_ID)
+    Value: !GetAtt WebAppRumMonitor.Id
+
+  CloudWatchRumIdentityPoolId:
+    Description: CloudWatch RUM Identity Pool ID
+    Value: !Ref WebAppRumIdentityPool

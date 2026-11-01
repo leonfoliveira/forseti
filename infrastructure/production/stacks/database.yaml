@@ -1,0 +1,190 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti database. PostgreSQL on RDS. In idle mode it is a single-AZ micro instance; in contest mode it becomes a
+  larger Multi-AZ instance (automatic failover). Switching modes reboots the instance, so do it well before a
+  contest starts and after it ends.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  Mode:
+    Type: String
+    Description: idle = cheapest, single-AZ. contest = Multi-AZ with more headroom.
+    AllowedValues:
+      - idle
+      - contest
+    Default: idle
+
+  PostgresEngineVersion:
+    Type: String
+    Description: >-
+      PostgreSQL version used when the instance is created. Minor upgrades are applied automatically afterwards.
+      RDS retires old minor versions, so bump this if a new environment fails to create with an unsupported version.
+    Default: "17.9"
+
+  AlarmTopicArn:
+    Type: String
+    Description: SNS topic notified by the alarms of this stack. Leave empty to skip the alarms.
+    Default: ""
+
+Mappings:
+  ModeSettings:
+    idle:
+      InstanceClass: db.t4g.micro
+    contest:
+      InstanceClass: db.t4g.small
+
+Conditions:
+  IsProduction: !Equals [!Ref Env, production]
+  IsContest: !Equals [!Ref Mode, contest]
+  HasAlarmTopic: !Not [!Equals [!Ref AlarmTopicArn, ""]]
+
+Resources:
+  DatabasePostgresqlLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/rds/instance/${Env}-core-db/postgresql"
+      RetentionInDays: 14
+
+  DatabaseUpgradeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/rds/instance/${Env}-core-db/upgrade"
+      RetentionInDays: 14
+
+  # No ingress rules here: the stack that owns the client (core) opens the port for its own security group
+  DatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Core database. Ingress rules are added by the core stack.
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db-sg"
+
+  DatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Private subnets for the core database
+      SubnetIds: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${Env}-network-PrivateSubnetIds"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db-subnet-group"
+
+  DatabaseParameterGroup:
+    Type: AWS::RDS::DBParameterGroup
+    Properties:
+      Description: !Sub "${Env} Forseti PostgreSQL parameters"
+      Family: postgres17
+      Parameters:
+        log_min_duration_statement: "1000"
+        log_lock_waits: "1"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db-parameters"
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    DependsOn:
+      - DatabasePostgresqlLogGroup
+      - DatabaseUpgradeLogGroup
+    Properties:
+      DBInstanceIdentifier: !Sub "${Env}-core-db"
+      Engine: postgres
+      EngineVersion: !Ref PostgresEngineVersion
+      DBInstanceClass: !FindInMap [ModeSettings, !Ref Mode, InstanceClass]
+      MultiAZ: !If [IsContest, true, false]
+      StorageType: gp3
+      AllocatedStorage: "20"
+      MaxAllocatedStorage: 100
+      StorageEncrypted: true
+      DBName: forseti
+      MasterUsername: forseti
+      MasterUserPassword: !Sub
+        - "{{resolve:secretsmanager:${SecretArn}:SecretString:password}}"
+        - SecretArn:
+            Fn::ImportValue: !Sub "${Env}-secrets-DatabaseSecretArn"
+      DBSubnetGroupName: !Ref DatabaseSubnetGroup
+      VPCSecurityGroups:
+        - !Ref DatabaseSecurityGroup
+      DBParameterGroupName: !Ref DatabaseParameterGroup
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 7
+      CopyTagsToSnapshot: true
+      DeletionProtection: !If [IsProduction, true, false]
+      AutoMinorVersionUpgrade: true
+      EnableCloudwatchLogsExports:
+        - postgresql
+        - upgrade
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-db"
+
+  DatabaseCpuAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-db-cpu-high"
+      AlarmDescription: Database CPU above 80% for 10 minutes. Consider a bigger instance class for contest mode.
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: DBInstanceIdentifier
+          Value: !Ref Database
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+  DatabaseFreeStorageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-db-free-storage-low"
+      AlarmDescription: Less than 1 GiB of free storage left on the database.
+      Namespace: AWS/RDS
+      MetricName: FreeStorageSpace
+      Dimensions:
+        - Name: DBInstanceIdentifier
+          Value: !Ref Database
+      Statistic: Minimum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1073741824
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+Outputs:
+  DatabaseAddress:
+    Description: Database endpoint address
+    Value: !GetAtt Database.Endpoint.Address
+    Export:
+      Name: !Sub "${Env}-database-Address"
+
+  DatabasePort:
+    Description: Database endpoint port
+    Value: !GetAtt Database.Endpoint.Port
+    Export:
+      Name: !Sub "${Env}-database-Port"
+
+  DatabaseSecurityGroupId:
+    Description: Security group of the database
+    Value: !Ref DatabaseSecurityGroup
+    Export:
+      Name: !Sub "${Env}-database-SecurityGroupId"

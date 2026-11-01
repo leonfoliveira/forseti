@@ -39,4 +39,8 @@ jobs:
 
       - name: Lint CloudFormation templates
         if: steps.changes.outputs.template == 'true'
-        run: cfn-lint template.yaml
+        run: cfn-lint stacks/*.yaml stacks/shared/*.yaml
+
+      - name: Lint deploy script
+        if: steps.changes.outputs.template == 'true'
+        run: shellcheck deploy.sh

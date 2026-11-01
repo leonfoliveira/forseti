@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti storage. The Core S3 bucket with submission code, test cases, problem statements and execution details.
+  Used by Core (reads, writes and signs URLs) and by the autojudge (reads submissions, writes execution details).
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  AppDomain:
+    Type: String
+    Description: Domain the webapp is served from (e.g. forsetijudge.com). Allowed to upload and download through signed URLs.
+
+Resources:
+  CoreBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketNamespace: account-regional
+      BucketName: !Sub "${Env}-core-bucket-${AWS::AccountId}-${AWS::Region}-an"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      VersioningConfiguration:
+        Status: Enabled
+      # Browsers upload and download attachments directly through the signed URLs created by Core
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - !Sub "https://${AppDomain}"
+            AllowedMethods:
+              - GET
+              - HEAD
+              - PUT
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders:
+              - ETag
+              - Content-Disposition
+            MaxAge: 3000
+      LifecycleConfiguration:
+        Rules:
+          - Id: abort-incomplete-multipart-uploads
+            Status: Enabled
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 7
+          - Id: expire-noncurrent-versions
+            Status: Enabled
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 30
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-bucket"
+
+  CoreBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CoreBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource:
+              - !GetAtt CoreBucket.Arn
+              - !Sub "${CoreBucket.Arn}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+
+Outputs:
+  CoreBucketName:
+    Description: Name of the Core bucket
+    Value: !Ref CoreBucket
+    Export:
+      Name: !Sub "${Env}-storage-CoreBucketName"
+
+  CoreBucketArn:
+    Description: ARN of the Core bucket
+    Value: !GetAtt CoreBucket.Arn
+    Export:
+      Name: !Sub "${Env}-storage-CoreBucketArn"

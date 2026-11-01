@@ -1,0 +1,223 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti messaging. The SQS queues that connect Core and the autojudge, each with its dead-letter queue.
+  Core -> submission queue -> autojudge -> judged queue -> Core. A submission the autojudge cannot process after
+  three attempts is moved to the failed queue (the dead-letter queue of the submission queue), which Core consumes
+  to mark the submission as failed. The auto freeze queue is fed by EventBridge Scheduler schedules created by Core.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  AlarmTopicArn:
+    Type: String
+    Description: SNS topic notified when a dead-letter queue is not empty. Leave empty to skip the alarms.
+    Default: ""
+
+Conditions:
+  HasAlarmTopic: !Not [!Equals [!Ref AlarmTopicArn, ""]]
+
+Resources:
+  # Judge work queue. The failed queue is its dead-letter queue.
+  SubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-queue"
+      SqsManagedSseEnabled: true
+      # Long polling: the consumers do not set WaitTimeSeconds, so without this they would busy-loop on the API
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 120
+      MessageRetentionPeriod: 345600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedQueue.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-queue"
+
+  # Consumed by Core. The retention is longer than the submission queue's because the age of a moved message
+  # counts from the moment it was first enqueued.
+  SubmissionFailedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-failed-queue"
+      SqsManagedSseEnabled: true
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 1209600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionFailedDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-failed-queue"
+
+  SubmissionFailedDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-failed-dlq"
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-failed-dlq"
+
+  SubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-judged-queue"
+      SqsManagedSseEnabled: true
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 345600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt SubmissionJudgedDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-judged-queue"
+
+  SubmissionJudgedDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-submission-judged-dlq"
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-submission-judged-dlq"
+
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-auto-freeze-queue"
+      SqsManagedSseEnabled: true
+      ReceiveMessageWaitTimeSeconds: 20
+      VisibilityTimeout: 60
+      MessageRetentionPeriod: 345600
+      RedrivePolicy:
+        deadLetterTargetArn: !GetAtt AutoFreezeDLQ.Arn
+        maxReceiveCount: 3
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-auto-freeze-queue"
+
+  AutoFreezeDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub "${Env}-auto-freeze-dlq"
+      SqsManagedSseEnabled: true
+      MessageRetentionPeriod: 1209600
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-auto-freeze-dlq"
+
+  SubmissionFailedDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-submission-failed-dlq-not-empty"
+      AlarmDescription: Core could not process a failed-submission message three times. The submission stays in judging.
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt SubmissionFailedDLQ.QueueName
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+  SubmissionJudgedDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-submission-judged-dlq-not-empty"
+      AlarmDescription: Core could not process a judged-submission message three times. A verdict was not recorded.
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt SubmissionJudgedDLQ.QueueName
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+  AutoFreezeDLQAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-auto-freeze-dlq-not-empty"
+      AlarmDescription: Core could not process an auto freeze message three times. A contest was not frozen on time.
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value: !GetAtt AutoFreezeDLQ.QueueName
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+Outputs:
+  SubmissionQueueUrl:
+    Value: !Ref SubmissionQueue
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionQueueUrl"
+
+  SubmissionQueueArn:
+    Value: !GetAtt SubmissionQueue.Arn
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionQueueArn"
+
+  SubmissionQueueName:
+    Value: !GetAtt SubmissionQueue.QueueName
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionQueueName"
+
+  SubmissionFailedQueueUrl:
+    Value: !Ref SubmissionFailedQueue
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionFailedQueueUrl"
+
+  SubmissionFailedQueueArn:
+    Value: !GetAtt SubmissionFailedQueue.Arn
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionFailedQueueArn"
+
+  SubmissionJudgedQueueUrl:
+    Value: !Ref SubmissionJudgedQueue
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionJudgedQueueUrl"
+
+  SubmissionJudgedQueueArn:
+    Value: !GetAtt SubmissionJudgedQueue.Arn
+    Export:
+      Name: !Sub "${Env}-messaging-SubmissionJudgedQueueArn"
+
+  AutoFreezeQueueUrl:
+    Value: !Ref AutoFreezeQueue
+    Export:
+      Name: !Sub "${Env}-messaging-AutoFreezeQueueUrl"
+
+  AutoFreezeQueueArn:
+    Value: !GetAtt AutoFreezeQueue.Arn
+    Export:
+      Name: !Sub "${Env}-messaging-AutoFreezeQueueArn"

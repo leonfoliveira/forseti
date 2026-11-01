@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti CloudFront certificate. CloudFront only accepts ACM certificates from us-east-1, so this stack must be
+  deployed in us-east-1 even though everything else runs in another region. One certificate covers the production
+  and staging domains. Deploy once per account.
+
+Parameters:
+  Domain:
+    Type: String
+    Description: Root domain of the platform (e.g. forsetijudge.com)
+
+  HostedZoneId:
+    Type: String
+    Description: ID of the Route 53 hosted zone of the domain. Used to create the DNS validation records.
+
+Resources:
+  # *.Domain covers the webapp and API of production (Domain, api.Domain) and the webapp of staging
+  # (staging.Domain). *.staging.Domain covers the API of staging (api.staging.Domain).
+  CloudFrontCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref Domain
+      SubjectAlternativeNames:
+        - !Sub "*.${Domain}"
+        - !Sub "*.staging.${Domain}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Ref Domain
+          HostedZoneId: !Ref HostedZoneId
+        - DomainName: !Sub "*.${Domain}"
+          HostedZoneId: !Ref HostedZoneId
+        - DomainName: !Sub "*.staging.${Domain}"
+          HostedZoneId: !Ref HostedZoneId
+
+Outputs:
+  CertificateArn:
+    Description: ARN of the certificate, passed to the api-edge and webapp stacks as CloudFrontCertificateArn
+    Value: !Ref CloudFrontCertificate

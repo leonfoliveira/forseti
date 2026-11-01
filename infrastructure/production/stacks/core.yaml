@@ -1,0 +1,758 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti Core API. Everything the Core application needs to run: the ALB that only CloudFront can reach, the
+  EC2 fleet of the Core ECS cluster, the IAM roles, the task definition and the ECS service. Idle mode runs one
+  instance and one task; contest mode runs two of each, spread across two availability zones.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  Version:
+    Type: String
+    Description: Core image tag
+    Default: latest
+
+  Mode:
+    Type: String
+    Description: idle = one instance, one task. contest = two instances in two AZs, two tasks.
+    AllowedValues:
+      - idle
+      - contest
+    Default: idle
+
+  AppDomain:
+    Type: String
+    Description: Domain the webapp is served from (e.g. forsetijudge.com). Used for CORS and as the cookie domain.
+
+  ApiDomain:
+    Type: String
+    Description: Domain the API is served from through CloudFront (e.g. api.forsetijudge.com)
+
+  HostedZoneId:
+    Type: String
+    Description: ID of the Route 53 hosted zone that contains AppDomain and ApiDomain
+
+  CloudFrontPrefixListId:
+    Type: String
+    Description: >-
+      ID of the AWS managed prefix list com.amazonaws.global.cloudfront.origin-facing in this region. The default is
+      the one of us-east-2; find others with: aws ec2 describe-managed-prefix-lists --filters
+      Name=prefix-list-name,Values=com.amazonaws.global.cloudfront.origin-facing
+    Default: pl-b6a144df
+
+  EcsAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Description: >-
+      Amazon ECS-optimized Amazon Linux 2023 AMI (x86_64). Resolved again on every deployment; running instances
+      are not replaced automatically.
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id
+
+  AlarmTopicArn:
+    Type: String
+    Description: SNS topic notified by the alarms of this stack. Leave empty to skip the alarms.
+    Default: ""
+
+  DesiredTasks:
+    Type: String
+    Description: >-
+      Overrides the number of Core tasks of the mode. Use 0 to keep Core stopped, for example on the first
+      deployment until the database migrations have been applied. Leave empty to use the number of the mode.
+    AllowedPattern: "^[0-9]*$"
+    Default: ""
+
+Mappings:
+  ModeSettings:
+    idle:
+      InstanceType: t3.small
+      Instances: "1"
+      MaxInstances: "2"
+      Tasks: "1"
+      # Hard memory limit of the Core container (MiB). Must leave room for the collector, the OS and the ECS agent.
+      TaskMemory: "1280"
+      # Idle has a single task, so a deployment stops it before starting the new one (short downtime is fine).
+      MinimumHealthyPercent: "0"
+      DbPoolMaxSize: "10"
+      DbPoolMinIdle: "2"
+    contest:
+      InstanceType: t3.small
+      Instances: "2"
+      MaxInstances: "3"
+      Tasks: "2"
+      TaskMemory: "1280"
+      # One task is always serving while the other is replaced
+      MinimumHealthyPercent: "50"
+      DbPoolMaxSize: "20"
+      DbPoolMinIdle: "5"
+
+Conditions:
+  IsProduction: !Equals [!Ref Env, production]
+  HasAlarmTopic: !Not [!Equals [!Ref AlarmTopicArn, ""]]
+  HasTaskOverride: !Not [!Equals [!Ref DesiredTasks, ""]]
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # Security groups
+  # ---------------------------------------------------------------------------
+  # The ALB only accepts HTTPS from CloudFront and only talks to the Core instances
+  AlbSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Core ALB. HTTPS only from CloudFront origin-facing addresses.
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      SecurityGroupIngress:
+        - Description: HTTPS from CloudFront
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          SourcePrefixListId: !Ref CloudFrontPrefixListId
+      SecurityGroupEgress:
+        - Description: Application port of the Core instances
+          IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          DestinationSecurityGroupId: !Ref CoreInstanceSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-alb-sg"
+
+  # No SSH: use SSM Session Manager to get a shell on an instance
+  CoreInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Core ECS instances. Only the ALB can reach the application port.
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      SecurityGroupEgress:
+        - Description: AWS APIs, ECR, database, cache
+          IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-instance-sg"
+
+  CoreInstanceIngressFromAlb:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref CoreInstanceSecurityGroup
+      Description: Application port from the ALB
+      IpProtocol: tcp
+      FromPort: 8080
+      ToPort: 8080
+      SourceSecurityGroupId: !Ref AlbSecurityGroup
+
+  # The data stores own their security groups and have no rules; the client opens the door for itself
+  DatabaseIngressFromCore:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        Fn::ImportValue: !Sub "${Env}-database-SecurityGroupId"
+      Description: PostgreSQL from the Core instances
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !Ref CoreInstanceSecurityGroup
+
+  CacheIngressFromCore:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        Fn::ImportValue: !Sub "${Env}-cache-SecurityGroupId"
+      Description: Valkey from the Core instances
+      IpProtocol: tcp
+      FromPort: 6379
+      ToPort: 6379
+      SourceSecurityGroupId: !Ref CoreInstanceSecurityGroup
+
+  # ---------------------------------------------------------------------------
+  # IAM
+  # ---------------------------------------------------------------------------
+  CoreInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
+
+  CoreInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref CoreInstanceRole
+
+  # Used by the ECS agent to pull the image, write container logs and inject the secrets at container start
+  CoreExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+      Policies:
+        - PolicyName: inject-secrets
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-secrets-DatabaseSecretArn"
+                  - Fn::ImportValue: !Sub "${Env}-secrets-CacheAuthSecretArn"
+
+  # Used by the application itself (AWS SDK in Core). These permissions have to be on the task role: the
+  # execution role is only for the ECS agent.
+  CoreTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: read-write-bucket
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Sub
+                    - "${BucketArn}/*"
+                    - BucketArn:
+                        Fn::ImportValue: !Sub "${Env}-storage-CoreBucketArn"
+        - PolicyName: consume-queues
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:ChangeMessageVisibility
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-messaging-SubmissionFailedQueueArn"
+                  - Fn::ImportValue: !Sub "${Env}-messaging-SubmissionJudgedQueueArn"
+                  - Fn::ImportValue: !Sub "${Env}-messaging-AutoFreezeQueueArn"
+        - PolicyName: produce-queues
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueArn"
+        # Core names its schedules auto-freeze-<contestId> in the default group
+        - PolicyName: manage-auto-freeze-schedules
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - scheduler:CreateSchedule
+                  - scheduler:DeleteSchedule
+                Resource: !Sub "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/auto-freeze-*"
+              - Effect: Allow
+                Action:
+                  - iam:PassRole
+                Resource: !GetAtt AutoFreezeSchedulerRole.Arn
+                Condition:
+                  StringEquals:
+                    iam:PassedToService: scheduler.amazonaws.com
+        - PolicyName: read-root-password
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-secrets-RootPasswordSecretArn"
+
+  # Assumed by EventBridge Scheduler to drop the auto freeze message into the queue at the scheduled time
+  AutoFreezeSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+      Policies:
+        - PolicyName: send-auto-freeze-message
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-messaging-AutoFreezeQueueArn"
+
+  # ---------------------------------------------------------------------------
+  # Load balancer. CloudFront reaches it over HTTPS on origin.<ApiDomain>.
+  # ---------------------------------------------------------------------------
+  OriginCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub "origin.${ApiDomain}"
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: !Sub "origin.${ApiDomain}"
+          HostedZoneId: !Ref HostedZoneId
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Type: application
+      Scheme: internet-facing
+      IpAddressType: ipv4
+      Subnets: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${Env}-network-PublicSubnetIds"
+      SecurityGroups:
+        - !Ref AlbSecurityGroup
+      LoadBalancerAttributes:
+        # Longer than the CloudFront origin keep-alive and than the SSE heartbeat (15 s)
+        - Key: idle_timeout.timeout_seconds
+          Value: "120"
+        - Key: routing.http.drop_invalid_header_fields.enabled
+          Value: "true"
+        - Key: deletion_protection.enabled
+          Value: !If [IsProduction, "true", "false"]
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-lb"
+
+  OriginRecordSet:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "origin.${ApiDomain}."
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt LoadBalancer.DNSName
+        HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
+        EvaluateTargetHealth: true
+
+  # The health check is the Spring Boot liveness probe (enabled with MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED).
+  # It does not depend on the database or the cache: a failure of those must not make ECS kill healthy tasks.
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      TargetType: instance
+      Protocol: HTTP
+      Port: 8080
+      HealthCheckProtocol: HTTP
+      HealthCheckPath: /actuator/health/liveness
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 2
+      Matcher:
+        HttpCode: "200"
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: "30"
+        - Key: load_balancing.algorithm.type
+          Value: least_outstanding_requests
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-tg"
+
+  # Anything that did not come through our CloudFront distribution gets a 403
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      Certificates:
+        - CertificateArn: !Ref OriginCertificate
+      DefaultActions:
+        - Type: fixed-response
+          FixedResponseConfig:
+            StatusCode: "403"
+            ContentType: text/plain
+            MessageBody: Forbidden
+
+  HttpsListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      ListenerArn: !Ref HttpsListener
+      Priority: 1
+      Conditions:
+        - Field: http-header
+          HttpHeaderConfig:
+            HttpHeaderName: X-Origin-Verify
+            Values:
+              - !Sub
+                - "{{resolve:secretsmanager:${SecretArn}:SecretString}}"
+                - SecretArn:
+                    Fn::ImportValue: !Sub "${Env}-secrets-OriginVerifySecretArn"
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+
+  # ---------------------------------------------------------------------------
+  # EC2 fleet of the Core cluster
+  # ---------------------------------------------------------------------------
+  CoreLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref EcsAmiId
+        InstanceType: !FindInMap [ModeSettings, !Ref Mode, InstanceType]
+        IamInstanceProfile:
+          Arn: !GetAtt CoreInstanceProfile.Arn
+        SecurityGroupIds:
+          - !Ref CoreInstanceSecurityGroup
+        # IMDSv2 only, and not reachable from containers behind a bridge
+        MetadataOptions:
+          HttpEndpoint: enabled
+          HttpTokens: required
+          HttpPutResponseHopLimit: 1
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: 30
+              VolumeType: gp3
+              Encrypted: true
+              DeleteOnTermination: true
+        Monitoring:
+          Enabled: false
+        UserData:
+          Fn::Base64: !Sub
+            - |
+              #!/bin/bash
+              mkdir -p /etc/ecs
+              cat <<'EOF' >> /etc/ecs/ecs.config
+              ECS_CLUSTER=${Cluster}
+              ECS_RESERVED_MEMORY=128
+              ECS_ENABLE_CONTAINER_METADATA=true
+              EOF
+            - Cluster:
+                Fn::ImportValue: !Sub "${Env}-platform-CoreClusterName"
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${Env}-core-instance"
+          - ResourceType: volume
+            Tags:
+              - Key: Name
+                Value: !Sub "${Env}-core-instance"
+
+  # Subnets in two AZs: with two instances the ASG puts one in each
+  CoreAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${Env}-network-PublicSubnetIds"
+      LaunchTemplate:
+        LaunchTemplateId: !Ref CoreLaunchTemplate
+        Version: !GetAtt CoreLaunchTemplate.LatestVersionNumber
+      MinSize: !FindInMap [ModeSettings, !Ref Mode, Instances]
+      DesiredCapacity: !FindInMap [ModeSettings, !Ref Mode, Instances]
+      MaxSize: !FindInMap [ModeSettings, !Ref Mode, MaxInstances]
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-instance"
+          PropagateAtLaunch: true
+
+  # ---------------------------------------------------------------------------
+  # Core application
+  # ---------------------------------------------------------------------------
+  CoreLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${Env}-core"
+      RetentionInDays: 14
+
+  # Host networking: the container reaches the OpenTelemetry collector at 127.0.0.1 and the ALB targets
+  # instance:8080. For that reason two Core tasks can never share an instance.
+  CoreTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Env}-core-task"
+      RequiresCompatibilities:
+        - EC2
+      NetworkMode: host
+      ExecutionRoleArn: !GetAtt CoreExecutionRole.Arn
+      TaskRoleArn: !GetAtt CoreTaskRole.Arn
+      ContainerDefinitions:
+        - Name: core
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/core:${Version}"
+          Essential: true
+          Cpu: 1024
+          Memory: !FindInMap [ModeSettings, !Ref Mode, TaskMemory]
+          StopTimeout: 30
+          PortMappings:
+            - ContainerPort: 8080
+              Protocol: tcp
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -f http://localhost:8080/actuator/health/liveness || exit 1
+            Interval: 15
+            Timeout: 5
+            Retries: 3
+            StartPeriod: 120
+          Ulimits:
+            # One connection per open SSE stream
+            - Name: nofile
+              SoftLimit: 65536
+              HardLimit: 65536
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref CoreLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: core
+          Environment:
+            - Name: SPRING_PROFILES_ACTIVE
+              Value: !Ref Env
+            - Name: VERSION
+              Value: !Ref Version
+            # Size the heap from the container limit and restart the task on OutOfMemoryError
+            - Name: JAVA_TOOL_OPTIONS
+              Value: -XX:MaxRAMPercentage=60.0 -XX:+ExitOnOutOfMemoryError
+            - Name: API_PORT
+              Value: "8080"
+            # Exposes /actuator/health/liveness and /actuator/health/readiness
+            - Name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED
+              Value: "true"
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_BUCKET
+              Value:
+                Fn::ImportValue: !Sub "${Env}-storage-CoreBucketName"
+            - Name: AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS
+              Value: "3600"
+            - Name: AWS_SQS_SUBMISSION_QUEUE_URL
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueUrl"
+            - Name: AWS_SQS_SUBMISSION_FAILED_QUEUE_URL
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-SubmissionFailedQueueUrl"
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-SubmissionJudgedQueueUrl"
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE_URL
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-AutoFreezeQueueUrl"
+            - Name: AWS_SQS_AUTO_FREEZE_QUEUE_ARN
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-AutoFreezeQueueArn"
+            - Name: AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN
+              Value: !GetAtt AutoFreezeSchedulerRole.Arn
+            - Name: DB_URL
+              Value: !Sub
+                - "jdbc:postgresql://${Address}:${Port}/forseti?sslmode=require"
+                - Address:
+                    Fn::ImportValue: !Sub "${Env}-database-Address"
+                  Port:
+                    Fn::ImportValue: !Sub "${Env}-database-Port"
+            - Name: DB_USER
+              Value: forseti
+            - Name: DB_MAX_POOL_SIZE
+              Value: !FindInMap [ModeSettings, !Ref Mode, DbPoolMaxSize]
+            - Name: DB_MIN_IDLE
+              Value: !FindInMap [ModeSettings, !Ref Mode, DbPoolMinIdle]
+            - Name: REDIS_HOST
+              Value:
+                Fn::ImportValue: !Sub "${Env}-cache-Address"
+            - Name: REDIS_PORT
+              Value:
+                Fn::ImportValue: !Sub "${Env}-cache-Port"
+            - Name: REDIS_SSL_ENABLED
+              Value: "true"
+            - Name: SSE_TTL_SECONDS
+              Value: "600"
+            - Name: OTEL_SDK_DISABLED
+              Value: "false"
+            - Name: OTEL_SERVICE_NAME
+              Value: !Sub "${Env}-core"
+            - Name: OTEL_RESOURCE_ATTRIBUTES
+              Value: !Sub "deployment.environment.name=${Env},service.namespace=forseti"
+            - Name: OTEL_EXPORTER_OTLP_ENDPOINT
+              Value: http://127.0.0.1:4318
+            - Name: OTEL_EXPORTER_OTLP_PROTOCOL
+              Value: http/protobuf
+            - Name: OTEL_TRACES_EXPORTER
+              Value: otlp
+            - Name: OTEL_METRICS_EXPORTER
+              Value: otlp
+            - Name: OTEL_LOGS_EXPORTER
+              Value: otlp
+            # The cookie has to be visible to both the webapp and the API host
+            - Name: COOKIE_DOMAIN
+              Value: !Ref AppDomain
+            - Name: COOKIE_SECURE
+              Value: "true"
+            - Name: ALLOWED_ORIGINS
+              Value: !Sub "https://${AppDomain}"
+            - Name: SESSION_EXPIRATION_SECONDS
+              Value: "21600"
+            - Name: SESSION_ROOT_EXPIRATION_SECONDS
+              Value: "900"
+          Secrets:
+            # ECS injects secrets as environment variables. The database secret is JSON, hence the key selector.
+            - Name: DB_PASSWORD
+              ValueFrom: !Sub
+                - "${SecretArn}:password::"
+                - SecretArn:
+                    Fn::ImportValue: !Sub "${Env}-secrets-DatabaseSecretArn"
+            - Name: REDIS_PASSWORD
+              ValueFrom:
+                Fn::ImportValue: !Sub "${Env}-secrets-CacheAuthSecretArn"
+
+  CoreService:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - HttpsListenerRule
+      - CoreAutoScalingGroup
+    Properties:
+      Cluster:
+        Fn::ImportValue: !Sub "${Env}-platform-CoreClusterName"
+      TaskDefinition: !Ref CoreTask
+      LaunchType: EC2
+      SchedulingStrategy: REPLICA
+      DesiredCount: !If
+        - HasTaskOverride
+        - !Ref DesiredTasks
+        - !FindInMap [ModeSettings, !Ref Mode, Tasks]
+      # Spring Boot plus the OpenTelemetry agent takes a while to start on a small instance
+      HealthCheckGracePeriodSeconds: 180
+      LoadBalancers:
+        - ContainerName: core
+          ContainerPort: 8080
+          TargetGroupArn: !Ref TargetGroup
+      DeploymentConfiguration:
+        MinimumHealthyPercent: !FindInMap [ModeSettings, !Ref Mode, MinimumHealthyPercent]
+        MaximumPercent: 100
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      PlacementStrategies:
+        - Type: spread
+          Field: attribute:ecs.availability-zone
+        - Type: spread
+          Field: instanceId
+      PlacementConstraints:
+        - Type: distinctInstance
+
+  # ---------------------------------------------------------------------------
+  # Alarms
+  # ---------------------------------------------------------------------------
+  UnhealthyHostsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-unhealthy-hosts"
+      AlarmDescription: At least one Core target has been failing the load balancer health check for 5 minutes.
+      Namespace: AWS/ApplicationELB
+      MetricName: UnHealthyHostCount
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !GetAtt LoadBalancer.LoadBalancerFullName
+        - Name: TargetGroup
+          Value: !GetAtt TargetGroup.TargetGroupFullName
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+  Target5xxAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-5xx"
+      AlarmDescription: Core returned 10 or more 5xx responses in 5 minutes.
+      Namespace: AWS/ApplicationELB
+      MetricName: HTTPCode_Target_5XX_Count
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !GetAtt LoadBalancer.LoadBalancerFullName
+        - Name: TargetGroup
+          Value: !GetAtt TargetGroup.TargetGroupFullName
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 10
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+  ResponseTimeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-latency-high"
+      AlarmDescription: p95 response time of Core above one second for 5 minutes.
+      Namespace: AWS/ApplicationELB
+      MetricName: TargetResponseTime
+      Dimensions:
+        - Name: LoadBalancer
+          Value: !GetAtt LoadBalancer.LoadBalancerFullName
+        - Name: TargetGroup
+          Value: !GetAtt TargetGroup.TargetGroupFullName
+      ExtendedStatistic: p95
+      Period: 60
+      EvaluationPeriods: 5
+      Threshold: 1
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+Outputs:
+  OriginDomainName:
+    Description: Domain name CloudFront uses to reach the load balancer
+    Value: !Sub "origin.${ApiDomain}"
+    Export:
+      Name: !Sub "${Env}-core-OriginDomainName"
+
+  LoadBalancerDnsName:
+    Description: DNS name of the load balancer (only reachable through CloudFront)
+    Value: !GetAtt LoadBalancer.DNSName

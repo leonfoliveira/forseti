@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti container registry. The ECR repositories for the Core and autojudge images, shared by every
+  environment (staging and production pull different tags from the same repositories). Deploy once per account.
+  Skip it if the repositories were already created by hand.
+
+Resources:
+  CoreRepository:
+    Type: AWS::ECR::Repository
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      RepositoryName: forseti/core
+      # Mutable because staging re-pushes the latest tag
+      ImageTagMutability: MUTABLE
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      EncryptionConfiguration:
+        EncryptionType: AES256
+      LifecyclePolicy:
+        LifecyclePolicyText: >-
+          {"rules":[
+          {"rulePriority":1,"description":"Expire untagged images after 7 days","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":7},"action":{"type":"expire"}},
+          {"rulePriority":2,"description":"Keep the most recent 20 images","selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":20},"action":{"type":"expire"}}
+          ]}
+
+  AutojudgeRepository:
+    Type: AWS::ECR::Repository
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      RepositoryName: forseti/autojudge
+      ImageTagMutability: MUTABLE
+      ImageScanningConfiguration:
+        ScanOnPush: true
+      EncryptionConfiguration:
+        EncryptionType: AES256
+      LifecyclePolicy:
+        LifecyclePolicyText: >-
+          {"rules":[
+          {"rulePriority":1,"description":"Expire untagged images after 7 days","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":7},"action":{"type":"expire"}},
+          {"rulePriority":2,"description":"Keep the most recent 20 images","selection":{"tagStatus":"any","countType":"imageCountMoreThan","countNumber":20},"action":{"type":"expire"}}
+          ]}
+
+Outputs:
+  CoreRepositoryUri:
+    Description: URI of the Core repository
+    Value: !GetAtt CoreRepository.RepositoryUri
+
+  AutojudgeRepositoryUri:
+    Description: URI of the autojudge repository
+    Value: !GetAtt AutojudgeRepository.RepositoryUri

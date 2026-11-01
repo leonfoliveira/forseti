@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti cache. ElastiCache for Valkey (Redis protocol, cluster mode disabled) holding sessions, the leaderboard
+  and the SSE fan-out channel of Core. In idle mode it is a single node; in contest mode a replica in another AZ
+  is added and automatic failover is enabled, so a node failure does not log everyone out.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  Mode:
+    Type: String
+    Description: idle = one node. contest = primary plus a replica with Multi-AZ automatic failover.
+    AllowedValues:
+      - idle
+      - contest
+    Default: idle
+
+  CacheNodeType:
+    Type: String
+    Description: Node type of every node of the replication group
+    Default: cache.t4g.micro
+
+  CacheEngineVersion:
+    Type: String
+    Description: Valkey engine version (major.minor). Patch versions are managed by ElastiCache.
+    Default: "8.1"
+
+  AlarmTopicArn:
+    Type: String
+    Description: SNS topic notified by the alarms of this stack. Leave empty to skip the alarms.
+    Default: ""
+
+Conditions:
+  IsContest: !Equals [!Ref Mode, contest]
+  HasAlarmTopic: !Not [!Equals [!Ref AlarmTopicArn, ""]]
+
+Resources:
+  CacheSlowLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/elasticache/${Env}/core-cache/slow-log"
+      RetentionInDays: 14
+
+  # No ingress rules here: the stack that owns the client (core) opens the port for its own security group
+  CacheSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Core cache. Ingress rules are added by the core stack.
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cache-sg"
+
+  CacheSubnetGroup:
+    Type: AWS::ElastiCache::SubnetGroup
+    Properties:
+      Description: Private subnets for the core cache
+      SubnetIds: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${Env}-network-PrivateSubnetIds"
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cache-subnet-group"
+
+  # Cluster mode stays disabled on purpose: Core uses multi-key commands (MGET) that would fail with CROSSSLOT
+  # on a sharded cache or on ElastiCache Serverless.
+  # TLS is enabled because the Core production profile defaults to REDIS_SSL_ENABLED=true.
+  CacheReplicationGroup:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: !Sub "${Env}-core-cache"
+      ReplicationGroupDescription: !Sub "${Env} Forseti cache: sessions, leaderboard and SSE fan-out"
+      Engine: valkey
+      EngineVersion: !Ref CacheEngineVersion
+      CacheNodeType: !Ref CacheNodeType
+      NumCacheClusters: !If [IsContest, 2, 1]
+      AutomaticFailoverEnabled: !If [IsContest, true, false]
+      MultiAZEnabled: !If [IsContest, true, false]
+      Port: 6379
+      TransitEncryptionEnabled: true
+      AtRestEncryptionEnabled: true
+      AuthToken: !Sub
+        - "{{resolve:secretsmanager:${SecretArn}:SecretString}}"
+        - SecretArn:
+            Fn::ImportValue: !Sub "${Env}-secrets-CacheAuthSecretArn"
+      CacheSubnetGroupName: !Ref CacheSubnetGroup
+      SecurityGroupIds:
+        - !Ref CacheSecurityGroup
+      AutoMinorVersionUpgrade: true
+      LogDeliveryConfigurations:
+        - DestinationDetails:
+            CloudWatchLogsDetails:
+              LogGroup: !Ref CacheSlowLogGroup
+          DestinationType: cloudwatch-logs
+          LogFormat: json
+          LogType: slow-log
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cache"
+
+  CacheMemoryAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasAlarmTopic
+    Properties:
+      AlarmName: !Sub "${Env}-core-cache-memory-high"
+      AlarmDescription: Cache memory usage above 80%. Evictions will start soon, consider a bigger node type.
+      Namespace: AWS/ElastiCache
+      MetricName: DatabaseMemoryUsagePercentage
+      Dimensions:
+        - Name: CacheClusterId
+          Value: !Sub "${CacheReplicationGroup}-001"
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 2
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn
+
+Outputs:
+  CacheAddress:
+    Description: Primary endpoint address of the cache
+    Value: !GetAtt CacheReplicationGroup.PrimaryEndPoint.Address
+    Export:
+      Name: !Sub "${Env}-cache-Address"
+
+  CachePort:
+    Description: Primary endpoint port of the cache
+    Value: !GetAtt CacheReplicationGroup.PrimaryEndPoint.Port
+    Export:
+      Name: !Sub "${Env}-cache-Port"
+
+  CacheSecurityGroupId:
+    Description: Security group of the cache
+    Value: !Ref CacheSecurityGroup
+    Export:
+      Name: !Sub "${Env}-cache-SecurityGroupId"

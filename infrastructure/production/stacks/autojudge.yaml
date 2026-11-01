@@ -1,0 +1,452 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti autojudge. A dedicated EC2 fleet that runs the autojudge worker next to the Docker daemon, kept apart
+  from Core because it executes untrusted code and needs consistent (non-burstable) CPUs for fair time limits.
+  The fleet scales to zero when idle, is pinned to two instances in two AZs in contest mode, and in both modes
+  grows with the backlog of the submission queue.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  Version:
+    Type: String
+    Description: >-
+      Autojudge image tag. The same tag is used to look for the sandbox images (forseti-sb-<language>:<tag>), which
+      must already exist in the Docker daemon of the instance.
+    Default: latest
+
+  Mode:
+    Type: String
+    Description: idle = no instances until a submission arrives. contest = at least two instances in two AZs.
+    AllowedValues:
+      - idle
+      - contest
+    Default: idle
+
+  JudgeInstanceType:
+    Type: String
+    Description: >-
+      Instance type of the judge fleet. Keep it a non-burstable type so CPU time measurements are consistent.
+      Each instance judges one submission at a time and starts one sandbox with up to the problem memory limit
+      plus 512 MiB.
+    Default: c6i.large
+
+  EcsAmiId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Description: >-
+      Amazon ECS-optimized Amazon Linux 2023 AMI (x86_64). Resolved again on every deployment; running instances
+      are not replaced automatically.
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2023/recommended/image_id
+
+  AlarmTopicArn:
+    Type: String
+    Description: SNS topic notified by the alarms of this stack. Leave empty to skip the alarms.
+    Default: ""
+
+Mappings:
+  ModeSettings:
+    idle:
+      MinInstances: "0"
+      MaxInstances: "2"
+    contest:
+      MinInstances: "2"
+      MaxInstances: "4"
+
+Conditions:
+  IsContest: !Equals [!Ref Mode, contest]
+  HasAlarmTopic: !Not [!Equals [!Ref AlarmTopicArn, ""]]
+  HasContestAlarm: !And
+    - !Condition IsContest
+    - !Condition HasAlarmTopic
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # Network and IAM
+  # ---------------------------------------------------------------------------
+  # Nothing can connect to the judge instances: no inbound rules at all. Use SSM Session Manager for a shell.
+  JudgeInstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Autojudge ECS instances. No inbound access.
+      VpcId:
+        Fn::ImportValue: !Sub "${Env}-network-VpcId"
+      SecurityGroupEgress:
+        - Description: AWS APIs and ECR
+          IpProtocol: "-1"
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-judge-instance-sg"
+
+  JudgeInstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore"
+
+  JudgeInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref JudgeInstanceRole
+
+  # Used by the ECS agent to pull the image and write container logs
+  JudgeExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+
+  # Used by the autojudge itself. It is the only identity reachable from a compromised judge host, so it is kept
+  # to the minimum: submissions and test cases in, execution details out, and the two queues.
+  JudgeTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: read-write-attachments
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:AbortMultipartUpload
+                Resource:
+                  - !Sub
+                    - "${BucketArn}/attachments/*"
+                    - BucketArn:
+                        Fn::ImportValue: !Sub "${Env}-storage-CoreBucketArn"
+        - PolicyName: consume-submission-queue
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:ChangeMessageVisibility
+                  - sqs:GetQueueAttributes
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueArn"
+        - PolicyName: produce-judged-queue
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource:
+                  - Fn::ImportValue: !Sub "${Env}-messaging-SubmissionJudgedQueueArn"
+
+  # ---------------------------------------------------------------------------
+  # EC2 fleet of the judge cluster
+  # ---------------------------------------------------------------------------
+  JudgeLaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        ImageId: !Ref EcsAmiId
+        InstanceType: !Ref JudgeInstanceType
+        IamInstanceProfile:
+          Arn: !GetAtt JudgeInstanceProfile.Arn
+        SecurityGroupIds:
+          - !Ref JudgeInstanceSecurityGroup
+        # IMDSv2 only, and not reachable from containers behind a bridge
+        MetadataOptions:
+          HttpEndpoint: enabled
+          HttpTokens: required
+          HttpPutResponseHopLimit: 1
+        BlockDeviceMappings:
+          - DeviceName: /dev/xvda
+            Ebs:
+              VolumeSize: 30
+              VolumeType: gp3
+              Encrypted: true
+              DeleteOnTermination: true
+        Monitoring:
+          Enabled: false
+        UserData:
+          Fn::Base64: !Sub
+            - |
+              #!/bin/bash
+              mkdir -p /etc/ecs
+              cat <<'EOF' >> /etc/ecs/ecs.config
+              ECS_CLUSTER=${Cluster}
+              ECS_ENABLE_CONTAINER_METADATA=true
+              EOF
+            - Cluster:
+                Fn::ImportValue: !Sub "${Env}-platform-JudgeClusterName"
+        TagSpecifications:
+          - ResourceType: instance
+            Tags:
+              - Key: Name
+                Value: !Sub "${Env}-judge-instance"
+          - ResourceType: volume
+            Tags:
+              - Key: Name
+                Value: !Sub "${Env}-judge-instance"
+
+  # DesiredCapacity is intentionally not set: the scaling policies below own it. Switching to idle mode lowers the
+  # minimum and the fleet shrinks once the queue has been empty for a while, instead of being cut mid-submission.
+  JudgeAutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier: !Split
+        - ","
+        - Fn::ImportValue: !Sub "${Env}-network-PublicSubnetIds"
+      LaunchTemplate:
+        LaunchTemplateId: !Ref JudgeLaunchTemplate
+        Version: !GetAtt JudgeLaunchTemplate.LatestVersionNumber
+      MinSize: !FindInMap [ModeSettings, !Ref Mode, MinInstances]
+      MaxSize: !FindInMap [ModeSettings, !Ref Mode, MaxInstances]
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-judge-instance"
+          PropagateAtLaunch: true
+
+  # ---------------------------------------------------------------------------
+  # Autojudge application: exactly one worker per instance
+  # ---------------------------------------------------------------------------
+  JudgeLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${Env}-autojudge"
+      RetentionInDays: 14
+
+  # The worker creates the sandbox containers through the Docker socket of the host, so the sandboxes are siblings
+  # of this container and their memory is not accounted to this task.
+  JudgeTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Env}-auto-judge-task"
+      RequiresCompatibilities:
+        - EC2
+      NetworkMode: host
+      ExecutionRoleArn: !GetAtt JudgeExecutionRole.Arn
+      TaskRoleArn: !GetAtt JudgeTaskRole.Arn
+      Volumes:
+        - Name: docker-sock
+          Host:
+            SourcePath: /var/run/docker.sock
+        - Name: tmp
+          Host:
+            SourcePath: /tmp
+      ContainerDefinitions:
+        - Name: autojudge
+          Image: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/forseti/autojudge:${Version}"
+          Essential: true
+          Cpu: 256
+          Memory: 1024
+          MemoryReservation: 256
+          # Time for the current submission to finish after SIGTERM
+          StopTimeout: 120
+          # Liveness only: curl without -f succeeds on any HTTP answer. The /health route also calls S3 and SQS, so
+          # using its status would restart the worker in the middle of a submission on a transient AWS error.
+          HealthCheck:
+            Command:
+              - CMD-SHELL
+              - curl -s -o /dev/null --max-time 5 http://localhost:8081/health || exit 1
+            Interval: 30
+            Timeout: 10
+            Retries: 3
+            StartPeriod: 60
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref JudgeLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: autojudge
+          Environment:
+            - Name: VERSION
+              Value: !Ref Version
+            - Name: ENV
+              Value: !Ref Env
+            - Name: PORT
+              Value: "8081"
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AWS_S3_BUCKET
+              Value:
+                Fn::ImportValue: !Sub "${Env}-storage-CoreBucketName"
+            - Name: AWS_SQS_SUBMISSION_QUEUE
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueUrl"
+            - Name: AWS_SQS_SUBMISSION_JUDGED_QUEUE
+              Value:
+                Fn::ImportValue: !Sub "${Env}-messaging-SubmissionJudgedQueueUrl"
+            - Name: OTEL_SDK_DISABLED
+              Value: "false"
+            - Name: OTEL_SERVICE_NAME
+              Value: !Sub "${Env}-autojudge"
+            - Name: OTEL_RESOURCE_ATTRIBUTES
+              Value: !Sub "deployment.environment.name=${Env},service.namespace=forseti"
+            - Name: OTEL_EXPORTER_OTLP_ENDPOINT
+              Value: http://127.0.0.1:4318
+            - Name: OTEL_EXPORTER_OTLP_PROTOCOL
+              Value: http/protobuf
+            - Name: OTEL_TRACES_EXPORTER
+              Value: otlp
+            - Name: OTEL_METRICS_EXPORTER
+              Value: otlp
+            - Name: OTEL_LOGS_EXPORTER
+              Value: otlp
+          MountPoints:
+            - SourceVolume: docker-sock
+              ContainerPath: /var/run/docker.sock
+            - SourceVolume: tmp
+              ContainerPath: /tmp
+
+  # DAEMON: one worker on every judge instance, so capacity is simply the size of the fleet
+  JudgeService:
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster:
+        Fn::ImportValue: !Sub "${Env}-platform-JudgeClusterName"
+      TaskDefinition: !Ref JudgeTask
+      LaunchType: EC2
+      SchedulingStrategy: DAEMON
+
+  # ---------------------------------------------------------------------------
+  # Scaling on the backlog of the submission queue
+  # ---------------------------------------------------------------------------
+  # Any waiting submission adds an instance (two when the backlog is 10 or more) until the backlog is gone.
+  # This is also what wakes the fleet up from zero in idle mode.
+  JudgeScaleOutPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref JudgeAutoScalingGroup
+      PolicyType: StepScaling
+      AdjustmentType: ChangeInCapacity
+      MetricAggregationType: Maximum
+      EstimatedInstanceWarmup: 180
+      StepAdjustments:
+        - MetricIntervalLowerBound: 0
+          MetricIntervalUpperBound: 10
+          ScalingAdjustment: 1
+        - MetricIntervalLowerBound: 10
+          ScalingAdjustment: 2
+
+  JudgeBacklogAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${Env}-judge-backlog"
+      AlarmDescription: Submissions are waiting for a judge. Adds judge instances.
+      Namespace: AWS/SQS
+      MetricName: ApproximateNumberOfMessagesVisible
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueName"
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref JudgeScaleOutPolicy
+
+  # Back to the minimum of the mode (zero in idle) after 30 minutes with nothing waiting and nothing being judged.
+  # SQS stops publishing metrics for queues without traffic, so missing data counts as an empty queue.
+  JudgeScaleInPolicy:
+    Type: AWS::AutoScaling::ScalingPolicy
+    Properties:
+      AutoScalingGroupName: !Ref JudgeAutoScalingGroup
+      PolicyType: StepScaling
+      AdjustmentType: ExactCapacity
+      MetricAggregationType: Minimum
+      StepAdjustments:
+        - MetricIntervalUpperBound: 0
+          ScalingAdjustment: 0
+
+  JudgeIdleAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "${Env}-judge-idle"
+      AlarmDescription: No submission has been waiting or in flight for 30 minutes. Shrinks the judge fleet to its minimum.
+      Metrics:
+        - Id: visible
+          ReturnData: false
+          MetricStat:
+            Metric:
+              Namespace: AWS/SQS
+              MetricName: ApproximateNumberOfMessagesVisible
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueName"
+            Period: 60
+            Stat: Maximum
+        - Id: inflight
+          ReturnData: false
+          MetricStat:
+            Metric:
+              Namespace: AWS/SQS
+              MetricName: ApproximateNumberOfMessagesNotVisible
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueName"
+            Period: 60
+            Stat: Maximum
+        - Id: pending
+          Expression: visible + inflight
+          Label: Submissions waiting or being judged
+          ReturnData: true
+      EvaluationPeriods: 30
+      DatapointsToAlarm: 30
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref JudgeScaleInPolicy
+
+  # Only meaningful in contest mode: from idle, the first submission always waits for an instance to boot
+  JudgeQueueAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Condition: HasContestAlarm
+    Properties:
+      AlarmName: !Sub "${Env}-judge-queue-age-high"
+      AlarmDescription: A submission has been waiting more than two minutes for a judge during a contest.
+      Namespace: AWS/SQS
+      MetricName: ApproximateAgeOfOldestMessage
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::ImportValue: !Sub "${Env}-messaging-SubmissionQueueName"
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 120
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopicArn

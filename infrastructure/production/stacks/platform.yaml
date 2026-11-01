@@ -1,0 +1,275 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti platform. The ECS clusters for the Core and autojudge fleets, the OpenTelemetry collector that runs on
+  every instance of both clusters, and the SNS topic that receives the CloudWatch alarms of all other stacks.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  AlarmEmail:
+    Type: String
+    Description: Email address subscribed to the alarm topic. Leave empty to create the topic without subscribers.
+    Default: ""
+
+  OtelCollectorImage:
+    Type: String
+    Description: OpenTelemetry collector image. Pin a tag to avoid unplanned collector upgrades.
+    Default: public.ecr.aws/aws-observability/aws-otel-collector:latest
+
+Conditions:
+  HasAlarmEmail: !Not [!Equals [!Ref AlarmEmail, ""]]
+
+Resources:
+  # Clusters. The EC2 fleets that join them live in the core and autojudge stacks.
+  CoreCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${Env}-core-cluster"
+      ClusterSettings:
+        - Name: containerInsights
+          Value: disabled
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-core-cluster"
+
+  JudgeCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: !Sub "${Env}-judge-cluster"
+      ClusterSettings:
+        - Name: containerInsights
+          Value: disabled
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-judge-cluster"
+
+  # Alarm notifications
+  AlertTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${Env}-forseti-alerts"
+      Subscription: !If
+        - HasAlarmEmail
+        - - Endpoint: !Ref AlarmEmail
+            Protocol: email
+        - !Ref AWS::NoValue
+
+  AlertTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref AlertTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudWatchAlarms
+            Effect: Allow
+            Principal:
+              Service: cloudwatch.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref AlertTopic
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+
+  # Telemetry
+  OTelApplicationLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/otel/${Env}/application"
+      RetentionInDays: 14
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-otel-application-logs"
+
+  OTelApplicationLogStream:
+    Type: AWS::Logs::LogStream
+    Properties:
+      LogGroupName: !Ref OTelApplicationLogGroup
+      LogStreamName: otlp
+
+  OTelCollectorLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/ecs/${Env}-otel-collector"
+      RetentionInDays: 14
+      Tags:
+        - Key: Name
+          Value: !Sub "${Env}-otel-collector-logs"
+
+  OTelCollectorExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub "arn:${AWS::Partition}:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+
+  OTelCollectorTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: export-telemetry
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: WriteOtelApplicationLogs
+                Effect: Allow
+                Action:
+                  - logs:PutLogEvents
+                Resource: !Sub "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/otel/${Env}/application:*"
+              - Sid: WriteOtelMetrics
+                Effect: Allow
+                Action:
+                  - cloudwatch:PutMetricData
+                Resource: "*"
+              - Sid: WriteOtelTraces
+                Effect: Allow
+                Action:
+                  - xray:PutTraceSegments
+                  - xray:PutTelemetryRecords
+                Resource: "*"
+
+  # Host networking: the applications reach the collector at 127.0.0.1:4318
+  OTelCollectorTask:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Sub "${Env}-otel-collector-task"
+      ExecutionRoleArn: !GetAtt OTelCollectorExecutionRole.Arn
+      TaskRoleArn: !GetAtt OTelCollectorTaskRole.Arn
+      NetworkMode: host
+      ContainerDefinitions:
+        - Name: !Sub "${Env}-otel-collector"
+          Image: !Ref OtelCollectorImage
+          Essential: true
+          Cpu: 128
+          Memory: 256
+          MemoryReservation: 128
+          PortMappings:
+            - ContainerPort: 4317
+              Protocol: tcp
+            - ContainerPort: 4318
+              Protocol: tcp
+          Environment:
+            - Name: AWS_REGION
+              Value: !Ref AWS::Region
+            - Name: AOT_CONFIG_CONTENT
+              Value: !Sub |
+                extensions:
+                  sigv4auth/logs:
+                    region: "${AWS::Region}"
+                    service: "logs"
+                  sigv4auth/metrics:
+                    region: "${AWS::Region}"
+                    service: "monitoring"
+                  sigv4auth/traces:
+                    region: "${AWS::Region}"
+                    service: "xray"
+                receivers:
+                  otlp:
+                    protocols:
+                      grpc:
+                        endpoint: 0.0.0.0:4317
+                      http:
+                        endpoint: 0.0.0.0:4318
+                processors:
+                  memory_limiter:
+                    check_interval: 1s
+                    limit_mib: 160
+                    spike_limit_mib: 32
+                  batch:
+                    timeout: 5s
+                    send_batch_size: 200
+                exporters:
+                  otlphttp/logs:
+                    logs_endpoint: "https://logs.${AWS::Region}.amazonaws.com/v1/logs"
+                    compression: gzip
+                    headers:
+                      x-aws-log-group: "/aws/otel/${Env}/application"
+                      x-aws-log-stream: "otlp"
+                    auth:
+                      authenticator: sigv4auth/logs
+                  otlphttp/metrics:
+                    metrics_endpoint: "https://monitoring.${AWS::Region}.amazonaws.com/v1/metrics"
+                    compression: gzip
+                    auth:
+                      authenticator: sigv4auth/metrics
+                  otlphttp/traces:
+                    traces_endpoint: "https://xray.${AWS::Region}.amazonaws.com/v1/traces"
+                    compression: gzip
+                    auth:
+                      authenticator: sigv4auth/traces
+                service:
+                  extensions: [sigv4auth/logs, sigv4auth/metrics, sigv4auth/traces]
+                  pipelines:
+                    logs:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/logs]
+                    metrics:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/metrics]
+                    traces:
+                      receivers: [otlp]
+                      processors: [memory_limiter, batch]
+                      exporters: [otlphttp/traces]
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref OTelCollectorLogGroup
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: collector
+
+  # One collector per instance, on both fleets
+  OTelCollectorCoreService:
+    Type: AWS::ECS::Service
+    DependsOn: OTelApplicationLogStream
+    Properties:
+      Cluster: !Ref CoreCluster
+      TaskDefinition: !Ref OTelCollectorTask
+      LaunchType: EC2
+      SchedulingStrategy: DAEMON
+
+  OTelCollectorJudgeService:
+    Type: AWS::ECS::Service
+    DependsOn: OTelApplicationLogStream
+    Properties:
+      Cluster: !Ref JudgeCluster
+      TaskDefinition: !Ref OTelCollectorTask
+      LaunchType: EC2
+      SchedulingStrategy: DAEMON
+
+Outputs:
+  CoreClusterName:
+    Description: Name of the ECS cluster of the Core fleet
+    Value: !Ref CoreCluster
+    Export:
+      Name: !Sub "${Env}-platform-CoreClusterName"
+
+  JudgeClusterName:
+    Description: Name of the ECS cluster of the autojudge fleet
+    Value: !Ref JudgeCluster
+    Export:
+      Name: !Sub "${Env}-platform-JudgeClusterName"
+
+  AlertTopicArn:
+    Description: SNS topic that receives the CloudWatch alarms. Pass it as AlarmTopicArn to the other stacks.
+    Value: !Ref AlertTopic

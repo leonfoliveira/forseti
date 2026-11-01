@@ -1,0 +1,134 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Forseti API edge. The CloudFront distribution that is the public entry point of the Core API, and its DNS
+  records. Nothing is cached: CloudFront is used for TLS termination close to the users, HTTP/2 and HTTP/3,
+  connection reuse towards the origin, and to hide the load balancer, which only accepts CloudFront.
+
+Parameters:
+  Env:
+    Type: String
+    Description: Environment name
+    AllowedValues:
+      - production
+      - staging
+
+  ApiDomain:
+    Type: String
+    Description: Domain the API is served from (e.g. api.forsetijudge.com)
+
+  HostedZoneId:
+    Type: String
+    Description: ID of the Route 53 hosted zone that contains ApiDomain
+
+  CloudFrontCertificateArn:
+    Type: String
+    Description: >-
+      ARN of an ACM certificate that covers ApiDomain. It has to live in us-east-1, whatever the region of the stack:
+      CloudFront only accepts certificates from there (see shared/certificate.yaml).
+
+  PriceClass:
+    Type: String
+    Description: >-
+      Edge locations used. PriceClass_100 is the cheapest but only covers North America and Europe, so users in
+      South America, Asia or Oceania would be served from farther away.
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+    Default: PriceClass_All
+
+Resources:
+  ApiDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: !Sub "${Env} Forseti API"
+        Aliases:
+          - !Ref ApiDomain
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: !Ref PriceClass
+        Origins:
+          - Id: core-alb
+            DomainName:
+              Fn::ImportValue: !Sub "${Env}-core-OriginDomainName"
+            CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              HTTPSPort: 443
+              OriginSSLProtocols:
+                - TLSv1.2
+              # The SSE streams of Core send a heartbeat every 15 seconds, well inside both timeouts
+              OriginReadTimeout: 60
+              OriginKeepaliveTimeout: 60
+            # The ALB answers 403 to anything without this header
+            OriginCustomHeaders:
+              - HeaderName: X-Origin-Verify
+                HeaderValue: !Sub
+                  - "{{resolve:secretsmanager:${SecretArn}:SecretString}}"
+                  - SecretArn:
+                      Fn::ImportValue: !Sub "${Env}-secrets-OriginVerifySecretArn"
+        DefaultCacheBehavior:
+          TargetOriginId: core-alb
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+            - PUT
+            - POST
+            - PATCH
+            - DELETE
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: false
+          # Managed policies. CachingDisabled; forward every header (Origin for CORS, Authorization, the CSRF
+          # header), cookie and query string except Host, so the ALB certificate matches the origin domain.
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac
+        # Do not keep error answers around: while an instance or task is being replaced, the next request after the
+        # recovery must reach the origin instead of getting a cached 502 or 503
+        CustomErrorResponses:
+          - ErrorCode: 500
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 502
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 503
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 504
+            ErrorCachingMinTTL: 0
+        ViewerCertificate:
+          AcmCertificateArn: !Ref CloudFrontCertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+
+  # Z2FDTNDATAQYW2 is the fixed hosted zone ID of every CloudFront distribution
+  ApiRecordSetIPv4:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "${ApiDomain}."
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt ApiDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  ApiRecordSetIPv6:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "${ApiDomain}."
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt ApiDistribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+Outputs:
+  ApiUrl:
+    Description: Public URL of the Core API (the webapp is built with it as VITE_API_URL)
+    Value: !Sub "https://${ApiDomain}"
+
+  ApiDistributionId:
+    Description: ID of the API CloudFront distribution
+    Value: !Ref ApiDistribution

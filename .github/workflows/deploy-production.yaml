@@ -1,8 +1,10 @@
 name: Build and Deploy Production
 
 on:
-  release:
-    types: [created]
+  # Automatic deployment is disabled
+  # release:
+  #   types: [created]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -82,66 +84,71 @@ jobs:
       - name: Set version environment variable
         run: echo "VERSION=${{ steps.vars.outputs.tag }}" >> $GITHUB_ENV
 
-      # - name: Set up Python
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: "3.12"
-      #     cache: "pip"
-
-      # - name: Set up JDK
-      #   uses: actions/setup-java@v4
-      #   with:
-      #     distribution: temurin
-      #     java-version: 21
-      #     cache: gradle
-      
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: "npm"
           cache-dependency-path: applications/webapp/package-lock.json
-      
-      # - name: Build autojudge
-      #   working-directory: applications/autojudge
-      #   run: docker build -t forseti/autojudge .
-      
-      # - name: Build core
-      #   working-directory: applications/core
-      #   run: ./gradlew build -x check
-      
-      # - name: Build webapp
-      #   working-directory: applications/webapp
-      #   env:
-      #     VERSION: ${{ steps.vars.outputs.tag }}
-      #     API_URL: ${{ vars.API_URL }}
-      #   run: npm ci && npm run build
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v4
-      #   with:
-      #     role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-      #     aws-region: us-east-2
-      
-      # - name: Push docker images
-      #   run: |
-      #     docker tag forseti/autojudge 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/autojudge:${{ steps.vars.outputs.tag }}
-      #     docker push 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/autojudge:${{ steps.vars.outputs.tag }}
-      #     docker tag forseti/core 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/core:${{ steps.vars.outputs.tag }}
-      #     docker push 170825161826.dkr.ecr.us-east-2.amazonaws.com/forseti/core:${{ steps.vars.outputs.tag }}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-2
 
-      # - name: Deploy CloudFormation Stack
-      #   uses: aws-actions/aws-cloudformation-github-deploy@v2
-      #   with:
-      #     name: prod-forseti-stack
-      #     template: applications/template/dist/template.yaml
-      #     parameter-overrides: ENV=production,Version=${{ steps.vars.outputs.tag }}
-      #     no-fail-on-empty-changeset: true
-      #     capabilities: CAPABILITY_IAM,CAPABILITY_NAMED_IAM
-      
-      # - name: Upload webapp artifact
-      #   run: |
-      #     aws s3 sync applications/webapp/dist/ s3://${{ secrets.AWS_S3_PRODUCTION_WEBAPP_BUCKET }} --delete
+      - name: Log in to Amazon ECR
+        id: ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push images
+        env:
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
+        run: |
+          for app in core autojudge; do
+            docker build -t "$REGISTRY/forseti/$app:$VERSION" "applications/$app"
+            docker push "$REGISTRY/forseti/$app:$VERSION"
+          done
+
+      # Mode is not passed, so the idle/contest mode of the running stacks is preserved.
+      - name: Deploy stacks
+        run: infrastructure/production/deploy.sh production --version "$VERSION" --yes
+
+      - name: Read stack outputs
+        id: outputs
+        run: |
+          set -euo pipefail
+          source "infrastructure/production/environments/production.env"
+          stack="production-forseti-webapp"
+          output() {
+            aws cloudformation describe-stacks --region "$REGION" --stack-name "$stack" \
+              --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text
+          }
+          echo "api_domain=api.$DOMAIN" >> "$GITHUB_OUTPUT"
+          echo "bucket=$(output WebAppBucketName)" >> "$GITHUB_OUTPUT"
+          echo "distribution=$(output WebAppDistributionId)" >> "$GITHUB_OUTPUT"
+          echo "rum_app_id=$(output CloudWatchRumAppId)" >> "$GITHUB_OUTPUT"
+
+      - name: Build webapp
+        working-directory: applications/webapp
+        env:
+          VITE_VERSION: ${{ env.VERSION }}
+          VITE_API_URL: https://${{ steps.outputs.outputs.api_domain }}
+          VITE_CLOUDWATCH_RUM_APP_ID: ${{ steps.outputs.outputs.rum_app_id }}
+          VITE_CLOUDWATCH_RUM_REGION: us-east-2
+        run: npm ci && npm run build
+
+      - name: Upload webapp
+        env:
+          BUCKET: ${{ steps.outputs.outputs.bucket }}
+          DISTRIBUTION: ${{ steps.outputs.outputs.distribution }}
+        run: |
+          dist=applications/webapp/dist
+          aws s3 sync "$dist/" "s3://$BUCKET" --delete --exclude index.html \
+            --cache-control "public, max-age=31536000, immutable"
+          aws s3 cp "$dist/index.html" "s3://$BUCKET/index.html" \
+            --cache-control "no-cache"
+          aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION" --paths "/index.html" "/config.js"
 
       - name: Install MkDocs and dependencies
         run: pip install mkdocs mkdocs-material
@@ -156,7 +163,7 @@ jobs:
           path: documentation/site
 
   deploy-pages:
-    needs: build-and-release
+    needs: build-and-deploy
     runs-on: ubuntu-latest
     environment:
       name: github-pages
