@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Announcement
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import java.util.UUID
 
@@ -9,5 +10,6 @@ import java.util.UUID
  */
 interface AnnouncementRepository : BaseRepository<Announcement> {
     @Query("SELECT a FROM Announcement a WHERE a.id = ?1 AND deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["contest", "member"])
     fun findByIdNullable(id: UUID): Announcement?
 }

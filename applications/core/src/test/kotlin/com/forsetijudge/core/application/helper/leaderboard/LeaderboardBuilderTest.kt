@@ -1,13 +1,11 @@
 package com.forsetijudge.core.application.helper.leaderboard
 
-import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
-import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -19,11 +17,10 @@ import org.mockito.kotlin.whenever
 import java.time.OffsetDateTime
 
 class LeaderboardBuilderTest {
-    private val members = mock<MemberRepository>()
     private val submissions = mock<SubmissionRepository>()
     private val frozenSubmissions = mock<FrozenSubmissionRepository>()
     private val cache = mock<LeaderboardCacheStore>()
-    private val builder = LeaderboardBuilder(members, submissions, frozenSubmissions, LeaderboardCellBuilder(), cache)
+    private val builder = LeaderboardBuilder(submissions, frozenSubmissions, LeaderboardCellBuilder(), cache)
 
     @Test
     fun `builds rows from cached and submitted cells and ranks contestants`() {
@@ -46,8 +43,7 @@ class LeaderboardBuilderTest {
                 wrongSubmissions = 1,
                 penalty = 35,
             )
-        whenever(members.findAllByContestIdAndTypeIn(contest.id, listOf(Member.Type.CONTESTANT)))
-            .thenReturn(contestants)
+        contest.members = contestants
         whenever(cache.getAllCellsByContestId(contest.id)).thenReturn(listOf(cachedCell))
         whenever(
             submissions.findByContestIdAndStatusAndMemberAndProblemPairsNotIn(
@@ -96,8 +92,6 @@ class LeaderboardBuilderTest {
     @Test
     fun `returns an empty leaderboard when no members or problems exist`() {
         val contest = MockEntityFactory.contest()
-        whenever(members.findAllByContestIdAndTypeIn(contest.id, listOf(Member.Type.CONTESTANT)))
-            .thenReturn(emptyList())
         whenever(cache.getAllCellsByContestId(contest.id)).thenReturn(emptyList())
         whenever(
             submissions.findByContestIdAndStatusAndMemberAndProblemPairsNotIn(

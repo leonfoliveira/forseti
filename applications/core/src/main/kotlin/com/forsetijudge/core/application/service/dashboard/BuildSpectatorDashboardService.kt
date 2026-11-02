@@ -47,7 +47,7 @@ class BuildSpectatorDashboardService(
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =
             if (contest.isFrozen()) {
-                frozenSubmissionRepository.findAllByContestId(contest.id)
+                frozenSubmissionRepository.findAllByContestId(contest.id).map { it.unfreeze() }
             } else {
                 submissionRepository.findAllByContestId(contest.id)
             }

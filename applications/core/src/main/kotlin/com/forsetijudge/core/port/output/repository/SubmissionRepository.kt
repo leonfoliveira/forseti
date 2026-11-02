@@ -1,6 +1,7 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Submission
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import java.time.OffsetDateTime
 import java.util.UUID
@@ -10,14 +11,17 @@ import java.util.UUID
  */
 interface SubmissionRepository : BaseRepository<Submission> {
     @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["member", "problem", "code"])
     fun findByIdNullable(id: UUID): Submission?
 
     @Query("SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["member", "problem", "code"])
     fun findAllByContestId(contestId: UUID): List<Submission>
 
     @Query(
         """SELECT s FROM Submission s WHERE s.problem.contest.id = ?1 AND s.member.id = ?2 AND deletedAt IS NULL""",
     )
+    @EntityGraph(attributePaths = ["member", "problem", "code"])
     fun findAllByContestIdAndMemberId(
         contestId: UUID,
         memberId: UUID,
@@ -26,6 +30,7 @@ interface SubmissionRepository : BaseRepository<Submission> {
     @Query(
         """SELECT s FROM Submission s WHERE s.problem.contest.id = :contestId AND s.updatedAt > :updatedAt AND deletedAt IS NULL""",
     )
+    @EntityGraph(attributePaths = ["member", "problem", "code"])
     fun findAllByContestAndUpdatedAtAfter(
         contestId: UUID,
         updatedAt: OffsetDateTime,
@@ -42,6 +47,7 @@ interface SubmissionRepository : BaseRepository<Submission> {
     ): List<Submission>
 
     @Query("SELECT s FROM Submission s WHERE s.id = ?1 AND s.problem.contest.id = ?2 AND deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["member", "problem", "code"])
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,

@@ -20,6 +20,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc:
           time_zone: UTC
+        default_batch_fetch_size: 100
       org:
         hibernate:
           envers:

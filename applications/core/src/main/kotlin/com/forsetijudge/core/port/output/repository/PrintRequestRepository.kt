@@ -1,25 +1,30 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.PrintRequest
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.Query
 import java.util.UUID
 
 interface PrintRequestRepository : BaseRepository<PrintRequest> {
     @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["submission", "submission.member", "submission.problem", "submission.code"])
     fun findByIdNullable(id: UUID): PrintRequest?
 
     @Query("SELECT pr FROM PrintRequest pr WHERE pr.id = :id AND pr.submission.problem.contest.id = :contestId AND pr.deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["submission", "submission.member", "submission.problem", "submission.code"])
     fun findByIdAndContestId(
         id: UUID,
         contestId: UUID,
     ): PrintRequest?
 
     @Query("SELECT pr FROM PrintRequest pr WHERE pr.submission.problem.contest.id = :contestId AND pr.deletedAt IS NULL")
+    @EntityGraph(attributePaths = ["submission", "submission.member", "submission.problem", "submission.code"])
     fun findAllByContestId(contestId: UUID): List<PrintRequest>
 
     @Query(
         "SELECT pr FROM PrintRequest pr WHERE pr.submission.problem.contest.id = :contestId AND pr.submission.member.id = :memberId AND pr.deletedAt IS NULL",
     )
+    @EntityGraph(attributePaths = ["submission", "submission.member", "submission.problem", "submission.code"])
     fun findAllByContestIdAndMemberId(
         contestId: UUID,
         memberId: UUID,

@@ -37,10 +37,4 @@ interface MemberRepository : BaseRepository<Member> {
         login: String,
         contestId: UUID,
     ): Member?
-
-    @Query("SELECT m FROM Member m WHERE m.contest.id = ?1 AND m.type IN ?2 AND m.deletedAt IS NULL")
-    fun findAllByContestIdAndTypeIn(
-        contestId: UUID,
-        type: Collection<Member.Type>,
-    ): List<Member>
 }
