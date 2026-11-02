@@ -1,5 +1,6 @@
 package com.forsetijudge.core.domain.model
 
+import com.forsetijudge.core.domain.model.Entitlement
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -9,7 +10,10 @@ class SessionAuthentication(
     val session: Session,
     val ip: String,
 ) : Authentication {
-    override fun getAuthorities(): Collection<GrantedAuthority> = listOf(SimpleGrantedAuthority("ROLE_${session.member.type}"))
+    override fun getAuthorities(): Collection<GrantedAuthority> =
+        Entitlement.forType(session.member.type).map {
+            SimpleGrantedAuthority(it.name)
+        }
 
     override fun getCredentials(): Any? = null
 

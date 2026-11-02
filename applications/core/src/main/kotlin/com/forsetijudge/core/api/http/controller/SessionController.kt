@@ -1,8 +1,10 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.util.CsrfCookieBuilder
+import com.forsetijudge.core.api.util.RequiresEntitlement
 import com.forsetijudge.core.api.util.SessionCookieBuilder
 import com.forsetijudge.core.application.helper.AuthenticationHelper
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.input.usecase.session.DeleteAllSessionsByContextMemberUseCase
 import com.forsetijudge.core.util.SafeLogger
@@ -24,6 +26,7 @@ class SessionController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/sessions/me")
+    @RequiresEntitlement(Entitlement.SESSION_READ)
     fun getSession(): ResponseEntity<Session> {
         logger.info("[GET] /v1/sessions/me")
         val session = AuthenticationHelper.getCurrentSession()
@@ -31,6 +34,7 @@ class SessionController(
     }
 
     @DeleteMapping("/sessions/me")
+    @RequiresEntitlement(Entitlement.SESSION_DELETE)
     fun deleteSession(): ResponseEntity<Void> {
         logger.info("[DELETE] /v1/sessions/me")
         deleteAllSessionsByContextMemberUseCase.execute()

@@ -2,6 +2,8 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.printrequest.CreatePrintRequestRequestBodyDTO
 import com.forsetijudge.core.api.http.dto.request.printrequest.UpdateStatusPrintRequestRequestBodyDTO
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.response.printrequest.PrintRequestResponseDTO
 import com.forsetijudge.core.port.input.usecase.printrequest.CreatePrintRequestUseCase
 import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRequestUseCase
@@ -25,6 +27,7 @@ class PrintRequestController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/print-requests")
+    @RequiresEntitlement(Entitlement.PRINT_REQUEST_CREATE)
     fun createPrintRequest(
         @PathVariable contestId: UUID,
         @RequestBody body: CreatePrintRequestRequestBodyDTO,
@@ -38,6 +41,7 @@ class PrintRequestController(
     }
 
     @PatchMapping("/contests/{contestId}/print-requests/{printRequestId}/status")
+    @RequiresEntitlement(Entitlement.PRINT_REQUEST_UPDATE_STATUS)
     fun updateStatusPrintRequest(
         @PathVariable contestId: UUID,
         @PathVariable printRequestId: UUID,

@@ -1,5 +1,7 @@
 package com.forsetijudge.core.api.http.controller
 
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.response.dashboard.AdminDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.ContestantDashboardResponseDTO
 import com.forsetijudge.core.port.dto.response.dashboard.JudgeDashboardResponseDTO
@@ -12,7 +14,6 @@ import com.forsetijudge.core.port.input.usecase.dashboard.BuildSpectatorDashboar
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildStaffDashboardUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -32,7 +33,7 @@ class DashboardController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/contests/{contestId}/dashboard/admin")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_ADMIN_READ)
     fun getAdminDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<AdminDashboardResponseDTO> {
@@ -45,7 +46,7 @@ class DashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/judge")
-    @PreAuthorize("hasRole('JUDGE')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_JUDGE_READ)
     fun getJudgeDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<JudgeDashboardResponseDTO> {
@@ -58,7 +59,7 @@ class DashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/staff")
-    @PreAuthorize("hasRole('STAFF')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_STAFF_READ)
     fun getStaffDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<StaffDashboardResponseDTO> {
@@ -71,7 +72,7 @@ class DashboardController(
     }
 
     @GetMapping("/contests/{contestId}/dashboard/contestant")
-    @PreAuthorize("hasRole('CONTESTANT')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_CONTESTANT_READ)
     fun getContestantDashboard(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestantDashboardResponseDTO> {

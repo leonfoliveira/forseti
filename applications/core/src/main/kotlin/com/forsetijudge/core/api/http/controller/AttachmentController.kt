@@ -1,6 +1,8 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.attachment.SignedUploadAttachmentRequestDTO
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.response.attachment.SignedDownloadAttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.SignedUploadAttachmentResponseDTO
 import com.forsetijudge.core.port.input.usecase.attachment.SignedDownloadAttachmentUseCase
@@ -25,6 +27,7 @@ class AttachmentController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/attachments")
+    @RequiresEntitlement(Entitlement.ATTACHMENT_CREATE)
     fun getUploadSignedUrl(
         @PathVariable contestId: UUID,
         @RequestBody body: SignedUploadAttachmentRequestDTO,

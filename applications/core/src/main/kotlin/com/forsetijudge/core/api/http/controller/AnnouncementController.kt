@@ -1,11 +1,12 @@
 package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.announcement.CreateAnnouncementRequestBody
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.response.announcement.AnnouncementResponseDTO
 import com.forsetijudge.core.port.input.usecase.announcement.CreateAnnouncementUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,7 +23,7 @@ class AnnouncementController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/announcements")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.ANNOUNCEMENT_CREATE)
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateAnnouncementRequestBody,

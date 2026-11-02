@@ -2,6 +2,8 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.submission.CreateSubmissionRequestBodyDTO
 import com.forsetijudge.core.api.http.dto.request.submission.UpdateAnswerSubmissionRequestBodyDTO
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeAndExecutionsResponseDTO
 import com.forsetijudge.core.port.dto.response.submission.SubmissionWithCodeResponseDTO
@@ -10,7 +12,6 @@ import com.forsetijudge.core.port.input.usecase.submission.ResubmitSubmissionUse
 import com.forsetijudge.core.port.input.usecase.submission.UpdateSubmissionAnswerUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -30,7 +31,7 @@ class SubmissionController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/submissions")
-    @PreAuthorize("hasRole('CONTESTANT')")
+    @RequiresEntitlement(Entitlement.SUBMISSION_CREATE)
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateSubmissionRequestBodyDTO,
@@ -49,7 +50,7 @@ class SubmissionController(
     }
 
     @PatchMapping("/contests/{contestId}/submissions/{submissionId}:resubmit")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
+    @RequiresEntitlement(Entitlement.SUBMISSION_RESUBMIT)
     fun resubmit(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,
@@ -66,7 +67,7 @@ class SubmissionController(
     }
 
     @PatchMapping("/contests/{contestId}/submissions/{submissionId}:update-answer")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
+    @RequiresEntitlement(Entitlement.SUBMISSION_UPDATE_ANSWER)
     fun updateAnswer(
         @PathVariable contestId: UUID,
         @PathVariable submissionId: UUID,

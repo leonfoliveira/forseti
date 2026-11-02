@@ -1,7 +1,8 @@
 package com.forsetijudge.core.api.http.sse
 
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestHeader
@@ -20,7 +21,7 @@ class SSEController(
     private val logger = SafeLogger(this::class)
 
     @GetMapping("/sse/contests/{contestId}/dashboard/admin")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_ADMIN_READ)
     fun subscribeToAdminDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
@@ -37,7 +38,7 @@ class SSEController(
     }
 
     @GetMapping("/sse/contests/{contestId}/dashboard/staff")
-    @PreAuthorize("hasRole('STAFF')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_STAFF_READ)
     fun subscribeToStaffDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
@@ -54,7 +55,7 @@ class SSEController(
     }
 
     @GetMapping("/sse/contests/{contestId}/dashboard/judge")
-    @PreAuthorize("hasRole('JUDGE')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_JUDGE_READ)
     fun subscribeToJudgeDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,
@@ -71,7 +72,7 @@ class SSEController(
     }
 
     @GetMapping("/sse/contests/{contestId}/dashboard/contestant")
-    @PreAuthorize("hasRole('CONTESTANT')")
+    @RequiresEntitlement(Entitlement.DASHBOARD_CONTESTANT_READ)
     fun subscribeToContestantDashboardRoom(
         @PathVariable contestId: UUID,
         @RequestHeader(value = "Last-Event-ID", required = false) lastEventId: String?,

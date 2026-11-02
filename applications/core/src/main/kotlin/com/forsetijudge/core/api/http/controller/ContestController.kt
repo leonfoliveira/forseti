@@ -2,6 +2,8 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.contest.CreateContestRequestBodyDTO
 import com.forsetijudge.core.api.http.dto.request.contest.UpdateContestRequestBodyDTO
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.command.AttachmentCommandDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
@@ -16,7 +18,6 @@ import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -57,7 +58,7 @@ class ContestController(
     }
 
     @GetMapping("/contests")
-    @PreAuthorize("hasRole('ROOT')")
+    @RequiresEntitlement(Entitlement.CONTEST_LIST)
     fun findAll(): ResponseEntity<List<ContestResponseDTO>> {
         logger.info("[GET] /v1/contests")
         val contests = findAllContestUseCase.execute()
@@ -65,7 +66,7 @@ class ContestController(
     }
 
     @PostMapping("/contests")
-    @PreAuthorize("hasRole('ROOT')")
+    @RequiresEntitlement(Entitlement.CONTEST_CREATE)
     fun create(
         @RequestBody body: CreateContestRequestBodyDTO,
     ): ResponseEntity<ContestResponseDTO> {
@@ -84,7 +85,7 @@ class ContestController(
     }
 
     @PutMapping("/contests/{contestId}")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.CONTEST_UPDATE)
     fun updateContest(
         @PathVariable contestId: UUID,
         @RequestBody body: UpdateContestRequestBodyDTO,
@@ -137,7 +138,7 @@ class ContestController(
     }
 
     @PatchMapping("/contests/{contestId}:force-start")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.CONTEST_FORCE_START)
     fun forceStart(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
@@ -150,7 +151,7 @@ class ContestController(
     }
 
     @PatchMapping("/contests/{contestId}:force-end")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.CONTEST_FORCE_END)
     fun forceEnd(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
@@ -163,7 +164,7 @@ class ContestController(
     }
 
     @PatchMapping("/contests/{contestId}:freeze")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.CONTEST_FREEZE)
     fun freeze(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
@@ -176,7 +177,7 @@ class ContestController(
     }
 
     @PatchMapping("/contests/{contestId}:unfreeze")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN')")
+    @RequiresEntitlement(Entitlement.CONTEST_UNFREEZE)
     fun unfreeze(
         @PathVariable contestId: UUID,
     ): ResponseEntity<ContestWithMembersAndProblemsResponseDTO> {
@@ -189,7 +190,7 @@ class ContestController(
     }
 
     @DeleteMapping("/contests/{contestId}")
-    @PreAuthorize("hasRole('ROOT')")
+    @RequiresEntitlement(Entitlement.CONTEST_DELETE)
     fun delete(
         @PathVariable contestId: UUID,
     ): ResponseEntity<Void> {

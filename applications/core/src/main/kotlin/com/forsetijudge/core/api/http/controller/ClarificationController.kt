@@ -2,13 +2,14 @@ package com.forsetijudge.core.api.http.controller
 
 import com.forsetijudge.core.api.http.dto.request.clarification.AnswerClarificationRequestBody
 import com.forsetijudge.core.api.http.dto.request.clarification.CreateClarificationRequestBody
+import com.forsetijudge.core.api.util.RequiresEntitlement
+import com.forsetijudge.core.domain.model.Entitlement
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.input.usecase.clarification.AnswerClarificationUseCase
 import com.forsetijudge.core.port.input.usecase.clarification.CreateClarificationUseCase
 import com.forsetijudge.core.port.input.usecase.clarification.PublishClarificationUseCase
 import com.forsetijudge.core.util.SafeLogger
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -28,7 +29,7 @@ class ClarificationController(
     private val logger = SafeLogger(this::class)
 
     @PostMapping("/contests/{contestId}/clarifications")
-    @PreAuthorize("hasRole('CONTESTANT')")
+    @RequiresEntitlement(Entitlement.CLARIFICATION_CREATE)
     fun create(
         @PathVariable contestId: UUID,
         @RequestBody body: CreateClarificationRequestBody,
@@ -46,7 +47,7 @@ class ClarificationController(
     }
 
     @PatchMapping("/contests/{contestId}/clarifications/{clarificationId}/answer")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
+    @RequiresEntitlement(Entitlement.CLARIFICATION_ANSWER)
     fun answer(
         @PathVariable contestId: UUID,
         @PathVariable clarificationId: UUID,
@@ -65,7 +66,7 @@ class ClarificationController(
     }
 
     @PatchMapping("/contests/{contestId}/clarifications/{clarificationId}/publish")
-    @PreAuthorize("hasAnyRole('ROOT', 'ADMIN', 'JUDGE')")
+    @RequiresEntitlement(Entitlement.CLARIFICATION_PUBLISH)
     fun publish(
         @PathVariable contestId: UUID,
         @PathVariable clarificationId: UUID,
