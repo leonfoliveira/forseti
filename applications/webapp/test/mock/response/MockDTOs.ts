@@ -81,6 +81,12 @@ export const MockContestResponseDTO = (
   autoFreezeAt: "2026-01-01T01:00:00.000Z",
   frozenAt: "2026-01-01T01:30:00.000Z",
   ipCIDRs: ["0.0.0.0/0"],
+  settings: {
+    isAutoJudgeEnabled: true,
+    isClarificationEnabled: true,
+    isPrintRequestEnabled: true,
+    isSpectatorEnabled: true,
+  },
   version: 1,
   ...overrides,
 });
@@ -405,6 +411,12 @@ export const MockUpdateContestRequestDTO = (
   startAt: "2026-01-01T00:00:00.000Z",
   endAt: "2026-01-01T02:00:00.000Z",
   ipCIDRs: ["0.0.0.0/0"],
+  settings: {
+    isAutoJudgeEnabled: true,
+    isSpectatorEnabled: true,
+    isClarificationEnabled: true,
+    isPrintRequestEnabled: true,
+  },
   members: [
     { type: MemberType.CONTESTANT, name: "Ada Lovelace", login: "ada" },
   ],
