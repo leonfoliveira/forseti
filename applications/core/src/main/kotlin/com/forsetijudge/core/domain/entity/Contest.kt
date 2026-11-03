@@ -12,10 +12,10 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "contest")
@@ -73,6 +73,7 @@ class Contest(
      * The settings for the contest, which include various configuration options.
      */
     @Embedded
+    @Audited(withModifiedFlag = false)
     var settings: Settings = Settings(),
     /**
      * The members of the contest, which can include contestants, judges, and other roles.

@@ -17,7 +17,7 @@ create table contest
     is_auto_judge_enabled    boolean   not null default false,
     is_clarification_enabled boolean   not null default false,
     is_print_request_enabled boolean   not null default false,
-    is_specification_enabled boolean   not null default false
+    is_spectator_enabled     boolean   not null default false
 );
 
 create unique index idx_contest_slug_unique_active on contest (slug) where deleted_at is null;
@@ -56,8 +56,8 @@ create table contest_aud
     is_clarification_enabled_mod boolean   not null default false,
     is_print_request_enabled     boolean   not null default false,
     is_print_request_enabled_mod boolean   not null default false,
-    is_specification_enabled     boolean   not null default false,
-    is_specification_enabled_mod boolean   not null default false,
+    is_spectator_enabled         boolean   not null default false,
+    is_spectator_enabled_mod     boolean   not null default false,
     primary key (rev, id),
     constraint fk_rev foreign key (rev) references revinfo (rev)
 );
