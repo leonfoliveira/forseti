@@ -129,6 +129,10 @@ class SSEAuthorizer(
         ContestAuthorizer(contest, null)
             .requireContestStarted()
             .throwIfErrors()
+
+        if (!contest.settings.isSpectatorEnabled) {
+            throw ForbiddenException("Spectators are not enabled for this contest")
+        }
     }
 
     /**

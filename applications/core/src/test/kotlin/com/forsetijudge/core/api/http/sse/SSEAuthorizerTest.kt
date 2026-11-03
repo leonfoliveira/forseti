@@ -8,6 +8,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class SSEAuthorizerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -284,6 +284,18 @@ class SSEAuthorizerTest {
         fun `should throw ForbiddenException when contest has not started`() {
             val contestId = IdGenerator.getUUID()
             val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().plusDays(1))
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToSpectatorDashboardRoom(contestId)
+            }
+        }
+
+        @Test
+        fun `should throw ForbiddenException when contest has not enabled spectators`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
+            contest.settings.isSpectatorEnabled = false
             whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
 
             assertThrows<ForbiddenException> {

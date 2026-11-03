@@ -2,6 +2,9 @@ package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -9,13 +12,11 @@ import org.mockito.kotlin.atLeastOnce
 import org.mockito.kotlin.atMost
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 class SSEHelperTest {
     private val room = "test-room"
@@ -76,6 +77,27 @@ class SSEHelperTest {
 
         helper.emit(message)
         verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>()) // count shouldn't increase
+    }
+
+    @Test
+    fun `completeAll should complete all emitters in the room`() {
+        val emitter1 = mock<SseEmitter>()
+        val emitter2 = mock<SseEmitter>()
+        val completionCaptor1 = argumentCaptor<Runnable>()
+        val completionCaptor2 = argumentCaptor<Runnable>()
+        val message = SSEFanoutMessage(room, eventName, data)
+        doNothing().whenever(emitter1).onCompletion(completionCaptor1.capture())
+        doNothing().whenever(emitter2).onCompletion(completionCaptor2.capture())
+
+        helper.subscribe(room, emitter1)
+
+        helper.completeAll(room)
+        completionCaptor1.firstValue.run()
+        completionCaptor2.firstValue.run()
+
+        helper.emit(message)
+        verify(emitter1, never()).send(any<SseEmitter.SseEventBuilder>())
+        verify(emitter2, never()).send(any<SseEmitter.SseEventBuilder>())
     }
 
     @Test
