@@ -11,6 +11,7 @@ import com.forsetijudge.core.port.output.repository.ClarificationRepository
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -19,7 +20,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class BuildSpectatorDashboardServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -64,5 +64,17 @@ class BuildSpectatorDashboardServiceTest {
         assertThrows(NotFoundException::class.java) {
             service.execute(BuildSpectatorDashboardUseCase.Command(contest.id))
         }
+    }
+
+    @Test
+    fun `rejects spectator when spectator is disabled`() {
+        TestAuthentication.clear()
+        val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusMinutes(1))
+        contest.settings.isSpectatorEnabled = false
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(BuildSpectatorDashboardUseCase.Command(contest.id))
+        }
+        verify(leaderboardBuilder, never()).build(any(), any())
     }
 }

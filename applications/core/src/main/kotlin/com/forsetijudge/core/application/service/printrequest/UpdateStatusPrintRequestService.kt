@@ -50,6 +50,10 @@ class UpdateStatusPrintRequestService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.STAFF)
             .throwIfErrors()
 
+        if (!contest.settings.isPrintRequestEnabled) {
+            throw ForbiddenException("Print requests are not enabled for this contest")
+        }
+
         if (command.status == PrintRequest.Status.PENDING) {
             throw ForbiddenException("Cannot change status to PENDING")
         }

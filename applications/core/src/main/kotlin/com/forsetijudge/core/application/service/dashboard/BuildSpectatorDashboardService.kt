@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.dashboard
 
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.domain.model.dashboard.SpectatorDashboard
 import com.forsetijudge.core.port.dto.response.dashboard.SpectatorDashboardResponseDTO
@@ -43,6 +44,10 @@ class BuildSpectatorDashboardService(
         ContestAuthorizer(contest)
             .requireContestStarted()
             .throwIfErrors()
+
+        if (!contest.settings.isSpectatorEnabled) {
+            throw ForbiddenException("Spectator is not enabled for contest with id ${command.contestId}")
+        }
 
         val leaderboard = leaderboardBuilder.build(contest = contest)
         val submissions =

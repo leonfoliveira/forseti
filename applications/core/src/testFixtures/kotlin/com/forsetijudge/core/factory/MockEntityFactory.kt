@@ -19,6 +19,7 @@ object MockEntityFactory {
         autoFreezeAt: OffsetDateTime? = null,
         frozenAt: OffsetDateTime? = null,
         ipCIDRs: List<String> = emptyList(),
+        settings: Contest.Settings = Contest.Settings(),
         problems: List<Problem> = emptyList(),
     ) = Contest(
         id = id,
@@ -30,6 +31,7 @@ object MockEntityFactory {
         autoFreezeAt = autoFreezeAt,
         frozenAt = frozenAt,
         ipCIDRs = ipCIDRs,
+        settings = settings,
         problems = problems,
     )
 

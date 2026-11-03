@@ -24,12 +24,12 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
 @Validated
@@ -137,6 +137,13 @@ class UpdateContestService(
         contest.endAt = command.endAt
         contest.autoFreezeAt = command.autoFreezeAt
         contest.ipCIDRs = command.ipCIDRs
+        contest.settings =
+            Contest.Settings(
+                isAutoJudgeEnabled = command.settings.isAutoJudgeEnabled,
+                isClarificationEnabled = command.settings.isClarificationEnabled,
+                isPrintRequestEnabled = command.settings.isPrintRequestEnabled,
+                isSpectatorEnabled = command.settings.isSpectatorEnabled,
+            )
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }

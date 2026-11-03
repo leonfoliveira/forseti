@@ -51,6 +51,10 @@ class CreatePrintRequestService(
             .requireContestActive()
             .throwIfErrors()
 
+        if (!contest.settings.isPrintRequestEnabled) {
+            throw ForbiddenException("Print requests are not enabled for this contest")
+        }
+
         if (submission.member != member) {
             throw ForbiddenException("Submission with id ${command.submissionId} does not belong to member with id $contextMemberId")
         }

@@ -17,6 +17,7 @@ import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,7 +28,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @RestController
 @RequestMapping("/v1")
@@ -102,6 +102,13 @@ class ContestController(
                     endAt = body.endAt,
                     autoFreezeAt = body.autoFreezeAt,
                     ipCIDRs = body.ipCIDRs,
+                    settings =
+                        UpdateContestUseCase.Command.Settings(
+                            isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
+                            isClarificationEnabled = body.settings.isClarificationEnabled,
+                            isPrintRequestEnabled = body.settings.isPrintRequestEnabled,
+                            isSpectatorEnabled = body.settings.isSpectatorEnabled,
+                        ),
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(

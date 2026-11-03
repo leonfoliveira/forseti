@@ -6,6 +6,7 @@ import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Clarification
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ClarificationEvent
+import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.clarification.ClarificationResponseDTO
 import com.forsetijudge.core.port.dto.response.clarification.toResponseDTO
@@ -64,6 +65,10 @@ class CreateClarificationService(
             .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .requireContestActive()
             .throwIfErrors()
+
+        if (!contest.settings.isClarificationEnabled) {
+            throw ForbiddenException("Clarifications are not enabled for this contest")
+        }
 
         val clarification =
             Clarification(

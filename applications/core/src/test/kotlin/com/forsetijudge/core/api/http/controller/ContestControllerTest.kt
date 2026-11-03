@@ -12,6 +12,8 @@ import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.FreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UnfreezeContestUseCase
 import com.forsetijudge.core.port.input.usecase.contest.UpdateContestUseCase
+import java.time.OffsetDateTime
+import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -26,8 +28,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import java.time.OffsetDateTime
-import java.util.UUID
 
 class ContestControllerTest {
     private val findBySlug = mock<FindContestBySlugUseCase>()
@@ -114,6 +114,12 @@ class ContestControllerTest {
                           "startAt":"$startAt",
                           "endAt":"$endAt",
                           "ipCIDRs":["192.168.0.1/24"],
+                          "settings":{
+                            "isAutoJudgeEnabled":true,
+                            "isClarificationEnabled":true,
+                            "isPrintRequestEnabled":true,
+                            "isSpectatorEnabled":true
+                          },
                           "members":[{"id":"$memberId","type":"ADMIN","name":"Coach","login":"coach","password":"pw"}],
                           "problems":[{"letter":"A","color":"#123456","title":"Warmup","description":{"id":"$descriptionId"},"timeLimit":1000,"memoryLimit":256,"testCases":{"id":"$testCasesId"}}]
                         }
@@ -132,6 +138,13 @@ class ContestControllerTest {
                 endAt = endAt,
                 autoFreezeAt = null,
                 ipCIDRs = listOf("192.168.0.1/24"),
+                settings =
+                    UpdateContestUseCase.Command.Settings(
+                        isAutoJudgeEnabled = true,
+                        isClarificationEnabled = true,
+                        isPrintRequestEnabled = true,
+                        isSpectatorEnabled = true,
+                    ),
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
