@@ -61,7 +61,7 @@ class CreateClarificationService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireMemberType(Member.Type.CONTESTANT)
+            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .requireContestActive()
             .throwIfErrors()
 

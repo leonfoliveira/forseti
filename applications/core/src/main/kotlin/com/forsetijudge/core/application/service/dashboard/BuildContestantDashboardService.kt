@@ -53,7 +53,7 @@ class BuildContestantDashboardService(
 
         ContestAuthorizer(contest, member)
             .requireMemberToBelong()
-            .requireMemberType(Member.Type.CONTESTANT)
+            .requireMemberType(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT)
             .requireContestStarted()
             .throwIfErrors()
 
