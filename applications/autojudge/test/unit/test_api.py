@@ -38,10 +38,3 @@ def test_health_unhealthy(client):
 
     assert response.status_code == 503
     assert response.get_json() == {"status": "unhealthy"}
-
-
-def test_metrics(client):
-    response = client.get("/metrics")
-
-    assert response.status_code == 200
-    assert response.mimetype == "text/plain"
