@@ -12,5 +12,11 @@ export type ContestResponseDTO = {
   autoFreezeAt?: string;
   frozenAt?: string;
   ipCIDRs: string[];
+  settings: {
+    isAutoJudgeEnabled: boolean;
+    isClarificationEnabled: boolean;
+    isPrintRequestEnabled: boolean;
+    isSpectatorEnabled: boolean;
+  };
   version: number;
 };

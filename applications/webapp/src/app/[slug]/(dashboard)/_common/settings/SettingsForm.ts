@@ -21,6 +21,12 @@ export type SettingsFormType = {
     autoFreezeAt?: string;
     frozenAt?: string;
     ipCIDRs: string;
+    settings: {
+      isAutoJudgeEnabled: boolean;
+      isClarificationEnabled: boolean;
+      isPrintRequestEnabled: boolean;
+      isSpectatorEnabled: boolean;
+    };
   };
   problems: {
     _id?: string;
@@ -209,6 +215,12 @@ export class SettingsForm {
           .messages({
             "ipCIDRs.invalid": "IP CIDRs are invalid",
           }),
+        settings: Joi.object({
+          isAutoJudgeEnabled: Joi.boolean().required(),
+          isClarificationEnabled: Joi.boolean().required(),
+          isPrintRequestEnabled: Joi.boolean().required(),
+          isSpectatorEnabled: Joi.boolean().required(),
+        }).required(),
       }).required(),
       problems: Joi.array()
         .items(
@@ -373,6 +385,12 @@ export class SettingsForm {
           : "",
         frozenAt: contest.frozenAt,
         ipCIDRs: ArrayUtil.toString(contest.ipCIDRs),
+        settings: {
+          isAutoJudgeEnabled: contest.settings.isAutoJudgeEnabled,
+          isClarificationEnabled: contest.settings.isClarificationEnabled,
+          isPrintRequestEnabled: contest.settings.isPrintRequestEnabled,
+          isSpectatorEnabled: contest.settings.isSpectatorEnabled,
+        },
       },
       members,
       problems,
@@ -393,6 +411,12 @@ export class SettingsForm {
         : undefined,
       frozenAt: form.contest.frozenAt,
       ipCIDRs: ArrayUtil.fromString(form.contest.ipCIDRs),
+      settings: {
+        isAutoJudgeEnabled: form.contest.settings.isAutoJudgeEnabled,
+        isClarificationEnabled: form.contest.settings.isClarificationEnabled,
+        isPrintRequestEnabled: form.contest.settings.isPrintRequestEnabled,
+        isSpectatorEnabled: form.contest.settings.isSpectatorEnabled,
+      },
       members: form.members.map((member) => ({
         id: member._id,
         type: member.type,
