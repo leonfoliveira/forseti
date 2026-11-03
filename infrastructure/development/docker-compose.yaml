@@ -7,7 +7,7 @@ services:
       FLOCI_SERVICES_DOCKER_NETWORK: dev-forseti-network
       FLOCI_STORAGE_MODE: persistent
       FLOCI_STORAGE_PERSISTENT_PATH: /app/data
-    image: floci/floci:2.4.0
+    image: floci/floci:2.4.0-compat
     networks:
       - dev-forseti-network
     ports:
@@ -18,7 +18,7 @@ services:
       - infra
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/floci/init:/etc/floci/init:ro
+      - ./volumes/floci/:/etc/floci
       - dev-floci_data:/app/data
 
   migration:

@@ -31,7 +31,6 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:forsetijudge}
       sse_ttl_seconds: ${SSE_TTL_SECONDS:600}
       ssl:
         enabled: ${REDIS_SSL_ENABLED:false}
@@ -42,6 +41,8 @@ aws:
   endpoint: ${AWS_ENDPOINT:http://localhost:4566}
   access-key-id: ${AWS_ACCESS_KEY_ID:accessKey}
   secret-access-key: ${AWS_SECRET_ACCESS_KEY:secretKey}
+  secrets-manager:
+    root-password-secret-name: ${AWS_SECRETS_MANAGER_ROOT_PASSWORD_SECRET_NAME:dev-root-password}
   s3:
     bucket: ${AWS_S3_BUCKET:dev-core-bucket}
     endpoint-override: ${AWS_S3_ENDPOINT_OVERRIDE:}

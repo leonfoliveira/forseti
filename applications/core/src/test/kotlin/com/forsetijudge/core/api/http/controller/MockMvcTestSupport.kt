@@ -35,7 +35,10 @@ internal object MockMvcTestSupport {
                 .builder()
                 .addModules(
                     KotlinModule.Builder().build(),
-                    SimpleModule().addSerializer(OffsetDateTime::class.java, JacksonConfig.OffsetDateTimeSerializer()),
+                    SimpleModule().addSerializer(
+                        OffsetDateTime::class.java,
+                        JacksonConfig.OffsetDateTimeSerializer(),
+                    ),
                 ).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
                 .build(),
         )

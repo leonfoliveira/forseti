@@ -1,10 +1,12 @@
 package com.forsetijudge.core.infrastructure.secretsmanager
 
-import com.forsetijudge.core.testcontainer.TestContainerLocalStack
+import com.forsetijudge.core.testcontainer.TestContainerFloci
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.testcontainers.junit.jupiter.Testcontainers
 
-class SecretsManagerVaultIntegrationTest : TestContainerLocalStack() {
+@Testcontainers
+class SecretsManagerVaultIntegrationTest : TestContainerFloci() {
     private val vault = SecretsManagerVault(secretsManagerClient)
 
     @Test

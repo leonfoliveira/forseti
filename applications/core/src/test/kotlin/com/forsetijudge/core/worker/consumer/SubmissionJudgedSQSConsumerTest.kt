@@ -2,18 +2,18 @@ package com.forsetijudge.core.worker.consumer
 
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.port.input.usecase.submission.JudgeSubmissionUseCase
-import com.forsetijudge.core.testcontainer.TestContainerLocalStack
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.verify
+import software.amazon.awssdk.services.sqs.SqsClient
 import tools.jackson.module.kotlin.jacksonObjectMapper
 
-class SubmissionJudgedSQSConsumerTest : TestContainerLocalStack() {
-    private val queueName = "submission-judged-queue"
-    private val queueUrl = sqsAsyncClient.createQueue { it.queueName(queueName) }.get().queueUrl()
+class SubmissionJudgedSQSConsumerTest {
+    private val sqsClient = org.mockito.kotlin.mock<SqsClient>()
     private val judgeSubmissionUseCase = mock<JudgeSubmissionUseCase>()
     private val objectMapper = jacksonObjectMapper()
-    private val consumer = SubmissionJudgedSQSConsumer(sqsClient, queueUrl, judgeSubmissionUseCase, objectMapper)
+    private val consumer =
+        SubmissionJudgedSQSConsumer(sqsClient, "submission-judged-queue", judgeSubmissionUseCase, objectMapper)
 
     @Test
     fun `should call judgeSubmissionUseCase when listen is called with valid body`() {

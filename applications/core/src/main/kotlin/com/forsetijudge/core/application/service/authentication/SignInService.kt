@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.vault.Vault
 import com.forsetijudge.core.util.SafeLogger
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -23,12 +24,10 @@ class SignInService(
     private val sessionDeleter: SessionDeleter,
     private val vault: Vault,
     private val hasher: Hasher,
+    @Value($$"${aws.secrets-manager.root-password-secret-name}")
+    private val rootPasswordSecretName: String,
 ) : SignInUseCase {
     private val logger = SafeLogger(this::class)
-
-    companion object {
-        const val ROOT_PASSWORD_SECRET_KEY = "root_password"
-    }
 
     /**
      * Authenticates a user and creates a new session.
@@ -54,7 +53,7 @@ class SignInService(
             } ?: throw UnauthorizedException("Invalid login or password")
 
         if (member.type == Member.Type.ROOT) {
-            val expectedPassword = vault.getSecret(ROOT_PASSWORD_SECRET_KEY)
+            val expectedPassword = vault.getSecret(rootPasswordSecretName)
             if (command.password != expectedPassword) {
                 throw UnauthorizedException("Invalid login or password")
             }

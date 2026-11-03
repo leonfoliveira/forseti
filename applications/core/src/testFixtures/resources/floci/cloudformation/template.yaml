@@ -1,12 +1,19 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Forseti Infrastructure setup for local development using LocalStack
+Description: Forseti Infrastructure setup for test environment using Floci
 
 Resources:
+  # --- Secrets ---
+  RootPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: test-root-password
+      SecretString: forsetijudge
+
   # --- S3 ---
   CoreS3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: dev-core-bucket
+      BucketName: test-core-bucket
       CorsConfiguration:
         CorsRules:
           - AllowedOrigins:
@@ -39,7 +46,7 @@ Resources:
   CoreDatabase:
     Type: AWS::RDS::DBInstance
     Properties:
-      DBInstanceIdentifier: dev-core-db
+      DBInstanceIdentifier: test-core-db
       Engine: postgres
       EngineVersion: "16"
       DBInstanceClass: db.t3.micro
@@ -50,44 +57,32 @@ Resources:
       Port: "5432"
       PubliclyAccessible: true
 
-  # --- ElastiCache ---
-  CoreRedis:
-    Type: AWS::ElastiCache::ReplicationGroup
-    Properties:
-      ReplicationGroupId: dev-core-redis
-      ReplicationGroupDescription: Forseti core Redis
-      Engine: redis
-      CacheNodeType: cache.t3.micro
-      NumCacheClusters: 1
-      Port: 6379
-      AuthToken: forsetijudge
-
   # --- SQS ---
   SubmissionFailedQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: dev-submission-failed-queue
+      QueueName: test-submission-failed-queue
 
   SubmissionJudgedQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: dev-submission-judged-queue
+      QueueName: test-submission-judged-queue
 
   SubmissionQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: dev-submission-queue
+      QueueName: test-submission-queue
 
   AutoFreezeQueue:
     Type: AWS::SQS::Queue
     Properties:
-      QueueName: dev-auto-freeze-queue
+      QueueName: test-auto-freeze-queue
 
   # --- Scheduler ---
   AutoFreezeScheduleExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: dev-auto-freeze-scheduler-execution-role
+      RoleName: test-auto-freeze-scheduler-execution-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -100,7 +95,7 @@ Resources:
                 aws:SourceAccount: !Ref AWS::AccountId
                 aws:SourceArn: !Sub
                   - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule-group/default"
-                  - {}
+                  - { }
       Policies:
         - PolicyName: SendAutoFreezeMessage
           PolicyDocument:
@@ -114,7 +109,7 @@ Resources:
   AutoFreezeSchedulerPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: dev-auto-freeze-scheduler-policy
+      ManagedPolicyName: test-auto-freeze-scheduler-policy
       Description: Allows the core application to manage auto-freeze schedules.
       PolicyDocument:
         Version: "2012-10-17"
@@ -126,7 +121,7 @@ Resources:
               - scheduler:DeleteSchedule
             Resource: !Sub
               - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/auto-freeze-*"
-              - {}
+              - { }
 
           - Sid: PassAutoFreezeExecutionRole
             Effect: Allow

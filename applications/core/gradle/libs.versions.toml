@@ -23,9 +23,10 @@ postgresql = "42.7.13"
 snakeyaml = "2.7"
 springBoot = "4.1.1"
 testcontainers = "1.21.4"
+testcontainersFlociAWS = "2.17.0"
 
 [libraries]
-aswSdkS3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
+awsSdkS3 = { module = "software.amazon.awssdk:s3", version.ref = "awsSdk" }
 awsSdkScheduler = { module = "software.amazon.awssdk:scheduler", version.ref = "awsSdk" }
 awsSdkSecretsManager = { module = "software.amazon.awssdk:secretsmanager", version.ref = "awsSdk" }
 awsSdkSqs = { module = "software.amazon.awssdk:sqs", version.ref = "awsSdk" }
@@ -60,10 +61,8 @@ springBootStarterValidation = { module = "org.springframework.boot:spring-boot-s
 springBootStarterValkey = { module = "org.springframework.boot:spring-boot-starter-valkey", version.ref = "springBoot" }
 springBootStarterWeb = { module = "org.springframework.boot:spring-boot-starter-web", version.ref = "springBoot" }
 springBootTestcontainers = { module = "org.springframework.boot:spring-boot-testcontainers", version.ref = "springBoot" }
-testcontainersLocalstack = { module = "org.testcontainers:localstack", version.ref = "testcontainers" }
 testcontainersJunitJupiter = { module = "org.testcontainers:junit-jupiter", version.ref = "testcontainers" }
-testcontainersPostgresql = { module = "org.testcontainers:postgresql", version.ref = "testcontainers" }
-testcontainersRedis = { module = "com.redis:testcontainers-redis", version = "2.2.4" }
+testcontainersFlociAWS = { module = "io.floci:testcontainers-floci-aws", version.ref = "testcontainersFlociAWS" }
 
 [plugins]
 flyway = { id = "org.flywaydb.flyway", version.ref = "flyway" }
