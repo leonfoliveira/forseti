@@ -98,6 +98,8 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                       getMedal(ranks[row.memberId])}
                   </TableCell>
                   <TableCell data-testid="member-name">
+                    {row.memberType === MemberType.UNOFFICIAL_CONTESTANT &&
+                      "(Unofficial) "}
                     {row.memberName}
                   </TableCell>
                   <TableCell data-testid="member-score">{row.score}</TableCell>
