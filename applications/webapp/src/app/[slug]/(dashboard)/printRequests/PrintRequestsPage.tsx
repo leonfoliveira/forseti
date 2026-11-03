@@ -16,6 +16,7 @@ export default function PrintRequestsPage() {
     case MemberType.STAFF:
       return <StaffPrintRequestsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantPrintRequestsPage />;
     default:
       return <Navigate to={routes.FORBIDDEN} />;

@@ -28,6 +28,7 @@ describe("ProblemsPage", () => {
     [MemberType.STAFF, "staff"],
     [MemberType.JUDGE, "judge"],
     [MemberType.CONTESTANT, "contestant"],
+    [MemberType.UNOFFICIAL_CONTESTANT, "contestant"],
     [null, "spectator"],
   ])("selects the role-specific view for %s", async (type, expected) => {
     await renderWithProviders(<ProblemsPage />, {

@@ -42,6 +42,7 @@ describe("ClarificationsPage", () => {
     [MemberType.JUDGE, "judge-page"],
     [MemberType.STAFF, "staff-page"],
     [MemberType.CONTESTANT, "contestant-page"],
+    [MemberType.UNOFFICIAL_CONTESTANT, "contestant-page"],
     [null, "spectator-page"],
   ])(
     "should render correct page for member type",

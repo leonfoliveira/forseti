@@ -21,6 +21,7 @@ export default function LeaderboardPage() {
     case MemberType.STAFF:
       return <StaffLeaderboardPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantLeaderboardPage />;
     default:
       return <SpectatorLeaderboardPage />;

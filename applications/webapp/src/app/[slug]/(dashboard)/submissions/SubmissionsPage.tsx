@@ -21,6 +21,7 @@ export default function SubmissionsPage() {
     case MemberType.STAFF:
       return <StaffSubmissionsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantSubmissionsPage />;
     default:
       return <SpectatorSubmissionsPage />;

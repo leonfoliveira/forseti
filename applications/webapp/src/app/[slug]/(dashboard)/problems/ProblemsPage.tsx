@@ -21,6 +21,7 @@ export default function ProblemsPage() {
     case MemberType.STAFF:
       return <StaffProblemsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantProblemsPage />;
     default:
       return <SpectatorProblemsPage />;
