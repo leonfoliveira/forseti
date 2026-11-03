@@ -2,29 +2,28 @@ import boto3
 import docker
 import pytest
 from docker.errors import DockerException, ImageNotFound
-from testcontainers.community.localstack import LocalStackContainer
+from floci.aws import FlociContainer
 
 from autojudge.sandbox.language_config import LANGUAGE_CONFIGS, SubmissionLanguage
 
-LOCALSTACK_IMAGE = "localstack/localstack:3.8"
 BUCKET = "test-bucket"
 SUBMISSION_QUEUE = "test-submission-queue"
 JUDGED_QUEUE = "test-submission-judged-queue"
 
 
 @pytest.fixture(scope="session")
-def localstack():
-    with LocalStackContainer(image=LOCALSTACK_IMAGE) as container:
+def floci():
+    with FlociContainer() as container:
         yield container
 
 
 @pytest.fixture(scope="session")
-def aws_clients(localstack):
+def aws_clients(floci):
     kwargs = dict(
-        aws_access_key_id="test",
-        aws_secret_access_key="test",
-        region_name="us-east-1",
-        endpoint_url=localstack.get_url(),
+        aws_access_key_id=floci.get_access_key(),
+        aws_secret_access_key=floci.get_secret_key(),
+        region_name=floci.get_region(),
+        endpoint_url=floci.get_endpoint(),
     )
     s3 = boto3.client("s3", **kwargs)
     sqs = boto3.client("sqs", **kwargs)
@@ -46,7 +45,7 @@ def sqs(aws_clients):
 
 @pytest.fixture
 def patch_aws(monkeypatch, s3, sqs):
-    """Point the application's module-level AWS clients to LocalStack."""
+    """Point the application's module-level AWS clients to Floci."""
     for module in ("autojudge.judge", "autojudge.worker", "autojudge.api"):
         monkeypatch.setattr(f"{module}.sqs_client", sqs, raising=False)
         monkeypatch.setattr(f"{module}.s3_client", s3, raising=False)

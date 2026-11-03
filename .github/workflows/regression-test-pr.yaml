@@ -71,8 +71,6 @@ jobs:
           docker buildx build -t forseti-sb-python312:latest -f python312.Dockerfile .
 
       - name: Start test composition
-        env:
-          LOCALSTACK_AUTH_TOKEN: ${{ secrets.LOCALSTACK_AUTH_TOKEN }}
         run: |
           docker compose -f infrastructure/development/docker-compose.yaml --profile infra --profile core --profile autojudge --profile webapp up -d --wait
 

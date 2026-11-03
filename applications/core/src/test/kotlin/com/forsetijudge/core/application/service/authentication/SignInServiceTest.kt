@@ -30,7 +30,8 @@ class SignInServiceTest {
     private val sessionDeleter = mock<SessionDeleter>()
     private val vault = mock<Vault>()
     private val hasher = mock<Hasher>()
-    private val service = SignInService(contests, members, sessionCreator, sessionDeleter, vault, hasher)
+    private val rootPasswordSecretName = "test-root-password"
+    private val service = SignInService(contests, members, sessionCreator, sessionDeleter, vault, hasher, rootPasswordSecretName)
 
     @Test
     fun `authenticates member password and creates session`() {
@@ -54,7 +55,7 @@ class SignInServiceTest {
         val root = MockEntityFactory.member(type = Member.Type.ROOT)
         val session = MockModelFactory.session(contestId = null)
         whenever(members.findByLoginAndContestIsNull(root.login)).thenReturn(root)
-        whenever(vault.getSecret(SignInService.ROOT_PASSWORD_SECRET_KEY)).thenReturn("root-secret")
+        whenever(vault.getSecret(rootPasswordSecretName)).thenReturn("root-secret")
         whenever(sessionCreator.create(null, root)).thenReturn(session)
 
         assertSame(session, service.execute(SignInUseCase.Command(null, root.login, "root-secret")))

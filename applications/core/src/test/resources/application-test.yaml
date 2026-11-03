@@ -1,0 +1,74 @@
+spring:
+  # PostgreSQL database configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/forseti
+    username: forseti
+    password: forsetijudge
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 10
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jpa:
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        ddl-auto: validate
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 100
+      org:
+        hibernate:
+          envers:
+            do_not_audit_optimistic_locking_field: false
+
+  # Redis configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      sse_ttl_seconds: 600
+      ssl:
+        enabled: false
+
+# AWS configuration
+aws:
+  region: us-east-1
+  endpoint: http://localhost:4566
+  access-key-id: accessKey
+  secret-access-key: secretKey
+  secrets-manager:
+    root-password-secret-name: test-root-password
+  s3:
+    bucket: test-core-bucket
+    endpoint-override:
+    signed-download-url-expiration-seconds: 3600
+    signed-upload-url-expiration-seconds: 3600
+  sqs:
+    submission-queue-url: http://localhost:4566/queue/us-east-1/000000000000/test-submission-queue
+    submission-failed-queue-url: http://localhost:4566/queue/us-east-1/000000000000/test-submission-failed-queue
+    submission-judged-queue-url: http://localhost:4566/queue/us-east-1/000000000000/test-submission-judged-queue
+    auto-freeze-queue-url: http://localhost:4566/queue/us-east-1/000000000000/test-auto-freeze-queue
+    auto-freeze-queue-arn: arn:aws:sqs:us-east-1:000000000000:test-auto-freeze-queue
+  scheduler:
+    auto-freeze-scheduler-role-arn: arn:aws:iam::000000000000:role/test-auto-freeze-scheduler-role
+
+# Security configuration
+security:
+  cookie:
+    domain: "*"
+    secure: false
+  session:
+    expiration:
+      default_seconds: 86400
+      root_seconds: 86400
+
+# API server configuration
+server:
+  cors:
+    allowed-origins: http://localhost:3000
+  port: 8080

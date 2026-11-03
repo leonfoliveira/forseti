@@ -1,84 +1,35 @@
 name: forseti-development
 services:
-  localstack:
-    container_name: dev-forseti-localstack
+  floci:
+    container_name: dev-forseti-floci
     environment:
-      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN}
-      - DEBUG=0
-      - DOCKER_HOST=unix:///var/run/docker.sock
-      - PERSISTENCE=1
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -f http://localhost:4566/_localstack/health || exit 1",
-        ]
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: localstack/localstack:2026.08.4
+      FLOCI_HOSTNAME: floci
+      FLOCI_SERVICES_DOCKER_NETWORK: dev-forseti-network
+      FLOCI_STORAGE_MODE: persistent
+      FLOCI_STORAGE_PERSISTENT_PATH: /app/data
+    image: floci/floci:2.4.0-compat
+    networks:
+      - dev-forseti-network
     ports:
       - 4566:4566
-      - 4510-4559:4510-4559
+      - 6379-6399:6379-6399
+      - 7001-7099:7001-7099
     profiles:
       - infra
-    networks:
-      - dev-forseti-network
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./volumes/localstack/template.yaml:/etc/localstack/init/ready.d/template.yaml
-      - ./volumes/localstack/init-aws.sh:/etc/localstack/init/ready.d/init-aws.sh
-
-  postgres:
-    container_name: dev-forseti-postgres
-    command: postgres -c wal_level=logical
-    environment:
-      POSTGRES_USER: forseti
-      POSTGRES_PASSWORD: forsetijudge
-      POSTGRES_DB: forseti
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U forseti -d forseti"]
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: postgres:17.5-alpine
-    networks:
-      - dev-forseti-network
-    ports:
-      - 5432:5432
-    profiles:
-      - infra
-    volumes:
-      - dev-postgres_data:/var/lib/postgresql/data
-
-  redis:
-    command: redis-server --requirepass "forsetijudge"
-    container_name: dev-forseti-redis
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a forsetijudge ping || exit 1"]
-      timeout: 5s
-      interval: 15s
-      retries: 5
-      start_period: 5s
-    image: redis:8.6.1-alpine
-    networks:
-      - dev-forseti-network
-    ports:
-      - 6379:6379
-    profiles:
-      - infra
+      - ./volumes/floci/:/etc/floci
+      - dev-floci_data:/app/data
 
   migration:
     container_name: dev-forseti-migration
     entrypoint: sh -c "flyway -url=$${FLYWAY_URL} -user=$${FLYWAY_USER} -password=$${FLYWAY_PASSWORD} -connectRetries=60 migrate"
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/forseti
+      FLYWAY_URL: jdbc:postgresql://floci:7001/forseti
       FLYWAY_USER: forseti
       FLYWAY_PASSWORD: forsetijudge
     depends_on:
-      postgres:
+      floci:
         condition: service_healthy
     image: flyway/flyway:11.9.2-alpine
     networks:
@@ -94,9 +45,7 @@ services:
       dockerfile: Dockerfile
     container_name: dev-forseti-core
     depends_on:
-      localstack:
-        condition: service_healthy
-      postgres:
+      floci:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
@@ -104,25 +53,24 @@ services:
       SPRING_PROFILES_ACTIVE: development
       VERSION: latest
       AWS_REGION: us-east-1
-      AWS_ENDPOINT: http://localstack:4566
+      AWS_ENDPOINT: http://floci:4566
       AWS_ACCESS_KEY_ID: forsetijudge
       AWS_SECRET_ACCESS_KEY: forsetijudge
       AWS_S3_ENDPOINT_OVERRIDE: http://localhost:4566
       AWS_S3_BUCKET: dev-core-bucket
       AWS_S3_SIGNED_DOWNLOAD_URL_EXPIRATION_SECONDS: 3600
       AWS_S3_SIGNED_UPLOAD_URL_EXPIRATION_SECONDS: 3600
-      AWS_SQS_SUBMISSION_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-queue
-      AWS_SQS_SUBMISSION_FAILED_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-failed-queue
-      AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-submission-judged-queue
-      AWS_SQS_AUTO_FREEZE_QUEUE_URL: http://localhost:4566/queue/us-east-1/000000000000/dev-auto-freeze-queue
+      AWS_SQS_SUBMISSION_QUEUE_URL: http://floci:4566/queue/us-east-1/000000000000/dev-submission-queue
+      AWS_SQS_SUBMISSION_FAILED_QUEUE_URL: http://floci:4566/queue/us-east-1/000000000000/dev-submission-failed-queue
+      AWS_SQS_SUBMISSION_JUDGED_QUEUE_URL: http://floci:4566/queue/us-east-1/000000000000/dev-submission-judged-queue
+      AWS_SQS_AUTO_FREEZE_QUEUE_URL: http://floci:4566/queue/us-east-1/000000000000/dev-auto-freeze-queue
       AWS_SQS_AUTO_FREEZE_QUEUE_ARN: arn:aws:sqs:us-east-1:000000000000:dev-auto-freeze-queue
       AWS_AUTO_FREEZE_SCHEDULER_ROLE_ARN: arn:aws:iam::000000000000:role/dev-auto-freeze-scheduler-role
-      DB_URL: jdbc:postgresql://postgres:5432/forseti
+      DB_URL: jdbc:postgresql://floci:7001/forseti
       DB_USER: forseti
       DB_PASSWORD: forsetijudge
-      REDIS_HOST: redis
+      REDIS_HOST: floci
       REDIS_PORT: 6379
-      REDIS_PASSWORD: forsetijudge
       REDIS_SSE_TTL_SECONDS: 600
       OTEL_SDK_DISABLED: true
       COOKIE_DOMAIN: "*"
@@ -152,16 +100,14 @@ services:
       dockerfile: Dockerfile
     container_name: dev-forseti-autojudge
     depends_on:
-      localstack:
-        condition: service_healthy
-      postgres:
+      floci:
         condition: service_healthy
       migration:
         condition: service_completed_successfully
     environment:
       VERSION: latest
       AWS_REGION: us-east-1
-      AWS_ENDPOINT_URL: http://localstack:4566
+      AWS_ENDPOINT_URL: http://floci:4566
       AWS_ACCESS_KEY_ID: forsetijudge
       AWS_SECRET_ACCESS_KEY: forsetijudge
       AWS_S3_BUCKET: dev-core-bucket
@@ -215,6 +161,4 @@ networks:
     driver: bridge
 
 volumes:
-  dev-localstack_data:
-  dev-postgres_data:
-  dev-redis_data:
+  dev-floci_data:

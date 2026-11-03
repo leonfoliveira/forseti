@@ -66,9 +66,11 @@ def container():
 def test_run_accepted(submission, container):
     container.run.return_value = run_result()
 
-    answer = Judge()._run(submission, "code", [("a", "1"), ("b", "1")])
+    with patch.object(Judge, "_store_details", return_value="details-1"):
+        result = Judge()._run(submission, "code", [("a", "1"), ("b", "1")])
 
-    assert answer == Answer.ACCEPTED
+    assert result.answer == Answer.ACCEPTED
+    assert result.details_id == "details-1"
     assert container.run.call_count == 2
     container.kill.assert_called_once()
 
@@ -76,9 +78,10 @@ def test_run_accepted(submission, container):
 def test_run_stops_on_first_failure(submission, container):
     container.run.return_value = run_result(stdout="0")
 
-    answer = Judge()._run(submission, "code", [("a", "1"), ("b", "1")])
+    with patch.object(Judge, "_store_details", return_value="details-1"):
+        result = Judge()._run(submission, "code", [("a", "1"), ("b", "1")])
 
-    assert answer == Answer.WRONG_ANSWER
+    assert result.answer == Answer.WRONG_ANSWER
     assert container.run.call_count == 1
     container.kill.assert_called_once()
 

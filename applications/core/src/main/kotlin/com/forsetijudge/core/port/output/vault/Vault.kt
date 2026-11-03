@@ -7,5 +7,5 @@ interface Vault {
      * @param key The key associated with the secret to be retrieved.
      * @return The secret value corresponding to the provided key.
      */
-    fun getSecret(key: String): String?
+    fun getSecret(key: String): String
 }

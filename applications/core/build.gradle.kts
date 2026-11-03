@@ -20,7 +20,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.aswSdkS3)
+    implementation(libs.awsSdkS3)
     implementation(libs.awsSdkScheduler)
     implementation(libs.awsSdkSecretsManager)
     implementation(libs.awsSdkSqs)
@@ -46,21 +46,20 @@ dependencies {
     implementation(libs.springBootStarterWeb)
 
     testFixturesApi(libs.junitJupiterApi)
-    testFixturesApi(libs.testcontainersLocalstack)
-    testFixturesApi(libs.testcontainersRedis)
-    testFixturesImplementation(libs.aswSdkS3)
+    testFixturesApi(libs.testcontainersJunitJupiter)
+    testFixturesApi(libs.testcontainersFlociAWS)
+    testFixturesImplementation(libs.awsSdkS3)
     testFixturesImplementation(libs.awsSdkScheduler)
     testFixturesImplementation(libs.awsSdkSecretsManager)
     testFixturesImplementation(libs.awsSdkSqs)
     testFixturesImplementation(libs.jacksonModuleKotlin)
     testFixturesImplementation(libs.springBootStarterDataRedis)
+    testFixturesImplementation(libs.springBootStarterTest)
 
     testImplementation(libs.jacksonModuleKotlin)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
-    testImplementation(libs.testcontainersJunitJupiter)
-    testImplementation(libs.testcontainersPostgresql)
 
     developmentOnly(libs.springBootDevTools)
 }

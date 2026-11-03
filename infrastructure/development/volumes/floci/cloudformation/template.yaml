@@ -1,0 +1,144 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Forseti Infrastructure setup for development environment using Floci
+
+Resources:
+  # --- Secrets ---
+  RootPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: dev-root-password
+      SecretString: forsetijudge
+
+  # --- S3 ---
+  CoreS3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dev-core-bucket
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              - "*"
+            AllowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+              - HEAD
+            AllowedHeaders:
+              - "*"
+            ExposedHeaders:
+              - ETag
+            MaxAge: 3000
+
+  CoreS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CoreS3Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "s3:*"
+            Resource: !Sub "${CoreS3Bucket.Arn}/*"
+
+  # --- RDS ---
+  CoreDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: dev-core-db
+      Engine: postgres
+      EngineVersion: "16"
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      DBName: forseti
+      MasterUsername: forseti
+      MasterUserPassword: forsetijudge
+      Port: "5432"
+      PubliclyAccessible: true
+
+  # --- ElastiCache ---
+  CoreCache:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: dev-core-cache
+      ReplicationGroupDescription: Forseti core cache
+      Engine: redis
+      CacheNodeType: cache.t3.micro
+      NumCacheClusters: 1
+      Port: 6379
+
+  # --- SQS ---
+  SubmissionFailedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-submission-failed-queue
+
+  SubmissionJudgedQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-submission-judged-queue
+
+  SubmissionQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-submission-queue
+
+  AutoFreezeQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: dev-auto-freeze-queue
+
+  # --- Scheduler ---
+  AutoFreezeScheduleExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: dev-auto-freeze-scheduler-execution-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                aws:SourceAccount: !Ref AWS::AccountId
+                aws:SourceArn: !Sub
+                  - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule-group/default"
+                  - {}
+      Policies:
+        - PolicyName: SendAutoFreezeMessage
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:SendMessage
+                Resource: !GetAtt AutoFreezeQueue.Arn
+
+  AutoFreezeSchedulerPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: dev-auto-freeze-scheduler-policy
+      Description: Allows the core application to manage auto-freeze schedules.
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ManageAutoFreezeSchedules
+            Effect: Allow
+            Action:
+              - scheduler:CreateSchedule
+              - scheduler:DeleteSchedule
+            Resource: !Sub
+              - "arn:${AWS::Partition}:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/auto-freeze-*"
+              - {}
+
+          - Sid: PassAutoFreezeExecutionRole
+            Effect: Allow
+            Action:
+              - iam:PassRole
+            Resource: !GetAtt AutoFreezeScheduleExecutionRole.Arn
+            Condition:
+              StringEquals:
+                iam:PassedToService: scheduler.amazonaws.com
