@@ -23,7 +23,6 @@ Resources:
               - ETag
             MaxAge: 3000
 
-  # --- S3 Policies ---
   CoreS3BucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -35,6 +34,33 @@ Resources:
             Principal: "*"
             Action: "s3:*"
             Resource: !Sub "${CoreS3Bucket.Arn}/*"
+
+  # --- RDS ---
+  CoreDatabase:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: dev-core-db
+      Engine: postgres
+      EngineVersion: "16"
+      DBInstanceClass: db.t3.micro
+      AllocatedStorage: "20"
+      DBName: forseti
+      MasterUsername: forseti
+      MasterUserPassword: forsetijudge
+      Port: "5432"
+      PubliclyAccessible: true
+
+  # --- ElastiCache ---
+  CoreRedis:
+    Type: AWS::ElastiCache::ReplicationGroup
+    Properties:
+      ReplicationGroupId: dev-core-redis
+      ReplicationGroupDescription: Forseti core Redis
+      Engine: redis
+      CacheNodeType: cache.t3.micro
+      NumCacheClusters: 1
+      Port: 6379
+      AuthToken: forsetijudge
 
   # --- SQS ---
   SubmissionFailedQueue:
@@ -57,7 +83,7 @@ Resources:
     Properties:
       QueueName: dev-auto-freeze-queue
 
-  # --- EventBridge Scheduler Execution Role ---
+  # --- Scheduler ---
   AutoFreezeScheduleExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -85,7 +111,6 @@ Resources:
                   - sqs:SendMessage
                 Resource: !GetAtt AutoFreezeQueue.Arn
 
-  # --- Scheduler Policies ---
   AutoFreezeSchedulerPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
