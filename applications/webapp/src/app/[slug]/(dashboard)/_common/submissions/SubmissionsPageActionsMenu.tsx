@@ -16,6 +16,7 @@ import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionExecutions";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { SubmissionsPageActionCreatePrintRequest } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionCreatePrintRequest";
+import { useAppSelector } from "@/app/_lib/store/Store";
 
 type Props = {
   submission:
@@ -33,6 +34,7 @@ export function SubmissionsPageActionsMenu({
   onEdit,
   onCreatePrintRequest,
 }: Props) {
+  const contest = useAppSelector((state) => state.contest);
   const [isOpen, setIsOpen] = useState(false);
 
   const close = () => setIsOpen(false);
@@ -65,7 +67,10 @@ export function SubmissionsPageActionsMenu({
   }
 
   if (canEdit) {
-    if (submission.status != SubmissionStatus.JUDGING) {
+    if (
+      contest.settings.isAutoJudgeEnabled &&
+      submission.status != SubmissionStatus.JUDGING
+    ) {
       items.push(
         <SubmissionsPageActionResubmit
           key="rerun"
@@ -85,7 +90,7 @@ export function SubmissionsPageActionsMenu({
     );
   }
 
-  if (canCreatePrintRequest) {
+  if (canCreatePrintRequest && contest.settings.isPrintRequestEnabled) {
     items.push(
       <SubmissionsPageActionCreatePrintRequest
         key="create-print-request"
