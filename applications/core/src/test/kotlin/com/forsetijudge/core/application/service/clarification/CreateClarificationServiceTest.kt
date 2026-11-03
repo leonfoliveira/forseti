@@ -13,7 +13,6 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.IdGenerator
-import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
@@ -23,6 +22,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.time.OffsetDateTime
 
 class CreateClarificationServiceTest {
     private val contestRepository = mock<ContestRepository>()

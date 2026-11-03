@@ -70,7 +70,7 @@ class ApiContestUpdatedEventListener(
             ),
         )
 
-        if (!contest.settings.isAutoJudgeEnabled) {
+        if (!contest.settings.isSpectatorEnabled) {
             sseHelper.completeAll(SSERoomBuilder.buildSpectatorDashboardRoom(event.contestId))
         }
     }

@@ -54,10 +54,7 @@ class ApiContestUpdatedEventListenerTest {
                     SSERoomBuilder.buildAdminDashboardRoom(event.contestId),
                     contest.toWithMembersAndProblemsResponseDTO(),
                 ),
-                listOf(
-                    SSERoomBuilder.buildJudgeDashboardRoom(event.contestId),
-                    contest.toWithMembersAndProblemsResponseDTO(),
-                ),
+                listOf(SSERoomBuilder.buildJudgeDashboardRoom(event.contestId), contest.toResponseDTO()),
                 listOf(SSERoomBuilder.buildStaffDashboardRoom(event.contestId), contest.toResponseDTO()),
                 listOf(SSERoomBuilder.buildContestantDashboardRoom(event.contestId), contest.toResponseDTO()),
                 listOf(SSERoomBuilder.buildSpectatorDashboardRoom(event.contestId), contest.toResponseDTO()),
