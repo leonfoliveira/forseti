@@ -14,6 +14,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 export function DashboardLayout() {
   const session = useAppSelector((state) => state.session);
   const slug = useAppSelector((state) => state.contest.slug);
+  const contest = useAppSelector((state) => state.contest);
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
@@ -34,13 +35,17 @@ export function DashboardLayout() {
       title: "Announcements",
       path: routes.CONTEST_ANNOUNCEMENTS(slug),
     },
-    {
-      title: "Clarifications",
-      path: routes.CONTEST_CLARIFICATIONS(slug),
-    },
   ];
 
+  if (contest.settings.isClarificationEnabled) {
+    tabs.push({
+      title: "Clarifications",
+      path: routes.CONTEST_CLARIFICATIONS(slug),
+    });
+  }
+
   if (
+    contest.settings.isPrintRequestEnabled &&
     session &&
     [
       MemberType.ROOT,
