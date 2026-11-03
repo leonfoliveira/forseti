@@ -18,6 +18,7 @@ data class ContestResponseDTO(
     val autoFreezeAt: OffsetDateTime?,
     val frozenAt: OffsetDateTime?,
     val ipCIDRs: List<String>,
+    val settings: Contest.Settings,
     val version: Long,
 ) : Serializable
 
@@ -34,5 +35,6 @@ fun Contest.toResponseDTO(): ContestResponseDTO =
         autoFreezeAt = this.autoFreezeAt,
         frozenAt = this.frozenAt,
         ipCIDRs = this.ipCIDRs,
+        settings = this.settings,
         version = this.version,
     )
