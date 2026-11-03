@@ -34,6 +34,15 @@ export const eventSource = {
 };
 global.EventSource = jest.fn(() => eventSource) as never;
 
+jest.mock("@/config/env", () => ({
+  env: {
+    version: "test-version",
+    apiUrl: "http://localhost",
+    cloudWatchRumAppId: "test-app-id",
+    cloudWatchRumRegion: "test-region",
+  },
+}));
+
 // Custom extensions for HTMLElement to support queries by test ID
 declare global {
   interface HTMLElement {

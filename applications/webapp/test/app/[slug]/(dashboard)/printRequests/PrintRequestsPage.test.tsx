@@ -62,6 +62,18 @@ describe("PrintRequestsPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("should render contestant page when member is unofficial contestant", async () => {
+    const session = MockSessionResponseDTO({
+      member: { type: MemberType.UNOFFICIAL_CONTESTANT },
+    } as never);
+
+    await renderWithProviders(<PrintRequestsPage />, { session });
+
+    expect(
+      screen.getByTestId("contestant-print-requests-page"),
+    ).toBeInTheDocument();
+  });
+
   it("should navigate to forbidden page when member is not allowed", async () => {
     const session = MockSessionResponseDTO({
       member: { type: MemberType.JUDGE },

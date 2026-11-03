@@ -21,6 +21,7 @@ export default function AnnouncementsPage() {
     case MemberType.STAFF:
       return <StaffAnnouncementsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantAnnouncementsPage />;
     default:
       return <SpectatorAnnouncementsPage />;

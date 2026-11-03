@@ -26,6 +26,9 @@ describe("EnumeratedTextUtil", () => {
     expect(EnumeratedTextUtil.getMemberType(MemberType.CONTESTANT)).toBe(
       "Contestant",
     );
+    expect(
+      EnumeratedTextUtil.getMemberType(MemberType.UNOFFICIAL_CONTESTANT),
+    ).toBe("Unofficial Contestant");
   });
 
   it("maps submission answers to labels", () => {

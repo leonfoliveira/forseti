@@ -1,5 +1,5 @@
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
-import React from "react";
+import { useState } from "react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/ProblemStatusBadge";
@@ -19,6 +19,12 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { clsx } from "clsx";
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+} from "@/app/_lib/component/shadcn/field";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 
 type Props = {
   problems: ProblemResponseDTO[];
@@ -29,7 +35,15 @@ type Props = {
  * A generic leaderboard page component for displaying contest results.
  */
 export function LeaderboardPage({ problems, leaderboard }: Props) {
+  const [doesShowUnofficial, setDoesShowUnofficial] = useState(true);
   const session = useAppSelector((state) => state.session);
+
+  const rows = leaderboard.rows.filter(
+    (row) =>
+      row.memberType === MemberType.CONTESTANT ||
+      (doesShowUnofficial &&
+        row.memberType === MemberType.UNOFFICIAL_CONTESTANT),
+  );
 
   function getMedal(rank: number) {
     if (rank > 12) {
@@ -53,11 +67,8 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
 
   const ranks: Record<string, number> = {};
   let currentRank = 1;
-  for (let i = 0; i < leaderboard.rows.length; i++) {
-    if (leaderboard.rows[i].memberType !== MemberType.CONTESTANT) {
-      continue;
-    }
-    ranks[leaderboard.rows[i].memberId] = currentRank;
+  for (let i = 0; i < rows.length; i++) {
+    ranks[rows[i].memberId] = currentRank;
     currentRank++;
   }
 
@@ -68,6 +79,20 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
     >
       <Card className="my-5">
         <CardContent>
+          <div className="mb-4">
+            <Field orientation="horizontal">
+              <Switch
+                id="doesShowUnofficial"
+                checked={doesShowUnofficial}
+                onCheckedChange={setDoesShowUnofficial}
+              />
+              <FieldContent>
+                <FieldLabel htmlFor="doesShowUnofficial">
+                  Show Unofficial
+                </FieldLabel>
+              </FieldContent>
+            </Field>
+          </div>
           <Table data-testid="leaderboard-table" className="border-b">
             <TableHeader className="bg-muted">
               <TableRow>
@@ -85,7 +110,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {leaderboard.rows.map((row) => (
+              {rows.map((row) => (
                 <TableRow
                   key={row.memberId}
                   className={clsx(
@@ -98,6 +123,11 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                       getMedal(ranks[row.memberId])}
                   </TableCell>
                   <TableCell data-testid="member-name">
+                    {row.memberType === MemberType.UNOFFICIAL_CONTESTANT && (
+                      <span className="text-muted-foreground">
+                        {"(Unofficial) "}
+                      </span>
+                    )}
                     {row.memberName}
                   </TableCell>
                   <TableCell data-testid="member-score">{row.score}</TableCell>

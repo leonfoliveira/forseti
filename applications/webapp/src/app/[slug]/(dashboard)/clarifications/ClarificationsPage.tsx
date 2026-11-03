@@ -21,6 +21,7 @@ export default function ClarificationsPage() {
     case MemberType.STAFF:
       return <StaffClarificationsPage />;
     case MemberType.CONTESTANT:
+    case MemberType.UNOFFICIAL_CONTESTANT:
       return <ContestantClarificationsPage />;
     default:
       return <SpectatorClarificationsPage />;

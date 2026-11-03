@@ -12,10 +12,10 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "member")
@@ -93,6 +93,11 @@ class Member(
          * Represents a member who participates in the contest, such as a contestant.
          */
         CONTESTANT,
+
+        /**
+         * Represents a member who participates in the contest but is not in the final ranking.
+         */
+        UNOFFICIAL_CONTESTANT,
     }
 
     companion object {

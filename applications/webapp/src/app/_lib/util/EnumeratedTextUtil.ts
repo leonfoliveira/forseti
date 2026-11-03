@@ -20,6 +20,7 @@ export class EnumeratedTextUtil {
       [MemberType.JUDGE]: "Judge",
       [MemberType.STAFF]: "Staff",
       [MemberType.CONTESTANT]: "Contestant",
+      [MemberType.UNOFFICIAL_CONTESTANT]: "Unofficial Contestant",
     }[type];
   }
 

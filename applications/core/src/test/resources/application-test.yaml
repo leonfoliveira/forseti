@@ -2,7 +2,7 @@ spring:
   # PostgreSQL database configuration
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/forseti
+    url: jdbc:postgresql://localhost:7001/forseti
     username: forseti
     password: forsetijudge
     hikari:

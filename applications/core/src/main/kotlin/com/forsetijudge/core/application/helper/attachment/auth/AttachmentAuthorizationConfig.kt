@@ -27,6 +27,7 @@ abstract class AttachmentAuthorizationConfig {
             Member.Type.STAFF -> authorizeStaffUpload(contest, member)
 
             Member.Type.CONTESTANT,
+            Member.Type.UNOFFICIAL_CONTESTANT,
             -> authorizeContestantUpload(contest, member)
 
             null -> throw ForbiddenException("Spectators cannot upload attachments")
@@ -57,6 +58,7 @@ abstract class AttachmentAuthorizationConfig {
             Member.Type.STAFF -> authorizeStaffDownload(contest, member, attachment)
 
             Member.Type.CONTESTANT,
+            Member.Type.UNOFFICIAL_CONTESTANT,
             -> authorizeContestantDownload(contest, member, attachment)
 
             null -> authorizeSpectatorDownload(contest, attachment)

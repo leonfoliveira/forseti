@@ -8,6 +8,7 @@ services:
       FLOCI_STORAGE_MODE: persistent
       FLOCI_STORAGE_PERSISTENT_PATH: /app/data
     image: floci/floci:2.4.0-compat
+    user: root
     networks:
       - dev-forseti-network
     ports:
@@ -158,6 +159,7 @@ services:
 
 networks:
   dev-forseti-network:
+    name: dev-forseti-network
     driver: bridge
 
 volumes:

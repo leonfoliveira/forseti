@@ -116,6 +116,16 @@ enum class Entitlement {
                         SESSION_DELETE,
                         SUBMISSION_CREATE,
                     ),
+                Member.Type.UNOFFICIAL_CONTESTANT to
+                    setOf(
+                        ATTACHMENT_CREATE,
+                        CLARIFICATION_CREATE,
+                        DASHBOARD_CONTESTANT_READ,
+                        PRINT_REQUEST_CREATE,
+                        SESSION_READ,
+                        SESSION_DELETE,
+                        SUBMISSION_CREATE,
+                    ),
             )
 
         fun forType(type: Member.Type): Set<Entitlement> = ENTITLEMENTS_BY_TYPE.getValue(type)

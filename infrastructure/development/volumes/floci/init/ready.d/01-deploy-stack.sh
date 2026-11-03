@@ -32,3 +32,22 @@ else
 fi
 
 echo "=== CloudFormation Stack Deployment Initiated ==="
+
+# Floci's CloudFormation does not support ElastiCache resources
+echo "=== Creating ElastiCache Replication Group ==="
+
+if aws --endpoint-url="$ENDPOINT" \
+    elasticache describe-replication-groups \
+    --replication-group-id dev-core-cache \
+    --region "$REGION" >/dev/null 2>&1; then
+    echo "Replication group already exists."
+else
+    aws --endpoint-url="$ENDPOINT" \
+        elasticache create-replication-group \
+        --replication-group-id dev-core-cache \
+        --replication-group-description "Forseti core cache" \
+        --engine redis \
+        --cache-node-type cache.t3.micro \
+        --num-cache-clusters 1 \
+        --region "$REGION" >/dev/null
+fi
