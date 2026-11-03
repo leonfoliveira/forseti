@@ -63,6 +63,10 @@ class AnswerClarificationService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN, Member.Type.JUDGE)
             .throwIfErrors()
 
+        if (!contest.settings.isClarificationEnabled) {
+            throw ForbiddenException("Clarifications are not enabled for this contest")
+        }
+
         if (clarification.answer != null) {
             throw ForbiddenException("Clarification with id = ${command.clarificationId} has already been answered")
         }

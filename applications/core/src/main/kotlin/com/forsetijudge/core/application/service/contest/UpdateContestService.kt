@@ -137,6 +137,13 @@ class UpdateContestService(
         contest.endAt = command.endAt
         contest.autoFreezeAt = command.autoFreezeAt
         contest.ipCIDRs = command.ipCIDRs
+        contest.settings =
+            Contest.Settings(
+                isAutoJudgeEnabled = command.settings.isAutoJudgeEnabled,
+                isClarificationEnabled = command.settings.isClarificationEnabled,
+                isPrintRequestEnabled = command.settings.isPrintRequestEnabled,
+                isSpectatorEnabled = command.settings.isSpectatorEnabled,
+            )
 
         val membersToCreate = command.members.filter { it.id == null }
         val problemsToCreate = command.problems.filter { it.id == null }

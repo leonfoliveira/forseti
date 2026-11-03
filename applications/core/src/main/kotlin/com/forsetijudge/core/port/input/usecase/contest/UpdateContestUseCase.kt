@@ -64,6 +64,8 @@ interface UpdateContestUseCase {
             String,
         >,
         @field:Valid
+        val settings: Settings,
+        @field:Valid
         val members: List<Member>,
         @field:Valid
         val problems: List<Problem>,
@@ -129,5 +131,12 @@ interface UpdateContestUseCase {
         @get:AssertFalse(message = "'problems.letter' must be unique")
         val isProblemLetterDuplicated: Boolean
             get() = problems.groupBy { it.letter }.any { it.value.size > 1 }
+
+        data class Settings(
+            val isAutoJudgeEnabled: Boolean,
+            val isClarificationEnabled: Boolean,
+            val isPrintRequestEnabled: Boolean,
+            val isSpectatorEnabled: Boolean,
+        )
     }
 }

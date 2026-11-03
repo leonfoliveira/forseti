@@ -75,5 +75,9 @@ class ProblemDescriptionAuthorizationConfig : AttachmentAuthorizationConfig() {
         ContestAuthorizer(contest)
             .requireContestStarted()
             .throwIfErrors()
+
+        if (!contest.settings.isSpectatorEnabled) {
+            throw ForbiddenException("Spectators cannot download problem description attachments for private contests")
+        }
     }
 }

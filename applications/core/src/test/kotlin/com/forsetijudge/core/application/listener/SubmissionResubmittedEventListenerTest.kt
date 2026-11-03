@@ -1,5 +1,6 @@
 package com.forsetijudge.core.application.listener
 
+import com.forsetijudge.core.domain.entity.Contest
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
@@ -51,6 +52,19 @@ class SubmissionResubmittedEventListenerTest {
         assertThrows(NotFoundException::class.java) {
             listener.handle(SubmissionEvent.Resubmitted(submissionId))
         }
+        verify(producer, never()).produce(any())
+    }
+
+    @Test
+    fun `skips producing message when auto-judge is disabled`() {
+        val contest = MockEntityFactory.contest(settings = Contest.Settings(isAutoJudgeEnabled = false))
+        val member = MockEntityFactory.member(contest = contest)
+        val problem = MockEntityFactory.problem(contest = contest)
+        val submission = MockEntityFactory.submission(member = member, problem = problem)
+        whenever(submissions.findByIdNullable(submission.id)).thenReturn(submission)
+
+        listener.handle(SubmissionEvent.Resubmitted(submission.id))
+
         verify(producer, never()).produce(any())
     }
 }

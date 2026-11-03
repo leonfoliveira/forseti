@@ -102,6 +102,13 @@ class ContestController(
                     endAt = body.endAt,
                     autoFreezeAt = body.autoFreezeAt,
                     ipCIDRs = body.ipCIDRs,
+                    settings =
+                        UpdateContestUseCase.Command.Settings(
+                            isAutoJudgeEnabled = body.settings.isAutoJudgeEnabled,
+                            isClarificationEnabled = body.settings.isClarificationEnabled,
+                            isPrintRequestEnabled = body.settings.isPrintRequestEnabled,
+                            isSpectatorEnabled = body.settings.isSpectatorEnabled,
+                        ),
                     members =
                         body.members.map {
                             UpdateContestUseCase.Command.Member(

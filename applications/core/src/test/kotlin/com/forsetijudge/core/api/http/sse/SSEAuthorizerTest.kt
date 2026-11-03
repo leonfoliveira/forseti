@@ -290,6 +290,18 @@ class SSEAuthorizerTest {
                 service.authorizeToSpectatorDashboardRoom(contestId)
             }
         }
+
+        @Test
+        fun `should throw ForbiddenException when contest has not enabled spectators`() {
+            val contestId = IdGenerator.getUUID()
+            val contest = MockEntityFactory.contest(startAt = OffsetDateTime.now().minusDays(1))
+            contest.settings.isSpectatorEnabled = false
+            whenever(contestRepository.findByIdNullable(contestId)).thenReturn(contest)
+
+            assertThrows<ForbiddenException> {
+                service.authorizeToSpectatorDashboardRoom(contestId)
+            }
+        }
     }
 
     @Nested

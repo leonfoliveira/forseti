@@ -19,6 +19,8 @@ import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/Leaderbo
 import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 
 /**
  * Provider component for fetching judge dashboard data and setting up sse listeners.
@@ -64,6 +66,7 @@ export function JudgeDashboardProvider({
             CLARIFICATION_CREATED: receiveClarificationCreated,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_UPDATED: receiveContestUpdated,
             CONTEST_FROZEN: receiveContestFrozen,
             CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
@@ -155,6 +158,12 @@ export function JudgeDashboardProvider({
     console.debug("Received clarification published:", clarification);
     dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
     toast.info(`A clarification has been published`);
+  }
+
+  function receiveContestUpdated(contest: ContestResponseDTO) {
+    console.debug("Received contest updated:", contest);
+    dispatch(JudgeDashboardSlice.actions.setContest(contest));
+    dispatch(ContestSlice.actions.set(contest));
   }
 
   function receiveContestFrozen(

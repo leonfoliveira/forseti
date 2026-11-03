@@ -22,6 +22,7 @@ import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -65,6 +66,7 @@ export function ContestantDashboardProvider({
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_UPDATED: receiveContestUpdated,
             CONTEST_FROZEN: receiveContestFrozen,
             CONTEST_UNFROZEN: receiveContestUnfrozen,
           },
@@ -198,6 +200,12 @@ export function ContestantDashboardProvider({
       ContestantDashboardSlice.actions.mergeClarification(clarification),
     );
     toast.info(`A clarification has been published`);
+  }
+
+  function receiveContestUpdated(contest: ContestResponseDTO) {
+    console.debug("Received contest updated:", contest);
+    dispatch(ContestantDashboardSlice.actions.setContest(contest));
+    dispatch(ContestSlice.actions.set(contest));
   }
 
   function receiveContestFrozen(contest: ContestResponseDTO) {

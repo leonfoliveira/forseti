@@ -16,8 +16,6 @@ import com.forsetijudge.core.util.SafeLogger
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import java.util.UUID
-import java.util.regex.Pattern
 import org.apache.commons.net.util.SubnetUtils
 import org.springframework.http.HttpHeaders
 import org.springframework.security.core.context.SecurityContextHolder
@@ -25,6 +23,8 @@ import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.filter.OncePerRequestFilter
 import org.springframework.web.util.WebUtils
+import java.util.UUID
+import java.util.regex.Pattern
 
 /**
  * Reads the "session_id" cookie from the incoming request, resolves the associated session and,

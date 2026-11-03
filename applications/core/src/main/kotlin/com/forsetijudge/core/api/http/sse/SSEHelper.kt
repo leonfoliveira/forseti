@@ -51,11 +51,24 @@ class SSEHelper(
         emitter: SseEmitter,
     ) {
         logger.info("New SSE unsubscription for room $room")
-
         emitters[room]?.let { roomEmitters ->
             roomEmitters.remove(emitter)
             if (roomEmitters.isEmpty()) {
                 emitters.remove(room, roomEmitters)
+            }
+        }
+    }
+
+    /**
+     * Complete all emitters from a room for SSE events.
+     *
+     * @param room The room to unsubscribe all emitters from.
+     */
+    fun completeAll(room: String) {
+        logger.info("Completing all SSE emitters for room $room")
+        emitters[room]?.let { roomEmitters ->
+            roomEmitters.forEach { emitter ->
+                emitter.complete()
             }
         }
     }

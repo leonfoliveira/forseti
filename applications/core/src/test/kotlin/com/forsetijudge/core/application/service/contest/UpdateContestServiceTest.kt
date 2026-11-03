@@ -63,6 +63,13 @@ class UpdateContestServiceTest {
                 endAt = endAt,
                 autoFreezeAt = contest.autoFreezeAt,
                 ipCIDRs = listOf("192.168.0.1/24"),
+                settings =
+                    UpdateContestUseCase.Command.Settings(
+                        isAutoJudgeEnabled = true,
+                        isClarificationEnabled = true,
+                        isPrintRequestEnabled = true,
+                        isSpectatorEnabled = true,
+                    ),
                 members = emptyList(),
                 problems = emptyList(),
             )
@@ -94,6 +101,13 @@ class UpdateContestServiceTest {
                 endAt = contest.endAt,
                 autoFreezeAt = contest.autoFreezeAt,
                 ipCIDRs = listOf("192.168.0.1/24"),
+                settings =
+                    UpdateContestUseCase.Command.Settings(
+                        isAutoJudgeEnabled = true,
+                        isClarificationEnabled = true,
+                        isPrintRequestEnabled = true,
+                        isSpectatorEnabled = true,
+                    ),
                 members =
                     listOf(
                         UpdateContestUseCase.Command.Member(
@@ -130,6 +144,12 @@ class UpdateContestServiceTest {
                 OffsetDateTime.now().plusHours(2),
                 null,
                 emptyList(),
+                UpdateContestUseCase.Command.Settings(
+                    isAutoJudgeEnabled = true,
+                    isClarificationEnabled = true,
+                    isPrintRequestEnabled = true,
+                    isSpectatorEnabled = true,
+                ),
                 emptyList(),
                 emptyList(),
             )

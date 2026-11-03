@@ -28,6 +28,9 @@ export const JudgeDashboardSlice = createSlice({
     reset() {
       return {} as unknown as JudgeDashboardState;
     },
+    setContest(state, action: { payload: ContestResponseDTO }) {
+      state.contest = action.payload;
+    },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
     },

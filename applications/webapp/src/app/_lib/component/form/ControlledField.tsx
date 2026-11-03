@@ -5,6 +5,7 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
+import clsx from "clsx";
 
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
@@ -72,10 +73,11 @@ export function ControlledField<TFieldValues extends FieldValues>({
           return (
             <Field
               {...props}
-              {...(isCheckbox ? { orientation: "horizontal" } : {})}
+              className={clsx("mb-2", props.className)}
+              orientation="horizontal"
             >
               {newField}
-              <FieldContent>
+              <FieldContent className="gap-0">
                 {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
                 {description && (
                   <FieldDescription>{description}</FieldDescription>
@@ -87,10 +89,7 @@ export function ControlledField<TFieldValues extends FieldValues>({
         }
 
         return (
-          <Field
-            {...props}
-            {...(isCheckbox ? { orientation: "horizontal" } : {})}
-          >
+          <Field {...props} className={clsx("gap-1", props.className)}>
             {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
             {newField}
             <FieldContent>

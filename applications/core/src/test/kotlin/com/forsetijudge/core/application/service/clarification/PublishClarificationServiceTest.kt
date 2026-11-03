@@ -112,6 +112,28 @@ class PublishClarificationServiceTest {
     }
 
     @Test
+    fun `throws ForbiddenException when clarification is not enabled`() {
+        val contestWithClarificationDisabled = MockEntityFactory.contest()
+        contestWithClarificationDisabled.settings.isClarificationEnabled = false
+        val otherMember = MockEntityFactory.member(contest = contestWithClarificationDisabled, type = Member.Type.ADMIN)
+        TestAuthentication.setMember(otherMember)
+        whenever(contestRepository.findByIdNullable(command.contestId)).thenReturn(contestWithClarificationDisabled)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(otherMember.id, command.contestId)).thenReturn(
+            otherMember,
+        )
+        whenever(clarificationRepository.findByIdAndContestId(command.clarificationId, command.contestId)).thenReturn(
+            clarification,
+        )
+
+        val exception =
+            assertThrows<ForbiddenException> {
+                service.execute(command)
+            }
+
+        assertEquals("Clarifications are not enabled for this contest", exception.message)
+    }
+
+    @Test
     fun `throws ForbiddenException when clarification has not been answered yet`() {
         val unansweredClarification = MockEntityFactory.clarification(answer = null)
         TestAuthentication.setMember(member)

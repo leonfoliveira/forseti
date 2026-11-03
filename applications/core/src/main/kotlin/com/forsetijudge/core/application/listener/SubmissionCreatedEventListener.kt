@@ -28,6 +28,10 @@ class SubmissionCreatedEventListener(
                 ?: throw NotFoundException("Could not find submission with id: ${event.submissionId}")
         val contest = submission.contest
 
+        if (!contest.settings.isAutoJudgeEnabled) {
+            logger.info("Auto-judge is disabled for contest with id: ${contest.id}. Skipping submission queue production.")
+            return
+        }
         submissionQueueProducer.produce(
             SubmissionQueueProducer.Message(
                 contestId = contest.id,

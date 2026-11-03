@@ -34,6 +34,7 @@ import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/Leaderbo
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { ContestUtil } from "@/util/ContestUtil";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -197,6 +198,8 @@ export function SettingsPageContestTab({
             />
           </div>
 
+          <Separator />
+
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <FieldLabel>Languages</FieldLabel>
@@ -231,6 +234,42 @@ export function SettingsPageContestTab({
               ))}
             </div>
           </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <ControlledField
+            form={form}
+            name="contest.settings.isAutoJudgeEnabled"
+            label="Auto Judge Enabled"
+            field={<Switch data-testid="contest-auto-judge-enabled" />}
+            description="Enable or disable the automatic judging of submissions."
+          />
+
+          <ControlledField
+            form={form}
+            name="contest.settings.isClarificationEnabled"
+            label="Clarification Enabled"
+            field={<Switch data-testid="contest-clarification-enabled" />}
+            description="Enable or disable the clarification feature for the contest."
+          />
+
+          <ControlledField
+            form={form}
+            name="contest.settings.isPrintRequestEnabled"
+            label="Print Request Enabled"
+            field={<Switch data-testid="contest-print-request-enabled" />}
+            description="Enable or disable the print request feature for the contest."
+          />
+
+          <ControlledField
+            form={form}
+            name="contest.settings.isSpectatorEnabled"
+            label="Spectator Enabled"
+            field={<Switch data-testid="contest-spectator-enabled" />}
+            description="Enable or disable the spectator feature for the contest."
+          />
         </div>
       </FieldSet>
 

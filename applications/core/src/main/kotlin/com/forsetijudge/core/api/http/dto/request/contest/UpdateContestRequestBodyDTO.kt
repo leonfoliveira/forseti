@@ -16,6 +16,7 @@ data class UpdateContestRequestBodyDTO(
     val endAt: OffsetDateTime,
     val autoFreezeAt: OffsetDateTime?,
     val ipCIDRs: List<String>,
+    val settings: Settings,
     val members: List<Member>,
     val problems: List<Problem>,
 ) {
@@ -39,5 +40,13 @@ data class UpdateContestRequestBodyDTO(
         val timeLimit: Int,
         val memoryLimit: Int,
         val testCases: AttachmentRequestBodyDTO,
+    )
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    data class Settings(
+        val isAutoJudgeEnabled: Boolean,
+        val isClarificationEnabled: Boolean,
+        val isPrintRequestEnabled: Boolean,
+        val isSpectatorEnabled: Boolean,
     )
 }

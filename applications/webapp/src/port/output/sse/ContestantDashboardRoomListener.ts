@@ -27,6 +27,7 @@ export interface ContestantDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_UPDATED: (contest: ContestResponseDTO) => void;
       CONTEST_FROZEN: (contest: ContestResponseDTO) => void;
       CONTEST_UNFROZEN: (data: {
         contest: ContestResponseDTO;

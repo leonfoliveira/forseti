@@ -115,6 +115,47 @@ class UpdateStatusPrintRequestServiceTest {
     }
 
     @Test
+    fun `should throw ForbiddenException when print requests are not enabled for the contest`() {
+        TestAuthentication.setMember(adminMember)
+        val contestWithPrintRequestsDisabled =
+            MockEntityFactory.contest(
+                startAt = OffsetDateTime.now().minusDays(1),
+                endAt = OffsetDateTime.now().plusDays(1),
+            )
+        contestWithPrintRequestsDisabled.settings.isPrintRequestEnabled = false
+
+        whenever(contestRepository.findByIdNullable(contestWithPrintRequestsDisabled.id)).thenReturn(
+            contestWithPrintRequestsDisabled,
+        )
+        whenever(
+            memberRepository.findByIdAndContestIdOrContestIsNull(
+                adminMember.id,
+                contestWithPrintRequestsDisabled.id,
+            ),
+        ).thenReturn(
+            adminMember,
+        )
+        whenever(
+            printRequestRepository.findByIdAndContestId(
+                printRequest.id,
+                contestWithPrintRequestsDisabled.id,
+            ),
+        ).thenReturn(
+            printRequest,
+        )
+
+        assertThrows<ForbiddenException> {
+            service.execute(
+                UpdateStatusPrintRequestUseCase.Command(
+                    contestId = contestWithPrintRequestsDisabled.id,
+                    printRequestId = printRequest.id,
+                    status = PrintRequest.Status.COMPLETED,
+                ),
+            )
+        }
+    }
+
+    @Test
     fun `should throw ForbiddenException when trying to change status to PENDING`() {
         TestAuthentication.setMember(adminMember)
         whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)

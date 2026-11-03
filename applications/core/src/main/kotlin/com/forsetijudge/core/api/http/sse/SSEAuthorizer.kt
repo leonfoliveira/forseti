@@ -7,9 +7,9 @@ import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
-import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.UUID
 
 @Service
 class SSEAuthorizer(
@@ -129,6 +129,10 @@ class SSEAuthorizer(
         ContestAuthorizer(contest, null)
             .requireContestStarted()
             .throwIfErrors()
+
+        if (!contest.settings.isSpectatorEnabled) {
+            throw ForbiddenException("Spectators are not enabled for this contest")
+        }
     }
 
     /**

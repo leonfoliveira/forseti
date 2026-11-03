@@ -118,6 +118,45 @@ class CreatePrintRequestServiceTest {
     }
 
     @Test
+    fun `should throw ForbiddenException when print requests are disabled`() {
+        TestAuthentication.setMember(member)
+        val contestWithPrintRequestsDisabled =
+            MockEntityFactory.contest(
+                startAt = OffsetDateTime.now().minusDays(1),
+                endAt = OffsetDateTime.now().plusDays(1),
+            )
+        contestWithPrintRequestsDisabled.settings.isPrintRequestEnabled = false
+        whenever(contestRepository.findByIdNullable(contestWithPrintRequestsDisabled.id)).thenReturn(
+            contestWithPrintRequestsDisabled,
+        )
+        whenever(
+            memberRepository.findByIdAndContestIdOrContestIsNull(
+                member.id,
+                contestWithPrintRequestsDisabled.id,
+            ),
+        ).thenReturn(
+            member,
+        )
+        whenever(
+            submissionRepository.findByIdAndContestId(
+                submission.id,
+                contestWithPrintRequestsDisabled.id,
+            ),
+        ).thenReturn(
+            submission,
+        )
+
+        assertThrows<ForbiddenException> {
+            service.execute(
+                CreatePrintRequestUseCase.Command(
+                    contestId = contestWithPrintRequestsDisabled.id,
+                    submissionId = submission.id,
+                ),
+            )
+        }
+    }
+
+    @Test
     fun `should create print request successfully`() {
         TestAuthentication.setMember(member)
         whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)

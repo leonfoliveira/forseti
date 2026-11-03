@@ -5,12 +5,38 @@ import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { CheckIcon, XIcon } from "lucide-react";
 
 /**
  * Page displaying information about the contest.
  */
 export default function DashboardAboutPage() {
   const contest = useAppSelector((state) => state.contest);
+
+  function getSettingItem(
+    isEnabled: boolean,
+    label: string,
+    dataTestId: string,
+  ) {
+    return (
+      <li className="flex items-center justify-center gap-3">
+        <span className="bg-muted/30 inline-flex h-7 w-7 items-center justify-center rounded-full">
+          {isEnabled ? (
+            <CheckIcon
+              className="h-4 w-4 stroke-green-500"
+              data-testid={`${dataTestId}-enabled`}
+            />
+          ) : (
+            <XIcon
+              className="h-4 w-4 stroke-red-500"
+              data-testid={`${dataTestId}-disabled`}
+            />
+          )}
+        </span>
+        <span>{label}</span>
+      </li>
+    );
+  }
 
   return (
     <Page title="Forseti - About" description="About the contest">
@@ -56,6 +82,32 @@ export default function DashboardAboutPage() {
                       ))}
                     </div>
                   </div>
+                </section>
+              </div>
+              <div className="mt-6 gap-6 text-center">
+                <section>
+                  <ul className="space-y-2 text-sm">
+                    {getSettingItem(
+                      contest.settings.isAutoJudgeEnabled,
+                      "Auto Judge Enabled",
+                      "auto-judge",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isClarificationEnabled,
+                      "Clarification Enabled",
+                      "clarification",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isPrintRequestEnabled,
+                      "Print Request Enabled",
+                      "submission-print-ticket",
+                    )}
+                    {getSettingItem(
+                      contest.settings.isSpectatorEnabled,
+                      "Spectator Enabled",
+                      "spectator",
+                    )}
+                  </ul>
                 </section>
               </div>
             </div>

@@ -4,7 +4,10 @@ import {
 } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
 import {} from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
+import {
+  MockContestResponseDTO,
+  MockSubmissionWithCodeAndExecutionsResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 import {
   MockJudgeDashboardResponseDTO,
   MockContestWithMembersAndProblemsDTO,
@@ -37,6 +40,17 @@ describe("JudgeDashboardSlice", () => {
     );
 
     expect(state).toEqual({});
+  });
+
+  it("should set the contest", () => {
+    const mockContest = MockContestResponseDTO();
+
+    const state = JudgeDashboardSlice.reducer(
+      stateWithData,
+      JudgeDashboardSlice.actions.setContest(mockContest),
+    );
+
+    expect(state.contest).toEqual(mockContest);
   });
 
   it("should set the leaderboard", () => {

@@ -140,16 +140,18 @@ export default function SignInPage() {
                 >
                   Sign In
                 </AsyncButton>
-                <AsyncButton
-                  className="w-full"
-                  type="button"
-                  onClick={enterAsSpectator}
-                  variant="outline"
-                  isLoading={enterAsSpectatorState.isLoading}
-                  data-testid="enter-spectator"
-                >
-                  Enter as Spectator
-                </AsyncButton>
+                {contest.settings.isSpectatorEnabled && (
+                  <AsyncButton
+                    className="w-full"
+                    type="button"
+                    onClick={enterAsSpectator}
+                    variant="outline"
+                    isLoading={enterAsSpectatorState.isLoading}
+                    data-testid="enter-spectator"
+                  >
+                    Enter as Spectator
+                  </AsyncButton>
+                )}
               </CardFooter>
             </Card>
           </FieldSet>
