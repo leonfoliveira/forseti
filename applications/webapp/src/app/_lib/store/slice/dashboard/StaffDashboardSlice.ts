@@ -27,6 +27,9 @@ export const StaffDashboardSlice = createSlice({
     reset() {
       return {} as unknown as StaffDashboardState;
     },
+    setContest(state, action: { payload: ContestResponseDTO }) {
+      state.contest = action.payload;
+    },
     setLeaderboard(state, action: { payload: LeaderboardResponseDTO }) {
       state.leaderboard = action.payload;
     },

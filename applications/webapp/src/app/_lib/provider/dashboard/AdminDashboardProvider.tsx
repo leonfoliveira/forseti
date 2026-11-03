@@ -71,6 +71,7 @@ export function AdminDashboardProvider({
             CLARIFICATION_CREATED: receiveClarificationCreated,
             CLARIFICATION_ANSWERED: receiveClarificationAnswered,
             CLARIFICATION_PUBLISHED: receiveClarificationPublished,
+            CONTEST_UPDATED: receiveContestUpdated,
             CONTEST_FROZEN: receiveContestFrozen,
             CONTEST_UNFROZEN: receiveContestUnfrozen,
             PRINT_REQUEST_CREATED: receivePrintRequest,
@@ -164,6 +165,14 @@ export function AdminDashboardProvider({
     console.debug("Received clarification published:", clarification);
     dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
     toast.info("A clarification has been published");
+  }
+
+  function receiveContestUpdated(
+    contest: ContestWithMembersAndProblemsResponseDTO,
+  ) {
+    console.debug("Received contest updated:", contest);
+    dispatch(AdminDashboardSlice.actions.setContest(contest));
+    dispatch(ContestSlice.actions.set(contest));
   }
 
   function receiveContestFrozen(

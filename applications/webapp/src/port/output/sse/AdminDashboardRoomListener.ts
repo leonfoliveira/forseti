@@ -34,6 +34,9 @@ export interface AdminDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_UPDATED: (
+        contest: ContestWithMembersAndProblemsResponseDTO,
+      ) => void;
       CONTEST_FROZEN: (
         contest: ContestWithMembersAndProblemsResponseDTO,
       ) => void;

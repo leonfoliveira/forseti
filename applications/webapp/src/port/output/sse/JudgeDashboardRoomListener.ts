@@ -4,6 +4,7 @@ import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/Announ
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 export interface JudgeDashboardRoomListener {
   /**
    * Subscribes to the judge dashboard room for the specified contest.
@@ -32,6 +33,7 @@ export interface JudgeDashboardRoomListener {
       CLARIFICATION_PUBLISHED: (
         clarification: ClarificationResponseDTO,
       ) => void;
+      CONTEST_UPDATED: (contest: ContestResponseDTO) => void;
       CONTEST_FROZEN: (
         contest: ContestWithMembersAndProblemsResponseDTO,
       ) => void;

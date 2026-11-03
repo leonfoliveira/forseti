@@ -6,7 +6,7 @@ import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
   MockStaffDashboardResponseDTO,
-  MockContestWithMembersAndProblemsDTO,
+  MockContestResponseDTO,
   MockLeaderboardResponseDTO,
   MockLeaderboardCellResponseDTO,
   MockAnnouncementResponseDTO,
@@ -34,6 +34,17 @@ describe("StaffDashboardSlice", () => {
     );
 
     expect(state).toEqual({});
+  });
+
+  it("should set the contest", () => {
+    const mockContest = MockContestResponseDTO();
+
+    const state = StaffDashboardSlice.reducer(
+      stateWithData,
+      StaffDashboardSlice.actions.setContest(mockContest),
+    );
+
+    expect(state.contest).toEqual(mockContest);
   });
 
   it("should set the leaderboard", () => {
@@ -101,7 +112,7 @@ describe("StaffDashboardSlice", () => {
   });
 
   it("should freeze the contest", () => {
-    const mockContest = MockContestWithMembersAndProblemsDTO();
+    const mockContest = MockContestResponseDTO();
 
     const state = StaffDashboardSlice.reducer(
       stateWithData,
@@ -112,7 +123,7 @@ describe("StaffDashboardSlice", () => {
   });
 
   it("should unfreeze the contest", () => {
-    const contest = MockContestWithMembersAndProblemsDTO();
+    const contest = MockContestResponseDTO();
     const leaderboard = MockLeaderboardResponseDTO();
     const submissions = [MockSubmissionWithCodeAndExecutionsResponseDTO()];
 
