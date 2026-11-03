@@ -57,6 +57,17 @@ Resources:
       Port: "5432"
       PubliclyAccessible: true
 
+    # --- ElastiCache ---
+    CoreCache:
+      Type: AWS::ElastiCache::ReplicationGroup
+      Properties:
+        ReplicationGroupId: test-core-cache
+        ReplicationGroupDescription: Forseti core cache
+        Engine: redis
+        CacheNodeType: cache.t3.micro
+        NumCacheClusters: 1
+        Port: 6379
+
   # --- SQS ---
   SubmissionFailedQueue:
     Type: AWS::SQS::Queue
