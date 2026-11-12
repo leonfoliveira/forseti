@@ -2,7 +2,10 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import PrintRequestsPage from "@/app/[slug]/(dashboard)/printRequests/PrintRequestsPage";
-import { MockSessionResponseDTO } from "@/test/mock/response/MockDTOs";
+import {
+  MockSessionResponseDTO,
+  MockContestResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/printRequests/AdminPrintRequestsPage",
@@ -28,6 +31,10 @@ jest.mock(
     ),
   }),
 );
+jest.mock("@/app/error/NotFoundPage", () => ({
+  __esModule: true,
+  default: () => <div data-testid="not-found-page" />,
+}));
 
 describe("PrintRequestsPage", () => {
   it("should render admin page when member is admin", async () => {
@@ -35,7 +42,10 @@ describe("PrintRequestsPage", () => {
       member: { type: MemberType.ADMIN },
     } as never);
 
-    await renderWithProviders(<PrintRequestsPage />, { session });
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest: MockContestResponseDTO(),
+    });
 
     expect(screen.getByTestId("admin-print-requests-page")).toBeInTheDocument();
   });
@@ -45,7 +55,10 @@ describe("PrintRequestsPage", () => {
       member: { type: MemberType.STAFF },
     } as never);
 
-    await renderWithProviders(<PrintRequestsPage />, { session });
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest: MockContestResponseDTO(),
+    });
 
     expect(screen.getByTestId("staff-print-requests-page")).toBeInTheDocument();
   });
@@ -55,7 +68,10 @@ describe("PrintRequestsPage", () => {
       member: { type: MemberType.CONTESTANT },
     } as never);
 
-    await renderWithProviders(<PrintRequestsPage />, { session });
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest: MockContestResponseDTO(),
+    });
 
     expect(
       screen.getByTestId("contestant-print-requests-page"),
@@ -67,7 +83,10 @@ describe("PrintRequestsPage", () => {
       member: { type: MemberType.UNOFFICIAL_CONTESTANT },
     } as never);
 
-    await renderWithProviders(<PrintRequestsPage />, { session });
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest: MockContestResponseDTO(),
+    });
 
     expect(
       screen.getByTestId("contestant-print-requests-page"),
@@ -79,8 +98,26 @@ describe("PrintRequestsPage", () => {
       member: { type: MemberType.JUDGE },
     } as never);
 
-    await renderWithProviders(<PrintRequestsPage />, { session });
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest: MockContestResponseDTO(),
+    });
 
     expect(screen.getByTestId("navigate")).toBeInTheDocument();
+  });
+
+  it("should render not found page when print request is disabled", async () => {
+    const session = MockSessionResponseDTO({
+      member: { type: MemberType.ADMIN },
+    } as never);
+    const contest = MockContestResponseDTO();
+    contest.settings.isPrintRequestEnabled = false;
+
+    await renderWithProviders(<PrintRequestsPage />, {
+      session,
+      contest,
+    });
+
+    expect(screen.getByTestId("not-found-page")).toBeInTheDocument();
   });
 });

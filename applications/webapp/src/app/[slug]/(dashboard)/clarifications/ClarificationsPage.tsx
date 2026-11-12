@@ -5,12 +5,18 @@ import { JudgeClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications
 import { StaffClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/StaffClarificationsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
+import NotFoundPage from "@/app/error/NotFoundPage";
 
 /**
  * Page displaying clarifications for the contest.
  */
 export default function ClarificationsPage() {
   const session = useAppSelector((state) => state.session);
+  const contest = useAppSelector((state) => state.contest);
+
+  if (!contest.settings.isClarificationEnabled) {
+    return <NotFoundPage />;
+  }
 
   switch (session?.member.type) {
     case MemberType.ROOT:

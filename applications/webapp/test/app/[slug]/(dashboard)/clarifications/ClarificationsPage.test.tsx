@@ -3,6 +3,7 @@ import { screen } from "@testing-library/dom";
 import ClarificationsPage from "@/app/[slug]/(dashboard)/clarifications/ClarificationsPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/clarifications/AdminClarificationsPage",
@@ -49,6 +50,7 @@ describe("ClarificationsPage", () => {
     async (memberType, expectedTestId) => {
       await renderWithProviders(<ClarificationsPage />, {
         session: { member: { type: memberType } },
+        contest: MockContestResponseDTO(),
       } as any);
 
       expect(screen.getByTestId(expectedTestId)).toBeInTheDocument();

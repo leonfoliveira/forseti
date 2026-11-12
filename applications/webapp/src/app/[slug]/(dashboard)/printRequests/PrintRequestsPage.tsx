@@ -5,9 +5,15 @@ import { AdminPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/A
 import { StaffPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/StaffPrintRequestsPage";
 import { ContestantPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/ContestantPrintRequestsPage";
 import { routes } from "@/config/routes";
+import NotFoundPage from "@/app/error/NotFoundPage";
 
 export default function PrintRequestsPage() {
   const session = useAppSelector((state) => state.session);
+  const contest = useAppSelector((state) => state.contest);
+
+  if (!contest.settings.isPrintRequestEnabled) {
+    return <NotFoundPage />;
+  }
 
   switch (session?.member.type) {
     case MemberType.ROOT:
