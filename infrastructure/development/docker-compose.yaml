@@ -106,7 +106,9 @@ services:
       migration:
         condition: service_completed_successfully
     environment:
+      ENV: development
       VERSION: latest
+      WORKERS: 1
       AWS_REGION: us-east-1
       AWS_ENDPOINT_URL: http://floci:4566
       AWS_ACCESS_KEY_ID: forsetijudge
@@ -114,6 +116,7 @@ services:
       AWS_S3_BUCKET: dev-core-bucket
       AWS_SQS_SUBMISSION_QUEUE: dev-submission-queue
       AWS_SQS_SUBMISSION_JUDGED_QUEUE: dev-submission-judged-queue
+      OTEL_SDK_DISABLED: true
       PORT: 8081
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8081/health"]
@@ -141,8 +144,8 @@ services:
       core:
         condition: service_healthy
     environment:
-      VERSION: latest
-      API_URL: http://localhost:8080
+      VITE_VERSION: latest
+      VITE_API_URL: http://localhost:8080
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost"]
       timeout: 5s

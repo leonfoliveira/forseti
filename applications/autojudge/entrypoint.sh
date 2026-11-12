@@ -8,5 +8,5 @@ else
     echo "WARNING: Docker socket not found at /var/run/docker.sock"
 fi
 
-echo "Starting autojudge worker..."
-exec python -m autojudge
+echo "Starting autojudge workers..."
+exec gunicorn -c gunicorn.conf.py autojudge.api:app

@@ -1,28 +1,28 @@
 from __future__ import annotations
 
 import csv
+import io
 import json
 import logging
 import os
-import io
 import tempfile
 import time
 from typing import List, Optional
-from uuid_v7.base import uuid7
-from opentelemetry.propagate import inject
 
+from opentelemetry.propagate import inject
 from pydantic import BaseModel
+from uuid_v7.base import uuid7
 
 from autojudge.config.aws_config import s3_client, sqs_client
 from autojudge.config.env import env
+from autojudge.observability.metrics import (
+    submissions_duration,
+    submissions_failed,
+    submissions_judged,
+    submissions_received,
+)
 from autojudge.sandbox.docker_sandbox_container import DockerSandboxContainer, RunResult
 from autojudge.schema.submission_schema import SubmissionSchema
-from autojudge.observability.metrics import (
-    submissions_received,
-    submissions_judged,
-    submissions_failed,
-    submissions_duration,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -44,7 +44,6 @@ class JudgeResult(BaseModel):
         max_clock_time_ms: Optional[int]
         max_peak_memory_kb: Optional[int]
         details_id: Optional[str]
-
 
     class Detail(BaseModel):
         exit_code: int
@@ -91,9 +90,14 @@ class Judge:
                 result = self._run(submission, code_file_path, test_cases)
 
             ended_at = time.perf_counter()
-            logger.info(f"Submission {submission.submission_id} judged as {result.answer} in {ended_at - started_at:.2f} seconds")
+            logger.info(
+                f"Submission {submission.submission_id} judged as "
+                f"{result.answer} in {ended_at - started_at:.2f} seconds"
+            )
             submissions_judged.add(1, {"answer": result.answer})
-            submissions_duration.record(ended_at - started_at, {"answer": result.answer})
+            submissions_duration.record(
+                ended_at - started_at, {"answer": result.answer}
+            )
 
             logger.info("Publishing result")
             trace_attributes = {}
@@ -118,7 +122,7 @@ class Judge:
                         "StringValue": value,
                     }
                     for key, value in trace_attributes.items()
-                }
+                },
             )
         except Exception as ex:
             logger.error(f"Error while judging submission: {ex}")
@@ -129,7 +133,7 @@ class Judge:
         submission: SubmissionSchema,
         code_file_path: str,
         test_cases: list[tuple[str, str]],
-    ) ->JudgeResult.Final:
+    ) -> JudgeResult.Final:
         """Run the submission against its test cases in an isolated container."""
 
         logger.info(f"Running submission {submission.submission_id} in Docker sandbox")
@@ -161,22 +165,24 @@ class Judge:
 
             logger.info(f"Running {len(test_cases)} test cases")
             for idx, (stdin, expected_stdout) in enumerate(test_cases):
-                result = container.run(stdin)                
+                result = container.run(stdin)
                 answer = self._evaluate(result, expected_stdout)
 
-                details.append(JudgeResult.Detail(
-                    test_case_idx=idx,
-                    exit_code=result.exit_code,
-                    status=result.status,
-                    cpu_time_ms=result.cpu_time_ms,
-                    clock_time_ms=result.clock_time_ms,
-                    peak_memory_kb=result.peak_memory_kb,
-                    stdin=stdin,
-                    stdout=result.stdout,
-                    stderr=result.stderr,
-                    expected_stdout=expected_stdout,
-                    answer=answer,
-                ))
+                details.append(
+                    JudgeResult.Detail(
+                        test_case_idx=idx,
+                        exit_code=result.exit_code,
+                        status=result.status,
+                        cpu_time_ms=result.cpu_time_ms,
+                        clock_time_ms=result.clock_time_ms,
+                        peak_memory_kb=result.peak_memory_kb,
+                        stdin=stdin,
+                        stdout=result.stdout,
+                        stderr=result.stderr,
+                        expected_stdout=expected_stdout,
+                        answer=answer,
+                    )
+                )
 
                 logger.info(
                     f"Test case {idx} produced answer {answer} with result {result}"
@@ -206,7 +212,9 @@ class Judge:
                     details_id=details_id,
                 )
             else:
-                logger.info(f"{approved_test_cases}/{total_test_cases} test cases passed")
+                logger.info(
+                    f"{approved_test_cases}/{total_test_cases} test cases passed"
+                )
                 return JudgeResult.Final(
                     answer=answer,
                     total_test_cases=total_test_cases,
@@ -248,14 +256,16 @@ class Judge:
 
         writer = csv.writer(text_wrapper)
         for idx, detail in enumerate(details):
-            writer.writerow([
-                idx,
-                detail.stdin,
-                detail.stdout,
-                detail.stderr,
-                detail.expected_stdout,
-                detail.answer,
-            ])
+            writer.writerow(
+                [
+                    idx,
+                    detail.stdin,
+                    detail.stdout,
+                    detail.stderr,
+                    detail.expected_stdout,
+                    detail.answer,
+                ]
+            )
 
         text_wrapper.flush()
         bytes_output.seek(0)
@@ -264,9 +274,7 @@ class Judge:
         file_key = f"{Judge.S3_ATTACHMENTS_PREFIX}{attachment_id}"
 
         s3_client.upload_fileobj(
-            Fileobj=bytes_output,
-            Bucket=env.aws.s3.bucket,
-            Key=file_key
+            Fileobj=bytes_output, Bucket=env.aws.s3.bucket, Key=file_key
         )
 
         logger.info(f"Stored details with attachment ID: {attachment_id}")

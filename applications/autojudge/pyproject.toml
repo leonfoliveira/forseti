@@ -6,9 +6,7 @@ addopts = "--cov=autojudge --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
 source = ["autojudge"]
-omit = [
-    "autojudge/__main__.py",
-]
+omit = []
 
 [tool.coverage.report]
 fail_under = 90

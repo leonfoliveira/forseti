@@ -14,7 +14,7 @@ submissions_duration = meter.create_histogram(
 
 submissions_judged = meter.create_counter(
     "submissions.judged",
-    description="Number of submissions judged",    
+    description="Number of submissions judged",
 )
 
 submissions_failed = meter.create_counter(

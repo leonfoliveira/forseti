@@ -1,6 +1,7 @@
 import logging
-from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
 from flask import Flask, jsonify
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from autojudge.config.aws_config import s3_client, sqs_client
 from autojudge.config.env import env
@@ -11,6 +12,7 @@ FlaskInstrumentor().instrument_app(
     app,
     excluded_urls="health,healthcheck",
 )
+
 
 def start_flask_app():
     @app.route("/health")

@@ -1,5 +1,6 @@
 import json
 import logging
+
 from opentelemetry import context, propagate, trace
 
 from autojudge.config.aws_config import sqs_client
@@ -38,14 +39,16 @@ class Worker:
 
         logger.info(f"Received {len(messages)} messages from SQS")
         for message in messages:
-            message_context = propagate.extract({
-                key: attribute["StringValue"]
-                for key, attribute in message.get(
-                    "MessageAttributes", {}
-                ).items()
-            })
+            message_context = propagate.extract(
+                {
+                    key: attribute["StringValue"]
+                    for key, attribute in message.get("MessageAttributes", {}).items()
+                }
+            )
             token = context.attach(message_context)
-            with trace.get_tracer("forseti.autojudge").start_as_current_span("process_message") as span:
+            with trace.get_tracer("forseti.autojudge").start_as_current_span(
+                "process_message"
+            ) as span:
                 try:
                     body = json.loads(message["Body"])
                     logger.info(f"Handling body: {body}")

@@ -1,6 +1,7 @@
+from typing import Optional
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import Optional
 
 
 class Settings(BaseSettings):
@@ -12,8 +13,12 @@ class Settings(BaseSettings):
 
 
 class AWSCredentials(Settings):
-    access_key: Optional[str] = Field(validation_alias="AWS_ACCESS_KEY_ID", default=None)
-    secret_key: Optional[str] = Field(validation_alias="AWS_SECRET_ACCESS_KEY", default=None)
+    access_key: Optional[str] = Field(
+        validation_alias="AWS_ACCESS_KEY_ID", default=None
+    )
+    secret_key: Optional[str] = Field(
+        validation_alias="AWS_SECRET_ACCESS_KEY", default=None
+    )
 
 
 class S3Config(Settings):
@@ -43,11 +48,19 @@ class Env(Settings):
     version: str = Field(validation_alias="VERSION")
     environment: str = Field(validation_alias="ENV")
     debug: bool = Field(validation_alias="DEBUG", default=False)
+    port: int = Field(validation_alias="PORT", default=8001)
+    workers: int = Field(validation_alias="WORKERS", default=1)
     aws: AWSConfig = Field(default_factory=AWSConfig)
     server: ServerConfig = Field(default_factory=ServerConfig)
-    otel_service_name: str = Field(validation_alias="OTEL_SERVICE_NAME", default="forseti-autojudge")
-    otel_exporter_otlp_protocol: str = Field(validation_alias="OTEL_EXPORTER_OTLP_PROTOCOL", default="http/protobuf")
-    otel_exporter_otlp_endpoint: Optional[str] = Field(validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT", default=None)
+    otel_service_name: str = Field(
+        validation_alias="OTEL_SERVICE_NAME", default="forseti-autojudge"
+    )
+    otel_exporter_otlp_protocol: str = Field(
+        validation_alias="OTEL_EXPORTER_OTLP_PROTOCOL", default="http/protobuf"
+    )
+    otel_exporter_otlp_endpoint: Optional[str] = Field(
+        validation_alias="OTEL_EXPORTER_OTLP_ENDPOINT", default=None
+    )
     otel_sdk_disabled: bool = Field(validation_alias="OTEL_SDK_DISABLED", default=True)
 
 
