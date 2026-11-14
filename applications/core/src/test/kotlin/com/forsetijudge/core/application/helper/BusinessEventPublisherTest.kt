@@ -1,20 +1,22 @@
 package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.event.ContestEvent
+import java.util.UUID
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.springframework.context.ApplicationEventPublisher
-import java.util.UUID
 
 class BusinessEventPublisherTest {
+    val applicationEventPublisher = mock<ApplicationEventPublisher>()
+    val businessEventPublisher = BusinessEventPublisher(applicationEventPublisher)
+
     @Test
-    fun `publishes business events to Spring event publisher`() {
-        val eventPublisher = mock<ApplicationEventPublisher>()
+    fun `should publish business events to application event publisher`() {
         val event = ContestEvent.Created(UUID.randomUUID())
 
-        BusinessEventPublisher(eventPublisher).publish(event)
+        businessEventPublisher.publish(event)
 
-        verify(eventPublisher).publishEvent(event)
+        verify(applicationEventPublisher).publishEvent(event)
     }
 }
