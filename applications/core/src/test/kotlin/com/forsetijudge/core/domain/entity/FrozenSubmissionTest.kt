@@ -105,5 +105,6 @@ class FrozenSubmissionTest {
         assertEquals(submission.status, frozenSubmission.status)
         assertEquals(submission.answer, frozenSubmission.answer)
         assertEquals(submission.code, frozenSubmission.code)
+        assertEquals(submission.problem.contest, frozenSubmission.problem.contest)
     }
 }
