@@ -116,6 +116,9 @@ kover {
                 classes(
                     "com.forsetijudge.core.AppKt",
                 )
+                packages(
+                    "com.forsetijudge.core.port",
+                )
             }
         }
         verify {
