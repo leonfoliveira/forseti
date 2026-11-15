@@ -2,13 +2,15 @@ package com.forsetijudge.core.domain.entity.aud
 
 import com.forsetijudge.core.domain.model.SessionAuthentication
 import com.forsetijudge.core.factory.MockModelFactory
+import java.util.UUID
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.slf4j.MDC
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.UUID
 
 class SessionRevisionListenerTest {
     private val listener = SessionRevisionListener()
@@ -48,7 +50,7 @@ class SessionRevisionListenerTest {
     @Test
     fun `ignores non-session authentication but retains trace`() {
         val authentication =
-            org.springframework.security.authentication.UsernamePasswordAuthenticationToken.authenticated(
+            UsernamePasswordAuthenticationToken.authenticated(
                 UUID.randomUUID(),
                 "credentials",
                 emptyList(),
@@ -66,7 +68,7 @@ class SessionRevisionListenerTest {
 
     @Test
     fun `rejects a revision entity of the wrong type`() {
-        org.junit.jupiter.api.Assertions.assertThrows(ClassCastException::class.java) {
+        assertThrows(ClassCastException::class.java) {
             listener.newRevision(Any())
         }
     }

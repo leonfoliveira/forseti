@@ -11,10 +11,10 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
-import org.hibernate.annotations.SQLRestriction
-import org.hibernate.envers.Audited
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.hibernate.annotations.SQLRestriction
+import org.hibernate.envers.Audited
 
 @Entity
 @Table(name = "execution")
@@ -47,11 +47,11 @@ class Execution(
     @Audited(withModifiedFlag = false)
     val totalTestCases: Int = 1,
     /**
-     * Index of the last test case executed.
+     * Number of test cases that were accepted in the execution.
      */
     @Column("approved_test_cases")
     @Audited(withModifiedFlag = false)
-    val approvedTestCases: Int,
+    val acceptedTestCases: Int,
     /**
      * The maximum cpu time a test case took during the execution in milliseconds.
      */
