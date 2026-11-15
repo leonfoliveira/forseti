@@ -2,8 +2,6 @@ import {
   JudgeDashboardState,
   JudgeDashboardSlice,
 } from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
-import {} from "@/app/_lib/store/slice/dashboard/JudgeDashboardSlice";
-import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import {
   MockContestResponseDTO,
   MockSubmissionWithCodeAndExecutionsResponseDTO,
@@ -27,10 +25,7 @@ describe("JudgeDashboardSlice", () => {
       undefined,
       JudgeDashboardSlice.actions.set(stateWithData),
     );
-    expect(state).toEqual({
-      ...stateWithData,
-      listenerStatus: ListenerStatus.CONNECTED,
-    });
+    expect(state).toEqual(stateWithData);
   });
 
   it("should reset the state", () => {

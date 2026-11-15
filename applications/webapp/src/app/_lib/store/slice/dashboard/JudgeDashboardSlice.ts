@@ -18,12 +18,10 @@ export type JudgeDashboardState = JudgeDashboardResponseDTO;
  */
 export const JudgeDashboardSlice = createSlice({
   name: "judgeDashboard",
-  initialState: {
-    listenerStatus: ListenerStatus.DISCONNECTED,
-  } as unknown as JudgeDashboardState,
+  initialState: {} as unknown as JudgeDashboardState,
   reducers: {
     set(state, action: { payload: JudgeDashboardResponseDTO }) {
-      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+      return action.payload;
     },
     reset() {
       return {} as unknown as JudgeDashboardState;

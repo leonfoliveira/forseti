@@ -22,7 +22,7 @@ export const StaffDashboardSlice = createSlice({
   initialState: {} as unknown as StaffDashboardState,
   reducers: {
     set(state, action: { payload: StaffDashboardResponseDTO }) {
-      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+      return action.payload;
     },
     reset() {
       return {} as unknown as StaffDashboardState;

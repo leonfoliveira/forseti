@@ -23,7 +23,7 @@ export const ContestantDashboardSlice = createSlice({
   initialState: {} as unknown as ContestantDashboardState,
   reducers: {
     set(state, action: { payload: ContestantDashboardResponseDTO }) {
-      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+      return action.payload;
     },
     reset() {
       return {} as unknown as ContestantDashboardState;

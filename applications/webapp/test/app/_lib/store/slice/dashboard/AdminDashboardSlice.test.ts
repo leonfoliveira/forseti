@@ -2,7 +2,6 @@ import {
   AdminDashboardState,
   AdminDashboardSlice,
 } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
-import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
   MockAdminDashboardResponseDTO,
@@ -23,10 +22,7 @@ describe("AdminDashboardSlice", () => {
       undefined,
       AdminDashboardSlice.actions.set(stateWithData),
     );
-    expect(state).toEqual({
-      ...stateWithData,
-      listenerStatus: ListenerStatus.CONNECTED,
-    });
+    expect(state).toEqual(stateWithData);
   });
 
   it("should reset the state", () => {

@@ -6,9 +6,12 @@ import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
 
 describe("StoreProvider", () => {
   it("makes its child tree available under the Redux provider", async () => {
-    render(<StoreProvider preloadedState={{ contest: MockContestResponseDTO() }}>
-      <span data-testid="store-child">Ready</span>
-    </StoreProvider>);
+    render(
+      <StoreProvider preloadedState={{ contest: MockContestResponseDTO() }}>
+        <span data-testid="store-child">Ready</span>
+      </StoreProvider>,
+    );
+
     expect(screen.getByTestId("store-child")).toHaveTextContent("Ready");
   });
 });

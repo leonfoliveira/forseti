@@ -14,16 +14,14 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 export type SpectatorDashboardState = SpectatorDashboardResponseDTO;
 
 /**
- * Redux slice for the guest dashboard data.
+ * Redux slice for the spectator dashboard data.
  */
 export const SpectatorDashboardSlice = createSlice({
   name: "spectatorDashboard",
-  initialState: {
-    listenerStatus: ListenerStatus.DISCONNECTED,
-  } as unknown as SpectatorDashboardState,
+  initialState: {} as unknown as SpectatorDashboardState,
   reducers: {
     set(state, action: { payload: SpectatorDashboardResponseDTO }) {
-      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+      return action.payload;
     },
     reset() {
       return {} as unknown as SpectatorDashboardState;
