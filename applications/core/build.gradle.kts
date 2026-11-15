@@ -101,6 +101,11 @@ flyway {
 }
 
 kover {
+    currentProject {
+        sources {
+            includedSourceSets.add("main")
+        }
+    }
     reports {
         filters {
             excludes {
