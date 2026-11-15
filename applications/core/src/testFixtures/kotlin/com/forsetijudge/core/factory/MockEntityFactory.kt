@@ -14,6 +14,7 @@ import java.util.UUID
 object MockEntityFactory {
     fun contest(
         id: UUID = UUID.randomUUID(),
+        languages: List<Submission.Language> = listOf(Submission.Language.CPP_17),
         startAt: OffsetDateTime = OffsetDateTime.now().minusHours(1),
         endAt: OffsetDateTime = OffsetDateTime.now().plusHours(1),
         autoFreezeAt: OffsetDateTime? = null,
@@ -25,7 +26,7 @@ object MockEntityFactory {
         id = id,
         slug = "sample-contest",
         title = "Sample contest",
-        languages = listOf(Submission.Language.CPP_17),
+        languages = languages,
         startAt = startAt,
         endAt = endAt,
         autoFreezeAt = autoFreezeAt,

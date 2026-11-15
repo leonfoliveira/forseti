@@ -68,20 +68,55 @@ class BuildAdminDashboardServiceTest {
     }
 
     @Test
-    fun `rejects contestants and missing contest`() {
+    fun `throws NotFoundException when contest does not exist`() {
+        val root = MockEntityFactory.member(type = Member.Type.ROOT)
+        TestAuthentication.setMember(root)
+        whenever(contestRepository.findByIdNullable(any())).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(BuildAdminDashboardUseCase.Command(MockEntityFactory.contest().id))
+        }
+        verify(leaderboardBuilder, never()).build(any(), any())
+    }
+
+    @Test
+    fun `throws NotFoundException when member is not found`() {
         val contest = MockEntityFactory.contest()
-        val contestant = MockEntityFactory.member(contest = contest)
-        TestAuthentication.setMember(contestant)
+        TestAuthentication.setMember(MockEntityFactory.member(type = Member.Type.ROOT))
         whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(any(), any())).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(BuildAdminDashboardUseCase.Command(contest.id))
+        }
+        verify(leaderboardBuilder, never()).build(any(), any())
+    }
+
+    @Test
+    fun `throws ForbiddenException when member does not belongs to contest`() {
+        val contest = MockEntityFactory.contest()
+        val admin = MockEntityFactory.member(type = Member.Type.ADMIN, contest = MockEntityFactory.contest())
+        TestAuthentication.setMember(admin)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
+
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildAdminDashboardUseCase.Command(contest.id))
         }
         verify(leaderboardBuilder, never()).build(any(), any())
+    }
 
-        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
-        assertThrows(NotFoundException::class.java) {
+    @Test
+    fun `throws ForbiddenException when member is not root or admin`() {
+        val contest = MockEntityFactory.contest()
+        val contestant = MockEntityFactory.member(type = Member.Type.CONTESTANT, contest = contest)
+        TestAuthentication.setMember(contestant)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
+
+        assertThrows(ForbiddenException::class.java) {
             service.execute(BuildAdminDashboardUseCase.Command(contest.id))
         }
+        verify(leaderboardBuilder, never()).build(any(), any())
     }
 }

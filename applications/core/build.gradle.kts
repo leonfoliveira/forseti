@@ -108,6 +108,9 @@ kover {
                     "org.springframework.context.annotation.Configuration",
                     "com.forsetijudge.core.util.SkipCoverage",
                 )
+                classes(
+                    "com.forsetijudge.core.AppKt",
+                )
             }
         }
         verify {

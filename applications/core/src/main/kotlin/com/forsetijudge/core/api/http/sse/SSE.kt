@@ -1,5 +1,8 @@
 package com.forsetijudge.core.api.http.sse
 
+import com.forsetijudge.core.util.SkipCoverage
+
+@SkipCoverage
 enum class SSE {
     ANNOUNCEMENT_CREATED,
     CLARIFICATION_ANSWERED,

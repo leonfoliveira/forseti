@@ -35,7 +35,7 @@ class SignedDownloadAttachmentServiceTest {
         val attachment =
             MockEntityFactory.attachment(
                 contest = contest,
-                context = Attachment.Context.PROBLEM_DESCRIPTION,
+                context = Attachment.Context.PROBLEM_TEST_CASES,
                 contentType = "application/pdf",
             )
         whenever(attachments.findByIdAndContestId(attachment.id, contest.id)).thenReturn(attachment)
@@ -46,6 +46,23 @@ class SignedDownloadAttachmentServiceTest {
 
         assertEquals("https://signed.test/download", response.downloadUrl)
         verify(bucket).getDownloadUrl(attachment)
+    }
+
+    @Test
+    fun `throws NotFoundException when member is not found`() {
+        val member = MockEntityFactory.member()
+        TestAuthentication.setMember(member)
+        val contest = MockEntityFactory.contest()
+        val attachment =
+            MockEntityFactory.attachment(
+                contest = contest,
+                context = Attachment.Context.PROBLEM_TEST_CASES,
+            )
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(SignedDownloadAttachmentUseCase.Command(contest.id, attachment.id))
+        }
     }
 
     @Test

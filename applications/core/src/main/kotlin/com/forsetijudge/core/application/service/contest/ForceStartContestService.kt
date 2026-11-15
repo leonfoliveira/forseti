@@ -5,7 +5,6 @@ import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.ContestAuthorizer
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.event.ContestEvent
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.contest.ContestWithMembersAndProblemsResponseDTO
 import com.forsetijudge.core.port.dto.response.contest.toWithMembersAndProblemsResponseDTO
@@ -13,9 +12,9 @@ import com.forsetijudge.core.port.input.usecase.contest.ForceStartContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.time.OffsetDateTime
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.OffsetDateTime
 
 @Service
 class ForceStartContestService(
@@ -49,10 +48,6 @@ class ForceStartContestService(
             .requireMemberType(Member.Type.ROOT, Member.Type.ADMIN)
             .requireContestNotStarted()
             .throwIfErrors()
-
-        if (contest.hasStarted()) {
-            throw ForbiddenException("Cannot force start a contest that has already started")
-        }
 
         contest.startAt = OffsetDateTime.now()
         contestRepository.saveAndFlush(contest)

@@ -6,6 +6,7 @@ import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutRedisMessageProducer
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.event.ContestEvent
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.dto.response.contest.toResponseDTO
@@ -16,14 +17,16 @@ import com.forsetijudge.core.port.dto.response.submission.toWithCodeAndExecution
 import com.forsetijudge.core.port.dto.response.submission.toWithCodeResponseDTO
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class ApiContestUnfrozenEventListenerTest {
     private val contestRepository = mock<ContestRepository>()
@@ -37,6 +40,16 @@ class ApiContestUnfrozenEventListenerTest {
             leaderboardBuilder = leaderboardBuilder,
             sseFanoutRedisMessageProducer = sseFanoutRedisMessageProducer,
         )
+
+    @Test
+    fun `should throw NotFoundException when contest does not exist`() {
+        val event = ContestEvent.Unfrozen(contestId = IdGenerator.getUUID(), frozenAt = OffsetDateTime.now())
+        whenever(contestRepository.findByIdNullable(event.contestId)).thenReturn(null)
+
+        assertThrows<NotFoundException> {
+            listener.handle(event)
+        }
+    }
 
     @Test
     fun `should produce SSEFanoutMessage for all dashboard rooms when contest is frozen`() {

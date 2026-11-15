@@ -5,6 +5,7 @@ import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.application.helper.MetricsCollector
 import com.forsetijudge.core.application.helper.attachment.AttachmentCommiter
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.event.SubmissionEvent
 import com.forsetijudge.core.domain.exception.ForbiddenException
@@ -16,16 +17,16 @@ import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import com.forsetijudge.core.util.IdGenerator
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 
 class CreateSubmissionServiceTest {
     private val contests = mock<ContestRepository>()
@@ -52,7 +53,13 @@ class CreateSubmissionServiceTest {
                 member = member,
                 context = Attachment.Context.SUBMISSION_CODE,
             )
-        val command = command(contest.id, problem.id, code.id)
+        val command =
+            CreateSubmissionUseCase.Command(
+                contestId = contest.id,
+                problemId = problem.id,
+                language = Submission.Language.CPP_17,
+                code = AttachmentCommandDTO(id = code.id),
+            )
         TestAuthentication.setMember(member)
         whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
@@ -73,37 +80,148 @@ class CreateSubmissionServiceTest {
     }
 
     @Test
-    fun `rejects unsupported language and missing problem`() {
+    fun `throws NotFoundException when contest does not exist`() {
+        val contestId = IdGenerator.getUUID()
+        val member = MockEntityFactory.member()
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contestId)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contestId,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws NotFoundException when member does not exist in contest`() {
         val contest = MockEntityFactory.contest()
         val member = MockEntityFactory.member(contest = contest)
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws ForbiddenException when member does not belong to contest`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member(contest = MockEntityFactory.contest())
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws ForbiddenException when member is not a contestant`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member(contest = contest, type = Member.Type.STAFF)
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws ForbiddenException when contest is not active`() {
+        val contest =
+            MockEntityFactory.contest(
+                startAt = OffsetDateTime.now().plusDays(1),
+                endAt = OffsetDateTime.now().plusDays(2),
+            )
+        val member = MockEntityFactory.member(contest = contest)
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws NotFoundException when problem does not exist in contest`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member(contest = contest)
+        TestAuthentication.setMember(member)
+        whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
+        whenever(problems.findByIdAndContestId(IdGenerator.getUUID(), contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = IdGenerator.getUUID(),
+                    language = Submission.Language.CPP_17,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `throws ForbiddenException when language is not allowed in contest`() {
+        val contest = MockEntityFactory.contest(languages = listOf(Submission.Language.CPP_17))
+        val member = MockEntityFactory.member(contest = contest)
         val problem = MockEntityFactory.problem(contest = contest)
-        val code = MockEntityFactory.attachment(contest = contest, member = member)
         TestAuthentication.setMember(member)
         whenever(contests.findByIdNullable(contest.id)).thenReturn(contest)
         whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(problem)
-        whenever(committer.commit(code.id, contest.id, Attachment.Context.SUBMISSION_CODE)).thenReturn(code)
 
         assertThrows(ForbiddenException::class.java) {
-            service.execute(command(contest.id, problem.id, code.id, Submission.Language.JAVA_21))
-        }
-        verify(submissions, never()).saveAndFlush(any())
-
-        whenever(problems.findByIdAndContestId(problem.id, contest.id)).thenReturn(null)
-        assertThrows(NotFoundException::class.java) {
-            service.execute(command(contest.id, problem.id, code.id))
+            service.execute(
+                CreateSubmissionUseCase.Command(
+                    contestId = contest.id,
+                    problemId = problem.id,
+                    language = Submission.Language.JAVA_21,
+                    code = AttachmentCommandDTO(id = IdGenerator.getUUID()),
+                ),
+            )
         }
     }
-
-    private fun command(
-        contestId: UUID,
-        problemId: UUID,
-        codeId: UUID,
-        language: Submission.Language = Submission.Language.CPP_17,
-    ) = CreateSubmissionUseCase.Command(
-        contestId,
-        problemId,
-        language,
-        AttachmentCommandDTO(codeId),
-    )
 }

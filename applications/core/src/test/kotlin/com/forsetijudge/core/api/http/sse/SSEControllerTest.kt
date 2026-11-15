@@ -27,6 +27,13 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToAdminDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildAdminDashboardRoom(contestId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/admin").header("Last-Event-ID", "123"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(eq(SSERoomBuilder.buildAdminDashboardRoom(contestId)), eq("123"), any())
     }
 
     @Test
@@ -38,6 +45,13 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToJudgeDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildJudgeDashboardRoom(contestId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/judge").header("Last-Event-ID", "456"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(eq(SSERoomBuilder.buildJudgeDashboardRoom(contestId)), eq("456"), any())
     }
 
     @Test
@@ -49,6 +63,13 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToStaffDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildStaffDashboardRoom(contestId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/staff").header("Last-Event-ID", "789"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(eq(SSERoomBuilder.buildStaffDashboardRoom(contestId)), eq("789"), any())
     }
 
     @Test
@@ -60,6 +81,17 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToContestantDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildContestantDashboardRoom(contestId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/contestant").header("Last-Event-ID", "101112"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(
+            eq(SSERoomBuilder.buildContestantDashboardRoom(contestId)),
+            eq("101112"),
+            any(),
+        )
     }
 
     @Test
@@ -71,6 +103,17 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         verify(sseAuthorizer).authorizeToSpectatorDashboardRoom(contestId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildSpectatorDashboardRoom(contestId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/contests/$contestId/dashboard/spectator").header("Last-Event-ID", "131415"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(
+            eq(SSERoomBuilder.buildSpectatorDashboardRoom(contestId)),
+            eq("131415"),
+            any(),
+        )
     }
 
     @Test
@@ -82,5 +125,12 @@ class SSEControllerTest {
             .andExpect(request().asyncStarted())
         sseAuthorizer.authorizeToMemberPrivateRoom(memberId)
         verify(sseHelper).subscribe(eq(SSERoomBuilder.buildMemberPrivateRoom(memberId)), any())
+
+        mvc
+            .perform(
+                get("/v1/sse/members/$memberId").header("Last-Event-ID", "161718"),
+            ).andExpect(status().isOk)
+            .andExpect(request().asyncStarted())
+        verify(sseHelper).emitMissedMessages(eq(SSERoomBuilder.buildMemberPrivateRoom(memberId)), eq("161718"), any())
     }
 }

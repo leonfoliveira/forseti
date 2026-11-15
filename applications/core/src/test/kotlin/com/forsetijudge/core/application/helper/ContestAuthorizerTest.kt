@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.InternalServerException
 import com.forsetijudge.core.factory.MockEntityFactory
 import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -129,6 +130,19 @@ class ContestAuthorizerTest {
     @Nested
     inner class RequireMemberToBelong {
         @Test
+        fun `requireMemberToBelong should throw InternalServerException if member is null`() {
+            val contest =
+                MockEntityFactory.contest(
+                    startAt = OffsetDateTime.now().minusMinutes(1),
+                    endAt = OffsetDateTime.now().plusMinutes(1),
+                )
+
+            assertThrows(InternalServerException::class.java) {
+                ContestAuthorizer(contest, null).requireMemberToBelong().throwIfErrors()
+            }
+        }
+
+        @Test
         fun `requireMemberToBelong should throw ForbiddenException if member does not belong to contest`() {
             val contest1 =
                 MockEntityFactory.contest(
@@ -199,6 +213,19 @@ class ContestAuthorizerTest {
 
     @Nested
     inner class RequireMemberCanAccessNotStartedContest {
+        @Test
+        fun `requireMemberCanAccessNotStartedContest should throw InternalServerException if member is null`() {
+            val contest =
+                MockEntityFactory.contest(
+                    startAt = OffsetDateTime.now().plusMinutes(1),
+                    endAt = OffsetDateTime.now().plusMinutes(2),
+                )
+
+            assertThrows(InternalServerException::class.java) {
+                ContestAuthorizer(contest, null).requireMemberCanAccessNotStartedContest().throwIfErrors()
+            }
+        }
+
         @Test
         fun `requireMemberCanAccessNotStartedContest should throw ForbiddenException if member type is not allowed`() {
             val contest =

@@ -3,12 +3,15 @@ package com.forsetijudge.core.application.service.contest
 import com.forsetijudge.core.application.helper.BusinessEventPublisher
 import com.forsetijudge.core.domain.entity.FrozenSubmission
 import com.forsetijudge.core.domain.event.ContestEvent
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.contest.AutoFreezeContestUseCase
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
@@ -16,7 +19,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class AutoFreezeContestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -32,6 +34,15 @@ class AutoFreezeContestServiceTest {
         )
 
     private val contest = MockEntityFactory.contest()
+
+    @Test
+    fun `should throw NotFoundException if contest does not exist`() {
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(AutoFreezeContestUseCase.Command(contestId = contest.id))
+        }
+    }
 
     @Test
     fun `should skip auto freeze if contest is already frozen`() {

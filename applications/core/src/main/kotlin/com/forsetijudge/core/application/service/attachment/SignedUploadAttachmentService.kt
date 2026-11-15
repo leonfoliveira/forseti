@@ -7,7 +7,6 @@ import com.forsetijudge.core.application.helper.attachment.auth.ProblemDescripti
 import com.forsetijudge.core.application.helper.attachment.auth.ProblemTestCasesAuthorizationConfig
 import com.forsetijudge.core.application.helper.attachment.auth.SubmissionCodeAuthorizationConfig
 import com.forsetijudge.core.domain.entity.Attachment
-import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.dto.response.attachment.SignedUploadAttachmentResponseDTO
 import com.forsetijudge.core.port.dto.response.attachment.toUploadSignedResponseDTO
@@ -32,14 +31,6 @@ class SignedUploadAttachmentService(
     private val attachmentBucket: AttachmentBucket,
 ) : SignedUploadAttachmentUseCase {
     private val logger = SafeLogger(this::class)
-
-    private val authorizationConfigsByContext =
-        mapOf(
-            Attachment.Context.PROBLEM_DESCRIPTION to ProblemDescriptionAuthorizationConfig(),
-            Attachment.Context.PROBLEM_TEST_CASES to ProblemTestCasesAuthorizationConfig(),
-            Attachment.Context.SUBMISSION_CODE to SubmissionCodeAuthorizationConfig(),
-            Attachment.Context.EXECUTION_DETAILS to ExecutionDetailsAuthorizationConfig(),
-        )
 
     /**
      * Creates an attachment with a signed upload URL for a contest.
@@ -66,9 +57,14 @@ class SignedUploadAttachmentService(
             .requireMemberToBelong()
             .throwIfErrors()
 
-        authorizationConfigsByContext[command.context]
-            ?.authorizeUpload(contest, member)
-            ?: throw ForbiddenException("Cannot create attachment with context ${command.context}")
+        val config =
+            when (command.context) {
+                Attachment.Context.PROBLEM_DESCRIPTION -> ProblemDescriptionAuthorizationConfig()
+                Attachment.Context.PROBLEM_TEST_CASES -> ProblemTestCasesAuthorizationConfig()
+                Attachment.Context.SUBMISSION_CODE -> SubmissionCodeAuthorizationConfig()
+                Attachment.Context.EXECUTION_DETAILS -> ExecutionDetailsAuthorizationConfig()
+            }
+        config.authorizeUpload(contest, member)
 
         val id = IdGenerator.getUUID()
         val attachment =
