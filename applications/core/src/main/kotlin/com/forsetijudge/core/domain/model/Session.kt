@@ -7,7 +7,7 @@ import java.util.UUID
 
 data class Session(
     val id: UUID = IdGenerator.getUUID(),
-    val contestId: UUID?,
+    val contestId: UUID? = null,
     val member: Member,
     val csrfToken: UUID = IdGenerator.getUUID(),
     val expiresAt: OffsetDateTime,

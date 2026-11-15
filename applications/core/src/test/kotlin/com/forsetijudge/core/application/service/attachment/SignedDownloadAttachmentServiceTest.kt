@@ -2,6 +2,7 @@ package com.forsetijudge.core.application.service.attachment
 
 import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
@@ -30,14 +31,16 @@ class SignedDownloadAttachmentServiceTest {
 
     @Test
     fun `returns signed download for public problem description`() {
-        TestAuthentication.clear()
         val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member(contest = contest, type = Member.Type.ROOT)
+        TestAuthentication.setMember(member)
         val attachment =
             MockEntityFactory.attachment(
                 contest = contest,
                 context = Attachment.Context.PROBLEM_TEST_CASES,
                 contentType = "application/pdf",
             )
+        whenever(members.findByIdAndContestIdOrContestIsNull(member.id, contest.id)).thenReturn(member)
         whenever(attachments.findByIdAndContestId(attachment.id, contest.id)).thenReturn(attachment)
         whenever(bucket.getDownloadUrl(attachment)).thenReturn("https://signed.test/download")
 
