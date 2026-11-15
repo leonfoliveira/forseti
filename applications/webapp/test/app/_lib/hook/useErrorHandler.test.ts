@@ -15,24 +15,29 @@ describe("useErrorHandler hook", () => {
     const { result } = await renderHookWithProviders(() =>
       useErrorHandlerRoot("contest"),
     );
+
     await act(async () =>
       result.current.handle(new UnauthorizedException("expired")),
     );
+
     expect(navigate).toHaveBeenCalledWith(
       expect.stringContaining("expired=true"),
     );
+
     await act(async () =>
       result.current.handle(new ForbiddenException("denied")),
     );
     expect(navigate).toHaveBeenLastCalledWith(
       expect.stringContaining("/error/403"),
     );
+
     const custom = jest.fn();
     await act(async () =>
       result.current.handle(new ServiceUnavailableException("offline"), {
         ServiceUnavailableException: custom,
       }),
     );
+
     expect(custom).toHaveBeenCalledWith(
       expect.objectContaining({ name: "ServiceUnavailableException" }),
     );

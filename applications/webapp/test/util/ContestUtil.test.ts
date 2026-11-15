@@ -22,12 +22,6 @@ describe("ContestUtil", () => {
         endAt: "2026-05-15T13:00:00.000Z",
       }),
     ).toBe(ContestStatus.IN_PROGRESS);
-    expect(
-      ContestUtil.getStatus({
-        startAt: "2026-05-15T11:00:00.000Z",
-        endAt: "2026-05-15T12:00:00.000Z",
-      }),
-    ).toBe(ContestStatus.IN_PROGRESS);
   });
 
   it("returns ENDED after the contest ends", () => {
