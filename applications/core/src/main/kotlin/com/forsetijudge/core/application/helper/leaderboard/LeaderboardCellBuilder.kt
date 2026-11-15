@@ -6,8 +6,8 @@ import com.forsetijudge.core.domain.entity.Problem
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.stereotype.Service
 import java.time.Duration
+import org.springframework.stereotype.Service
 
 @Service
 class LeaderboardCellBuilder {
@@ -41,6 +41,7 @@ class LeaderboardCellBuilder {
                 .firstOrNull { it.answer == Submission.Answer.ACCEPTED }
         val wrongSubmissionsBeforeAccepted =
             sortedSubmissions
+                .filter { it.status != Submission.Status.JUDGING }
                 .takeWhile { it.answer != Submission.Answer.ACCEPTED }
 
         val isAccepted = firstAcceptedSubmission != null

@@ -7,13 +7,15 @@ import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.domain.model.Leaderboard
 import com.forsetijudge.core.port.output.cache.LeaderboardCacheStore
 import com.forsetijudge.core.port.output.repository.FrozenSubmissionRepository
+import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.stereotype.Service
 import java.time.Duration
+import org.springframework.stereotype.Service
 
 @Service
 class LeaderboardBuilder(
+    private val memberRepository: MemberRepository,
     private val submissionRepository: SubmissionRepository,
     private val frozenSubmissionRepository: FrozenSubmissionRepository,
     private val leaderboardCellBuilder: LeaderboardCellBuilder,
@@ -35,12 +37,10 @@ class LeaderboardBuilder(
         logger.info("Building leaderboard for contest with id: ${contest.id}, shouldBypassFreeze: $shouldBypassFreeze")
 
         val contestants =
-            contest.members.filter {
-                setOf(
-                    Member.Type.CONTESTANT,
-                    Member.Type.UNOFFICIAL_CONTESTANT,
-                ).contains(it.type)
-            }
+            memberRepository.findAllByContestIdAndTypeIn(
+                contest.id,
+                setOf(Member.Type.CONTESTANT, Member.Type.UNOFFICIAL_CONTESTANT),
+            )
         val problems = contest.problems
 
         val rows =

@@ -58,6 +58,7 @@ dependencies {
 
     testImplementation(libs.jacksonModuleKotlin)
     testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.opentelemetrySdkTesting)
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
 

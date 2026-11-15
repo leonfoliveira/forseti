@@ -1,8 +1,8 @@
 package com.forsetijudge.core.port.output.repository
 
 import com.forsetijudge.core.domain.entity.Member
-import org.springframework.data.jpa.repository.Query
 import java.util.UUID
+import org.springframework.data.jpa.repository.Query
 
 /**
  * Accessor for persistence operations related to Member entity
@@ -37,4 +37,10 @@ interface MemberRepository : BaseRepository<Member> {
         login: String,
         contestId: UUID,
     ): Member?
+
+    @Query("SELECT m FROM Member m WHERE m.contest.id = ?1 AND m.type IN ?2 AND m.deletedAt IS NULL")
+    fun findAllByContestIdAndTypeIn(
+        contestId: UUID,
+        types: Set<Member.Type>,
+    ): List<Member>
 }
