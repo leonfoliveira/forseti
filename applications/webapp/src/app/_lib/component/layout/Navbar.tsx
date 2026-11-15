@@ -20,18 +20,22 @@ export function Navbar() {
     {
       title: "Leaderboard",
       path: routes.CONTEST_LEADERBOARD(slug),
+      "data-testid": `tab-leaderboard`,
     },
     {
       title: "Problems",
       path: routes.CONTEST_PROBLEMS(slug),
+      "data-testid": `tab-problems`,
     },
     {
       title: "Submissions",
       path: routes.CONTEST_SUBMISSIONS(slug),
+      "data-testid": `tab-submissions`,
     },
     {
       title: "Announcements",
       path: routes.CONTEST_ANNOUNCEMENTS(slug),
+      "data-testid": `tab-announcements`,
     },
   ];
 
@@ -39,6 +43,7 @@ export function Navbar() {
     tabs.push({
       title: "Clarifications",
       path: routes.CONTEST_CLARIFICATIONS(slug),
+      "data-testid": `tab-clarifications`,
     });
   }
 
@@ -50,11 +55,13 @@ export function Navbar() {
       MemberType.ADMIN,
       MemberType.STAFF,
       MemberType.CONTESTANT,
+      MemberType.UNOFFICIAL_CONTESTANT,
     ].includes(session.member.type)
   ) {
     tabs.push({
       title: "Print Requests",
       path: routes.CONTEST_PRINT_REQUESTS(slug),
+      "data-testid": `tab-print-requests`,
     });
   }
 
@@ -65,12 +72,14 @@ export function Navbar() {
     tabs.push({
       title: "Settings",
       path: routes.CONTEST_SETTINGS(slug),
+      "data-testid": `tab-settings`,
     });
   }
 
   tabs.push({
     title: "About",
     path: routes.CONTEST_ABOUT(slug),
+    "data-testid": `tab-about`,
   });
 
   return (
@@ -91,7 +100,7 @@ export function Navbar() {
                 value={item.path}
                 className="flex-0 whitespace-nowrap"
                 onClick={() => navigate(item.path)}
-                data-testid={`tab-${item.path}`}
+                data-testid={item["data-testid"]}
               >
                 {item.title}
               </TabsTrigger>
