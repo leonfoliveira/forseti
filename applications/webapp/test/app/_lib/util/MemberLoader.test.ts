@@ -22,6 +22,7 @@ describe("MemberLoader", () => {
         );
         return undefined as never;
       });
+
     await expect(
       MemberLoader.loadFromCsv(new File(["csv"], "members.csv")),
     ).resolves.toEqual([
