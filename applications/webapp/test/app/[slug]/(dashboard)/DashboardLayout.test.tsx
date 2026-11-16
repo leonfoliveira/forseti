@@ -48,10 +48,8 @@ describe("DashboardLayout", () => {
         member: { id: "member-1", name: "Admin", type: MemberType.ADMIN },
       }),
     });
-    expect(screen.getByTestId("tab-/spring/settings")).toHaveTextContent(
-      "Settings",
-    );
-    fireEvent.click(screen.getByTestId("tab-/spring/problems"));
+    expect(screen.getByTestId("tab-settings")).toHaveTextContent("Settings");
+    fireEvent.click(screen.getByTestId("tab-problems"));
     expect(navigate).toHaveBeenCalledWith("/spring/problems");
     expect(screen.getByTestId("balloons")).toBeInTheDocument();
   });

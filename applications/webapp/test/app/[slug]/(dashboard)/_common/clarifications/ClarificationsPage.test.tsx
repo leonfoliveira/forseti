@@ -11,8 +11,8 @@ import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ClarificationsPage", () => {
   const contest = MockContestResponseDTO({
-    startAt: MockDate.past().toISOString(),
-    endAt: MockDate.future().toISOString(),
+    startAt: MockDate.now().past().toISOString(),
+    endAt: MockDate.now().future().toISOString(),
   });
   const problems = [MockProblemResponseDTO(), MockProblemResponseDTO()];
   const clarifications = [
@@ -64,8 +64,8 @@ describe("ClarificationsPage", () => {
 
   it("should not render form when contest is ended", async () => {
     const pastContestMetadata = MockContestResponseDTO({
-      startAt: MockDate.past(10).toISOString(),
-      endAt: MockDate.past(5).toISOString(),
+      startAt: MockDate.now().past(10).toISOString(),
+      endAt: MockDate.now().past(5).toISOString(),
     });
 
     await renderWithProviders(
