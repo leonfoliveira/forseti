@@ -41,7 +41,7 @@ jobs:
       - name: Run checks
         if: steps.changes.outputs.webapp == 'true'
         run: |
-          # Run lint, i18n checks, and tests
+          # Run lint, and tests
           npm run lint
           npm run test:coverage
 
