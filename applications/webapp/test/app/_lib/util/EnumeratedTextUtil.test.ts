@@ -4,6 +4,7 @@ import { MemberType } from "@/domain/enumerate/MemberType";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 
 describe("EnumeratedTextUtil", () => {
   it("maps contest status to labels", () => {
@@ -29,6 +30,18 @@ describe("EnumeratedTextUtil", () => {
     expect(
       EnumeratedTextUtil.getMemberType(MemberType.UNOFFICIAL_CONTESTANT),
     ).toBe("Unofficial Contestant");
+  });
+
+  it("maps submission status to labels", () => {
+    expect(
+      EnumeratedTextUtil.getSubmissionStatus(SubmissionStatus.JUDGED),
+    ).toBe("Judged");
+    expect(
+      EnumeratedTextUtil.getSubmissionStatus(SubmissionStatus.FAILED),
+    ).toBe("Failed");
+    expect(
+      EnumeratedTextUtil.getSubmissionStatus(SubmissionStatus.JUDGING),
+    ).toBe("Judging");
   });
 
   it("maps submission answers to labels", () => {

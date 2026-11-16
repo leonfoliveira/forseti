@@ -37,8 +37,8 @@ data class UpdateContestRequestBodyDTO(
         val color: String,
         val title: String,
         val description: AttachmentRequestBodyDTO,
-        val timeLimit: Int,
-        val memoryLimit: Int,
+        val timeLimitMs: Int,
+        val memoryLimitMb: Int,
         val testCases: AttachmentRequestBodyDTO,
     )
 

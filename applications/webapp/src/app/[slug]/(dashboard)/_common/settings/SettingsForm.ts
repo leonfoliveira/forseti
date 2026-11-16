@@ -32,11 +32,11 @@ export type SettingsFormType = {
     _id?: string;
     color: string;
     title: string;
-    description: AttachmentResponseDTO;
+    description?: AttachmentResponseDTO;
     newDescription?: File[];
-    timeLimit: string;
-    memoryLimit: string;
-    testCases: AttachmentResponseDTO;
+    timeLimitMs: string;
+    memoryLimitMb: string;
+    testCases?: AttachmentResponseDTO;
     newTestCases?: File[];
   }[];
   members: {
@@ -191,9 +191,9 @@ export class SettingsForm {
           .messages({
             "string.pattern.base": "Freeze date is invalid",
             "datetime-local.invalid": "Freeze date is invalid",
-            "datetime-local.after-start":
+            "datetime-local.auto-freeze-after-start":
               "Freeze date must be after the start date",
-            "datetime-local.before-end":
+            "datetime-local.auto-freeze-before-end":
               "Freeze date must be before the end date",
             "datetime-local.future": "Freeze date must be in the future",
           }),
@@ -261,11 +261,11 @@ export class SettingsForm {
               "file.too-large": "Problem description must be smaller than 10MB",
               "file.invalid-type": "Problem description must be a PDF",
             }),
-            timeLimit: Joi.number().greater(0).required().messages({
+            timeLimitMs: Joi.number().greater(0).required().messages({
               "any.required": "Problem time limit is required",
               "number.min": "Problem time limit must be positive",
             }),
-            memoryLimit: Joi.number().greater(0).required().messages({
+            memoryLimitMb: Joi.number().greater(0).required().messages({
               "any.required": "Problem memory limit is required",
               "number.min": "Problem memory limit must be positive",
             }),
@@ -350,8 +350,8 @@ export class SettingsForm {
         title: problem.title,
         description: problem.description,
         newDescription: [],
-        timeLimit: problem.timeLimit.toString(),
-        memoryLimit: problem.memoryLimit.toString(),
+        timeLimitMs: problem.timeLimit.toString(),
+        memoryLimitMb: problem.memoryLimit.toString(),
         testCases: problem.testCases,
         newTestCases: [],
       }));
@@ -435,8 +435,8 @@ export class SettingsForm {
         title: problem.title,
         description: problem.description,
         newDescription: this.parseFiles(problem.newDescription),
-        timeLimit: parseInt(problem.timeLimit, 10),
-        memoryLimit: parseInt(problem.memoryLimit, 10),
+        timeLimitMs: parseInt(problem.timeLimitMs, 10),
+        memoryLimitMb: parseInt(problem.memoryLimitMb, 10),
         testCases: problem.testCases,
         newTestCases: this.parseFiles(problem.newTestCases),
       })),

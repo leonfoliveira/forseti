@@ -85,6 +85,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 id="doesShowUnofficial"
                 checked={doesShowUnofficial}
                 onCheckedChange={setDoesShowUnofficial}
+                data-testid="does-show-unofficial"
               />
               <FieldContent>
                 <FieldLabel htmlFor="doesShowUnofficial">

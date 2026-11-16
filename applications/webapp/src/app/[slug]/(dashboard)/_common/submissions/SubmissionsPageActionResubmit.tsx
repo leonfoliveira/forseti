@@ -31,14 +31,13 @@ export function SubmissionsPageActionResubmit({
     resubmitState.start();
 
     try {
-      await Composition.submissionWriter.resubmit(contestId, submissionId);
+      const updatedSubmission = await Composition.submissionWriter.resubmit(
+        contestId,
+        submissionId,
+      );
 
       toast.success("Submission resubmitted successfully");
-      onResubmit({
-        ...submission,
-        status: SubmissionStatus.JUDGING,
-        answer: undefined,
-      });
+      onResubmit(updatedSubmission);
       dialog.close();
       resubmitState.finish();
       console.debug("Submission resubmitted successfully");

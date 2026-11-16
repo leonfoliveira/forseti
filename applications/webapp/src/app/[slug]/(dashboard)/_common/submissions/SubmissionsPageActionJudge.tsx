@@ -50,14 +50,14 @@ export function SubmissionsPageActionJudge({
     judgeState.start();
 
     try {
-      await Composition.submissionWriter.updateAnswer(
+      const updatedSubmission = await Composition.submissionWriter.updateAnswer(
         contestId,
         submission.id,
         data.answer,
       );
 
       toast.success("Submission judged successfully");
-      onJudge({ ...submission, answer: data.answer });
+      onJudge(updatedSubmission);
       judgeForm.reset();
       dialog.close();
       judgeState.finish();

@@ -3,6 +3,7 @@ import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 
 export class EnumeratedTextUtil {
   public static getContestStatus(status: ContestStatus): string {
@@ -22,6 +23,14 @@ export class EnumeratedTextUtil {
       [MemberType.CONTESTANT]: "Contestant",
       [MemberType.UNOFFICIAL_CONTESTANT]: "Unofficial Contestant",
     }[type];
+  }
+
+  public static getSubmissionStatus(status: SubmissionStatus): string {
+    return {
+      [SubmissionStatus.JUDGED]: "Judged",
+      [SubmissionStatus.FAILED]: "Failed",
+      [SubmissionStatus.JUDGING]: "Judging",
+    }[status];
   }
 
   public static getSubmissionAnswer(answer: SubmissionAnswer): string {

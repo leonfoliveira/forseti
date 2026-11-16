@@ -132,8 +132,32 @@ jest.mock("@/app/_lib/component/shadcn/alert-dialog", () => ({
   ),
 }));
 jest.mock("@/app/_lib/component/shadcn/checkbox", () => ({
-  Checkbox: (props: any) => <input type="checkbox" {...props} />,
+  Checkbox: ({ onCheckedChange, ...props }: any) => (
+    <input
+      type="checkbox"
+      {...props}
+      onChange={(e) => onCheckedChange?.(e.target.checked)}
+    />
+  ),
 }));
+jest.mock("@/app/_lib/component/shadcn/dialog", () => ({
+  Dialog: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DialogContent: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DialogDescription: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DialogHeader: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  DialogTitle: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+}));
+
 jest.mock("@/app/_lib/component/shadcn/field", () => ({
   Field: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   FieldContent: ({ children }: any) => <div>{children}</div>,
@@ -150,7 +174,31 @@ jest.mock("@/app/_lib/component/shadcn/input", () => ({
   Input: (props: any) => <input {...props} />,
 }));
 jest.mock("@/app/_lib/component/shadcn/switch", () => ({
-  Switch: (props: any) => <input type="checkbox" {...props} />,
+  Switch: ({ onCheckedChange, ...props }: any) => (
+    <input
+      type="checkbox"
+      {...props}
+      onChange={(e) => onCheckedChange?.(e.target.checked)}
+    />
+  ),
+}));
+jest.mock("@/app/_lib/component/shadcn/tabs", () => ({
+  Tabs: ({ children, ...props }: { children: React.ReactNode }) => (
+    <div {...props}>{children}</div>
+  ),
+  TabsList: ({ children, ...props }: { children: React.ReactNode }) => (
+    <div {...props}>{children}</div>
+  ),
+  TabsTrigger: ({ children, ...props }: { children: React.ReactNode }) => (
+    <div {...props}>
+      <div>{children}</div>
+    </div>
+  ),
+}));
+jest.mock("@/app/_lib/component/shadcn/toggle", () => ({
+  Toggle: ({ onPressedChange, ...props }: any) => (
+    <button type="button" {...props} onClick={() => onPressedChange?.(true)} />
+  ),
 }));
 
 // Mocking useToast hook

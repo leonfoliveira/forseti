@@ -3,6 +3,7 @@ import { screen } from "@testing-library/react";
 import { SubmissionsPageActionsMenu } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionsMenu";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import {
+  MockContestWithMembersAndProblemsDTO,
   MockSubmissionWithCodeAndExecutionsResponseDTO,
   MockSubmissionWithCodeResponseDTO,
 } from "@/test/mock/response/MockDTOs";
@@ -40,53 +41,93 @@ jest.mock(
     ),
   }),
 );
-
-jest.mock("@/app/_lib/component/shadcn/dropdown-menu", () => ({
-  DropdownMenu: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="dropdown-menu">{children}</div>
-  ),
-  DropdownMenuContent: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="dropdown-menu-content">{children}</div>
-  ),
-  DropdownMenuGroup: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="dropdown-menu-group">{children}</div>
-  ),
-  DropdownMenuLabel: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="dropdown-menu-label">{children}</div>
-  ),
-  DropdownMenuTrigger: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="dropdown-menu-trigger">{children}</div>
-  ),
-}));
+jest.mock(
+  "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionCreatePrintRequest",
+  () => ({
+    SubmissionsPageActionCreatePrintRequest: () => (
+      <span data-testid="create-print-request-action">
+        Create Print Request
+      </span>
+    ),
+  }),
+);
 
 describe("SubmissionsPageActionsMenu", () => {
-  it("offers download, resubmit, and judge actions for editable submissions", async () => {
+  it("shows action download when can download any", async () => {
     await renderWithProviders(
       <SubmissionsPageActionsMenu
         submission={MockSubmissionWithCodeAndExecutionsResponseDTO()}
-        canViewExecutions
-        onEdit={jest.fn()}
+        canDownloadAny
       />,
     );
-    expect(screen.getByTestId("submission-actions-button")).toBeInTheDocument();
-    expect(screen.getAllByTestId("download-action").length).toBeGreaterThan(0);
-    expect(screen.getAllByTestId("resubmit-action").length).toBeGreaterThan(0);
-    expect(screen.getAllByTestId("judge-action").length).toBeGreaterThan(0);
-    expect(screen.getAllByTestId("executions-action").length).toBeGreaterThan(
-      0,
-    );
+
+    expect(screen.getByTestId("download-action")).toBeInTheDocument();
   });
 
-  it("omits resubmit while the submission is already judging", async () => {
+  it("shows action download when submission has code", async () => {
     await renderWithProviders(
       <SubmissionsPageActionsMenu
-        submission={MockSubmissionWithCodeResponseDTO({
-          status: SubmissionStatus.JUDGING,
-        })}
-        onEdit={jest.fn()}
+        submission={MockSubmissionWithCodeResponseDTO()}
       />,
     );
-    expect(screen.queryByTestId("resubmit-action")).toBeNull();
-    expect(screen.getAllByTestId("judge-action").length).toBeGreaterThan(0);
+
+    expect(screen.getByTestId("download-action")).toBeInTheDocument();
+  });
+
+  it("shows executions when can view executions", async () => {
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu submission={submission} canViewExecutions />,
+    );
+
+    expect(screen.getByTestId("executions-action")).toBeInTheDocument();
+  });
+
+  it("shows resubmit when can edit, autojudge is enabled and submission is not judging", async () => {
+    const contest = MockContestWithMembersAndProblemsDTO({
+      settings: {
+        ...MockContestWithMembersAndProblemsDTO().settings,
+        isAutoJudgeEnabled: true,
+      },
+    });
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO({
+      status: SubmissionStatus.FAILED,
+    });
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu submission={submission} onEdit={jest.fn()} />,
+      { contest },
+    );
+
+    expect(screen.getByTestId("resubmit-action")).toBeInTheDocument();
+  });
+
+  it("shows judge action when can edit", async () => {
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu submission={submission} onEdit={jest.fn()} />,
+    );
+
+    expect(screen.getByTestId("judge-action")).toBeInTheDocument();
+  });
+
+  it("shows create print request when can create print request and it is enabled", async () => {
+    const contest = MockContestWithMembersAndProblemsDTO({
+      settings: {
+        ...MockContestWithMembersAndProblemsDTO().settings,
+        isPrintRequestEnabled: true,
+      },
+    });
+    const submission = MockSubmissionWithCodeAndExecutionsResponseDTO();
+    await renderWithProviders(
+      <SubmissionsPageActionsMenu
+        submission={submission}
+        onCreatePrintRequest={jest.fn()}
+      />,
+      { contest },
+    );
+
+    expect(
+      screen.getByTestId("create-print-request-action"),
+    ).toBeInTheDocument();
   });
 });

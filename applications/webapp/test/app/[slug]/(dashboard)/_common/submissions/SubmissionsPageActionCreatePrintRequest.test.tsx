@@ -8,32 +8,46 @@ import {
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { Composition } from "@/config/composition";
-
-jest.mock("@/app/_lib/component/feedback/ConfirmationDialog", () => ({
-  ConfirmationDialog: ({
-    isOpen,
-    title,
-    onConfirm,
-  }: {
-    isOpen: boolean;
-    title: string;
-    onConfirm: () => void;
-  }) => (
-    <div
-      data-testid="confirmation"
-      data-open={String(isOpen)}
-      onClick={onConfirm}
-    >
-      {title}
-    </div>
-  ),
-}));
+import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SubmissionsPageActionCreatePrintRequest", () => {
   it("should create print request successfully", async () => {
     const printRequest = MockPrintRequestResponseDTO();
     (Composition.printRequestWriter.create as jest.Mock).mockResolvedValueOnce(
       printRequest,
+    );
+    const submission = MockSubmissionWithCodeResponseDTO();
+    const contest = MockContestResponseDTO();
+    const onClose = jest.fn();
+
+    await renderWithProviders(
+      <SubmissionsPageActionCreatePrintRequest
+        submission={submission}
+        onCreatePrintRequest={jest.fn()}
+        onClose={onClose}
+      />,
+      {
+        contest,
+      },
+    );
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
+    });
+
+    expect(Composition.printRequestWriter.create).toHaveBeenCalledWith(
+      contest.id,
+      {
+        submissionId: submission.id,
+      },
+    );
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("shows toast on creation failure", async () => {
+    const error = new Error("Failed to create print request");
+    (Composition.printRequestWriter.create as jest.Mock).mockRejectedValueOnce(
+      error,
     );
     const submission = MockSubmissionWithCodeResponseDTO();
     const contest = MockContestResponseDTO();
@@ -49,27 +63,15 @@ describe("SubmissionsPageActionCreatePrintRequest", () => {
       },
     );
 
-    expect(screen.getByTestId("confirmation")).toHaveAttribute(
-      "data-open",
-      "false",
-    );
-    fireEvent.click(
-      screen.getByTestId("submissions-page-action-create-print-request"),
-    );
-    expect(screen.getByTestId("confirmation")).toHaveAttribute(
-      "data-open",
-      "true",
-    );
-
     await act(async () => {
-      fireEvent.click(screen.getByTestId("confirmation"));
+      fireEvent.click(
+        screen.getByTestId("submissions-page-action-create-print-request"),
+      );
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("confirmation-dialog-confirm-button"));
     });
 
-    expect(Composition.printRequestWriter.create).toHaveBeenCalledWith(
-      contest.id,
-      {
-        submissionId: submission.id,
-      },
-    );
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

@@ -36,7 +36,6 @@ import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashb
 import { useAppDispatch } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
-import { ObjectUtil } from "@/util/ObjectUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
@@ -183,7 +182,6 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   leaderboard={leaderboard}
                   form={form}
                   isUpdateLoading={isUpdateLoading}
-                  isContestEnded={isContestEnded}
                 />
               )}
 
@@ -192,7 +190,6 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   contest={contest}
                   form={form}
                   isUpdateLoading={isUpdateLoading}
-                  isContestEnded={isContestEnded}
                 />
               )}
 
@@ -200,7 +197,6 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                 <SettingsPageMembersTab
                   form={form}
                   isUpdateLoading={isUpdateLoading}
-                  isContestEnded={isContestEnded}
                 />
               )}
             </CardContent>
