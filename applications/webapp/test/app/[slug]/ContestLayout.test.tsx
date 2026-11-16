@@ -1,12 +1,11 @@
 import { act, render, screen } from "@testing-library/react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { ContestLayout } from "@/app/[slug]/ContestLayout";
 import { Composition } from "@/config/composition";
-import {
-  MockContestResponseDTO,
-  MockSessionResponseDTO,
-} from "@/test/mock/response/MockDTOs";
+import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
+import { NotFoundException } from "@/domain/exception/NotFoundException";
+import { routes } from "@/config/routes";
 
 jest.mock("@/app/_lib/component/layout/Footer", () => ({
   Footer: () => <footer data-testid="footer" />,
@@ -35,24 +34,71 @@ jest.mock("@/app/_lib/store/StoreProvider", () => ({
 }));
 
 describe("ContestLayout", () => {
-  it("loads contest and session data and renders the shared layout", async () => {
-    jest
-      .mocked(useLocation)
-      .mockReturnValue({ pathname: "/spring/leaderboard" } as never);
-    jest
-      .mocked(Composition.sessionReader.getCurrent)
-      .mockResolvedValue(MockSessionResponseDTO());
-    jest
-      .mocked(Composition.contestReader.findBySlug)
-      .mockResolvedValue(MockContestResponseDTO({ slug: "spring" }));
+  it("fetches data on startup", async () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: "/spring/leaderboard",
+    });
 
     await act(async () => render(<ContestLayout />));
+
+    expect(Composition.sessionReader.getCurrent).toHaveBeenCalled();
     expect(Composition.contestReader.findBySlug).toHaveBeenCalledWith("spring");
-    expect(screen.getByTestId("store")).toHaveAttribute(
-      "data-loaded",
-      expect.stringContaining('"slug":"spring"'),
+  });
+
+  it("renders error page on failure", async () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: "/spring/leaderboard",
+    });
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      new Error("Failed to fetch session"),
     );
-    expect(screen.getByTestId("header")).toBeInTheDocument();
-    expect(screen.getByTestId("footer")).toBeInTheDocument();
+
+    await act(async () => render(<ContestLayout />));
+
+    expect(screen.getByTestId("error")).toBeInTheDocument();
+  });
+
+  it("navigates to sign-in page on unauthorized", async () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: "/spring/leaderboard",
+    });
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      new UnauthorizedException("Unauthorized"),
+    );
+
+    await act(async () => render(<ContestLayout />));
+
+    expect(useNavigate()).toHaveBeenCalledWith(
+      routes.CONTEST_SIGN_IN("spring"),
+      { replace: true },
+    );
+  });
+
+  it("does not navigates to sign-in page if already on sign-in page", async () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: "/spring/sign-in",
+    });
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      new UnauthorizedException("Unauthorized"),
+    );
+
+    await act(async () => render(<ContestLayout />));
+
+    expect(useNavigate()).not.toHaveBeenCalled();
+  });
+
+  it("navigates to not found page on not found", async () => {
+    (useLocation as jest.Mock).mockReturnValue({
+      pathname: "/spring/leaderboard",
+    });
+    (Composition.sessionReader.getCurrent as jest.Mock).mockRejectedValueOnce(
+      new NotFoundException("Not Found"),
+    );
+
+    await act(async () => render(<ContestLayout />));
+
+    expect(useNavigate()).toHaveBeenCalledWith(routes.NOT_FOUND, {
+      replace: true,
+    });
   });
 });
