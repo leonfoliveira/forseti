@@ -33,23 +33,13 @@ import { useDialog } from "@/app/_lib/hook/useDialog";
 type Props = {
   contestId: string;
   clarification: ClarificationResponseDTO;
-} & (
-  | {
-      canAnswer: true;
-      onAnswer: (data: ClarificationResponseDTO) => void;
-      onPublish: (data: ClarificationResponseDTO) => void;
-    }
-  | {
-      canAnswer?: false;
-      onAnswer?: (data: ClarificationResponseDTO) => void;
-      onPublish?: (data: ClarificationResponseDTO) => void;
-    }
-);
+  onAnswer?: (data: ClarificationResponseDTO) => void;
+  onPublish?: (data: ClarificationResponseDTO) => void;
+};
 
 export function ClarificationsPageCard({
   contestId,
   clarification,
-  canAnswer,
   onAnswer,
   onPublish,
 }: Props) {
@@ -57,6 +47,9 @@ export function ClarificationsPageCard({
   const publishState = useLoadableState();
   const toast = useToast();
   const publishDialog = useDialog();
+
+  const canAnswer = !!onAnswer;
+  const canPublish = !!onPublish;
 
   const form = useForm<ClarificationAnswerFormType>({
     resolver: joiResolver(ClarificationAnswerForm.schema),
@@ -185,7 +178,7 @@ export function ClarificationsPageCard({
               <p className="mt-3" data-testid="clarification-answer-text">
                 {clarification.answer.text}
               </p>
-              {!clarification.isPublic && (
+              {!clarification.isPublic && canPublish && (
                 <div className="flex justify-end">
                   <AsyncButton
                     isLoading={publishState.isLoading}

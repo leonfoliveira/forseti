@@ -3,12 +3,11 @@ package com.forsetijudge.core.application.helper.session
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.model.Session
 import com.forsetijudge.core.port.output.cache.SessionCache
-import com.forsetijudge.core.util.IdGenerator
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 import java.time.OffsetDateTime
 import java.util.UUID
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Component
 
 @Component
 class SessionCreator(
@@ -44,7 +43,6 @@ class SessionCreator(
 
         val session =
             Session(
-                id = IdGenerator.getUUID(),
                 contestId = contestId,
                 member =
                     Session.Member(
@@ -52,7 +50,6 @@ class SessionCreator(
                         type = member.type,
                         name = member.name,
                     ),
-                csrfToken = IdGenerator.getUUID(),
                 expiresAt = OffsetDateTime.now().plusSeconds(expiresAtOffset),
             )
         sessionCache.cache(session)

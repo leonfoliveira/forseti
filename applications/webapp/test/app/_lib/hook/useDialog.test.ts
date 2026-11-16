@@ -7,10 +7,13 @@ describe("useDialog hook", () => {
   it("opens and closes the dialog, restoring body pointer events", async () => {
     const { result } = await renderHookWithProviders(() => useDialog());
     expect(result.current.isOpen).toBe(false);
+
     await act(async () => result.current.open());
     expect(result.current.isOpen).toBe(true);
+
     document.body.style.pointerEvents = "none";
     await act(async () => result.current.close());
+
     expect(result.current.isOpen).toBe(false);
     expect(document.body.style.pointerEvents).toBe("auto");
   });

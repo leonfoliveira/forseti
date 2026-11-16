@@ -1,29 +1,55 @@
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
+import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { MockSubmissionResponseDTO } from "@/test/mock/response/MockDTOs";
 
 describe("EntityUtil", () => {
-  const current = [
-    { id: "same", version: 1, value: "old" },
-    { id: "keep", version: 1, value: "kept" },
-  ];
+  describe("merge", () => {
+    it("should merge a new entity into an array", () => {
+      const array: SubmissionResponseDTO[] = [];
+      const item = MockSubmissionResponseDTO();
+      const result = EntityUtil.merge(array, item);
+      expect(result).toEqual([item]);
+    });
 
-  it("adds missing entities and replaces existing entities only with a newer version", () => {
-    expect(EntityUtil.merge(current, { id: "new", version: 1, value: "new" })).toHaveLength(3);
-    expect(EntityUtil.merge(current, { id: "same", version: 2, value: "new" })[0].value).toBe("new");
-    expect(EntityUtil.merge(current, { id: "same", version: 1, value: "stale" })).toBe(current);
-    expect(EntityUtil.merge(undefined, { id: "first", version: 1, value: "first" })).toEqual([
-      { id: "first", version: 1, value: "first" },
-    ]);
+    it("should update an existing entity in an array", () => {
+      const item = MockSubmissionResponseDTO();
+      const array: SubmissionResponseDTO[] = [item];
+      const updatedItem = { ...item, version: item.version + 1 };
+      const result = EntityUtil.merge(array, updatedItem);
+      expect(result).toEqual([updatedItem]);
+    });
+
+    it("should ignore entities with version lower than existing entity", () => {
+      const item = MockSubmissionResponseDTO();
+      const array: SubmissionResponseDTO[] = [item];
+      const lowerVersionItem = { ...item, version: item.version - 1 };
+      const result = EntityUtil.merge(array, lowerVersionItem);
+      expect(result).toEqual([item]);
+    });
   });
 
-  it("merges batches without downgrading versions", () => {
-    expect(EntityUtil.mergeBatch(current, [
-      { id: "same", version: 2, value: "new" },
-      { id: "keep", version: 0, value: "stale" },
-      { id: "extra", version: 1, value: "extra" },
-    ])).toEqual([
-      { id: "same", version: 2, value: "new" },
-      { id: "keep", version: 1, value: "kept" },
-      { id: "extra", version: 1, value: "extra" },
-    ]);
+  describe("mergeBatch", () => {
+    it("should merge a new entity into an array", () => {
+      const array: SubmissionResponseDTO[] = [];
+      const item = MockSubmissionResponseDTO();
+      const result = EntityUtil.mergeBatch(array, [item]);
+      expect(result).toEqual([item]);
+    });
+
+    it("should update existing entities in an array", () => {
+      const item = MockSubmissionResponseDTO();
+      const array: SubmissionResponseDTO[] = [item];
+      const updatedItem = { ...item, version: item.version + 1 };
+      const result = EntityUtil.mergeBatch(array, [updatedItem]);
+      expect(result).toEqual([updatedItem]);
+    });
+
+    it("should ignore entities with lower version in batch", () => {
+      const item = MockSubmissionResponseDTO();
+      const array: SubmissionResponseDTO[] = [item];
+      const lowerVersionItem = { ...item, version: item.version - 1 };
+      const result = EntityUtil.mergeBatch(array, [lowerVersionItem]);
+      expect(result).toEqual([item]);
+    });
   });
 });

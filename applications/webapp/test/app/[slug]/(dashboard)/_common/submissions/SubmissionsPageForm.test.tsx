@@ -1,62 +1,101 @@
 import React from "react";
-import { screen } from "@testing-library/react";
+import { act, fireEvent, screen } from "@testing-library/react";
 
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageForm";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import {
   MockContestResponseDTO,
   MockProblemResponseDTO,
+  MockSubmissionWithCodeResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-
-jest.mock("@/app/_lib/component/form/ControlledField", () => ({
-  ControlledField: ({ name }: { name: string }) => (
-    <div data-testid={`field-${name}`} />
-  ),
-}));
-jest.mock("@/app/_lib/component/shadcn/card", () => ({
-  Card: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-    <div {...props}>{children}</div>
-  ),
-  CardContent: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  CardDescription: ({ children }: { children: React.ReactNode }) => (
-    <p>{children}</p>
-  ),
-  CardHeader: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
-  CardTitle: ({ children }: { children: React.ReactNode }) => (
-    <h2>{children}</h2>
-  ),
-}));
-jest.mock("@/app/_lib/component/shadcn/field", () => ({
-  FieldSet: ({ children }: { children: React.ReactNode }) => (
-    <fieldset>{children}</fieldset>
-  ),
-}));
-jest.mock("@/app/_lib/component/shadcn/separator", () => ({
-  Separator: () => <hr />,
-}));
+import { Composition } from "@/config/composition";
+import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SubmissionsPageForm", () => {
-  it("renders the problem, language, and code inputs", async () => {
+  it("creates submission successfully", async () => {
+    const onClose = jest.fn();
+    const onCreate = jest.fn();
+    const problem = MockProblemResponseDTO();
+    const contest = MockContestResponseDTO();
+    const newSubmission = MockSubmissionWithCodeResponseDTO();
+    (Composition.submissionWriter.create as jest.Mock).mockResolvedValue(
+      newSubmission,
+    );
+
     await renderWithProviders(
       <SubmissionsPageForm
-        onClose={jest.fn()}
-        problems={[MockProblemResponseDTO()]}
-        onCreate={jest.fn()}
+        onClose={onClose}
+        problems={[problem]}
+        onCreate={onCreate}
       />,
       {
-        contest: MockContestResponseDTO({
-          languages: [SubmissionLanguage.CPP_17],
-        }),
+        contest,
       },
     );
-    expect(screen.getByTestId("submission-form")).toBeInTheDocument();
-    expect(screen.getByTestId("field-problemId")).toBeInTheDocument();
-    expect(screen.getByTestId("field-language")).toBeInTheDocument();
-    expect(screen.getByTestId("field-code")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId("submission-form-problem"), {
+      target: { value: problem.id },
+    });
+    fireEvent.change(screen.getByTestId("submission-form-language"), {
+      target: { value: SubmissionLanguage.CPP_17 },
+    });
+    fireEvent.change(screen.getByTestId("submission-form-code"), {
+      target: {
+        files: [new File(["code"], "code.cpp", { type: "text/plain" })],
+      },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("submission-form-submit"));
+    });
+
+    expect(Composition.submissionWriter.create).toHaveBeenCalledWith(
+      contest.id,
+      expect.any(Object),
+    );
+    expect(onCreate).toHaveBeenCalledWith(newSubmission);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("shows toast on submission error", async () => {
+    const onClose = jest.fn();
+    const onCreate = jest.fn();
+    const problem = MockProblemResponseDTO();
+    const contest = MockContestResponseDTO();
+    (Composition.submissionWriter.create as jest.Mock).mockRejectedValue(
+      new Error("Submission failed"),
+    );
+
+    await renderWithProviders(
+      <SubmissionsPageForm
+        onClose={onClose}
+        problems={[problem]}
+        onCreate={onCreate}
+      />,
+      {
+        contest,
+      },
+    );
+
+    fireEvent.change(screen.getByTestId("submission-form-problem"), {
+      target: { value: problem.id },
+    });
+    fireEvent.change(screen.getByTestId("submission-form-language"), {
+      target: { value: SubmissionLanguage.CPP_17 },
+    });
+    fireEvent.change(screen.getByTestId("submission-form-code"), {
+      target: {
+        files: [new File(["code"], "code.cpp", { type: "text/plain" })],
+      },
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId("submission-form-submit"));
+    });
+
+    expect(onCreate).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(useToast().error).toHaveBeenCalled();
   });
 });

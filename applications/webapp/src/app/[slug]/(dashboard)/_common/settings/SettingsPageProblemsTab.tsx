@@ -31,22 +31,23 @@ import { ColorUtil } from "@/app/_lib/util/ColorUtil";
 import { Composition } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
   form: UseFormReturn<SettingsFormType>;
   isUpdateLoading?: boolean;
-  isContestEnded?: boolean;
 };
 
 export function SettingsPageProblemsTab({
   contest,
   form,
   isUpdateLoading,
-  isContestEnded,
 }: Props) {
   const errorHandler = useErrorHandler();
   const toast = useToast();
+  const contestStatus = useContestStatusWatcher();
 
   const { fields, append, remove, move } = useFieldArray({
     control: form.control,
@@ -67,8 +68,10 @@ export function SettingsPageProblemsTab({
     }
   }
 
+  const hasContestEnded = contestStatus === ContestStatus.ENDED;
+
   return (
-    <FieldSet disabled={isUpdateLoading || isContestEnded}>
+    <FieldSet disabled={isUpdateLoading || hasContestEnded}>
       <div className="flex flex-col gap-4" data-testid="settings-problems-tab">
         {fields.map((field, index) => (
           <Item key={field.id} variant="outline" data-testid="problem-item">
@@ -109,7 +112,7 @@ export function SettingsPageProblemsTab({
 
                 <ControlledField
                   form={form}
-                  name={`problems.${index}.timeLimit`}
+                  name={`problems.${index}.timeLimitMs`}
                   label="Time Limit (ms)"
                   field={
                     <Input
@@ -123,12 +126,12 @@ export function SettingsPageProblemsTab({
 
                 <ControlledField
                   form={form}
-                  name={`problems.${index}.memoryLimit`}
+                  name={`problems.${index}.memoryLimitMb`}
                   label="Memory Limit (MB)"
                   field={
                     <Input
                       type="number"
-                      step="500"
+                      step="512"
                       data-testid="problem-memory-limit"
                     />
                   }
@@ -156,7 +159,7 @@ export function SettingsPageProblemsTab({
                       variant="secondary"
                       className="mt-2 w-full justify-start"
                       title={field.description.filename}
-                      onClick={() => downloadAttachment(field.description)}
+                      onClick={() => downloadAttachment(field.description!!)}
                       data-testid="problem-description-download"
                     >
                       <DownloadIcon />
@@ -188,7 +191,7 @@ export function SettingsPageProblemsTab({
                       variant="secondary"
                       className="mt-2 w-full justify-start"
                       title={field.testCases.filename}
-                      onClick={() => downloadAttachment(field.testCases)}
+                      onClick={() => downloadAttachment(field.testCases!!)}
                       data-testid="problem-test-cases-download"
                     >
                       <DownloadIcon />
@@ -257,8 +260,8 @@ export function SettingsPageProblemsTab({
             append({
               title: "",
               color: ColorUtil.getRandom(),
-              timeLimit: "1000",
-              memoryLimit: "1024",
+              timeLimitMs: "1000",
+              memoryLimitMb: "1024",
             } as SettingsFormType["problems"][number])
           }
           data-testid="add-problem-button"

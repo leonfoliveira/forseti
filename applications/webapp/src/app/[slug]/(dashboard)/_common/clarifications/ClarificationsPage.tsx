@@ -23,30 +23,10 @@ import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseD
 type Props = {
   problems: ProblemResponseDTO[];
   clarifications: ClarificationResponseDTO[];
-  canCreate?: boolean;
-  canAnswer?: boolean;
-} & (
-  | {
-      canCreate: true;
-      onCreate: (clarification: ClarificationResponseDTO) => void;
-    }
-  | {
-      canCreate?: false;
-      onCreate?: (clarification: ClarificationResponseDTO) => void;
-    }
-) &
-  (
-    | {
-        canAnswer: true;
-        onAnswer: (data: ClarificationResponseDTO) => void;
-        onPublish: (data: ClarificationResponseDTO) => void;
-      }
-    | {
-        canAnswer?: false;
-        onAnswer?: (data: ClarificationResponseDTO) => void;
-        onPublish?: (data: ClarificationResponseDTO) => void;
-      }
-  );
+  onCreate?: (clarification: ClarificationResponseDTO) => void;
+  onAnswer?: (clarification: ClarificationResponseDTO) => void;
+  onPublish?: (clarification: ClarificationResponseDTO) => void;
+};
 
 /**
  * Displays the clarifications page where users can view, request, and answer clarifications for contest problems.
@@ -54,15 +34,17 @@ type Props = {
 export function ClarificationsPage({
   problems,
   clarifications,
-  canCreate,
   onCreate,
-  canAnswer,
   onAnswer,
   onPublish,
 }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const contestStatus = useContestStatusWatcher();
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
+
+  const canCreate = !!onCreate;
+  const canAnswer = !!onAnswer;
+  const canPublish = !!onPublish;
 
   const shouldSeeCreationComponents =
     canCreate && contestStatus === ContestStatus.IN_PROGRESS;
@@ -122,7 +104,6 @@ export function ClarificationsPage({
                   key={clarification.id}
                   contestId={contestId}
                   clarification={clarification}
-                  canAnswer={canAnswer}
                   onAnswer={onAnswer as never}
                   onPublish={onPublish as never}
                 />

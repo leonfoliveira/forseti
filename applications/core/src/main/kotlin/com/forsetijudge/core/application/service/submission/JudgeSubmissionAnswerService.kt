@@ -12,9 +12,9 @@ import com.forsetijudge.core.port.input.usecase.submission.JudgeSubmissionUseCas
 import com.forsetijudge.core.port.output.repository.ExecutionRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
 import com.forsetijudge.core.util.SafeLogger
+import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class JudgeSubmissionAnswerService(
@@ -81,7 +81,7 @@ class JudgeSubmissionAnswerService(
                 submission = submission,
                 answer = command.answer,
                 totalTestCases = command.totalTestCases,
-                approvedTestCases = command.approvedTestCases,
+                acceptedTestCases = command.approvedTestCases,
                 maxCpuTimeMs = command.maxCpuTimeMs,
                 maxClockTimeMs = command.maxClockTimeMs,
                 maxPeakMemoryKb = command.maxPeakMemoryKb,

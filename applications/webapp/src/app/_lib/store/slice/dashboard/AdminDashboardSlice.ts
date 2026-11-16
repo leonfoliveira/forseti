@@ -22,7 +22,7 @@ export const AdminDashboardSlice = createSlice({
   initialState: {} as unknown as AdminDashboardState,
   reducers: {
     set(state, action: { payload: AdminDashboardResponseDTO }) {
-      return { ...action.payload, listenerStatus: ListenerStatus.CONNECTED };
+      return action.payload;
     },
     reset() {
       return {} as unknown as AdminDashboardState;

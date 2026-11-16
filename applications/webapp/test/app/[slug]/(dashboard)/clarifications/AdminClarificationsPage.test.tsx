@@ -20,7 +20,7 @@ describe("AdminClarificationsPage", () => {
       MockClarificationResponseDTO(),
       MockClarificationResponseDTO(),
     ];
-    await renderWithProviders(<AdminClarificationsPage />, {
+    const { store } = await renderWithProviders(<AdminClarificationsPage />, {
       adminDashboard: {
         problems,
         clarifications,
@@ -31,9 +31,26 @@ describe("AdminClarificationsPage", () => {
       expect.objectContaining({
         problems,
         clarifications,
-        canAnswer: true,
+        onAnswer: expect.any(Function),
+        onPublish: expect.any(Function),
       }),
       undefined,
+    );
+
+    const updatedClarification = MockClarificationResponseDTO();
+
+    const onAnswer = (ClarificationsPage as jest.Mock).mock.calls[0][0]
+      .onAnswer;
+    onAnswer(updatedClarification);
+    expect(store.getState().adminDashboard.clarifications).toContainEqual(
+      updatedClarification,
+    );
+
+    const onPublish = (ClarificationsPage as jest.Mock).mock.calls[0][0]
+      .onPublish;
+    onPublish(updatedClarification);
+    expect(store.getState().adminDashboard.clarifications).toContainEqual(
+      updatedClarification,
     );
   });
 });

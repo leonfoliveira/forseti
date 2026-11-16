@@ -12,6 +12,7 @@ import com.forsetijudge.core.port.input.usecase.printrequest.UpdateStatusPrintRe
 import com.forsetijudge.core.port.output.repository.ContestRepository
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.PrintRequestRepository
+import java.time.OffsetDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -19,7 +20,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.OffsetDateTime
 
 class UpdateStatusPrintRequestServiceTest {
     private val contestRepository = mock<ContestRepository>()
@@ -116,12 +116,13 @@ class UpdateStatusPrintRequestServiceTest {
 
     @Test
     fun `should throw ForbiddenException when print requests are not enabled for the contest`() {
-        TestAuthentication.setMember(adminMember)
         val contestWithPrintRequestsDisabled =
             MockEntityFactory.contest(
                 startAt = OffsetDateTime.now().minusDays(1),
                 endAt = OffsetDateTime.now().plusDays(1),
             )
+        val adminMember = MockEntityFactory.member(contest = contestWithPrintRequestsDisabled, type = Member.Type.ADMIN)
+        TestAuthentication.setMember(adminMember)
         contestWithPrintRequestsDisabled.settings.isPrintRequestEnabled = false
 
         whenever(contestRepository.findByIdNullable(contestWithPrintRequestsDisabled.id)).thenReturn(

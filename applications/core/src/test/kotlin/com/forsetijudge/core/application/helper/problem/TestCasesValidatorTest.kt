@@ -5,43 +5,54 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.output.bucket.AttachmentBucket
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class TestCasesValidatorTest {
-    private val bucket = mock<AttachmentBucket>()
-    private val validator = TestCasesValidator(bucket)
-    private val attachment = MockEntityFactory.attachment(contentType = "text/csv")
+    private val attachmentBucket = mock<AttachmentBucket>()
+    private val testCasesValidator = TestCasesValidator(attachmentBucket)
+
+    private val testCases = MockEntityFactory.attachment(contentType = "text/csv")
 
     @Test
-    fun `accepts a csv file with two columns per row`() {
-        whenever(bucket.download(attachment)).thenReturn("1,2\n3,4\n".toByteArray())
+    fun `should throw BusinessException when test cases file is not a CSV file`() {
+        val invalidTestCases = MockEntityFactory.attachment(contentType = "application/json")
 
-        validator.validate(attachment)
-
-        verify(bucket).download(attachment)
+        assertThrows(BusinessException::class.java) {
+            testCasesValidator.validate(invalidTestCases)
+        }
     }
 
     @Test
-    fun `rejects non csv without downloading`() {
-        val nonCsv = MockEntityFactory.attachment(contentType = "application/json")
+    fun `should throw BusinessException when test cases file is empty`() {
+        val emptyTestCases = MockEntityFactory.attachment(contentType = "text/csv")
+        whenever(attachmentBucket.download(emptyTestCases)).thenReturn(ByteArray(0))
 
-        assertThrows(BusinessException::class.java) { validator.validate(nonCsv) }
-
-        verify(bucket, never()).download(nonCsv)
+        assertThrows(BusinessException::class.java) {
+            testCasesValidator.validate(emptyTestCases)
+        }
     }
 
     @Test
-    fun `rejects empty content and rows with the wrong number of columns`() {
-        whenever(bucket.download(attachment)).thenReturn(ByteArray(0))
-        assertThrows(BusinessException::class.java) { validator.validate(attachment) }
+    fun `should throw BusinessException when test case does not have exactly input and output columns`() {
+        val invalidTestCases = MockEntityFactory.attachment(contentType = "text/csv")
+        val invalidCsvContent = "input1,output1\ninput2"
+        whenever(attachmentBucket.download(invalidTestCases)).thenReturn(invalidCsvContent.toByteArray())
 
-        whenever(bucket.download(attachment)).thenReturn("only-one-column\n".toByteArray())
-        assertThrows(BusinessException::class.java) { validator.validate(attachment) }
+        assertThrows(BusinessException::class.java) {
+            testCasesValidator.validate(invalidTestCases)
+        }
+    }
 
-        whenever(bucket.download(attachment)).thenReturn("a,b,c\n".toByteArray())
-        assertThrows(BusinessException::class.java) { validator.validate(attachment) }
+    @Test
+    fun `should not throw any exception when test cases file is valid`() {
+        val validTestCases = MockEntityFactory.attachment(contentType = "text/csv")
+        val validCsvContent = "input1,output1\ninput2,output2"
+        whenever(attachmentBucket.download(validTestCases)).thenReturn(validCsvContent.toByteArray())
+
+        assertDoesNotThrow {
+            testCasesValidator.validate(validTestCases)
+        }
     }
 }

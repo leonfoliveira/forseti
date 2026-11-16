@@ -2,17 +2,24 @@ import { act } from "@testing-library/react";
 
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { renderHookWithProviders } from "@/test/render-with-providers";
+import {
+  MockAdminDashboardResponseDTO,
+  MockContestantDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
+  MockJudgeDashboardResponseDTO,
+  MockStaffDashboardResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 
 describe("useDashboardReseter hook", () => {
   it("resets all role dashboard slices", async () => {
     const { result, store } = await renderHookWithProviders(
       () => useDashboardReseter(),
       {
-        adminDashboard: { stale: true } as never,
-        contestantDashboard: { stale: true } as never,
-        spectatorDashboard: { stale: true } as never,
-        judgeDashboard: { stale: true } as never,
-        staffDashboard: { stale: true } as never,
+        adminDashboard: MockAdminDashboardResponseDTO(),
+        contestantDashboard: MockContestantDashboardResponseDTO(),
+        spectatorDashboard: MockSpectatorDashboardResponseDTO(),
+        judgeDashboard: MockJudgeDashboardResponseDTO(),
+        staffDashboard: MockStaffDashboardResponseDTO(),
       },
     );
     await act(async () => result.current.reset());

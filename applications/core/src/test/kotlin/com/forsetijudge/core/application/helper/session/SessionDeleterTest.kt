@@ -7,13 +7,15 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
 class SessionDeleterTest {
+    val sessionCache = mock<SessionCache>()
+    val sessionDeleter = SessionDeleter(sessionCache)
+
     @Test
     fun `evicts cache entries by member id`() {
-        val cache = mock<SessionCache>()
         val member = MockEntityFactory.member()
 
-        SessionDeleter(cache).deleteByMember(member)
+        sessionDeleter.deleteByMember(member)
 
-        verify(cache).evictByMemberId(memberId = member.id)
+        verify(sessionCache).evictByMemberId(memberId = member.id)
     }
 }

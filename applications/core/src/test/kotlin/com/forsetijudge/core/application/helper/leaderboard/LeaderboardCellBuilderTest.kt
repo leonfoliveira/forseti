@@ -2,80 +2,128 @@ package com.forsetijudge.core.application.helper.leaderboard
 
 import com.forsetijudge.core.domain.entity.Submission
 import com.forsetijudge.core.factory.MockEntityFactory
+import java.time.Duration
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import java.time.OffsetDateTime
+import org.junit.jupiter.api.assertNotNull
+import org.junit.jupiter.api.assertNull
 
 class LeaderboardCellBuilderTest {
-    private val builder = LeaderboardCellBuilder()
+    private val leaderboardCellBuilder = LeaderboardCellBuilder()
 
     @Test
-    fun `calculates accepted time and wrong answer penalty in chronological order`() {
-        val startAt = OffsetDateTime.now().minusHours(2)
-        val contest = MockEntityFactory.contest(startAt = startAt)
+    fun `should build cell for problems with no submissions`() {
+        val contest = MockEntityFactory.contest()
         val member = MockEntityFactory.member()
-        val problem = MockEntityFactory.problem(contest = contest, letter = 'C', color = "#abcdef")
-        val acceptedAt = startAt.plusMinutes(37)
-        val submissions =
-            listOf(
-                MockEntityFactory.submission(
-                    createdAt = acceptedAt,
-                    member = member,
-                    problem = problem,
-                    answer = Submission.Answer.ACCEPTED,
-                ),
-                MockEntityFactory.submission(
-                    createdAt = startAt.plusMinutes(10),
-                    member = member,
-                    problem = problem,
-                    answer = Submission.Answer.WRONG_ANSWER,
-                ),
-                MockEntityFactory.submission(
-                    createdAt = startAt.plusMinutes(20),
-                    member = member,
-                    problem = problem,
-                    answer = Submission.Answer.COMPILATION_ERROR,
-                ),
-            )
+        val problem = MockEntityFactory.problem()
+        val submissions = emptyList<Submission>()
 
-        val cell = builder.build(contest, member, problem, submissions)
+        val cell = leaderboardCellBuilder.build(contest, member, problem, submissions)
 
-        assertTrue(cell.isAccepted)
         assertEquals(member.id, cell.memberId)
         assertEquals(problem.id, cell.problemId)
-        assertEquals('C', cell.problemLetter)
-        assertEquals("#abcdef", cell.problemColor)
-        assertEquals(acceptedAt, cell.acceptedAt)
-        assertEquals(2, cell.wrongSubmissions)
-        assertEquals(77, cell.penalty)
+        assertEquals(problem.letter, cell.problemLetter)
+        assertEquals(problem.color, cell.problemColor)
+        assertFalse(cell.isAccepted)
+        assertNull(cell.acceptedAt)
+        assertEquals(0, cell.wrongSubmissions)
+        assertEquals(0, cell.penalty)
     }
 
     @Test
-    fun `does not count penalty for unaccepted problem`() {
+    fun `should build cell for problems with only pending submissions`() {
         val contest = MockEntityFactory.contest()
         val member = MockEntityFactory.member()
-        val problem = MockEntityFactory.problem(contest = contest)
+        val problem = MockEntityFactory.problem()
         val submissions =
             listOf(
-                MockEntityFactory.submission(
-                    member = member,
-                    problem = problem,
-                    answer = Submission.Answer.WRONG_ANSWER,
-                ),
-                MockEntityFactory.submission(
-                    member = member,
-                    problem = problem,
-                    answer = Submission.Answer.COMPILATION_ERROR,
-                ),
+                MockEntityFactory.submission(status = Submission.Status.JUDGING),
             )
 
-        val cell = builder.build(contest, member, problem, submissions)
+        val cell = leaderboardCellBuilder.build(contest, member, problem, submissions)
 
+        assertEquals(member.id, cell.memberId)
+        assertEquals(problem.id, cell.problemId)
+        assertEquals(problem.letter, cell.problemLetter)
+        assertEquals(problem.color, cell.problemColor)
         assertFalse(cell.isAccepted)
-        assertEquals(null, cell.acceptedAt)
+        assertNull(cell.acceptedAt)
+        assertEquals(0, cell.wrongSubmissions)
+        assertEquals(0, cell.penalty)
+    }
+
+    @Test
+    fun `should build cell for problems with only wrong submissions`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member()
+        val problem = MockEntityFactory.problem()
+        val submissions =
+            listOf(
+                MockEntityFactory.submission(answer = Submission.Answer.WRONG_ANSWER),
+                MockEntityFactory.submission(answer = Submission.Answer.TIME_LIMIT_EXCEEDED),
+                MockEntityFactory.submission(status = Submission.Status.JUDGING),
+            )
+
+        val cell = leaderboardCellBuilder.build(contest, member, problem, submissions)
+
+        assertEquals(member.id, cell.memberId)
+        assertEquals(problem.id, cell.problemId)
+        assertEquals(problem.letter, cell.problemLetter)
+        assertEquals(problem.color, cell.problemColor)
+        assertFalse(cell.isAccepted)
+        assertNull(cell.acceptedAt)
         assertEquals(2, cell.wrongSubmissions)
         assertEquals(0, cell.penalty)
+    }
+
+    @Test
+    fun `should build cell for problems with only accepted submissions`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member()
+        val problem = MockEntityFactory.problem()
+        val submissions =
+            listOf(
+                MockEntityFactory.submission(answer = Submission.Answer.ACCEPTED),
+                MockEntityFactory.submission(answer = Submission.Answer.ACCEPTED),
+                MockEntityFactory.submission(status = Submission.Status.JUDGING),
+            )
+
+        val cell = leaderboardCellBuilder.build(contest, member, problem, submissions)
+
+        assertEquals(member.id, cell.memberId)
+        assertEquals(problem.id, cell.problemId)
+        assertEquals(problem.letter, cell.problemLetter)
+        assertEquals(problem.color, cell.problemColor)
+        assertTrue(cell.isAccepted)
+        assertNotNull(submissions.first().createdAt)
+        assertEquals(0, cell.wrongSubmissions)
+        assertEquals(Duration.between(contest.startAt, submissions.first().createdAt).toMinutes().toInt(), cell.penalty)
+    }
+
+    @Test
+    fun `should build cell for problems with wrong submissions before accepted submission`() {
+        val contest = MockEntityFactory.contest()
+        val member = MockEntityFactory.member()
+        val problem = MockEntityFactory.problem()
+        val submissions =
+            listOf(
+                MockEntityFactory.submission(answer = Submission.Answer.WRONG_ANSWER),
+                MockEntityFactory.submission(answer = Submission.Answer.TIME_LIMIT_EXCEEDED),
+                MockEntityFactory.submission(answer = Submission.Answer.ACCEPTED),
+                MockEntityFactory.submission(status = Submission.Status.JUDGING),
+            )
+
+        val cell = leaderboardCellBuilder.build(contest, member, problem, submissions)
+
+        assertEquals(member.id, cell.memberId)
+        assertEquals(problem.id, cell.problemId)
+        assertEquals(problem.letter, cell.problemLetter)
+        assertEquals(problem.color, cell.problemColor)
+        assertTrue(cell.isAccepted)
+        assertNotNull(submissions[2].createdAt)
+        assertEquals(2, cell.wrongSubmissions)
+        assertEquals(40 + Duration.between(contest.startAt, submissions[2].createdAt).toMinutes().toInt(), cell.penalty)
     }
 }

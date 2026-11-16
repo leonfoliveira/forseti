@@ -1,12 +1,13 @@
 package com.forsetijudge.core.application.helper.attachment
 
 import com.forsetijudge.core.domain.entity.Attachment
+import com.forsetijudge.core.domain.exception.ConflictException
 import com.forsetijudge.core.domain.exception.ForbiddenException
 import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.port.output.repository.AttachmentRepository
 import com.forsetijudge.core.util.SafeLogger
-import org.springframework.stereotype.Component
 import java.util.UUID
+import org.springframework.stereotype.Component
 
 @Component
 class AttachmentCommiter(
@@ -34,7 +35,7 @@ class AttachmentCommiter(
                 ?: throw NotFoundException("Attachment with id $attachmentId not found in contest with id $contestId")
 
         if (attachment.isCommited) {
-            throw ForbiddenException("Attachment with id $attachmentId is already commited")
+            throw ConflictException("Attachment with id $attachmentId is already commited")
         }
         if (attachment.context != context) {
             throw ForbiddenException("Attachment with id $attachmentId has invalid context ${attachment.context}")

@@ -119,10 +119,10 @@ interface UpdateContestUseCase {
             val title: String,
             @field:Valid
             val description: AttachmentCommandDTO,
-            @field:Min(1, message = "'problems.timeLimit' must be positive")
-            val timeLimit: Int,
-            @field:Min(1, message = "'problems.memoryLimit' must be positive")
-            val memoryLimit: Int,
+            @field:Min(1, message = "'problems.timeLimitMs' must be positive")
+            val timeLimitMs: Int,
+            @field:Min(1, message = "'problems.memoryLimitMb' must be positive")
+            val memoryLimitMb: Int,
             @field:Valid
             val testCases: AttachmentCommandDTO,
         )

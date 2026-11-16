@@ -16,7 +16,6 @@ export function JudgeClarificationsPage() {
     <ClarificationsPage
       problems={problems}
       clarifications={clarifications}
-      canAnswer
       onAnswer={(clarification: ClarificationResponseDTO) => {
         dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
       }}

@@ -4,36 +4,88 @@ import { MemberLoader } from "@/app/_lib/util/MemberLoader";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 describe("MemberLoader", () => {
-  it("maps CSV rows and blanks missing or unsupported values", async () => {
+  it("rejects on parse errors", async () => {
     const parse = jest
       .spyOn(Papa, "parse")
       .mockImplementation((_file, config) => {
-        if (!config) throw new Error("Expected parse options");
-        config.complete?.(
+        (config as any).error?.(new Error("Parse error"), _file as never);
+        return undefined as never;
+      });
+
+    const file = new File(["csv"], "members.csv");
+    await expect(MemberLoader.loadFromCsv(file)).rejects.toThrow();
+    parse.mockRestore();
+  });
+
+  it("rejects on parse complete with errors", async () => {
+    const parse = jest
+      .spyOn(Papa, "parse")
+      .mockImplementation((_file, config) => {
+        (config as any).complete?.(
           {
-            data: [
-              ["Ada", MemberType.CONTESTANT, "ada", "pw", "127.0.0.1"],
-              ["Invalid", MemberType.ROOT, "", "", ""],
-            ],
-            errors: [],
+            data: [],
+            errors: [new Error("Parse complete error")],
             meta: {} as never,
           },
           _file as never,
         );
         return undefined as never;
       });
-    await expect(
-      MemberLoader.loadFromCsv(new File(["csv"], "members.csv")),
-    ).resolves.toEqual([
+
+    const file = new File(["csv"], "members.csv");
+    await expect(MemberLoader.loadFromCsv(file)).rejects.toThrow();
+    parse.mockRestore();
+  });
+
+  it("loads with default values for missing fields", async () => {
+    const data = ",,,,\n";
+    const file = new File([data], "members.csv");
+    const members = await MemberLoader.loadFromCsv(file);
+    expect(members).toEqual([
       {
-        name: "Ada",
-        type: MemberType.CONTESTANT,
-        login: "ada",
-        password: "pw",
+        name: "",
+        type: "",
+        login: "",
+        password: "",
+        ip: "",
+      },
+    ]);
+  });
+
+  it("loads multiple members correctly", async () => {
+    const data = "John Doe,ADMIN,johndoe,password123,127.0.0.1\n";
+    const file = new File([data], "members.csv");
+    const members = await MemberLoader.loadFromCsv(file);
+    expect(members).toEqual([
+      {
+        name: "John Doe",
+        type: MemberType.ADMIN,
+        login: "johndoe",
+        password: "password123",
         ip: "127.0.0.1",
       },
-      { name: "Invalid", type: "", login: "", password: "", ip: "" },
     ]);
-    parse.mockRestore();
+  });
+
+  it("should load empty type on invalid fields", async () => {
+    const data = ",INVALID,,,\n,ROOT,,,";
+    const file = new File([data], "members.csv");
+    const members = await MemberLoader.loadFromCsv(file);
+    expect(members).toEqual([
+      {
+        name: "",
+        type: "",
+        login: "",
+        password: "",
+        ip: "",
+      },
+      {
+        name: "",
+        type: "",
+        login: "",
+        password: "",
+        ip: "",
+      },
+    ]);
   });
 });

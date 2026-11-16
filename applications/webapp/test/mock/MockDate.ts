@@ -1,13 +1,29 @@
 export class MockDate {
-  static past(hoursAgo: number = 1): Date {
-    return new Date(new Date().getTime() - hoursAgo * 60 * 60 * 1000);
+  constructor(public date: Date) {
+    this.date = date;
   }
 
-  static future(hoursAhead: number = 1): Date {
-    return new Date(new Date().getTime() + hoursAhead * 60 * 60 * 1000);
+  static now(): MockDate {
+    return new MockDate(new Date());
   }
 
-  static toDateTime(date: Date): string {
-    return date.toISOString().slice(0, 16);
+  past(hoursAgo: number = 1): MockDate {
+    return new MockDate(
+      new Date(this.date.getTime() - hoursAgo * 60 * 60 * 1000),
+    );
+  }
+
+  future(hoursAhead: number = 1): MockDate {
+    return new MockDate(
+      new Date(this.date.getTime() + hoursAhead * 60 * 60 * 1000),
+    );
+  }
+
+  toISOString(): string {
+    return this.date.toISOString();
+  }
+
+  toDateTime(): string {
+    return this.date.toISOString().slice(0, 16);
   }
 }

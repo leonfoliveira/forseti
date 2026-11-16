@@ -1,46 +1,101 @@
-import { fireEvent, screen } from "@testing-library/react";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { SettingsPageMembersTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageMembersTab";
-import { renderWithProviders } from "@/test/render-with-providers";
-
-jest.mock("@/app/_lib/component/form/ControlledField", () => ({
-  ControlledField: ({ name }: { name: string }) => <input data-testid={name} />,
-}));
-jest.mock("@/app/_lib/component/shadcn/field", () => ({
-  FieldSet: ({ children }: { children: React.ReactNode }) => (
-    <fieldset>{children}</fieldset>
-  ),
-}));
-
-function Harness() {
-  const form = useForm<SettingsFormType>({
-    defaultValues: {
-      contest: {
-        slug: "",
-        title: "",
-        languages: {} as never,
-        startAt: "",
-        endAt: "",
-      },
-      problems: [],
-      members: [],
-    },
-  });
-  return <SettingsPageMembersTab form={form} />;
-}
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from "@/test/render-with-providers";
+import { MemberType } from "@/domain/enumerate/MemberType";
+import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SettingsPageMembersTab", () => {
-  it("adds a member row and provides the CSV input", async () => {
-    await renderWithProviders(<Harness />);
-    expect(screen.getByTestId("member-file-input")).toHaveAttribute(
-      "accept",
-      ".csv",
+  it("fills the form with members", async () => {
+    const { result: form } = await renderHookWithProviders(() =>
+      useForm<SettingsFormType>(),
     );
-    expect(screen.queryByTestId("member-row")).toBeNull();
+    await renderWithProviders(<SettingsPageMembersTab form={form.current} />);
+
     fireEvent.click(screen.getByTestId("add-member-button"));
-    expect(screen.getByTestId("member-row")).toBeInTheDocument();
-    expect(screen.getByTestId("members.0.name")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByTestId("member-name"), {
+      target: { value: "New Member" },
+    });
+    fireEvent.change(screen.getByTestId("member-type"), {
+      target: { value: MemberType.CONTESTANT },
+    });
+    fireEvent.change(screen.getByTestId("member-login"), {
+      target: { value: "newmemberlogin" },
+    });
+    fireEvent.change(screen.getByTestId("member-password"), {
+      target: { value: "newmemberpassword" },
+    });
+    fireEvent.change(screen.getByTestId("member-ip"), {
+      target: { value: "192.168.0.1" },
+    });
+
+    expect(form.current.getValues("members")).toEqual([
+      {
+        name: "New Member",
+        type: MemberType.CONTESTANT,
+        login: "newmemberlogin",
+        password: "newmemberpassword",
+        ip: "192.168.0.1",
+      },
+    ]);
+
+    fireEvent.click(screen.getByTestId("remove-member-button"));
+    expect(form.current.getValues("members")).toEqual([]);
+  });
+
+  it("loads members from CSV", async () => {
+    const { result: form } = await renderHookWithProviders(() =>
+      useForm<SettingsFormType>(),
+    );
+    await renderWithProviders(<SettingsPageMembersTab form={form.current} />);
+
+    fireEvent.change(screen.getByTestId("member-file-input"), {
+      target: {
+        files: [
+          new File(
+            [
+              "New Member,CONTESTANT,newmemberlogin,newmemberpassword,192.168.0.1",
+            ],
+            "members.csv",
+            { type: "text/csv" },
+          ),
+        ],
+      },
+    });
+
+    await waitFor(() => {
+      expect(form.current.getValues("members")).toEqual([
+        {
+          name: "New Member",
+          type: MemberType.CONTESTANT,
+          login: "newmemberlogin",
+          password: "newmemberpassword",
+          ip: "192.168.0.1",
+        },
+      ]);
+    });
+  });
+
+  it("shows toast on load error", async () => {
+    const { result: form } = await renderHookWithProviders(() =>
+      useForm<SettingsFormType>(),
+    );
+    await renderWithProviders(<SettingsPageMembersTab form={form.current} />);
+
+    fireEvent.change(screen.getByTestId("member-file-input"), {
+      target: {
+        files: [new File([], "members.csv", { type: "text/csv" })],
+      },
+    });
+
+    await waitFor(() => {
+      expect(useToast().error).toHaveBeenCalled();
+    });
   });
 });

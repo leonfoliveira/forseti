@@ -1,22 +1,13 @@
-import { screen } from "@testing-library/react";
-
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
 import {
   MockContestantDashboardResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
-  ProblemsPage: ({
-    problems,
-    leaderboardRow,
-  }: {
-    problems: unknown[];
-    leaderboardRow?: { memberId: string };
-  }) => (
-    <div data-testid="problem-props">{`${problems.length}:${leaderboardRow?.memberId ?? "none"}`}</div>
-  ),
+  ProblemsPage: jest.fn(),
 }));
 
 describe("ContestantProblemsPage", () => {
@@ -24,12 +15,18 @@ describe("ContestantProblemsPage", () => {
     const session = MockSessionResponseDTO();
     const dashboard = MockContestantDashboardResponseDTO();
     dashboard.leaderboard.rows[0].memberId = session.member.id;
+
     await renderWithProviders(<ContestantProblemsPage />, {
       contestantDashboard: dashboard,
       session,
     });
-    expect(screen.getByTestId("problem-props")).toHaveTextContent(
-      `1:${session.member.id}`,
+
+    expect(ProblemsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        problems: dashboard.problems,
+        leaderboardRow: dashboard.leaderboard.rows[0],
+      }),
+      undefined,
     );
   });
 });

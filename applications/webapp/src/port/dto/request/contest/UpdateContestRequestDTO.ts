@@ -31,8 +31,8 @@ export type UpdateContestRequestDTO = {
     color: string;
     title: string;
     description: AttachmentResponseDTO;
-    timeLimit: number;
-    memoryLimit: number;
+    timeLimitMs: number;
+    memoryLimitMb: number;
     testCases: AttachmentResponseDTO;
   }[];
 };

@@ -41,14 +41,12 @@ type Props = {
   leaderboard: LeaderboardResponseDTO;
   form: UseFormReturn<SettingsFormType>;
   isUpdateLoading?: boolean;
-  isContestEnded?: boolean;
 };
 
 export function SettingsPageContestTab({
   contest,
   form,
   isUpdateLoading,
-  isContestEnded,
 }: Props) {
   const freezeState = useLoadableState();
   const forceState = useLoadableState();
@@ -130,9 +128,11 @@ export function SettingsPageContestTab({
     }
   }
 
+  const hasContestEnded = contestStatus === ContestStatus.ENDED;
+
   return (
     <>
-      <FieldSet disabled={isUpdateLoading || isContestEnded}>
+      <FieldSet disabled={isUpdateLoading || hasContestEnded}>
         <div className="flex flex-col gap-4" data-testid="settings-contest-tab">
           <div className="grid grid-cols-2 gap-6">
             <ControlledField
@@ -299,7 +299,7 @@ export function SettingsPageContestTab({
           variant="secondary"
           data-testid="force-toggle-button"
           onClick={forceConfirmationDialog.open}
-          disabled={isUpdateLoading || isContestEnded || forceState.isLoading}
+          disabled={isUpdateLoading || hasContestEnded || forceState.isLoading}
         >
           {contestStatus === ContestStatus.NOT_STARTED
             ? "Force Start"

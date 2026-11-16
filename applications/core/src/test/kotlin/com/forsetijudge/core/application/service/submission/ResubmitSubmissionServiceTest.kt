@@ -11,6 +11,7 @@ import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.port.input.usecase.submission.ResubmitSubmissionUseCase
 import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.SubmissionRepository
+import com.forsetijudge.core.util.IdGenerator
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
@@ -55,21 +56,100 @@ class ResubmitSubmissionServiceTest {
     }
 
     @Test
-    fun `rejects contestant and missing submission`() {
+    fun `throws NotFoundException when submission does not exist`() {
         val contest = MockEntityFactory.contest()
-        val submission = MockEntityFactory.submission(problem = MockEntityFactory.problem(contest = contest))
-        val contestant = MockEntityFactory.member(contest = contest)
+        val judge = MockEntityFactory.member(contest = contest, type = Member.Type.JUDGE)
+        TestAuthentication.setMember(judge)
+        whenever(submissions.findByIdAndContestId(any(), any())).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(ResubmitSubmissionUseCase.Command(contest.id, IdGenerator.getUUID()))
+        }
+        verify(submissions, never()).saveAndFlush(any())
+        verify(events, never()).publish(any())
+    }
+
+    @Test
+    fun `throws NotFoundException when member does not exist`() {
+        val contest = MockEntityFactory.contest()
+        val submission =
+            MockEntityFactory.submission(
+                member = MockEntityFactory.member(contest = contest),
+                problem = MockEntityFactory.problem(contest = contest),
+                status = Submission.Status.FAILED,
+            )
+        val judge = MockEntityFactory.member(contest = contest, type = Member.Type.JUDGE)
+        TestAuthentication.setMember(judge)
+        whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(submission)
+        whenever(members.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(ResubmitSubmissionUseCase.Command(contest.id, submission.id))
+        }
+        verify(submissions, never()).saveAndFlush(any())
+        verify(events, never()).publish(any())
+    }
+
+    @Test
+    fun `throws ForbiddenException when member is not a judge`() {
+        val contest = MockEntityFactory.contest()
+        val submission =
+            MockEntityFactory.submission(
+                member = MockEntityFactory.member(contest = contest),
+                problem = MockEntityFactory.problem(contest = contest),
+                status = Submission.Status.FAILED,
+            )
+        val contestant = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
         TestAuthentication.setMember(contestant)
         whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(submission)
         whenever(members.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
+
         assertThrows(ForbiddenException::class.java) {
             service.execute(ResubmitSubmissionUseCase.Command(contest.id, submission.id))
         }
         verify(submissions, never()).saveAndFlush(any())
+        verify(events, never()).publish(any())
+    }
 
-        whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(null)
-        assertThrows(NotFoundException::class.java) {
+    @Test
+    fun `throws ForbiddenException when member does not belong to contest`() {
+        val contest = MockEntityFactory.contest()
+        val submission =
+            MockEntityFactory.submission(
+                member = MockEntityFactory.member(contest = contest),
+                problem = MockEntityFactory.problem(contest = contest),
+                status = Submission.Status.FAILED,
+            )
+        val judge = MockEntityFactory.member(type = Member.Type.JUDGE, contest = MockEntityFactory.contest())
+        TestAuthentication.setMember(judge)
+        whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(submission)
+        whenever(members.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
+
+        assertThrows(ForbiddenException::class.java) {
             service.execute(ResubmitSubmissionUseCase.Command(contest.id, submission.id))
         }
+        verify(submissions, never()).saveAndFlush(any())
+        verify(events, never()).publish(any())
+    }
+
+    @Test
+    fun `throws ForbiddenException when member is not a root, judge or admin`() {
+        val contest = MockEntityFactory.contest()
+        val submission =
+            MockEntityFactory.submission(
+                member = MockEntityFactory.member(contest = contest),
+                problem = MockEntityFactory.problem(contest = contest),
+                status = Submission.Status.FAILED,
+            )
+        val staff = MockEntityFactory.member(contest = contest, type = Member.Type.STAFF)
+        TestAuthentication.setMember(staff)
+        whenever(submissions.findByIdAndContestId(submission.id, contest.id)).thenReturn(submission)
+        whenever(members.findByIdAndContestIdOrContestIsNull(staff.id, contest.id)).thenReturn(staff)
+
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(ResubmitSubmissionUseCase.Command(contest.id, submission.id))
+        }
+        verify(submissions, never()).saveAndFlush(any())
+        verify(events, never()).publish(any())
     }
 }

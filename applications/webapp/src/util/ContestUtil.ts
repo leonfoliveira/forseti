@@ -16,7 +16,7 @@ export class ContestUtil {
 
     if (now < startAt) {
       return ContestStatus.NOT_STARTED;
-    } else if (now >= startAt && now <= endAt) {
+    } else if (now >= startAt && now < endAt) {
       return ContestStatus.IN_PROGRESS;
     } else {
       return ContestStatus.ENDED;

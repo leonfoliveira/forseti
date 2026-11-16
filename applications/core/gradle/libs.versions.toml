@@ -48,6 +48,7 @@ mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "m
 opencsv = { module = "com.opencsv:opencsv", version.ref = "opencsv" }
 opentelemetryApi = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
 opentelemetryInstrumentationLogbackMdc = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-mdc-1.0", version.ref = "opentelemetryInstrumentationLogbackMdc" }
+opentelemetrySdkTesting = { module = "io.opentelemetry:opentelemetry-sdk-testing", version.ref = "opentelemetry" }
 postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" }
 snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
 springBootDevTools = { module = "org.springframework.boot:spring-boot-devtools", version.ref = "springBoot" }

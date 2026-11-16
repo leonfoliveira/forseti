@@ -2,7 +2,12 @@ package com.forsetijudge.core.api.http.sse
 
 import com.forsetijudge.core.api.http.sse.fanout.SSEFanoutMessage
 import com.forsetijudge.core.infrastructure.redis.SSERedisCacheStore
+import java.io.IOException
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.atLeastOnce
@@ -14,9 +19,6 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 class SSEHelperTest {
     private val room = "test-room"
@@ -44,6 +46,10 @@ class SSEHelperTest {
         val emitter1 = mock<SseEmitter>()
         val emitter2 = mock<SseEmitter>()
 
+        helper.emit(SSEFanoutMessage(room, eventName, data))
+        verify(emitter1, never()).send(any<SseEmitter.SseEventBuilder>())
+        verify(emitter2, never()).send(any<SseEmitter.SseEventBuilder>())
+
         helper.subscribe(room, emitter1)
         helper.subscribe(room, emitter2)
 
@@ -64,19 +70,35 @@ class SSEHelperTest {
     }
 
     @Test
+    fun `emit should unsubscribe on error`() {
+        val emitter = mock<SseEmitter>()
+
+        helper.subscribe(room, emitter)
+
+        val message = SSEFanoutMessage(room, eventName, data)
+        whenever(emitter.send(any<SseEmitter.SseEventBuilder>())).thenThrow(IOException("Test exception"))
+        assertDoesNotThrow {
+            helper.emit(message)
+        }
+    }
+
+    @Test
     fun `unsubscribe should remove emitter and clean up empty rooms`() {
         val emitter = mock<SseEmitter>()
         val message = SSEFanoutMessage(room, eventName, data)
 
+        assertDoesNotThrow {
+            helper.unsubscribe(room, emitter)
+        }
         helper.subscribe(room, emitter)
         helper.emit(message)
 
-        verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>())
+        verify(emitter, times(2)).send(any<SseEmitter.SseEventBuilder>())
 
         helper.unsubscribe(room, emitter)
 
         helper.emit(message)
-        verify(emitter, atLeastOnce()).send(any<SseEmitter.SseEventBuilder>()) // count shouldn't increase
+        verify(emitter, times(2)).send(any<SseEmitter.SseEventBuilder>()) // count shouldn't increase
     }
 
     @Test
@@ -90,6 +112,9 @@ class SSEHelperTest {
         doNothing().whenever(emitter1).onCompletion(completionCaptor1.capture())
         doNothing().whenever(emitter2).onCompletion(completionCaptor2.capture())
 
+        assertDoesNotThrow {
+            helper.completeAll(room)
+        }
         helper.subscribe(room, emitter1)
         helper.subscribe(room, emitter2)
 
@@ -151,6 +176,29 @@ class SSEHelperTest {
     }
 
     @Test
+    fun `emitMissedMessages should unsubscribe on error`() {
+        val emitter = mock<SseEmitter>()
+        val lastEventId = "1"
+        val message1 = SSEFanoutMessage(room, eventName, data)
+
+        whenever(
+            sseRedisCacheStore.getAllMessagesByRoomAfterTimestamp(
+                room,
+                OffsetDateTime.ofInstant(
+                    Instant.ofEpochMilli(lastEventId.toLong()),
+                    ZoneOffset.UTC,
+                ),
+            ),
+        ).thenReturn(listOf(message1))
+
+        whenever(emitter.send(any<SseEmitter.SseEventBuilder>())).thenThrow(IOException("Test exception"))
+
+        assertDoesNotThrow {
+            helper.emitMissedMessages(room, lastEventId, emitter)
+        }
+    }
+
+    @Test
     fun `emits heartbeat messages to keep the connection alive`() {
         val emitter = mock<SseEmitter>()
 
@@ -158,5 +206,17 @@ class SSEHelperTest {
         helper.heartbeat()
 
         verify(emitter, times(2)).send(any<SseEmitter.SseEventBuilder>())
+    }
+
+    @Test
+    fun `heartbeat should unsubscribe emitters on error`() {
+        val emitter = mock<SseEmitter>()
+
+        helper.subscribe(room, emitter)
+        whenever(emitter.send(any<SseEmitter.SseEventBuilder>())).thenThrow(RuntimeException("Test exception"))
+
+        assertDoesNotThrow {
+            helper.heartbeat()
+        }
     }
 }

@@ -31,21 +31,19 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { MemberLoader } from "@/app/_lib/util/MemberLoader";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 
 type Props = {
   form: UseFormReturn<SettingsFormType>;
   isUpdateLoading?: boolean;
-  isContestEnded?: boolean;
 };
 
-export function SettingsPageMembersTab({
-  form,
-  isUpdateLoading,
-  isContestEnded,
-}: Props) {
+export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
   const loadCsvState = useLoadableState();
   const memberFileInputRef = useRef<HTMLInputElement>(null);
   const toast = useToast();
+  const contestStatus = useContestStatusWatcher();
 
   const { fields, append, remove, replace } = useFieldArray({
     control: form.control,
@@ -71,8 +69,10 @@ export function SettingsPageMembersTab({
     }
   }
 
+  const hasContestEnded = contestStatus === ContestStatus.ENDED;
+
   return (
-    <FieldSet disabled={isUpdateLoading || isContestEnded}>
+    <FieldSet disabled={isUpdateLoading || hasContestEnded}>
       <div className="flex flex-col gap-4" data-testid="settings-members-tab">
         <div className="flex justify-end">
           <Input

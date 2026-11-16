@@ -2,9 +2,35 @@ import { SubmissionJudgeForm } from "@/app/[slug]/(dashboard)/_common/submission
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 
 describe("SubmissionJudgeForm", () => {
-  it("defaults answer and validates required answer", () => {
-    expect(SubmissionJudgeForm.getDefault().answer).toBe("");
-    expect(SubmissionJudgeForm.schema.validate({ answer: SubmissionAnswer.ACCEPTED }).error).toBeUndefined();
-    expect(SubmissionJudgeForm.schema.validate({ answer: "" }).error?.message).toBe("Answer is Required");
+  const validData = {
+    answer: SubmissionAnswer.ACCEPTED,
+  };
+
+  describe("schema", () => {
+    it("validates correct data", () => {
+      expect(
+        SubmissionJudgeForm.schema.validate(validData).error,
+      ).toBeUndefined();
+    });
+
+    it("validates answer", () => {
+      expect(
+        SubmissionJudgeForm.schema.validate({ ...validData, answer: undefined })
+          .error?.message,
+      ).toContain("Answer is Required");
+      expect(
+        SubmissionJudgeForm.schema.validate({ ...validData, answer: "" }).error
+          ?.message,
+      ).toContain("Answer is Required");
+    });
+  });
+
+  describe("getDefault", () => {
+    it("returns default data", () => {
+      const defaultData = SubmissionJudgeForm.getDefault();
+      expect(defaultData).toEqual({
+        answer: "",
+      });
+    });
   });
 });

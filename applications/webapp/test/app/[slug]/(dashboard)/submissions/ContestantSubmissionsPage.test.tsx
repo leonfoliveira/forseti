@@ -3,25 +3,48 @@ import { screen } from "@testing-library/react";
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockContestantDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",
   () => ({
-    SubmissionsPage: (props: {
-      submissions: unknown[];
-      problems: unknown[];
-      memberSubmissions?: unknown[];
-    }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.memberSubmissions?.length}:${props.problems.length}`}</div>
-    ),
+    SubmissionsPage: jest.fn(),
   }),
 );
 
 describe("ContestantSubmissionsPage", () => {
   it("passes member submissions and enables submission creation", async () => {
-    await renderWithProviders(<ContestantSubmissionsPage />, {
-      contestantDashboard: MockContestantDashboardResponseDTO() as never,
+    const contestantDashboard = MockContestantDashboardResponseDTO();
+
+    const { store } = await renderWithProviders(<ContestantSubmissionsPage />, {
+      contestantDashboard,
     });
-    expect(screen.getByTestId("submission-props")).toHaveTextContent("1:1:1");
+
+    expect(SubmissionsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submissions: contestantDashboard.submissions,
+        problems: contestantDashboard.problems,
+        memberSubmissions: contestantDashboard.memberSubmissions,
+        onCreate: expect.any(Function),
+        onCreatePrintRequest: expect.any(Function),
+      }),
+      undefined,
+    );
+
+    const onCreate = (SubmissionsPage as jest.Mock).mock.calls[0][0].onCreate;
+    const onCreatePrintRequest = (SubmissionsPage as jest.Mock).mock.calls[0][0]
+      .onCreatePrintRequest;
+
+    const newSubmission = { id: "new-submission" };
+    onCreate(newSubmission);
+    expect(store.getState().contestantDashboard.submissions).toContainEqual(
+      newSubmission,
+    );
+
+    const newPrintRequest = { id: "new-print-request" };
+    onCreatePrintRequest(newPrintRequest);
+    expect(store.getState().contestantDashboard.printRequests).toContainEqual(
+      newPrintRequest,
+    );
   });
 });

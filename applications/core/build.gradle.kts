@@ -58,6 +58,7 @@ dependencies {
 
     testImplementation(libs.jacksonModuleKotlin)
     testImplementation(libs.mockitoKotlin)
+    testImplementation(libs.opentelemetrySdkTesting)
     testImplementation(libs.springBootStarterTest)
     testImplementation(libs.springBootTestcontainers)
 
@@ -100,12 +101,24 @@ flyway {
 }
 
 kover {
+    currentProject {
+        sources {
+            includedSourceSets.add("main")
+        }
+    }
     reports {
         filters {
             excludes {
                 annotatedBy(
                     "org.springframework.context.annotation.Configuration",
                     "com.forsetijudge.core.util.SkipCoverage",
+                )
+                classes(
+                    "com.forsetijudge.core.AppKt",
+                    "com.forsetijudge.core.AppKtKt",
+                )
+                packages(
+                    "com.forsetijudge.core.port",
                 )
             }
         }

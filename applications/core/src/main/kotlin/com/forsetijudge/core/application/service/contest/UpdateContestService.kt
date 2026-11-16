@@ -24,12 +24,12 @@ import com.forsetijudge.core.port.output.repository.MemberRepository
 import com.forsetijudge.core.port.output.repository.ProblemRepository
 import com.forsetijudge.core.util.SafeLogger
 import jakarta.validation.Valid
-import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import java.time.temporal.ChronoUnit
 import java.util.UUID
+import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
 @Validated
@@ -222,8 +222,8 @@ class UpdateContestService(
                 color = problemDTO.color.lowercase(),
                 title = problemDTO.title,
                 description = description,
-                timeLimitMs = problemDTO.timeLimit,
-                memoryLimitMb = problemDTO.memoryLimit,
+                timeLimitMs = problemDTO.timeLimitMs,
+                memoryLimitMb = problemDTO.memoryLimitMb,
                 testCases = testCases,
                 contest = contest,
             )
@@ -292,8 +292,8 @@ class UpdateContestService(
 
         problem.letter = problemDTO.letter
         problem.title = problemDTO.title
-        problem.timeLimitMs = problemDTO.timeLimit
-        problem.memoryLimitMb = problemDTO.memoryLimit
+        problem.timeLimitMs = problemDTO.timeLimitMs
+        problem.memoryLimitMb = problemDTO.memoryLimitMb
 
         return problem
     }

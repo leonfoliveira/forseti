@@ -168,7 +168,7 @@ export function Header() {
                 className="text-muted-foreground text-end text-xs font-bold"
                 data-testid="member-type"
               >
-                {session.member.type}
+                {EnumeratedTextUtil.getMemberType(session.member.type)}
               </p>
             </div>
             <Tooltip>

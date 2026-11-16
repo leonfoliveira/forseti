@@ -1,13 +1,11 @@
 package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.util.Metrics
-import com.forsetijudge.core.util.SkipCoverage
 import io.opentelemetry.api.common.Attributes
-import org.springframework.stereotype.Component
 import java.util.UUID
+import org.springframework.stereotype.Component
 
 @Component
-@SkipCoverage
 class MetricsCollector {
     fun incrementSubmissionsCreated(contestId: UUID) {
         Metrics.submissionsCreated.add(1, Attributes.builder().put("contestId", contestId.toString()).build())

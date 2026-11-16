@@ -2,7 +2,6 @@ import {
   StaffDashboardState,
   StaffDashboardSlice,
 } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
-import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
   MockStaffDashboardResponseDTO,
@@ -21,10 +20,7 @@ describe("StaffDashboardSlice", () => {
       undefined,
       StaffDashboardSlice.actions.set(stateWithData),
     );
-    expect(state).toEqual({
-      ...stateWithData,
-      listenerStatus: ListenerStatus.CONNECTED,
-    });
+    expect(state).toEqual(stateWithData);
   });
 
   it("should reset the state", () => {

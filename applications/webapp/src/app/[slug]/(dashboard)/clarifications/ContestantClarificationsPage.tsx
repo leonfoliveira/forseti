@@ -18,7 +18,6 @@ export function ContestantClarificationsPage() {
     <ClarificationsPage
       problems={problems}
       clarifications={clarifications}
-      canCreate
       onCreate={(clarification: ClarificationResponseDTO) => {
         dispatch(
           ContestantDashboardSlice.actions.mergeClarification(clarification),

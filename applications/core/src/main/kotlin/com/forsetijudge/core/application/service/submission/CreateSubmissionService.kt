@@ -67,16 +67,17 @@ class CreateSubmissionService(
         val problem =
             problemRepository.findByIdAndContestId(command.problemId, command.contestId)
                 ?: throw NotFoundException("Could not find problem with id = ${command.problemId} in contest")
+
+        if (!contest.hasLanguage(command.language)) {
+            throw ForbiddenException("Language ${command.language} is not allowed for this contest")
+        }
+
         val code =
             attachmentCommiter.commit(
                 attachmentId = command.code.id,
                 contestId = command.contestId,
                 context = Attachment.Context.SUBMISSION_CODE,
             )
-
-        if (!contest.hasLanguage(command.language)) {
-            throw ForbiddenException("Language ${command.language} is not allowed for this contest")
-        }
 
         val submission =
             Submission(

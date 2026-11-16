@@ -3,24 +3,26 @@ import { screen } from "@testing-library/react";
 import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProblemsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
-  ProblemsPage: ({
-    problems,
-    canDownloadTestCases,
-  }: {
-    problems: unknown[];
-    canDownloadTestCases?: boolean;
-  }) => (
-    <div data-testid="problem-props">{`${problems.length}:${Boolean(canDownloadTestCases)}`}</div>
-  ),
+  ProblemsPage: jest.fn(),
 }));
 
 describe("AdminProblemsPage", () => {
   it("passes the admin problem list and allows test-case downloads", async () => {
+    const adminDashboard = MockAdminDashboardResponseDTO();
+
     await renderWithProviders(<AdminProblemsPage />, {
-      adminDashboard: MockAdminDashboardResponseDTO() as never,
+      adminDashboard,
     });
-    expect(screen.getByTestId("problem-props")).toHaveTextContent("1:true");
+
+    expect(ProblemsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        problems: adminDashboard.problems,
+        canDownloadTestCases: true,
+      }),
+      undefined,
+    );
   });
 });

@@ -4,6 +4,7 @@ import com.forsetijudge.core.application.TestAuthentication
 import com.forsetijudge.core.application.helper.leaderboard.LeaderboardBuilder
 import com.forsetijudge.core.domain.entity.Member
 import com.forsetijudge.core.domain.exception.ForbiddenException
+import com.forsetijudge.core.domain.exception.NotFoundException
 import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import com.forsetijudge.core.port.input.usecase.dashboard.BuildJudgeDashboardUseCase
@@ -60,16 +61,55 @@ class BuildJudgeDashboardServiceTest {
     }
 
     @Test
-    fun `rejects admin role`() {
+    fun `throws NotFoundException when contest does not exist`() {
         val contest = MockEntityFactory.contest()
-        val admin = MockEntityFactory.member(contest = contest, type = Member.Type.ADMIN)
-        TestAuthentication.setMember(admin)
+        val judge = MockEntityFactory.member(type = Member.Type.JUDGE)
+        TestAuthentication.setMember(judge)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(BuildJudgeDashboardUseCase.Command(contest.id))
+        }
+        verify(submissionRepository, never()).findAllByContestId(any())
+    }
+
+    @Test
+    fun `throws NotFoundException when member does not exist`() {
+        val contest = MockEntityFactory.contest()
+        val judge = MockEntityFactory.member(type = Member.Type.JUDGE)
+        TestAuthentication.setMember(judge)
         whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
-        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(admin.id, contest.id)).thenReturn(admin)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(null)
+
+        assertThrows(NotFoundException::class.java) {
+            service.execute(BuildJudgeDashboardUseCase.Command(contest.id))
+        }
+        verify(submissionRepository, never()).findAllByContestId(any())
+    }
+
+    @Test
+    fun `throws ForbiddenException when member does not belong to contest`() {
+        val contest = MockEntityFactory.contest()
+        val judge = MockEntityFactory.member(type = Member.Type.JUDGE, contest = MockEntityFactory.contest())
+        TestAuthentication.setMember(judge)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(judge.id, contest.id)).thenReturn(judge)
 
         assertThrows(ForbiddenException::class.java) {
             service.execute(BuildJudgeDashboardUseCase.Command(contest.id))
         }
-        verify(leaderboardBuilder, never()).build(any(), any())
+    }
+
+    @Test
+    fun `throws ForbiddenException when member is not a judge`() {
+        val contest = MockEntityFactory.contest()
+        val contestant = MockEntityFactory.member(contest = contest, type = Member.Type.CONTESTANT)
+        TestAuthentication.setMember(contestant)
+        whenever(contestRepository.findByIdNullable(contest.id)).thenReturn(contest)
+        whenever(memberRepository.findByIdAndContestIdOrContestIsNull(contestant.id, contest.id)).thenReturn(contestant)
+
+        assertThrows(ForbiddenException::class.java) {
+            service.execute(BuildJudgeDashboardUseCase.Command(contest.id))
+        }
     }
 }

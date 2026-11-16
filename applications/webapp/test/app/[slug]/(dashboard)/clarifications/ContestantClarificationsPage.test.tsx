@@ -20,20 +20,31 @@ describe("ContestantClarificationsPage", () => {
       MockClarificationResponseDTO(),
       MockClarificationResponseDTO(),
     ];
-    await renderWithProviders(<ContestantClarificationsPage />, {
-      contestantDashboard: {
-        problems,
-        clarifications,
-      },
-    } as any);
+    const { store } = await renderWithProviders(
+      <ContestantClarificationsPage />,
+      {
+        contestantDashboard: {
+          problems,
+          clarifications,
+        },
+      } as any,
+    );
 
     expect(ClarificationsPage).toHaveBeenCalledWith(
       expect.objectContaining({
         problems,
         clarifications,
-        canCreate: true,
+        onCreate: expect.any(Function),
       }),
       undefined,
+    );
+
+    const onCreate = (ClarificationsPage as jest.Mock).mock.calls[0][0]
+      .onCreate;
+    const newClarification = MockClarificationResponseDTO();
+    onCreate(newClarification);
+    expect(store.getState().contestantDashboard.clarifications).toContainEqual(
+      newClarification,
     );
   });
 });

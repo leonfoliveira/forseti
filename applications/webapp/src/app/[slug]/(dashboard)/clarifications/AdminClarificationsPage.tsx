@@ -16,7 +16,6 @@ export function AdminClarificationsPage() {
     <ClarificationsPage
       problems={problems}
       clarifications={clarifications}
-      canAnswer
       onAnswer={(clarification: ClarificationResponseDTO) => {
         dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
       }}

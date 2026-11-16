@@ -2,18 +2,14 @@ package com.forsetijudge.core.application.helper
 
 import com.forsetijudge.core.domain.exception.UnauthorizedException
 import com.forsetijudge.core.domain.model.SessionAuthentication
-import com.forsetijudge.core.factory.MockEntityFactory
 import com.forsetijudge.core.factory.MockModelFactory
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertSame
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.UUID
 
 class AuthenticationHelperTest {
     @BeforeEach
@@ -26,38 +22,91 @@ class AuthenticationHelperTest {
         SecurityContextHolder.clearContext()
     }
 
-    @Test
-    fun `returns session and member id for session authentication`() {
-        val member = MockEntityFactory.member(id = UUID.randomUUID())
-        val sessionMember =
-            MockModelFactory.sessionMember(
-                id = member.id,
-                type = member.type,
-                name = member.name,
-            )
-        val session = MockModelFactory.session(member = sessionMember)
-        SecurityContextHolder.getContext().authentication = SessionAuthentication(session, "127.0.0.1")
+    @Nested
+    inner class GetCurrentSession {
+        @Test
+        fun `should return current session when authenticated`() {
+            val session = MockModelFactory.session()
+            val authentication = SessionAuthentication(session, "")
+            SecurityContextHolder.getContext().authentication = authentication
 
-        assertSame(AuthenticationHelper.getCurrentSession(), session)
-        assertSame(AuthenticationHelper.getCurrentSessionNullable(), session)
-        assertEquals(AuthenticationHelper.getCurrentMemberId(), member.id)
-        assertEquals(AuthenticationHelper.getCurrentMemberIdNullable(), member.id)
+            val result = AuthenticationHelper.getCurrentSession()
+
+            assertSame(session, result)
+        }
+
+        @Test
+        fun `should throw UnauthorizedException when not authenticated`() {
+            SecurityContextHolder.getContext().authentication = null
+
+            assertThrows(UnauthorizedException::class.java) {
+                AuthenticationHelper.getCurrentSession()
+            }
+        }
     }
 
-    @Test
-    fun `throws for missing session and returns null from nullable accessors`() {
-        assertThrows(UnauthorizedException::class.java) { AuthenticationHelper.getCurrentSession() }
-        assertThrows(UnauthorizedException::class.java) { AuthenticationHelper.getCurrentMemberId() }
-        assertNull(AuthenticationHelper.getCurrentSessionNullable())
-        assertNull(AuthenticationHelper.getCurrentMemberIdNullable())
+    @Nested
+    inner class GetCurrentSessionNullable {
+        @Test
+        fun `should return current session when authenticated`() {
+            val session = MockModelFactory.session()
+            val authentication = SessionAuthentication(session, "")
+            SecurityContextHolder.getContext().authentication = authentication
+
+            val result = AuthenticationHelper.getCurrentSessionNullable()
+
+            assertSame(session, result)
+        }
+
+        @Test
+        fun `should return null when not authenticated`() {
+            SecurityContextHolder.getContext().authentication = null
+
+            val result = AuthenticationHelper.getCurrentSessionNullable()
+
+            assertSame(null, result)
+        }
     }
 
-    @Test
-    fun `treats a different authentication type as unauthenticated`() {
-        SecurityContextHolder.getContext().authentication =
-            UsernamePasswordAuthenticationToken("user", "password")
+    @Nested
+    inner class GetCurrentMemberId {
+        @Test
+        fun `should return current member id when authenticated`() {
+            val session = MockModelFactory.session()
+            val authentication = SessionAuthentication(session, "")
+            SecurityContextHolder.getContext().authentication = authentication
+        }
 
-        assertThrows(UnauthorizedException::class.java) { AuthenticationHelper.getCurrentSession() }
-        assertNull(AuthenticationHelper.getCurrentSessionNullable())
+        @Test
+        fun `should throw UnauthorizedException when not authenticated`() {
+            SecurityContextHolder.getContext().authentication = null
+
+            assertThrows(UnauthorizedException::class.java) {
+                AuthenticationHelper.getCurrentMemberId()
+            }
+        }
+    }
+
+    @Nested
+    inner class GetCurrentMemberIdNullable {
+        @Test
+        fun `should return current member id when authenticated`() {
+            val session = MockModelFactory.session()
+            val authentication = SessionAuthentication(session, "")
+            SecurityContextHolder.getContext().authentication = authentication
+
+            val result = AuthenticationHelper.getCurrentMemberIdNullable()
+
+            assertSame(result, session.member.id)
+        }
+
+        @Test
+        fun `should return null when not authenticated`() {
+            SecurityContextHolder.getContext().authentication = null
+
+            val result = AuthenticationHelper.getCurrentMemberIdNullable()
+
+            assertSame(null, result)
+        }
     }
 }

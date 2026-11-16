@@ -1,14 +1,15 @@
 package com.forsetijudge.core.domain.model
 
 import com.forsetijudge.core.domain.entity.Member
+import com.forsetijudge.core.util.IdGenerator
 import java.time.OffsetDateTime
 import java.util.UUID
 
 data class Session(
-    val id: UUID,
-    val contestId: UUID?,
+    val id: UUID = IdGenerator.getUUID(),
+    val contestId: UUID? = null,
     val member: Member,
-    val csrfToken: UUID,
+    val csrfToken: UUID = IdGenerator.getUUID(),
     val expiresAt: OffsetDateTime,
 ) {
     data class Member(

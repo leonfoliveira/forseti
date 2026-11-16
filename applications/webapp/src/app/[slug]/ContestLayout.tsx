@@ -44,7 +44,7 @@ export function ContestLayout() {
       } catch (error) {
         await initState.fail(error, {
           [UnauthorizedException.name]: () => {
-            const signInPath = `/${slug}/sign-in`;
+            const signInPath = routes.CONTEST_SIGN_IN(slug);
             if (!pathname.startsWith(signInPath)) {
               navigate(signInPath, { replace: true });
             }
