@@ -113,7 +113,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer
           onAnswer={() => {}}
           onPublish={() => {}}
         />,
@@ -130,7 +129,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer
           onAnswer={() => {}}
           onPublish={() => {}}
         />,
@@ -152,7 +150,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer
           onAnswer={onAnswer}
           onPublish={() => {}}
         />,
@@ -190,7 +187,6 @@ describe("ClarificationsPageCard", () => {
         <ClarificationsPageCard
           clarification={clarification}
           contestId="test-contest"
-          canAnswer
           onAnswer={() => {}}
           onPublish={() => {}}
         />,
@@ -229,7 +225,6 @@ describe("ClarificationsPageCard", () => {
       <ClarificationsPageCard
         clarification={clarification}
         contestId="test-contest"
-        canAnswer
         onAnswer={() => {}}
         onPublish={onPublish}
       />,
@@ -256,7 +251,6 @@ describe("ClarificationsPageCard", () => {
       <ClarificationsPageCard
         clarification={clarification}
         contestId="test-contest"
-        canAnswer
         onAnswer={() => {}}
         onPublish={onPublish}
       />,

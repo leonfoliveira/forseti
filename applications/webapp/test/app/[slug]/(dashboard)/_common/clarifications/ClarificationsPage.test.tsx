@@ -50,7 +50,6 @@ describe("ClarificationsPage", () => {
       <ClarificationsPage
         problems={problems}
         clarifications={clarifications}
-        canCreate
         onCreate={() => {}}
       />,
       { contest },
@@ -72,7 +71,6 @@ describe("ClarificationsPage", () => {
       <ClarificationsPage
         problems={problems}
         clarifications={clarifications}
-        canCreate
         onCreate={() => {}}
       />,
       { contest: pastContestMetadata },
