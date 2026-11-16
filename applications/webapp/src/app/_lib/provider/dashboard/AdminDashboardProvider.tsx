@@ -7,11 +7,7 @@ import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import {
-  useAppDispatch,
-  useAppSelector,
-  useAppStore,
-} from "@/app/_lib/store/Store";
+import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
@@ -39,7 +35,6 @@ export function AdminDashboardProvider({
   const contest = useAppSelector((state) => state.contest);
   const state = useLoadableState({ isLoading: true });
   const dispatch = useAppDispatch();
-  const store = useAppStore();
   const toast = useToast();
   const dashboardReseter = useDashboardReseter();
 
@@ -64,7 +59,7 @@ export function AdminDashboardProvider({
         await Composition.adminDashboardRoomListener.subscribe(
           contest.id,
           {
-            LEADERBOARD_UPDATED: receiveLeaderboardPartial,
+            LEADERBOARD_UPDATED: receiveLeaderboardCell,
             SUBMISSION_CREATED: receiveSubmission,
             SUBMISSION_UPDATED: receiveSubmission,
             ANNOUNCEMENT_CREATED: receiveAnnouncement,
@@ -119,9 +114,9 @@ export function AdminDashboardProvider({
     };
   }, [session, contest.id]);
 
-  function receiveLeaderboardPartial(leaderboard: LeaderboardCellResponseDTO) {
-    console.debug("Received leaderboard cell update:", leaderboard);
-    dispatch(AdminDashboardSlice.actions.mergeLeaderboard(leaderboard));
+  function receiveLeaderboardCell(leaderboardCell: LeaderboardCellResponseDTO) {
+    console.debug("Received leaderboard cell update:", leaderboardCell);
+    dispatch(AdminDashboardSlice.actions.mergeLeaderboard(leaderboardCell));
   }
 
   function receiveSubmission(
