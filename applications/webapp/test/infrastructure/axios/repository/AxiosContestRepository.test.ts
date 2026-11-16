@@ -31,6 +31,25 @@ describe("AxiosContestRepository", () => {
     expect(client.get).toHaveBeenCalledWith("/v1/contests/slug/spring-contest");
   });
 
+  it.each(["freeze", "unfreeze"] as const)(
+    "sends the %s operation to the contest endpoint",
+    async (operation) => {
+      const contest = MockContestWithMembersAndProblemsDTO();
+      const client = { patch: jest.fn().mockResolvedValue({ data: contest }) };
+      const repository = new AxiosContestRepository(client as never);
+
+      const result =
+        operation === "freeze"
+          ? repository.freeze("contest-42")
+          : repository.unfreeze("contest-42");
+
+      await expect(result).resolves.toBe(contest);
+      expect(client.patch).toHaveBeenCalledWith(
+        `/v1/contests/contest-42:${operation}`,
+      );
+    },
+  );
+
   it.each(["force-start", "force-end"] as const)(
     "sends the %s operation to the contest endpoint",
     async (operation) => {

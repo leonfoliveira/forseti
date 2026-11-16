@@ -9,9 +9,7 @@ export default function ServerErrorPage() {
   const previousPath = searchParams.get("from");
 
   function handleRetry() {
-    if (previousPath) {
-      navigate(previousPath);
-    }
+    navigate(previousPath!!);
   }
 
   return (
