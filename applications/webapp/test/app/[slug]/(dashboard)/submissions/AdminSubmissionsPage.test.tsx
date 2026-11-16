@@ -3,28 +3,31 @@ import { screen } from "@testing-library/react";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/AdminSubmissionsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",
   () => ({
-    SubmissionsPage: (props: {
-      submissions: unknown[];
-      problems: unknown[];
-      canDownloadAny?: boolean;
-      canViewExecutions?: boolean;
-    }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}:${Boolean(props.canDownloadAny)}:${Boolean(props.canViewExecutions)}`}</div>
-    ),
+    SubmissionsPage: jest.fn(),
   }),
 );
 
 describe("AdminSubmissionsPage", () => {
   it("passes admin submission data and enables viewing and editing", async () => {
+    const adminDashboard = MockAdminDashboardResponseDTO();
+
     await renderWithProviders(<AdminSubmissionsPage />, {
-      adminDashboard: MockAdminDashboardResponseDTO() as never,
+      adminDashboard,
     });
-    expect(screen.getByTestId("submission-props")).toHaveTextContent(
-      "1:1:true:true",
+
+    expect(SubmissionsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submissions: adminDashboard.submissions,
+        problems: adminDashboard.problems,
+        canDownloadAny: true,
+        canViewExecutions: true,
+      }),
+      undefined,
     );
   });
 });

@@ -3,29 +3,31 @@ import { screen } from "@testing-library/react";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockJudgeDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",
   () => ({
-    SubmissionsPage: (props: {
-      submissions: unknown[];
-      problems: unknown[];
-      canDownloadAny?: boolean;
-      canViewExecutions?: boolean;
-      
-    }) => (
-      <div data-testid="submission-props">{`${props.submissions.length}:${props.problems.length}:${Boolean(props.canDownloadAny)}:${Boolean(props.canViewExecutions)}`}</div>
-    ),
+    SubmissionsPage: jest.fn(),
   }),
 );
 
 describe("JudgeSubmissionsPage", () => {
   it("passes judge submissions and enables viewing and editing", async () => {
+    const judgeDashboard = MockJudgeDashboardResponseDTO();
+
     await renderWithProviders(<JudgeSubmissionsPage />, {
-      judgeDashboard: MockJudgeDashboardResponseDTO() as never,
+      judgeDashboard,
     });
-    expect(screen.getByTestId("submission-props")).toHaveTextContent(
-      "1:1:true:true",
+
+    expect(SubmissionsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        submissions: judgeDashboard.submissions,
+        problems: judgeDashboard.problems,
+        canDownloadAny: true,
+        canViewExecutions: true,
+      }),
+      undefined,
     );
   });
 });

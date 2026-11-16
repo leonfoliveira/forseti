@@ -3,24 +3,26 @@ import { screen } from "@testing-library/react";
 import { JudgeProblemsPage } from "@/app/[slug]/(dashboard)/problems/JudgeProblemsPage";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { MockJudgeDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
-  ProblemsPage: ({
-    problems,
-    canDownloadTestCases,
-  }: {
-    problems: unknown[];
-    canDownloadTestCases?: boolean;
-  }) => (
-    <div data-testid="problem-props">{`${problems.length}:${Boolean(canDownloadTestCases)}`}</div>
-  ),
+  ProblemsPage: jest.fn(),
 }));
 
 describe("JudgeProblemsPage", () => {
   it("passes judge problems and allows test-case downloads", async () => {
+    const judgeDashboard = MockJudgeDashboardResponseDTO();
+
     await renderWithProviders(<JudgeProblemsPage />, {
-      judgeDashboard: MockJudgeDashboardResponseDTO() as never,
+      judgeDashboard,
     });
-    expect(screen.getByTestId("problem-props")).toHaveTextContent("1:true");
+
+    expect(ProblemsPage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        problems: judgeDashboard.problems,
+        canDownloadTestCases: true,
+      }),
+      undefined,
+    );
   });
 });
