@@ -43,6 +43,7 @@ jobs:
         run: |
           # Run lint, and tests
           npm run lint
+          npm run i18n:lint
           npm run test:coverage
 
       - name: Build

@@ -20,6 +20,7 @@
         },
         "Header": {
           "brand": "Forseti",
+          "altLogo": "Logo of Forseti",
           "toggleTheme": "Toggle theme",
           "signOut": "Sign out",
           "signIn": "Sign in"
@@ -39,6 +40,11 @@
         "ErrorPage": {
           "message": "An unexpected error has occurred on the server.",
           "tryAgain": "Try again."
+        }
+      },
+      "shadcn": {
+        "dialog": {
+          "close": "Close"
         }
       }
     },
@@ -226,6 +232,9 @@
           "ProblemsPage": {
             "testCasesDownloadFailed": "Failed to download test cases",
             "descriptionDownloadFailed": "Failed to download problem description",
+            "accepted": "Accepted",
+            "attempts": "{{count}} Attempt(s)",
+            "notAttempted": "Not Attempted",
             "pageTitle": "Forseti - Problems",
             "pageDescription": "View all problems for the contest.",
             "headerProblem": "Problem",
@@ -234,6 +243,8 @@
             "headerStatus": "Status",
             "headerTestCases": "Test Cases",
             "headerDescription": "Description",
+            "downloadCSV": "{{icon}} CSV",
+            "downloadPDF": "{{icon}} PDF",
             "help": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
           }
         },
@@ -403,7 +414,8 @@
             "headerTestCases": "Test Cases",
             "headerMaxTime": "Max Time (CPU / Clock)",
             "headerMaxPeakMemory": "Max Peak Memory",
-            "headerDetails": "Details"
+            "headerDetails": "Details",
+            "buttonDownload": "{{icon} CSV"
           },
           "SubmissionsPageActionJudge": {
             "judgeSuccess": "Submission judged successfully",
@@ -445,6 +457,8 @@
       "about": {
         "pageTitle": "Forseti - About",
         "pageDescription": "About the contest",
+        "labelStartAt": "Start At",
+        "labelEndAt": "End At",
         "labelLanguages": "Languages",
         "labelIsAutoJudgeEnabled": "Auto Judge Enabled",
         "labelIsClarificationEnabled": "Clarification Enabled",
@@ -491,6 +505,7 @@
   "HomePage": {
     "pageTitle": "Forseti",
     "pageDescription": "Forseti application",
+    "altLogo": "Forseti Logo",
     "welcome": "Welcome to Forseti Judge",
     "instructions1": "To access a contest, please use the correct contest URL format:",
     "path": "'/{contest-slug}'",

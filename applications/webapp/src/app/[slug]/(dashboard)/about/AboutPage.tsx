@@ -60,13 +60,17 @@ export default function DashboardAboutPage() {
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-[repeat(2,1fr)] gap-6 text-center">
                 <section>
-                  <p className="mb-2 font-medium">Start At</p>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage id="[slug].(dashboard).about.labelStartAt" />
+                  </p>
                   <p className="text-sm" data-testid="start-at">
                     <FormattedDateTime timestamp={contest.startAt} />
                   </p>
                 </section>
                 <section>
-                  <p className="mb-2 font-medium">End At</p>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage id="[slug].(dashboard).about.labelEndAt" />
+                  </p>
                   <p className="text-sm" data-testid="end-at">
                     <FormattedDateTime timestamp={contest.endAt} />
                   </p>

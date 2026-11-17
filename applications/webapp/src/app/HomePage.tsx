@@ -1,4 +1,5 @@
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { useTranslation } from "react-i18next";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
 
@@ -8,6 +9,7 @@ import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
  */
 export default function HomePage() {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Page title="HomePage.pageTitle" description="HomePage.pageDescription">
@@ -15,7 +17,7 @@ export default function HomePage() {
         <div className="text-center">
           <img
             src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
-            alt="Logo of forseti"
+            alt={t("HomePage.altLogo")}
             width={300}
             height={300}
             data-testid="logo-image"

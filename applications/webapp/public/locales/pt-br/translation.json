@@ -1,1 +1,515 @@
-{}
+{
+  "brand": "Forseti",
+  "_lib": {
+    "component": {
+      "feedback": {
+        "ConfirmationDialog": {
+          "cancel": "Cancelar",
+          "confirm": "Confirmar"
+        },
+        "DisconnectionBanner": {
+          "message": "Conexão com o servidor perdida. Atualizações em tempo real indisponíveis. Tentando reconectar..."
+        },
+        "FreezeBanner": {
+          "message": "Competição congelada."
+        }
+      },
+      "layout": {
+        "Footer": {
+          "message": "Forseti {{version}}"
+        },
+        "Header": {
+          "brand": "Forseti",
+          "altLogo": "Logo do Forseti",
+          "toggleTheme": "Alternar tema",
+          "signOut": "Sair",
+          "signIn": "Entrar"
+        },
+        "Navbar": {
+          "leaderboard": "Placar",
+          "problems": "Problemas",
+          "submissions": "Submissões",
+          "announcements": "Avisos",
+          "clarifications": "Esclarecimentos",
+          "printRequests": "Pedidos de Impressão",
+          "settings": "Configurações",
+          "about": "Sobre"
+        }
+      },
+      "page": {
+        "ErrorPage": {
+          "message": "Ocorreu um erro inesperado no servidor.",
+          "tryAgain": "Tente novamente."
+        }
+      },
+      "shadcn": {
+        "dialog": {
+          "close": "Fechar"
+        }
+      }
+    },
+    "provider": {
+      "dashboard": {
+        "AdminDashboardProvider": {
+          "newFailedSubmission": "Nova submissão com falha",
+          "newAnnouncement": "Novo aviso: {{text}}",
+          "newClarification": "Nova dúvida",
+          "clarificationPublished": "Um esclarecimento foi publicado",
+          "contestFrozen": "A competição foi congelada",
+          "contestUnfrozen": "A competição foi descongelada"
+        },
+        "ContestDashboardProvider": {
+          "memberSubmissionUpdate": "Problema {{letter}}: {{answer}}",
+          "newAnnouncement": "Novo aviso: {{text}}",
+          "clarificationAnswered": "Dúvida respondida",
+          "clarificationPublished": "Um esclarecimento foi publicado",
+          "contestFrozen": "A competição foi congelada",
+          "contestUnfrozen": "A competição foi descongelada"
+        },
+        "JudgeDashboardProvider": {
+          "newFailedSubmission": "Nova submissão com falha",
+          "newAnnouncement": "Novo aviso: {{text}}",
+          "newClarification": "Nova dúvida",
+          "clarificationPublished": "Um esclarecimento foi publicado",
+          "contestFrozen": "A competição foi congelada",
+          "contestUnfrozen": "A competição foi descongelada"
+        },
+        "spectatorDashboardProvider": {
+          "newAnnouncement": "Novo aviso: {{text}}",
+          "clarificationPublished": "Um esclarecimento foi publicado",
+          "contestFrozen": "A competição foi congelada",
+          "contestUnfrozen": "A competição foi descongelada"
+        },
+        "staffDashboardProvider": {
+          "newAnnouncement": "Novo aviso: {{text}}",
+          "newClarification": "Nova dúvida",
+          "clarificationPublished": "Um esclarecimento foi publicado",
+          "contestFrozen": "A competição foi congelada",
+          "contestUnfrozen": "A competição foi descongelada"
+        }
+      }
+    },
+    "util": {
+      "i18nUtil": {
+        "contestStatus": {
+          "notStarted": "Não Iniciada",
+          "inProgress": "Em Andamento",
+          "ended": "Encerrada"
+        },
+        "memberType": {
+          "root": "Root",
+          "admin": "Administrador",
+          "judge": "Juiz",
+          "staff": "Equipe",
+          "contestant": "Competidor",
+          "unofficialContestant": "Competidor Não Oficial"
+        },
+        "submissionStatus": {
+          "judged": "Julgado",
+          "failed": "Falhou",
+          "judging": "Julgando"
+        },
+        "submissionAnswer": {
+          "accepted": "Aceito",
+          "wrongAnswer": "Resposta Incorreta",
+          "compilationError": "Erro de Compilação",
+          "runtimeError": "Erro em Tempo de Execução",
+          "timeLimitExceeded": "Tempo Limite Excedido",
+          "memoryLimitExceeded": "Limite de Memória Excedido"
+        },
+        "submissionLanguage": {
+          "cpp17": "C++ 17",
+          "java21": "Java 21",
+          "python312": "Python 3.12",
+          "node22": "Node 22"
+        },
+        "printRequestStatus": {
+          "pending": "Pendente",
+          "completed": "Concluído",
+          "refused": "Recusado"
+        }
+      }
+    }
+  },
+  "[slug]": {
+    "(dashboard)": {
+      "_common": {
+        "announcements": {
+          "AnnouncementForm": {
+            "textRequired": "O texto é obrigatório",
+            "textTooLong": "O texto não pode exceder 500 caracteres"
+          },
+          "AnnouncementsPage": {
+            "pageTitle": "Forseti - Avisos",
+            "pageDescription": "Visualize e crie avisos da competição.",
+            "newAnnouncement": "Novo aviso",
+            "emptyTitle": "Nenhum aviso ainda",
+            "emptyDescription": "Os avisos aparecerão aqui assim que forem criados.",
+            "help": "Esta página exibe avisos importantes da competição enviados por juízes e organizadores. Os avisos podem incluir atualizações da competição, esclarecimentos que afetam todos os competidores, mudanças de cronograma ou outras informações importantes."
+          },
+          "AnnouncementsPageForm": {
+            "createSuccessfull": "Aviso criado com sucesso",
+            "createFailed": "Falha ao criar aviso",
+            "title": "Criar Aviso",
+            "subtitle": "Escreva e transmita um novo aviso para todos os participantes.",
+            "text": "Texto",
+            "cancel": "Cancelar",
+            "broadcast": "Transmitir"
+          }
+        },
+        "clarifications": {
+          "ClarificationForm": {
+            "textRequired": "O texto é obrigatório",
+            "textTooLong": "O texto não pode exceder 500 caracteres"
+          },
+          "ClarificationAnswerForm": {
+            "textRequired": "O texto é obrigatório",
+            "textTooLong": "O texto não pode exceder 255 caracteres"
+          },
+          "ClarificationPage": {
+            "pageTitle": "Forseti - Esclarecimentos",
+            "pageDescription": "Visualize e solicite esclarecimentos sobre os problemas da competição.",
+            "newClarification": "Novo esclarecimento",
+            "emptyTitle": "Nenhum esclarecimento ainda",
+            "emptyDescription": "Os esclarecimentos aparecerão aqui assim que forem solicitados.",
+            "help": "Esta página exibe esclarecimentos sobre os problemas da competição. Os competidores podem solicitar esclarecimentos, e os juízes fornecerão respostas oficiais. Todos os esclarecimentos e respostas são visíveis para todos os competidores para garantir a imparcialidade."
+          },
+          "ClarificationsPageCard": {
+            "answerSuccess": "Esclarecimento respondido com sucesso",
+            "answerFailed": "Falha ao responder esclarecimento",
+            "publishSuccess": "Esclarecimento publicado com sucesso",
+            "publishFailed": "Falha ao publicar esclarecimento",
+            "problem": "Problema {{letter}}",
+            "public": "Público",
+            "private": "Privado",
+            "publish": "Publicar",
+            "answer": "Responder",
+            "publishClarification": "Publicar esclarecimento",
+            "dialogDescription": "Tem certeza de que deseja publicar este esclarecimento? Ele ficará visível para todos os participantes."
+          },
+          "ClarificationsPageForm": {
+            "createSuccessfull": "Esclarecimento criado com sucesso",
+            "createFailed": "Falha ao criar esclarecimento",
+            "title": "Criar Esclarecimento",
+            "subtitle": "Solicite um novo esclarecimento sobre os problemas da competição.",
+            "problem": "Problema",
+            "generalQuestion": "Nenhum (Questão geral)",
+            "question": "Questão",
+            "cancel": "Cancelar",
+            "submit": "Enviar"
+          }
+        },
+        "leaderboard": {
+          "LeaderboardPage": {
+            "pageTitle": "Forseti - Placar",
+            "pageDescription": "Visualize o placar da competição.",
+            "showUnnoficial": "Mostrar não oficiais",
+            "headerContestant": "Competidor",
+            "headerScore": "Pontuação",
+            "headerPenalty": "Tempo",
+            "unnoficialName": "(Não oficial) {{name}}",
+            "help": "As classificações são determinadas por: 1) Total de problemas resolvidos (mais é melhor); 2) Tempo total de penalidade (menos é melhor); 3) Horário das submissões aceitas (mais cedo é melhor); 4) Nome (alfabético). A penalidade inclui o horário da submissão mais 20 minutos para cada resposta incorreta antes da aceitação."
+          }
+        },
+        "printRequests": {
+          "PrintRequestsPage": {
+            "title": "Forseti - Pedidos de Impressão",
+            "subtitle": "Visualize e gerencie os pedidos de impressão.",
+            "headerTimestamp": "Horário",
+            "headerContestant": "Competidor",
+            "headerProblem": "Problema",
+            "headerStatus": "Status"
+          },
+          "PrintRequestsPageActions": {
+            "printFailed": "Falha ao imprimir",
+            "updateFailed": "Falha ao atualizar o status do pedido de impressão",
+            "print": "Imprimir",
+            "complete": "Concluir",
+            "reject": "Rejeitar"
+          }
+        },
+        "problems": {
+          "ProblemsPage": {
+            "testCasesDownloadFailed": "Falha ao baixar os casos de teste",
+            "descriptionDownloadFailed": "Falha ao baixar a descrição do problema",
+            "accepted": "Aceito",
+            "attempts": "{{count}} tentativa(s)",
+            "notAttempted": "Não Tentado",
+            "pageTitle": "Forseti - Problemas",
+            "pageDescription": "Visualize todos os problemas da competição.",
+            "headerProblem": "Problema",
+            "headerTimeLimit": "Tempo Limite",
+            "headerMemoryLimit": "Limite de Memória",
+            "headerStatus": "Status",
+            "headerTestCases": "Casos de Teste",
+            "headerDescription": "Descrição",
+            "downloadCSV": "{{icon}} CSV",
+            "downloadPDF": "{{icon}} PDF",
+            "help": "Aqui você pode visualizar todos os problemas da competição. Clique no botão PDF para baixar os enunciados dos problemas. Os limites de tempo e memória são exibidos para cada problema."
+          }
+        },
+        "settings": {
+          "SettingsForm": {
+            "slugRequired": "O identificador (slug) é obrigatório",
+            "slugTooLong": "O slug deve ter no máximo 30 caracteres",
+            "slugPatternInvalid": "O slug deve conter apenas caracteres alfanuméricos e hífens",
+            "titleRequired": "O título é obrigatório",
+            "titleTooLong": "O título deve ter no máximo 200 caracteres",
+            "languagesRequired": "Pelo menos uma linguagem é obrigatória",
+            "startAtRequired": "A data de início é obrigatória",
+            "startAtInvalid": "A data de início é inválida",
+            "startAtFuture": "A data de início deve estar no futuro",
+            "endAtRequired": "A data de término é obrigatória",
+            "endAtInvalid": "A data de término é inválida",
+            "endAtAfterStart": "A data de término deve ser posterior à data de início",
+            "autoFreezeAtInvalid": "A data de congelamento automático é inválida",
+            "autoFreezeAtBeforeStart": "A data de congelamento automático deve ser posterior à data de início",
+            "autoFreezeAtAfterEnd": "A data de congelamento automático deve ser anterior à data de término",
+            "autoFreezeAtFuture": "A data de congelamento automático deve estar no futuro",
+            "ipCIDRsInvalid": "Os CIDRs de IP são inválidos",
+            "problemColorRequired": "A cor do problema é obrigatória",
+            "problemColorInvalid": "A cor do problema é inválida",
+            "problemTitleRequired": "O título do problema é obrigatório",
+            "problemTitleTooLong": "O título do problema deve ter no máximo 200 caracteres",
+            "problemDescriptionRequired": "A descrição do problema é obrigatória",
+            "problemDescriptionTooLarge": "A descrição do problema deve ser menor que 10MB",
+            "problemDescriptionPDF": "A descrição do problema deve estar no formato PDF",
+            "problemTimeLimitRequired": "O limite de tempo do problema é obrigatório",
+            "problemTimeLimitPositive": "O limite de tempo do problema deve ser um número positivo",
+            "problemMemoryLimitRequired": "O limite de memória do problema é obrigatório",
+            "problemMemoryLimitPositive": "O limite de memória do problema deve ser um número positivo",
+            "problemTestCasesRequired": "Os casos de teste do problema são obrigatórios",
+            "problemTestCasesTooLarge": "Os casos de teste do problema devem ser menores que 10MB",
+            "problemTestCasesCSV": "Os casos de teste do problema devem estar no formato CSV",
+            "memberTypeRequired": "O tipo de membro é obrigatório",
+            "memberNameRequired": "O nome do membro é obrigatório",
+            "memberNameTooLong": "O nome do membro deve ter no máximo 50 caracteres",
+            "memberLoginRequired": "O login do membro é obrigatório",
+            "memberLoginTooLong": "O login do membro deve ter no máximo 30 caracteres",
+            "memberPasswordRequired": "A senha do membro é obrigatória",
+            "memberPasswordTooLong": "A senha do membro deve ter no máximo 30 caracteres",
+            "memberIpInvalid": "O IP do membro é inválido"
+          },
+          "SettingsPage": {
+            "saveSuccess": "Configurações salvas com sucesso",
+            "saveError": "Falha ao salvar as configurações",
+            "pageTitle": "Configurações",
+            "pageDescription": "Gerenciar configurações da competição",
+            "contestTab": "Competição",
+            "problemsTab": "Problemas",
+            "membersTab": "Membros",
+            "contestInProgress": "A competição está em andamento. Alterações podem afetar a competição atual.",
+            "reset": "Redefinir",
+            "save": "Salvar",
+            "dialogTitle": "Confirmar Alterações",
+            "dialogDescription": "Tem certeza de que deseja aplicar estas alterações?",
+            "dialogInProgressAlertTitle": "Competição em Andamento",
+            "dialogInProgressAlertDescription": "Esta competição está atualmente em andamento. Alterar as configurações pode afetar a experiência dos participantes. Revise suas alterações com cuidado antes de confirmar."
+          },
+          "SettingsPageContestTab": {
+            "unfrozenSuccess": "A competição foi descongelada com sucesso",
+            "frozenSuccess": "A competição foi congelada com sucesso",
+            "unfrozenFailed": "Falha ao descongelar a competição",
+            "frozenFailed": "Falha ao congelar a competição",
+            "forceStartSuccess": "A competição foi iniciada à força com sucesso",
+            "forceEndSuccess": "A competição foi encerrada à força com sucesso",
+            "forceStartFailed": "Falha ao iniciar a competição à força",
+            "forceEndFailed": "Falha ao encerrar a competição à força",
+            "labelSlug": "Slug",
+            "labelTitle": "Título",
+            "labelStartAt": "Início em",
+            "labelEndAt": "Término em",
+            "labelAutoFreezeAt": "Congelamento Automático em (opcional)",
+            "labelIpCIDRs": "CIDRs de IP (opcional)",
+            "labelLanguages": "Linguagens",
+            "descriptionLanguages": "Selecione as linguagens de programação que os participantes podem usar na competição",
+            "labelTimezone": "Fuso Horário",
+            "labelStatus": "Status",
+            "labelIsAutoJudgeEnabled": "Julgamento Automático Habilitado",
+            "labelIsClarificationEnabled": "Esclarecimentos Habilitados",
+            "labelIsPrintRequestEnabled": "Pedidos de Impressão Habilitados",
+            "labelIsSpectatorEnabled": "Espectadores Habilitados",
+            "buttonFreeze": "Congelar",
+            "buttonUnfreeze": "Descongelar",
+            "buttonForceStart": "Forçar Início",
+            "buttonForceEnd": "Forçar Término",
+            "freezeDialogTitle": "Confirmação de Congelamento",
+            "unfreezeDialogTitle": "Confirmação de Descongelamento",
+            "freezeDialogDescription": "Tem certeza de que deseja congelar a competição?",
+            "unfreezeDialogDescription": "Tem certeza de que deseja descongelar a competição?",
+            "forceStartDialogTitle": "Confirmação de Forçar Início",
+            "forceEndDialogTitle": "Confirmação de Forçar Término",
+            "forceStartDialogDescription": "Tem certeza de que deseja forçar o início da competição?",
+            "forceEndDialogDescription": "Tem certeza de que deseja forçar o término da competição?"
+          },
+          "SettingsPageMembersTab": {
+            "loadMembersFailed": "Falha ao carregar membros do CSV.",
+            "buttonLoadCsv": "Carregar CSV",
+            "headerName": "Nome",
+            "headerType": "Tipo",
+            "headerLogin": "Login",
+            "headerPassword": "Senha",
+            "headerIp": "IP (opcional)",
+            "tooltipRemove": "Remover",
+            "buttonNewMember": "Novo Membro"
+          },
+          "SettingsPageProblemsTab": {
+            "downloadAttachmentFailed": "Falha ao baixar o anexo",
+            "labelTitle": "Título",
+            "descriptionTitle": "O título do problema",
+            "labelTimeLimit": "Tempo Limite (ms)",
+            "descriptionTimeLimit": "O limite de tempo para o problema em milissegundos",
+            "labelMemoryLimit": "Limite de Memória (MB)",
+            "descriptionMemoryLimit": "O limite de memória para o problema em megabytes",
+            "labelDescription": "Descrição (PDF)",
+            "descriptionDescription": "A descrição do problema em formato PDF",
+            "labelTestCases": "Casos de Teste (CSV)",
+            "descriptionTestCases": "Os casos de teste para o problema em formato CSV",
+            "tooltipMoveUp": "Mover para Cima",
+            "tooltipMoveDown": "Mover para Baixo",
+            "tooltipRemove": "Remover",
+            "buttonNewProblem": "Novo Problema"
+          }
+        },
+        "submissions": {
+          "SubmissionForm": {
+            "problemRequired": "O problema é obrigatório",
+            "languageRequired": "A linguagem é obrigatória",
+            "codeRequired": "O código é obrigatório",
+            "codeTooLarge": "O arquivo de código deve ter no máximo 10MB"
+          },
+          "SubmissionJudgeForm": {
+            "answerRequired": "A resposta é obrigatória"
+          },
+          "SubmissionsPage": {
+            "pageTitle": "Forseti - Submissões",
+            "pageDescription": "Visualize e gerencie as submissões da competição",
+            "buttonNewSubmission": "Nova Submissão",
+            "toggleOnlyMine": "Apenas Minhas",
+            "headerTimestamp": "Horário",
+            "headerContestant": "Competidor",
+            "headerProblem": "Problema",
+            "headerLanguage": "Linguagem",
+            "headerStatus": "Status",
+            "headerAnswer": "Resposta",
+            "help": "Visualize todas as submissões da competição aqui. As submissões são julgadas automaticamente e os resultados aparecem em tempo real. Você pode ver o status (julgando/julgado/falha) e a resposta (aceito/resposta incorreta/erro de compilação/erro em tempo de execução/tempo limite excedido/limite de memória excedido) para cada submissão."
+          },
+          "SubmissionsPageActionCreatePrintRequest": {
+            "createSuccess": "Pedido de impressão criado com sucesso",
+            "createFailed": "Falha ao criar o pedido de impressão",
+            "menuItemRequestPrint": "Solicitar Impressão",
+            "createDialogTitle": "Criar Pedido de Impressão",
+            "createDialogDescription": "Tem certeza de que deseja criar um pedido de impressão para esta submissão?"
+          },
+          "SubmissionsPageActionDownload": {
+            "downloadFailed": "Falha ao baixar a submissão",
+            "menuItemDownload": "Baixar"
+          },
+          "SubmissionsPageActionExecutions": {
+            "menuItemExecutions": "Execuções",
+            "executionsDialogTitle": "Histórico de Execuções",
+            "executionsDialogDescription": "Visualize o histórico de execuções para esta submissão",
+            "headerTimestamp": "Horário",
+            "headerStatus": "Status",
+            "headerTestCases": "Casos de Teste",
+            "headerMaxTime": "Tempo Máx (CPU / Relógio)",
+            "headerMaxPeakMemory": "Pico Máx de Memória",
+            "headerDetails": "Detalhes",
+            "buttonDownload": "{{icon} CSV"
+          },
+          "SubmissionsPageActionJudge": {
+            "judgeSuccess": "Submissão julgada com sucesso",
+            "judgeFailed": "Falha ao julgar a submissão",
+            "menuItemJudge": "Julgar",
+            "judgeDialogTitle": "Julgar Submissão",
+            "judgeDialogDescription": "Tem certeza de que deseja julgar esta submissão?",
+            "labelAnswer": "Resposta"
+          },
+          "SubmissionsPageActionResubmit": {
+            "resubmitSuccess": "Submissão reenviada com sucesso",
+            "resubmitFailed": "Falha ao reenviar a submissão",
+            "menuItemResubmit": "Reenviar",
+            "resubmitDialogTitle": "Reenviar Submissão",
+            "resubmitDialogDescription": "Tem certeza de que deseja reenviar esta submissão?"
+          },
+          "SubmissionsPageActionsMenu": {
+            "labelActions": "Ações"
+          },
+          "SubmissionsPageForm": {
+            "createSuccess": "Submissão criada com sucesso",
+            "createFailed": "Falha ao criar submissão",
+            "title": "Criar Submissão",
+            "subtitle": "Crie uma nova submissão selecionando um problema, linguagem de programação e enviando o arquivo do seu código.",
+            "problemLabel": "Problema",
+            "languageLabel": "Linguagem",
+            "codeLabel": "Código",
+            "cancel": "Cancelar",
+            "submit": "Enviar"
+          }
+        },
+        "WaitPage": {
+          "pageTitle": "Forseti - Página de Espera",
+          "pageDescription": "Aguarde o início da competição",
+          "text1": "A competição ainda não começou. Por favor, aguarde o início da competição.",
+          "text2": "A página será recarregada automaticamente quando a competição começar."
+        }
+      },
+      "about": {
+        "pageTitle": "Forseti - Sobre",
+        "pageDescription": "Sobre a competição",
+        "labelStartAt": "Início em",
+        "labelEndAt": "Término em",
+        "labelLanguages": "Linguagens",
+        "labelIsAutoJudgeEnabled": "Julgamento Automático Habilitado",
+        "labelIsClarificationEnabled": "Esclarecimentos Habilitados",
+        "labelIsPrintRequestEnabled": "Pedidos de Impressão Habilitados",
+        "labelIsSpectatorEnabled": "Espectadores Habilitados"
+      }
+    },
+    "signIn": {
+      "SignInForm": {
+        "loginRequired": "O login é obrigatório",
+        "passwordRequired": "A senha é obrigatória"
+      },
+      "SignInPage": {
+        "sessionExpired": "Sua sessão expirou",
+        "signInFailed": "Falha ao entrar devido a um erro inesperado",
+        "wrongLoginOrPassword": "Login ou senha incorretos",
+        "pageTitle": "Forseti - Entrar",
+        "pageDescription": "Entre para acessar a competição",
+        "title": "Entrar",
+        "subtitle": "Entre para acessar a competição",
+        "labelLogin": "Login",
+        "labelPassword": "Senha",
+        "buttonSignIn": "Entrar",
+        "buttonEnterAsSpectator": "Entrar como Espectador"
+      }
+    }
+  },
+  "error": {
+    "ForbiddenPage": {
+      "text": "Você não tem permissão para acessar esta página."
+    },
+    "NotFoundPage": {
+      "text": "A página que você está procurando não existe."
+    },
+    "ServerErrorPage": {
+      "text": "Ocorreu um erro inesperado no servidor.",
+      "buttonTryAgain": "Tentar Novamente"
+    },
+    "ServiceUnavailablePage": {
+      "text": "O serviço está indisponível no momento. Tente novamente mais tarde.",
+      "buttonTryAgain": "Tentar Novamente"
+    }
+  },
+  "HomePage": {
+    "pageTitle": "Forseti",
+    "pageDescription": "Aplicação Forseti",
+    "altLogo": "Logo do Forseti",
+    "welcome": "Bem-vindo ao Forseti Judge",
+    "instructions1": "Para acessar uma competição, utilize o formato correto de URL da competição:",
+    "path": "'/{contest-slug}'",
+    "instructions2": "Substitua '{contest-slug}' pelo identificador específico da sua competição.",
+    "instructions3": "Se você não possui uma URL de competição, entre em contato com o administrador da sua competição."
+  }
+}

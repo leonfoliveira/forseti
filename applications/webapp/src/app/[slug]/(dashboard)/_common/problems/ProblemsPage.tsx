@@ -66,17 +66,24 @@ export function ProblemsPage({
       return (
         <p className="text-xs text-green-700 dark:text-green-300">
           <CircleCheckIcon size={14} className="mr-1 inline" />
-          Accepted
+          <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.accepted" />
         </p>
       );
     if (cell.wrongSubmissions > 0)
       return (
         <p className="text-xs text-yellow-700 dark:text-yellow-300">
           <ClockIcon size={14} className="mr-1 inline" />
-          {cell.wrongSubmissions} Attempt(s)
+          <FormattedMessage
+            id="[slug].(dashboard)._common.problems.ProblemsPage.attempts"
+            values={{ count: cell.wrongSubmissions }}
+          />
         </p>
       );
-    return <Badge variant="secondary">Not Attempted</Badge>;
+    return (
+      <Badge variant="secondary">
+        <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.notAttempted" />
+      </Badge>
+    );
   }
 
   async function downloadTestCases(problem: ProblemWithTestCasesResponseDTO) {
@@ -207,7 +214,10 @@ export function ProblemsPage({
                           }
                           data-testid="problem-download-test-cases"
                         >
-                          <DownloadIcon size={16} /> CSV
+                          <FormattedMessage
+                            id="[slug].(dashboard)._common.problems.ProblemsPage.downloadCSV"
+                            values={{ icon: <DownloadIcon size={16} /> }}
+                          />
                         </Button>
                       </TableCell>
                     )}
@@ -221,7 +231,10 @@ export function ProblemsPage({
                         onClick={() => downloadDescription(problem)}
                         data-testid="problem-download"
                       >
-                        <DownloadIcon size={16} /> PDF
+                        <FormattedMessage
+                          id="[slug].(dashboard)._common.problems.ProblemsPage.downloadPDF"
+                          values={{ icon: <DownloadIcon size={16} /> }}
+                        />
                       </Button>
                     </TableCell>
                   </TableRow>

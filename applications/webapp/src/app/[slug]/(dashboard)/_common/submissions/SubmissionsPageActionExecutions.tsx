@@ -136,7 +136,12 @@ export function SubmissionsPageActionExecutions({
                         }
                         data-testid="submission-execution-details"
                       >
-                        <DownloadIcon size={16} /> CSV
+                        <FormattedMessage
+                          id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload"
+                          values={{
+                            icon: <DownloadIcon size={16} />,
+                          }}
+                        />
                       </Button>
                     )}
                   </TableCell>

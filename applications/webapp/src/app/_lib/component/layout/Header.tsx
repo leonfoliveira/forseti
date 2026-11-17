@@ -19,6 +19,7 @@ import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { PathUtil } from "@/app/_lib/util/PathUtil";
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { useTranslation } from "react-i18next";
 
 /**
  * Header component displayed at the top of the web application.
@@ -31,6 +32,7 @@ export function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   async function handleSignOut() {
     await Composition.sessionWriter.deleteCurrent();
@@ -59,7 +61,7 @@ export function Header() {
           <div className="mr-2 flex items-center justify-center">
             <img
               src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
-              alt="Logo of forseti"
+              alt={t("_lib.component.layout.Header.altLogo")}
               width={30}
               height={30}
             />
