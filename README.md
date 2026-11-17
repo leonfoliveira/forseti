@@ -19,6 +19,13 @@ Please refer to the full documentation for detailed information about the platfo
 
 Community contributions are highly welcome! Feel free to open issues and submit **Pull Requests (PRs)** to help improve the platform.
 
+### Requirements
+
+- Python 3.12 for autojudge ([uv](https://docs.astral.sh/uv/) is recommended)
+- Java 21 for core ([sdkman](https://sdkman.io/) is recommended)
+- Node.js 26 for webapp ([nvm](https://github.com/nvm-sh/nvm) is recommended)
+- Docker for AWS emulation
+
 ## License
 
 This project is primarily intended for **educational purposes**.  Any commercial exploitation or profit-making activities involving this software are **strictly prohibited**.
