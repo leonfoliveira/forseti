@@ -18,7 +18,7 @@ describe("FormattedDuration", () => {
       </>,
     );
 
-    expect(screen.getByTestId("days")).toHaveTextContent("1d, 01:01:01");
+    expect(screen.getByTestId("days")).toHaveTextContent("1d 01:01:01");
     expect(screen.getByTestId("without-days")).toHaveTextContent("01:00:00");
     expect(screen.getByTestId("negative")).toHaveTextContent("00:00:00");
   });

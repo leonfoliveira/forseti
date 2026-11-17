@@ -20,12 +20,19 @@ export function FormattedDuration({ ms, options }: Props) {
     seconds: totalSeconds % 60,
   };
 
-  return new Intl.DurationFormat(i18n.language, {
+  const formatter = new Intl.DurationFormat(i18n.language, {
     style: "digital",
     days: "narrow",
     hours: "2-digit",
     minutes: "2-digit",
     seconds: "2-digit",
     ...options,
-  }).format(duration);
+  });
+
+  return formatter
+    .formatToParts(duration)
+    .map((part) =>
+      part.type === "literal" && part.value === ", " ? " " : part.value,
+    )
+    .join("");
 }
