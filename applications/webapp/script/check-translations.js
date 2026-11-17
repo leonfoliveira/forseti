@@ -2,7 +2,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const LOCALES_DIR = "public/locales";
-const REFERENCE_LANGUAGE = "en-us";
+const REFERENCE_LANGUAGE = "en";
 
 function flattenKeys(obj, prefix = "") {
   return Object.entries(obj).flatMap(([key, value]) => {

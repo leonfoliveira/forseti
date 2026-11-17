@@ -1,11 +1,11 @@
 import { createInstance } from "i18next";
 import { initReactI18next } from "react-i18next";
 
-import enUS from "../public/locales/en-us/translation.json";
+import en from "../public/locales/en/translation.json";
 
 const resources = {
-  "en-us": {
-    translation: enUS,
+  en: {
+    translation: en,
   },
 };
 
@@ -13,9 +13,9 @@ export async function createTestI18n() {
   const i18n = createInstance();
 
   await i18n.use(initReactI18next).init({
-    lng: "en-us",
-    fallbackLng: "en-us",
-    supportedLngs: ["en-us"],
+    lng: "en",
+    fallbackLng: "en",
+    supportedLngs: ["en"],
     lowerCaseLng: true,
     load: "currentOnly",
     defaultNS: "translation",

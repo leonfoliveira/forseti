@@ -1,11 +1,11 @@
 import { defineConfig } from "i18next-cli";
 
 export default defineConfig({
-  locales: ["en-us", "pt-br"],
+  locales: ["en", "pt"],
   extract: {
     input: "src/**/*.{js,jsx,mjs,ts,tsx}",
     output: "public/locales/{{language}}/{{namespace}}.json",
-    primaryLanguage: "en-us",
+    primaryLanguage: "en",
   },
   lint: {
     ignore: ["src/app/ErrorBoundary.tsx"],
