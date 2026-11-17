@@ -124,7 +124,9 @@ export function JudgeDashboardProvider({
     dispatch(JudgeDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
-      toast.error("New failed submission");
+      toast.error(
+        "_lib.provider.dashboard.JudgeDashboardProvider.newFailedSubmission",
+      );
     }
   }
 
@@ -133,7 +135,12 @@ export function JudgeDashboardProvider({
     dispatch(JudgeDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
-      toast.warning(`New announcement: ${announcement.text}`);
+      toast.warning(
+        "_lib.provider.dashboard.JudgeDashboardProvider.newAnnouncement",
+        {
+          text: announcement.text,
+        },
+      );
     }
   }
 
@@ -142,7 +149,9 @@ export function JudgeDashboardProvider({
   ) {
     console.debug("Received clarification created:", clarification);
     dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`New clarification created`);
+    toast.info(
+      "_lib.provider.dashboard.JudgeDashboardProvider.newClarification",
+    );
   }
 
   function receiveClarificationAnswered(
@@ -157,7 +166,9 @@ export function JudgeDashboardProvider({
   ) {
     console.debug("Received clarification published:", clarification);
     dispatch(JudgeDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`A clarification has been published`);
+    toast.info(
+      "_lib.provider.dashboard.JudgeDashboardProvider.clarificationPublished",
+    );
   }
 
   function receiveContestUpdated(contest: ContestResponseDTO) {
@@ -171,7 +182,7 @@ export function JudgeDashboardProvider({
   ) {
     console.debug("Received contest frozen:", contest);
     dispatch(JudgeDashboardSlice.actions.freeze(contest));
-    toast.info("The contest has been frozen");
+    toast.info("_lib.provider.dashboard.JudgeDashboardProvider.contestFrozen");
   }
 
   function receiveContestUnfrozen(data: {
@@ -181,7 +192,9 @@ export function JudgeDashboardProvider({
   }) {
     console.debug("Received contest unfrozen");
     dispatch(JudgeDashboardSlice.actions.unfreeze(data));
-    toast.info("The contest has been unfrozen");
+    toast.info(
+      "_lib.provider.dashboard.JudgeDashboardProvider.contestUnfrozen",
+    );
   }
 
   if (state.isLoading) {

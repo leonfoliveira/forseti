@@ -13,7 +13,6 @@ export function AdminAnnouncementsPage() {
   return (
     <AnnouncementsPage
       announcements={announcements}
-      canCreate
       onCreate={(announcement) =>
         dispatch(AdminDashboardSlice.actions.mergeAnnouncement(announcement))
       }

@@ -1,4 +1,5 @@
 import React from "react";
+import type { ParseKeys } from "i18next";
 
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import {
@@ -11,12 +12,13 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from "@/app/_lib/component/shadcn/alert-dialog";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   isOpen: boolean;
   icon?: React.ReactNode;
-  title: string;
-  description: string;
+  title: ParseKeys;
+  description: ParseKeys;
   content?: React.ReactNode;
   onCancel: () => void;
   onConfirm: () => Promise<void>;
@@ -47,10 +49,10 @@ export function ConfirmationDialog({
             </AlertDialogMedia>
           )}
           <AlertDialogTitle data-testid="confirmation-dialog-title">
-            {title}
+            <FormattedMessage id={title} />
           </AlertDialogTitle>
           <AlertDialogDescription data-testid="confirmation-dialog-description">
-            {description}
+            <FormattedMessage id={description} />
           </AlertDialogDescription>
           {content}
         </AlertDialogHeader>
@@ -59,14 +61,14 @@ export function ConfirmationDialog({
             disabled={isLoading}
             data-testid="confirmation-dialog-cancel-button"
           >
-            Cancel
+            <FormattedMessage id="_lib.component.feedback.ConfirmationDialog.cancel" />
           </AlertDialogCancel>
           <AsyncButton
             isLoading={isLoading}
             onClick={onConfirm}
             data-testid="confirmation-dialog-confirm-button"
           >
-            Confirm
+            <FormattedMessage id="_lib.component.feedback.ConfirmationDialog.confirm" />
           </AsyncButton>
         </AlertDialogFooter>
       </AlertDialogContent>

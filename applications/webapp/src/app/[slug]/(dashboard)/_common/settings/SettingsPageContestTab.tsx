@@ -1,5 +1,6 @@
 import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
+import type { ParseKeys } from "i18next";
 
 import {
   SettingsForm,
@@ -31,10 +32,11 @@ import {
 } from "@/domain/enumerate/SubmissionLanguage";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { ContestUtil } from "@/util/ContestUtil";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -65,12 +67,12 @@ export function SettingsPageContestTab({
     const method = isContestFrozen
       ? Composition.contestWriter.unfreeze.bind(Composition.contestWriter)
       : Composition.contestWriter.freeze.bind(Composition.contestWriter);
-    const successMessage = isContestFrozen
-      ? "Contest has been unfrozen successfully."
-      : "Contest has been frozen successfully.";
-    const errorMessage = isContestFrozen
-      ? "Failed to unfreeze the contest."
-      : "Failed to freeze the contest.";
+    const successMessage: ParseKeys = isContestFrozen
+      ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.unfrozenSuccess"
+      : "[slug].(dashboard)._common.settings.SettingsPageContestTab.frozenSuccess";
+    const errorMessage: ParseKeys = isContestFrozen
+      ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.unfrozenFailed"
+      : "[slug].(dashboard)._common.settings.SettingsPageContestTab.frozenFailed";
 
     console.debug("Toggling freeze. Current state:", isContestFrozen);
     freezeState.start();
@@ -98,14 +100,14 @@ export function SettingsPageContestTab({
       mode === "start"
         ? Composition.contestWriter.forceStart.bind(Composition.contestWriter)
         : Composition.contestWriter.forceEnd.bind(Composition.contestWriter);
-    const successMessage =
+    const successMessage: ParseKeys =
       mode === "start"
-        ? "Contest has been force started."
-        : "Contest has been force ended.";
-    const errorMessage =
+        ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceStartSuccess"
+        : "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceEndSuccess";
+    const errorMessage: ParseKeys =
       mode === "start"
-        ? "Failed to force start the contest."
-        : "Failed to force end the contest.";
+        ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceStartFailed"
+        : "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceEndFailed";
 
     console.debug(`Forcing contest ${mode}. Current status:`, contestStatus);
     forceState.start();
@@ -138,7 +140,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.slug"
-              label="Slug"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelSlug"
               field={<Input data-testid="contest-slug" />}
               description="The slug is used in the URL and must be unique."
             />
@@ -146,7 +148,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.title"
-              label="Title"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelTitle"
               field={<Input data-testid="contest-title" />}
               description="The title of the contest."
             />
@@ -154,7 +156,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.startAt"
-              label="Start At"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelStartAt"
               field={
                 <Input
                   type="datetime-local"
@@ -168,7 +170,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.endAt"
-              label="End At"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelEndAt"
               field={
                 <Input type="datetime-local" data-testid="contest-end-at" />
               }
@@ -178,7 +180,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.autoFreezeAt"
-              label="Auto Freeze At (optional)"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelAutoFreezeAt"
               field={
                 <Input
                   type="datetime-local"
@@ -192,7 +194,7 @@ export function SettingsPageContestTab({
             <ControlledField
               form={form}
               name="contest.ipCIDRs"
-              label="IP CIDRs (optional)"
+              label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIpCIDRs"
               field={<Input data-testid="contest-ip-cidrs" />}
               description="The IP CIDRs allowed for the contest separated by commas."
             />
@@ -202,10 +204,11 @@ export function SettingsPageContestTab({
 
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
-              <FieldLabel>Languages</FieldLabel>
+              <FieldLabel>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelLanguages" />
+              </FieldLabel>
               <FieldDescription>
-                Select the programming languages that participants can use in
-                the contest.
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionLanguages" />
               </FieldDescription>
               {languageError && <FieldError>{languageError}</FieldError>}
             </div>
@@ -219,7 +222,7 @@ export function SettingsPageContestTab({
                         key={lang}
                         form={form}
                         name={`contest.languages.${lang}` as any}
-                        label={EnumeratedTextUtil.getSubmissionLanguage(
+                        label={I18nUtil.getSubmissionLanguage(
                           lang as SubmissionLanguage,
                         )}
                         field={
@@ -242,7 +245,7 @@ export function SettingsPageContestTab({
           <ControlledField
             form={form}
             name="contest.settings.isAutoJudgeEnabled"
-            label="Auto Judge Enabled"
+            label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsAutoJudgeEnabled"
             field={<Switch data-testid="contest-auto-judge-enabled" />}
             description="Enable or disable the automatic judging of submissions."
           />
@@ -250,7 +253,7 @@ export function SettingsPageContestTab({
           <ControlledField
             form={form}
             name="contest.settings.isClarificationEnabled"
-            label="Clarification Enabled"
+            label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsClarificationEnabled"
             field={<Switch data-testid="contest-clarification-enabled" />}
             description="Enable or disable the clarification feature for the contest."
           />
@@ -258,7 +261,7 @@ export function SettingsPageContestTab({
           <ControlledField
             form={form}
             name="contest.settings.isPrintRequestEnabled"
-            label="Print Request Enabled"
+            label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsPrintRequestEnabled"
             field={<Switch data-testid="contest-print-request-enabled" />}
             description="Enable or disable the print request feature for the contest."
           />
@@ -266,7 +269,7 @@ export function SettingsPageContestTab({
           <ControlledField
             form={form}
             name="contest.settings.isSpectatorEnabled"
-            label="Spectator Enabled"
+            label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsSpectatorEnabled"
             field={<Switch data-testid="contest-spectator-enabled" />}
             description="Enable or disable the spectator feature for the contest."
           />
@@ -291,7 +294,11 @@ export function SettingsPageContestTab({
             (!isContestFrozen && contestStatus !== ContestStatus.IN_PROGRESS)
           }
         >
-          {isContestFrozen ? "Unfreeze" : "Freeze"}
+          {isContestFrozen ? (
+            <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.buttonUnfreeze" />
+          ) : (
+            <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.buttonFreeze" />
+          )}
         </Button>
 
         <Button
@@ -301,9 +308,11 @@ export function SettingsPageContestTab({
           onClick={forceConfirmationDialog.open}
           disabled={isUpdateLoading || hasContestEnded || forceState.isLoading}
         >
-          {contestStatus === ContestStatus.NOT_STARTED
-            ? "Force Start"
-            : "Force End"}
+          {contestStatus === ContestStatus.NOT_STARTED ? (
+            <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.buttonForceStart" />
+          ) : (
+            <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageContestTab.buttonForceEnd" />
+          )}
         </Button>
       </div>
 
@@ -311,12 +320,14 @@ export function SettingsPageContestTab({
         isOpen={freezeConfirmationDialog.isOpen}
         icon={<TriangleAlertIcon />}
         title={
-          isContestFrozen ? "Unfreeze Confirmation" : "Freeze Confirmation"
+          isContestFrozen
+            ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.unfreezeDialogTitle"
+            : "[slug].(dashboard)._common.settings.SettingsPageContestTab.freezeDialogTitle"
         }
         description={
           isContestFrozen
-            ? "Are you sure you want to unfreeze the contest?"
-            : "Are you sure you want to freeze the contest?"
+            ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.unfreezeDialogDescription"
+            : "[slug].(dashboard)._common.settings.SettingsPageContestTab.freezeDialogDescription"
         }
         onCancel={freezeConfirmationDialog.close}
         onConfirm={toggleFreeze}
@@ -329,13 +340,13 @@ export function SettingsPageContestTab({
         icon={<TriangleAlertIcon />}
         title={
           contestStatus === ContestStatus.NOT_STARTED
-            ? "Force Start Confirmation"
-            : "Force End Confirmation"
+            ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceStartDialogTitle"
+            : "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceEndDialogTitle"
         }
         description={
           contestStatus === ContestStatus.NOT_STARTED
-            ? "Are you sure you want to force start the contest?"
-            : "Are you sure you want to force end the contest?"
+            ? "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceStartDialogDescription"
+            : "[slug].(dashboard)._common.settings.SettingsPageContestTab.forceEndDialogDescription"
         }
         onCancel={forceConfirmationDialog.close}
         onConfirm={() =>

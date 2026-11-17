@@ -39,6 +39,7 @@ import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -97,13 +98,18 @@ export function SettingsPage({ contest, leaderboard }: Props) {
         dispatch(AdminDashboardSlice.actions.set(dashboard));
         dispatch(ContestSlice.actions.set(updatedContest));
 
-        toast.success("Settings saved successfully.");
+        toast.success(
+          "[slug].(dashboard)._common.settings.SettingsPage.saveSuccess",
+        );
         setIsConfirmDialogOpen(false);
       }
       updateContestState.finish("Settings saved successfully.");
     } catch (error) {
       await updateContestState.fail(error, {
-        default: () => toast.error("Failed to save settings."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.settings.SettingsPage.saveError",
+          ),
       });
     }
   }
@@ -116,7 +122,10 @@ export function SettingsPage({ contest, leaderboard }: Props) {
   const isContestEnded = contestStatus === ContestStatus.ENDED;
 
   return (
-    <Page title="Settings" description="Manage contest settings">
+    <Page
+      title="[slug].(dashboard)._common.settings.SettingsPage.pageTitle"
+      description="[slug].(dashboard)._common.settings.SettingsPage.pageDescription"
+    >
       <div className="py-5">
         <Tabs
           value={selectedTab}
@@ -133,7 +142,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   hasContestValidationError && "text-destructive",
                 )}
               >
-                Contest
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.contestTab" />
               </p>
             </TabsTrigger>
             <TabsTrigger
@@ -145,7 +154,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   hasProblemsValidationError && "text-destructive",
                 )}
               >
-                Problems
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.problemsTab" />
               </p>
             </TabsTrigger>
             <TabsTrigger
@@ -157,7 +166,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                   hasMembersValidationError && "text-destructive",
                 )}
               >
-                Members
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.membersTab" />
               </p>
             </TabsTrigger>
           </TabsList>
@@ -170,8 +179,7 @@ export function SettingsPage({ contest, leaderboard }: Props) {
                 <Alert className="mb-5 bg-red-50 dark:bg-red-100">
                   <AlertCircleIcon className="stroke-red-500 dark:stroke-red-600" />
                   <AlertDescription className="text-red-600 dark:text-red-700">
-                    Contest is currently in progress. Changes may affect the
-                    ongoing contest.
+                    <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.contestInProgress" />
                   </AlertDescription>
                 </Alert>
               )}
@@ -204,27 +212,26 @@ export function SettingsPage({ contest, leaderboard }: Props) {
             <Separator />
             <CardFooter className="justify-end gap-3">
               <Button type="button" variant="outline" onClick={reset}>
-                Reset
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.reset" />
               </Button>
               <Button type="submit" data-testid="save-settings-button">
-                Save
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.save" />
                 <SaveIcon />
               </Button>
 
               <ConfirmationDialog
                 isOpen={isConfirmDialogOpen}
-                title="Confirm Changes"
-                description="Are you sure you want to apply these changes?"
+                title="[slug].(dashboard)._common.settings.SettingsPage.dialogTitle"
+                description="[slug].(dashboard)._common.settings.SettingsPage.dialogDescription"
                 content={
                   contestStatus !== ContestStatus.NOT_STARTED && (
                     <Alert variant="destructive" className="mt-2">
                       <AlertCircleIcon />
-                      <AlertTitle>Contest In Progress</AlertTitle>
+                      <AlertTitle>
+                        <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.contestInProgress" />
+                      </AlertTitle>
                       <AlertDescription>
-                        This contest is currently in progress. Changing the
-                        settings may affect the contest experience for
-                        participants. Please review your changes carefully
-                        before confirming.
+                        <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPage.dialogInProgressAlertDescription" />
                       </AlertDescription>
                     </Alert>
                   )

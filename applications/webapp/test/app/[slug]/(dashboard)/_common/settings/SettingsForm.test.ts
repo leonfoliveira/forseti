@@ -71,25 +71,27 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, slug: undefined },
         }),
-      ).toBe("Slug is required");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.slugRequired");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, slug: "" },
         }),
-      ).toBe("Slug is required");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.slugRequired");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, slug: "a".repeat(31) },
         }),
-      ).toBe("Slug must be at most 30 characters long");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.slugTooLong");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, slug: "invalid slug" },
         }),
-      ).toBe("Slug must only contain alphanumeric characters and hyphens");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.slugPatternInvalid",
+      );
     });
 
     it("validates title", () => {
@@ -98,19 +100,19 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, title: undefined },
         }),
-      ).toBe("Title is required");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.titleRequired");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, title: "" },
         }),
-      ).toBe("Title is required");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.titleRequired");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, title: "a".repeat(201) },
         }),
-      ).toBe("Title must be at most 200 characters long");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.titleTooLong");
     });
 
     it("validates languages", () => {
@@ -119,7 +121,9 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, languages: undefined },
         }),
-      ).toBe("At least one language is required");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.languagesRequired",
+      );
       expect(
         validate({
           ...validData,
@@ -133,7 +137,9 @@ describe("SettingsForm", () => {
             },
           },
         }),
-      ).toBe("At least one language is required");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.languagesRequired",
+      );
     });
 
     it("validates startAt", () => {
@@ -142,13 +148,15 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, startAt: undefined },
         }),
-      ).toBe("Start date is required");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.startAtRequired",
+      );
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, startAt: "invalid-date" },
         }),
-      ).toBe("Start date is invalid");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.startAtInvalid");
       expect(
         validate(
           {
@@ -160,7 +168,7 @@ describe("SettingsForm", () => {
           },
           ContestStatus.NOT_STARTED,
         ),
-      ).toBe("Start date must be in the future");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.startAtFuture");
       expect(
         validate(
           {
@@ -181,13 +189,13 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, endAt: undefined },
         }),
-      ).toBe("End date is required");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.endAtRequired");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, endAt: "invalid-date" },
         }),
-      ).toBe("End date is invalid");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.endAtInvalid");
       expect(
         validate({
           ...validData,
@@ -197,7 +205,9 @@ describe("SettingsForm", () => {
             endAt: MockDate.now().future(12).toDateTime(),
           },
         }),
-      ).toBe("End date must be after the start date");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.endAtAfterStart",
+      );
     });
 
     it("validates autoFreezeAt", () => {
@@ -218,7 +228,9 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, autoFreezeAt: "invalid-date" },
         }),
-      ).toBe("Freeze date is invalid");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtInvalid",
+      );
       expect(
         validate({
           ...validData,
@@ -229,7 +241,9 @@ describe("SettingsForm", () => {
             autoFreezeAt: MockDate.now().future(11).toDateTime(),
           },
         }),
-      ).toContain("Freeze date must be after the start date");
+      ).toContain(
+        "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtBeforeStart",
+      );
       expect(
         validate({
           ...validData,
@@ -240,7 +254,9 @@ describe("SettingsForm", () => {
             autoFreezeAt: MockDate.now().future(14).toDateTime(),
           },
         }),
-      ).toContain("Freeze date must be before the end date");
+      ).toContain(
+        "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtAfterEnd",
+      );
       expect(
         validate(
           {
@@ -254,7 +270,9 @@ describe("SettingsForm", () => {
           },
           ContestStatus.IN_PROGRESS,
         ),
-      ).toBe("Freeze date must be in the future");
+      ).toBe(
+        "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtFuture",
+      );
     });
 
     it("validates ipCIDRs", () => {
@@ -278,13 +296,13 @@ describe("SettingsForm", () => {
           ...validData,
           contest: { ...validData.contest, ipCIDRs: "999.999.999.999/24" },
         }),
-      ).toBe("IP CIDRs are invalid");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.ipCIDRsInvalid");
       expect(
         validate({
           ...validData,
           contest: { ...validData.contest, ipCIDRs: "192.168.1.1" },
         }),
-      ).toBe("IP CIDRs are invalid");
+      ).toBe("[slug].(dashboard)._common.settings.SettingsForm.ipCIDRsInvalid");
     });
 
     it("validates contest settings", () => {
@@ -317,19 +335,25 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, color: undefined }],
           }),
-        ).toBe("Problem color is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemColorRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, color: "" }],
           }),
-        ).toBe("Problem color is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemColorRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, color: "not-a-hex" }],
           }),
-        ).toBe("Problem color is invalid");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemColorInvalid",
+        );
       });
 
       it("validates title", () => {
@@ -338,19 +362,25 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, title: undefined }],
           }),
-        ).toBe("Problem title is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTitleRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, title: "" }],
           }),
-        ).toBe("Problem title is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTitleRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, title: "a".repeat(201) }],
           }),
-        ).toBe("Problem title is too long");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTitleTooLong",
+        );
       });
 
       it("validates newDescription", () => {
@@ -359,13 +389,17 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newDescription: undefined }],
           }),
-        ).toBe("Problem description is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, newDescription: [] }],
           }),
-        ).toBe("Problem description is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionRequired",
+        );
 
         const largePdf = new File(
           [new Uint8Array(10 * 1024 * 1024 + 1)],
@@ -377,7 +411,9 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newDescription: [largePdf] }],
           }),
-        ).toBe("Problem description must be smaller than 10MB");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionTooLarge",
+        );
 
         const wrongTypeFile = new File([], "description.txt", {
           type: "text/plain",
@@ -387,7 +423,9 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newDescription: [wrongTypeFile] }],
           }),
-        ).toBe("Problem description must be a PDF");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionPDF",
+        );
 
         // Optional when _id exists
         expect(
@@ -404,26 +442,34 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, timeLimitMs: undefined }],
           }),
-        ).toBe("Problem time limit is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTimeLimitRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, timeLimitMs: "0" }],
           }),
-        ).toBeDefined();
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTimeLimitPositive",
+        );
 
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, memoryLimitMb: undefined }],
           }),
-        ).toBe("Problem memory limit is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemMemoryLimitRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, memoryLimitMb: "-10" }],
           }),
-        ).toBeDefined();
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemMemoryLimitPositive",
+        );
       });
 
       it("validates newTestCases", () => {
@@ -432,13 +478,17 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newTestCases: undefined }],
           }),
-        ).toBe("Problem test cases are required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesRequired",
+        );
         expect(
           validate({
             ...validData,
             problems: [{ ...baseProblem, newTestCases: [] }],
           }),
-        ).toBe("Problem test cases are required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesRequired",
+        );
 
         const largeCsv = new File(
           [new Uint8Array(10 * 1024 * 1024 + 1)],
@@ -450,7 +500,9 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newTestCases: [largeCsv] }],
           }),
-        ).toBe("Problem test cases must be smaller than 10MB");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesTooLarge",
+        );
 
         const wrongTypeFile = new File([], "test.pdf", {
           type: "application/pdf",
@@ -460,7 +512,9 @@ describe("SettingsForm", () => {
             ...validData,
             problems: [{ ...baseProblem, newTestCases: [wrongTypeFile] }],
           }),
-        ).toBe("Problem test cases must be a CSV");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesCSV",
+        );
 
         // Optional when _id exists
         expect(
@@ -481,13 +535,17 @@ describe("SettingsForm", () => {
             ...validData,
             members: [{ ...baseMember, type: undefined }],
           }),
-        ).toBe("Member type is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberTypeRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, type: "" }],
           }),
-        ).toBe("Member type is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberTypeRequired",
+        );
       });
 
       it("validates name", () => {
@@ -496,19 +554,25 @@ describe("SettingsForm", () => {
             ...validData,
             members: [{ ...baseMember, name: undefined }],
           }),
-        ).toBe("Member name is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberNameRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, name: "" }],
           }),
-        ).toBe("Member name is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberNameRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, name: "a".repeat(51) }],
           }),
-        ).toBe("Member name is too long");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberNameTooLong",
+        );
       });
 
       it("validates login", () => {
@@ -517,19 +581,25 @@ describe("SettingsForm", () => {
             ...validData,
             members: [{ ...baseMember, login: undefined }],
           }),
-        ).toBe("Member login is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberLoginRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, login: "" }],
           }),
-        ).toBe("Member login is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberLoginRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, login: "a".repeat(31) }],
           }),
-        ).toBe("Member login is too long");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberLoginTooLong",
+        );
       });
 
       it("validates password", () => {
@@ -538,19 +608,25 @@ describe("SettingsForm", () => {
             ...validData,
             members: [{ ...baseMember, password: undefined }],
           }),
-        ).toBe("Member password is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, password: "" }],
           }),
-        ).toBe("Member password is required");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordRequired",
+        );
         expect(
           validate({
             ...validData,
             members: [{ ...baseMember, password: "a".repeat(31) }],
           }),
-        ).toBe("Member password is too long");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordTooLong",
+        );
 
         // Optional / allowed empty when _id exists
         expect(
@@ -579,7 +655,9 @@ describe("SettingsForm", () => {
             ...validData,
             members: [{ ...baseMember, ip: "invalid-ip" }],
           }),
-        ).toBe("Member IP must be a valid IP address");
+        ).toBe(
+          "[slug].(dashboard)._common.settings.SettingsForm.memberIpInvalid",
+        );
       });
     });
   });

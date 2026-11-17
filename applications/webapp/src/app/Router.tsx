@@ -11,7 +11,7 @@ const ServerErrorPage = React.lazy(() => import("./error/ServerErrorPage"));
 const ServiceUnavailablePage = React.lazy(
   () => import("./error/ServiceUnavailablePage"),
 );
-const SignInPage = React.lazy(() => import("./[slug]/sign-in/SignInPage"));
+const SignInPage = React.lazy(() => import("./[slug]/signIn/SignInPage"));
 const DashboardAboutPage = React.lazy(
   () => import("./[slug]/(dashboard)/about/AboutPage"),
 );

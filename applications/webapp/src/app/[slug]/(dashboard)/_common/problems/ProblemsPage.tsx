@@ -27,6 +27,7 @@ import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[] | ProblemWithTestCasesResponseDTO[];
@@ -90,7 +91,10 @@ export function ProblemsPage({
       );
     } catch (error) {
       await errorHandler.handle(error as Error, {
-        default: () => toast.error("Failed to download problem test cases"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.problems.ProblemsPage.testCasesDownloadFailed",
+          ),
       });
     }
   }
@@ -110,15 +114,18 @@ export function ProblemsPage({
       );
     } catch (error) {
       await errorHandler.handle(error as Error, {
-        default: () => toast.error("Failed to download problem description"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.problems.ProblemsPage.descriptionDownloadFailed",
+          ),
       });
     }
   }
 
   return (
     <Page
-      title={"Forseti - Problems"}
-      description={"View all problems for the contest."}
+      title="[slug].(dashboard)._common.problems.ProblemsPage.pageTitle"
+      description="[slug].(dashboard)._common.problems.ProblemsPage.pageDescription"
     >
       <Card className="my-5">
         <CardContent>
@@ -128,16 +135,28 @@ export function ProblemsPage({
                 <TableHead>
                   <ArrowDownAZIcon size={16} />
                 </TableHead>
-                <TableHead>Problem</TableHead>
-                <TableHead>Time Limit</TableHead>
-                <TableHead>Memory Limit</TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerProblem" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerTimeLimit" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerMemoryLimit" />
+                </TableHead>
                 {hasStatus && (
-                  <TableHead className="text-center">Status</TableHead>
+                  <TableHead className="text-center">
+                    <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerStatus" />
+                  </TableHead>
                 )}
                 {canDownloadTestCases && (
-                  <TableHead className="text-right">Test Cases</TableHead>
+                  <TableHead className="text-right">
+                    <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerTestCases" />
+                  </TableHead>
                 )}
-                <TableHead className="text-right">Description</TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.headerDescription" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -212,9 +231,7 @@ export function ProblemsPage({
 
           <Alert className="bg-muted mt-7 py-2">
             <AlertDescription className="text-xs">
-              {
-                "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
-              }
+              <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.help" />
             </AlertDescription>
           </Alert>
         </CardContent>

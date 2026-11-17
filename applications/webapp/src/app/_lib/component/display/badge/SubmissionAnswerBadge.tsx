@@ -1,5 +1,6 @@
 import React from "react";
-
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 
@@ -11,14 +12,7 @@ type Props = React.ComponentProps<typeof Badge> & {
  * Displays a badge component styled according to the submission answer status.
  */
 export function SubmissionAnswerBadge({ answer, ...props }: Props) {
-  const text = {
-    [SubmissionAnswer.ACCEPTED]: "Accepted",
-    [SubmissionAnswer.WRONG_ANSWER]: "Wrong Answer",
-    [SubmissionAnswer.TIME_LIMIT_EXCEEDED]: "Time Limit Exceeded",
-    [SubmissionAnswer.MEMORY_LIMIT_EXCEEDED]: "Memory Limit Exceeded",
-    [SubmissionAnswer.RUNTIME_ERROR]: "Runtime Error",
-    [SubmissionAnswer.COMPILATION_ERROR]: "Compilation Error",
-  }[answer];
+  const text = <FormattedMessage id={I18nUtil.getSubmissionAnswer(answer)} />;
 
   switch (answer) {
     case SubmissionAnswer.ACCEPTED:

@@ -1,6 +1,6 @@
 import React from "react";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
-
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 
@@ -12,7 +12,7 @@ type Props = React.ComponentProps<typeof Badge> & {
  * Displays a badge component styled according to the submission status.
  */
 export function SubmissionStatusBadge({ status, ...props }: Props) {
-  const text = EnumeratedTextUtil.getSubmissionStatus(status);
+  const text = <FormattedMessage id={I18nUtil.getSubmissionStatus(status)} />;
 
   switch (status) {
     case SubmissionStatus.JUDGED:

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Page } from "@/app/_lib/component/page/Page";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * A page displayed when the contest has not started yet.
@@ -37,8 +38,8 @@ export function WaitPage() {
 
   return (
     <Page
-      title="Forseti - Waiting for the contest to start"
-      description="Waiting page displayed when the contest has not started yet."
+      title="[slug].(dashboard)._common.WaitPage.pageTitle"
+      description="[slug].(dashboard)._common.WaitPage.pageDescription"
     >
       <div
         className="flex flex-1 items-center justify-center"
@@ -47,10 +48,11 @@ export function WaitPage() {
         <div className="flex flex-col items-center gap-3 text-center">
           <ClockAlertIcon size={100} className="mb-5" />
           <p>
-            The contest has not started yet. Please wait for the contest to
-            start.
+            <FormattedMessage id="[slug].(dashboard)._common.WaitPage.text1" />
           </p>
-          <p>The page will automatically reload when the contest starts.</p>
+          <p>
+            <FormattedMessage id="[slug].(dashboard)._common.WaitPage.text2" />
+          </p>
         </div>
       </div>
     </Page>

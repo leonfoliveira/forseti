@@ -17,11 +17,14 @@ import {
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
+import type { ParseKeys, TOptions } from "i18next";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>;
   name: FieldPath<TFieldValues>;
-  label?: string;
+  label?: ParseKeys;
+  labelValues?: TOptions;
   field: React.ReactElement & { props: object };
   description?: string;
 } & React.ComponentProps<typeof Field>;
@@ -30,6 +33,7 @@ export function ControlledField<TFieldValues extends FieldValues>({
   form,
   name,
   label,
+  labelValues,
   field,
   description,
   ...props
@@ -78,11 +82,19 @@ export function ControlledField<TFieldValues extends FieldValues>({
             >
               {newField}
               <FieldContent className="gap-0">
-                {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
+                {label && (
+                  <FieldLabel htmlFor={name}>
+                    <FormattedMessage id={label} values={labelValues} />
+                  </FieldLabel>
+                )}
                 {description && (
                   <FieldDescription>{description}</FieldDescription>
                 )}
-                {error && <FieldError>{error}</FieldError>}
+                {error && (
+                  <FieldError>
+                    <FormattedMessage id={error as ParseKeys} />
+                  </FieldError>
+                )}
               </FieldContent>
             </Field>
           );
@@ -90,13 +102,21 @@ export function ControlledField<TFieldValues extends FieldValues>({
 
         return (
           <Field {...props} className={clsx("gap-1", props.className)}>
-            {label && <FieldLabel htmlFor={name}>{label}</FieldLabel>}
+            {label && (
+              <FieldLabel htmlFor={name}>
+                <FormattedMessage id={label} values={labelValues} />
+              </FieldLabel>
+            )}
             {newField}
             <FieldContent>
               {description && (
                 <FieldDescription>{description}</FieldDescription>
               )}
-              {error && <FieldError>{error}</FieldError>}
+              {error && (
+                <FieldError>
+                  <FormattedMessage id={error as ParseKeys} />
+                </FieldError>
+              )}
             </FieldContent>
           </Field>
         );

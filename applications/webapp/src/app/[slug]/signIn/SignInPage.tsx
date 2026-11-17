@@ -2,8 +2,9 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import type { ParseKeys } from "i18next";
 
-import { SignInForm, SignInFormType } from "@/app/[slug]/sign-in/SignInForm";
+import { SignInForm, SignInFormType } from "@/app/[slug]/signIn/SignInForm";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
@@ -26,6 +27,7 @@ import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * SignInPage component allows members to sign in to a contest.
@@ -49,7 +51,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (hasExpired === "true") {
-      toast.warning("Your session has expired.");
+      toast.warning("[slug].signIn.SignInPage.sessionExpired");
     }
   }, [hasExpired]);
 
@@ -67,14 +69,16 @@ export default function SignInPage() {
         [UnauthorizedException.name]: () => {
           form.setError("login", {
             type: "manual",
-            message: "Wrong login or password",
+            message:
+              "[slug].signIn.SignInPage.wrongLoginOrPassword" as ParseKeys,
           });
           form.setError("password", {
             type: "manual",
-            message: "Wrong login or password",
+            message:
+              "[slug].signIn.SignInPage.wrongLoginOrPassword" as ParseKeys,
           });
         },
-        default: () => toast.error("Error signing in"),
+        default: () => toast.error("[slug].signIn.SignInPage.signInFailed"),
       });
     }
   }
@@ -96,7 +100,10 @@ export default function SignInPage() {
   }
 
   return (
-    <Page title="Forseti - Sign In" description="Sign in to access the contest">
+    <Page
+      title="[slug].signIn.SignInPage.pageTitle"
+      description="[slug].signIn.SignInPage.pageDescription"
+    >
       <div className="flex flex-1 flex-col items-center justify-center">
         <Form
           onSubmit={form.handleSubmit(signIn)}
@@ -108,9 +115,11 @@ export default function SignInPage() {
           >
             <Card>
               <CardHeader>
-                <CardTitle data-testid="title">Sign In</CardTitle>
+                <CardTitle data-testid="title">
+                  <FormattedMessage id="[slug].signIn.SignInPage.title" />
+                </CardTitle>
                 <CardDescription data-testid="subtitle">
-                  Sign in to access the contest
+                  <FormattedMessage id="[slug].signIn.SignInPage.subtitle" />
                 </CardDescription>
               </CardHeader>
               <Separator />
@@ -119,14 +128,14 @@ export default function SignInPage() {
                   form={form}
                   name="login"
                   onChange={() => form.clearErrors()}
-                  label="Login"
+                  label="[slug].signIn.SignInPage.labelLogin"
                   field={<Input data-testid="login" />}
                 />
                 <ControlledField
                   form={form}
                   name="password"
                   onChange={() => form.clearErrors()}
-                  label="Password"
+                  label="[slug].signIn.SignInPage.labelPassword"
                   field={<Input type="password" data-testid="password" />}
                 />
               </CardContent>
@@ -138,7 +147,7 @@ export default function SignInPage() {
                   isLoading={signInState.isLoading}
                   data-testid="sign-in"
                 >
-                  Sign In
+                  <FormattedMessage id="[slug].signIn.SignInPage.buttonSignIn" />
                 </AsyncButton>
                 {contest.settings.isSpectatorEnabled && (
                   <AsyncButton
@@ -149,7 +158,7 @@ export default function SignInPage() {
                     isLoading={enterAsSpectatorState.isLoading}
                     data-testid="enter-spectator"
                   >
-                    Enter as Spectator
+                    <FormattedMessage id="[slug].signIn.SignInPage.buttonEnterAsSpectator" />
                   </AsyncButton>
                 )}
               </CardFooter>

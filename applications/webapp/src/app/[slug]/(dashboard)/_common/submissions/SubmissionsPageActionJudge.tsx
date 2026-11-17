@@ -22,7 +22,8 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   submission: SubmissionWithCodeAndExecutionsResponseDTO;
@@ -56,7 +57,9 @@ export function SubmissionsPageActionJudge({
         data.answer,
       );
 
-      toast.success("Submission judged successfully");
+      toast.success(
+        "[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.judgeSuccess",
+      );
       onJudge(updatedSubmission);
       judgeForm.reset();
       dialog.close();
@@ -66,7 +69,10 @@ export function SubmissionsPageActionJudge({
       onClose();
     } catch (error) {
       await judgeState.fail(error, {
-        default: () => toast.error("Failed to judge submission"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.judgeFailed",
+          ),
       });
     }
   }
@@ -81,13 +87,13 @@ export function SubmissionsPageActionJudge({
         data-testid="submissions-page-action-judge"
       >
         <GavelIcon />
-        Judge
+        <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.menuItemJudge" />
       </DropdownMenuItem>
 
       <ConfirmationDialog
         isOpen={dialog.isOpen}
-        title="Are you sure you want to judge?"
-        description="This will override any existing answer."
+        title="[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.judgeDialogTitle"
+        description="[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.judgeDialogDescription"
         content={
           <Form
             onSubmit={judgeForm.handleSubmit(judgeSubmission)}
@@ -97,15 +103,17 @@ export function SubmissionsPageActionJudge({
               <ControlledField
                 form={judgeForm}
                 name="answer"
-                label="Answer"
+                label="[slug].(dashboard)._common.submissions.SubmissionsPageActionJudge.labelAnswer"
                 field={
                   <NativeSelect data-testid="submission-judge-form-answer">
                     <NativeSelectOption value="" disabled />
                     {Object.keys(SubmissionAnswer).map((answer) => (
                       <NativeSelectOption key={answer} value={answer}>
-                        {EnumeratedTextUtil.getSubmissionAnswer(
-                          answer as SubmissionAnswer,
-                        )}
+                        <FormattedMessage
+                          id={I18nUtil.getSubmissionAnswer(
+                            answer as SubmissionAnswer,
+                          )}
+                        />
                       </NativeSelectOption>
                     ))}
                   </NativeSelect>

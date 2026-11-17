@@ -13,6 +13,7 @@ import { PrintRequestStatusBadge } from "@/app/_lib/component/display/badge/Prin
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
 import clsx from "clsx";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   printRequests: PrintRequestResponseDTO[];
@@ -36,8 +37,8 @@ export function PrintRequestsPage({
 
   return (
     <Page
-      title="Forseti - Print Requests"
-      description="View and manage print requests."
+      title="[slug].(dashboard)._common.printRequests.PrintRequestsPage.title"
+      description="[slug].(dashboard)._common.printRequests.PrintRequestsPage.subtitle"
     >
       <Card className="my-5 w-full">
         <CardContent>
@@ -45,12 +46,21 @@ export function PrintRequestsPage({
             <TableHeader className="bg-muted">
               <TableRow>
                 <TableHead>
-                  Timestamp
+                  <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPage.headerTimestamp" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPage.headerTimestamp" />
                   <ArrowUp10Icon size={16} className="ml-1 inline" />
                 </TableHead>
-                <TableHead>Contestant</TableHead>
-                <TableHead>Problem</TableHead>
-                <TableHead className="text-right">Status</TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPage.headerContestant" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPage.headerProblem" />
+                </TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPage.headerStatus" />
+                </TableHead>
                 {canUpdate && <TableHead></TableHead>}
               </TableRow>
             </TableHeader>

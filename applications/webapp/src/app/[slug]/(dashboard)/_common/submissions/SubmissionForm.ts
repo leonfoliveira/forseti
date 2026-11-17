@@ -1,4 +1,5 @@
 import Joi from "joi";
+import type { ParseKeys } from "i18next";
 
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { CreateSubmissionInputDTO } from "@/port/input/usecase/submission/SubmissionWriter";
@@ -11,14 +12,22 @@ export type SubmissionFormType = {
 
 export class SubmissionForm {
   static schema = Joi.object({
-    problemId: Joi.string().required().messages({
-      "any.required": "Problem is Required",
-      "string.empty": "Problem is Required",
-    }),
-    language: Joi.string().required().messages({
-      "any.required": "Language is Required",
-      "string.empty": "Language is Required",
-    }),
+    problemId: Joi.string()
+      .required()
+      .messages({
+        "any.required":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.problemRequired",
+        "string.empty":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.problemRequired",
+      } as Record<string, ParseKeys>),
+    language: Joi.string()
+      .required()
+      .messages({
+        "any.required":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.languageRequired",
+        "string.empty":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.languageRequired",
+      } as Record<string, ParseKeys>),
     code: Joi.custom((value: File[], helpers) => {
       if (value.length === 0) {
         return helpers.error("file.required");
@@ -30,10 +39,13 @@ export class SubmissionForm {
     })
       .required()
       .messages({
-        "any.required": "Code is Required",
-        "file.required": "Code is Required",
-        "file.too-large": "Code file must be at most 10MB",
-      }),
+        "any.required":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.codeRequired",
+        "file.required":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.codeRequired",
+        "file.too-large":
+          "[slug].(dashboard)._common.submissions.SubmissionForm.codeTooLarge",
+      } as Record<string, ParseKeys>),
   });
 
   static toInputDTO(data: SubmissionFormType): CreateSubmissionInputDTO {

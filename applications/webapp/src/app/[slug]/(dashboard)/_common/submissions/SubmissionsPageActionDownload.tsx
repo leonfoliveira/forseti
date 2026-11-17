@@ -6,6 +6,7 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   submission: SubmissionWithCodeResponseDTO;
@@ -30,7 +31,10 @@ export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
       onClose();
     } catch (error) {
       await errorHandler.handle(error as Error, {
-        default: () => toast.error("Failed to download submission."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.submissions.SubmissionsPageActionDownload.downloadFailed",
+          ),
       });
     }
   }
@@ -44,7 +48,7 @@ export function SubmissionsPageActionDownload({ submission, onClose }: Props) {
       data-testid="submissions-page-action-download"
     >
       <DownloadIcon />
-      Download
+      <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionDownload.menuItemDownload" />
     </DropdownMenuItem>
   );
 }

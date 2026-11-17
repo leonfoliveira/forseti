@@ -11,6 +11,7 @@ import { Composition } from "@/config/composition";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   printRequest: PrintRequestResponseDTO;
@@ -34,7 +35,10 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
       printLoadableState.finish();
     } catch (error) {
       await printLoadableState.fail(error, {
-        default: () => toast.error("Failed to print."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.printRequests.PrintRequestsPageActions.printFailed",
+          ),
       });
     }
   }
@@ -57,7 +61,10 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
       loadableState.finish();
     } catch (error) {
       await loadableState.fail(error, {
-        default: () => toast.error("Failed to update print request status."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.printRequests.PrintRequestsPageActions.updateFailed",
+          ),
       });
     }
   }
@@ -79,7 +86,9 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
             <PrinterIcon />
           </AsyncButton>
         </TooltipTrigger>
-        <TooltipContent>Print</TooltipContent>
+        <TooltipContent>
+          <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPageActions.print" />
+        </TooltipContent>
       </Tooltip>
 
       <Tooltip>
@@ -98,7 +107,9 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
             <CheckIcon />
           </AsyncButton>
         </TooltipTrigger>
-        <TooltipContent>Complete</TooltipContent>
+        <TooltipContent>
+          <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPageActions.complete" />
+        </TooltipContent>
       </Tooltip>
 
       <Tooltip>
@@ -117,7 +128,9 @@ export function PrintRequestsPageActions({ printRequest, onUpdate }: Props) {
             <XIcon />
           </AsyncButton>
         </TooltipTrigger>
-        <TooltipContent>Reject</TooltipContent>
+        <TooltipContent>
+          <FormattedMessage id="[slug].(dashboard)._common.printRequests.PrintRequestsPageActions.reject" />
+        </TooltipContent>
       </Tooltip>
     </div>
   );

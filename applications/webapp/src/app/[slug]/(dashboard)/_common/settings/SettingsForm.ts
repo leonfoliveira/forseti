@@ -1,4 +1,5 @@
 import Joi from "joi";
+import type { ParseKeys } from "i18next";
 
 import { DateTimeUtil } from "@/app/_lib/util/DateTimeUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
@@ -59,19 +60,31 @@ export class SettingsForm {
           .pattern(/^[a-zA-Z0-9-]+$/)
           .required()
           .messages({
-            "any.required": "Slug is required",
-            "string.empty": "Slug is required",
-            "string.min": "Slug is required",
-            "string.max": "Slug must be at most 30 characters long",
+            "any.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.slugRequired",
+            "string.empty":
+              "[slug].(dashboard)._common.settings.SettingsForm.slugRequired",
+            "string.min":
+              "[slug].(dashboard)._common.settings.SettingsForm.slugRequired",
+            "string.max":
+              "[slug].(dashboard)._common.settings.SettingsForm.slugTooLong",
             "string.pattern.base":
-              "Slug must only contain alphanumeric characters and hyphens",
-          }),
-        title: Joi.string().min(1).max(200).required().messages({
-          "any.required": "Title is required",
-          "string.empty": "Title is required",
-          "string.min": "Title is required",
-          "string.max": "Title must be at most 200 characters long",
-        }),
+              "[slug].(dashboard)._common.settings.SettingsForm.slugPatternInvalid",
+          } as Record<string, ParseKeys>),
+        title: Joi.string()
+          .min(1)
+          .max(200)
+          .required()
+          .messages({
+            "any.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.titleRequired",
+            "string.empty":
+              "[slug].(dashboard)._common.settings.SettingsForm.titleRequired",
+            "string.min":
+              "[slug].(dashboard)._common.settings.SettingsForm.titleRequired",
+            "string.max":
+              "[slug].(dashboard)._common.settings.SettingsForm.titleTooLong",
+          } as Record<string, ParseKeys>),
         languages: Joi.object()
           .pattern(Joi.string(), Joi.boolean())
           .custom(
@@ -87,9 +100,11 @@ export class SettingsForm {
           )
           .required()
           .messages({
-            "any.required": "At least one language is required",
-            "languages.required": "At least one language is required",
-          }),
+            "any.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.languagesRequired",
+            "languages.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.languagesRequired",
+          } as Record<string, ParseKeys>),
         startAt: Joi.string()
           .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
           .custom((value: string, helpers) => {
@@ -112,11 +127,15 @@ export class SettingsForm {
           })
           .required()
           .messages({
-            "any.required": "Start date is required",
-            "string.pattern.base": "Start date is invalid",
-            "datetime-local.invalid": "Start date is invalid",
-            "datetime-local.future": "Start date must be in the future",
-          }),
+            "any.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.startAtRequired",
+            "string.pattern.base":
+              "[slug].(dashboard)._common.settings.SettingsForm.startAtInvalid",
+            "datetime-local.invalid":
+              "[slug].(dashboard)._common.settings.SettingsForm.startAtInvalid",
+            "datetime-local.future":
+              "[slug].(dashboard)._common.settings.SettingsForm.startAtFuture",
+          } as Record<string, ParseKeys>),
         endAt: Joi.string()
           .pattern(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/)
           .custom((value: string, helpers) => {
@@ -138,12 +157,15 @@ export class SettingsForm {
           })
           .required()
           .messages({
-            "any.required": "End date is required",
-            "string.pattern.base": "End date is invalid",
-            "datetime-local.invalid": "End date is invalid",
+            "any.required":
+              "[slug].(dashboard)._common.settings.SettingsForm.endAtRequired",
+            "string.pattern.base":
+              "[slug].(dashboard)._common.settings.SettingsForm.endAtInvalid",
+            "datetime-local.invalid":
+              "[slug].(dashboard)._common.settings.SettingsForm.endAtInvalid",
             "datetime-local.after-start":
-              "End date must be after the start date",
-          }),
+              "[slug].(dashboard)._common.settings.SettingsForm.endAtAfterStart",
+          } as Record<string, ParseKeys>),
         autoFreezeAt: Joi.string()
           .allow("")
           .custom((value: string, helpers) => {
@@ -189,14 +211,17 @@ export class SettingsForm {
           })
           .optional()
           .messages({
-            "string.pattern.base": "Freeze date is invalid",
-            "datetime-local.invalid": "Freeze date is invalid",
+            "string.pattern.base":
+              "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtInvalid",
+            "datetime-local.invalid":
+              "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtInvalid",
             "datetime-local.auto-freeze-after-start":
-              "Freeze date must be after the start date",
+              "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtBeforeStart",
             "datetime-local.auto-freeze-before-end":
-              "Freeze date must be before the end date",
-            "datetime-local.future": "Freeze date must be in the future",
-          }),
+              "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtAfterEnd",
+            "datetime-local.future":
+              "[slug].(dashboard)._common.settings.SettingsForm.autoFreezeAtFuture",
+          } as Record<string, ParseKeys>),
         frozenAt: Joi.optional(),
         unfrozenAt: Joi.optional(),
         ipCIDRs: Joi.string()
@@ -213,8 +238,9 @@ export class SettingsForm {
             return value;
           })
           .messages({
-            "ipCIDRs.invalid": "IP CIDRs are invalid",
-          }),
+            "ipCIDRs.invalid":
+              "[slug].(dashboard)._common.settings.SettingsForm.ipCIDRsInvalid",
+          } as Record<string, ParseKeys>),
         settings: Joi.object({
           isAutoJudgeEnabled: Joi.boolean().required(),
           isClarificationEnabled: Joi.boolean().required(),
@@ -230,16 +256,27 @@ export class SettingsForm {
               .pattern(/^#[A-Fa-f0-9]{6}$/)
               .required()
               .messages({
-                "any.required": "Problem color is required",
-                "string.empty": "Problem color is required",
-                "string.pattern.base": "Problem color is invalid",
-              }),
-            title: Joi.string().min(1).max(200).required().messages({
-              "any.required": "Problem title is required",
-              "string.empty": "Problem title is required",
-              "string.min": "Problem title is required",
-              "string.max": "Problem title is too long",
-            }),
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemColorRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemColorRequired",
+                "string.pattern.base":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemColorInvalid",
+              } as Record<string, ParseKeys>),
+            title: Joi.string()
+              .min(1)
+              .max(200)
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTitleRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTitleRequired",
+                "string.min":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTitleRequired",
+                "string.max":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTitleTooLong",
+              } as Record<string, ParseKeys>),
             newDescription: Joi.when("_id", {
               is: Joi.exist(),
               then: Joi.optional(),
@@ -256,19 +293,33 @@ export class SettingsForm {
                 return value;
               }).required(),
             }).messages({
-              "any.required": "Problem description is required",
-              "file.required": "Problem description is required",
-              "file.too-large": "Problem description must be smaller than 10MB",
-              "file.invalid-type": "Problem description must be a PDF",
-            }),
-            timeLimitMs: Joi.number().greater(0).required().messages({
-              "any.required": "Problem time limit is required",
-              "number.min": "Problem time limit must be positive",
-            }),
-            memoryLimitMb: Joi.number().greater(0).required().messages({
-              "any.required": "Problem memory limit is required",
-              "number.min": "Problem memory limit must be positive",
-            }),
+              "any.required":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionRequired",
+              "file.required":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionRequired",
+              "file.too-large":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionTooLarge",
+              "file.invalid-type":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemDescriptionPDF",
+            } as Record<string, ParseKeys>),
+            timeLimitMs: Joi.number()
+              .positive()
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTimeLimitRequired",
+                "number.positive":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemTimeLimitPositive",
+              } as Record<string, ParseKeys>),
+            memoryLimitMb: Joi.number()
+              .positive()
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemMemoryLimitRequired",
+                "number.positive":
+                  "[slug].(dashboard)._common.settings.SettingsForm.problemMemoryLimitPositive",
+              } as Record<string, ParseKeys>),
             newTestCases: Joi.when("_id", {
               is: Joi.exist(),
               then: Joi.optional(),
@@ -285,11 +336,15 @@ export class SettingsForm {
                 return value;
               }).required(),
             }).messages({
-              "any.required": "Problem test cases are required",
-              "file.required": "Problem test cases are required",
-              "file.too-large": "Problem test cases must be smaller than 10MB",
-              "file.invalid-type": "Problem test cases must be a CSV",
-            }),
+              "any.required":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesRequired",
+              "file.required":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesRequired",
+              "file.too-large":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesTooLarge",
+              "file.invalid-type":
+                "[slug].(dashboard)._common.settings.SettingsForm.problemTestCasesCSV",
+            } as Record<string, ParseKeys>),
           }).unknown(),
         )
         .required(),
@@ -297,22 +352,42 @@ export class SettingsForm {
         .items(
           Joi.object({
             _id: Joi.string(),
-            type: Joi.string().required().messages({
-              "any.required": "Member type is required",
-              "string.empty": "Member type is required",
-            }),
-            name: Joi.string().min(1).max(50).required().messages({
-              "any.required": "Member name is required",
-              "string.empty": "Member name is required",
-              "string.min": "Member name is required",
-              "string.max": "Member name is too long",
-            }),
-            login: Joi.string().min(1).max(30).required().messages({
-              "any.required": "Member login is required",
-              "string.empty": "Member login is required",
-              "string.min": "Member login is required",
-              "string.max": "Member login is too long",
-            }),
+            type: Joi.string()
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberTypeRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberTypeRequired",
+              } as Record<string, ParseKeys>),
+            name: Joi.string()
+              .min(1)
+              .max(50)
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberNameRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberNameRequired",
+                "string.min":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberNameRequired",
+                "string.max":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberNameTooLong",
+              } as Record<string, ParseKeys>),
+            login: Joi.string()
+              .min(1)
+              .max(30)
+              .required()
+              .messages({
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberLoginRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberLoginRequired",
+                "string.min":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberLoginRequired",
+                "string.max":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberLoginTooLong",
+              } as Record<string, ParseKeys>),
             password: Joi.string()
               .min(1)
               .max(30)
@@ -322,14 +397,22 @@ export class SettingsForm {
                 otherwise: Joi.required(),
               })
               .messages({
-                "any.required": "Member password is required",
-                "string.empty": "Member password is required",
-                "string.min": "Member password is required",
-                "string.max": "Member password is too long",
-              }),
-            ip: Joi.string().allow("").ip().messages({
-              "string.ip": "Member IP must be a valid IP address",
-            }),
+                "any.required":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordRequired",
+                "string.empty":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordRequired",
+                "string.min":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordRequired",
+                "string.max":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberPasswordTooLong",
+              } as Record<string, ParseKeys>),
+            ip: Joi.string()
+              .allow("")
+              .ip()
+              .messages({
+                "string.ip":
+                  "[slug].(dashboard)._common.settings.SettingsForm.memberIpInvalid",
+              } as Record<string, ParseKeys>),
           }).unknown(),
         )
         .required(),

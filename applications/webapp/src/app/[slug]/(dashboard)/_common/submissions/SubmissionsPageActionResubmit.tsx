@@ -7,8 +7,8 @@ import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
-import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   submission: SubmissionWithCodeAndExecutionsResponseDTO;
@@ -36,7 +36,9 @@ export function SubmissionsPageActionResubmit({
         submissionId,
       );
 
-      toast.success("Submission resubmitted successfully");
+      toast.success(
+        "[slug].(dashboard)._common.submissions.SubmissionsPageActionResubmit.resubmitSuccess",
+      );
       onResubmit(updatedSubmission);
       dialog.close();
       resubmitState.finish();
@@ -45,7 +47,10 @@ export function SubmissionsPageActionResubmit({
       onClose();
     } catch (error) {
       await resubmitState.fail(error, {
-        default: () => toast.error("Failed to resubmit submission"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.submissions.SubmissionsPageActionResubmit.resubmitFailed",
+          ),
       });
     }
   }
@@ -60,13 +65,13 @@ export function SubmissionsPageActionResubmit({
         data-testid="submissions-page-action-resubmit"
       >
         <RefreshCwIcon />
-        Resubmit
+        <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionResubmit.menuItemResubmit" />
       </DropdownMenuItem>
 
       <ConfirmationDialog
         isOpen={dialog.isOpen}
-        title="Resubmit Submission"
-        description="Are you sure you want to resubmit this submission?"
+        title="[slug].(dashboard)._common.submissions.SubmissionsPageActionResubmit.resubmitDialogTitle"
+        description="[slug].(dashboard)._common.submissions.SubmissionsPageActionResubmit.resubmitDialogDescription"
         onCancel={() => dialog.close()}
         onConfirm={() => resubmitSubmission(submission.id)}
         isLoading={resubmitState.isLoading}

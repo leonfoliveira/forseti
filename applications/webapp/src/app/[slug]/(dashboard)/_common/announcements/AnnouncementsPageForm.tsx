@@ -24,6 +24,7 @@ import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { Composition } from "@/config/composition";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;
@@ -50,7 +51,9 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
         AnnouncementForm.toInputDTO(data),
       );
 
-      toast.success("Announcement created successfully");
+      toast.success(
+        "[slug].(dashboard)._common.announcements.AnnouncementsPageForm.createSuccessfull",
+      );
       onCreate(newAnnouncement);
       form.reset();
       createAnnouncementState.finish();
@@ -59,7 +62,10 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
       onClose();
     } catch (error) {
       await createAnnouncementState.fail(error, {
-        default: () => toast.error("Failed to create announcement"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.announcements.AnnouncementsPageForm.createFailed",
+          ),
       });
     }
   }
@@ -67,9 +73,11 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
   return (
     <Card className="w-full max-w-4xl" data-testid="announcement-form">
       <CardHeader>
-        <CardTitle>Create Announcement</CardTitle>
+        <CardTitle>
+          <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPageForm.title" />
+        </CardTitle>
         <CardDescription>
-          Write and broadcast a new announcement to all participants.
+          <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPageForm.subtitle" />
         </CardDescription>
       </CardHeader>
       <Separator />
@@ -79,7 +87,7 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
             <ControlledField
               form={form}
               name="text"
-              label="Text"
+              label="[slug].(dashboard)._common.announcements.AnnouncementsPageForm.text"
               field={<Textarea data-testid="announcement-form-text" />}
             />
             <div className="flex justify-end gap-3">
@@ -89,7 +97,7 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
                 onClick={onClose}
                 data-testid="announcement-form-cancel"
               >
-                Cancel
+                <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPageForm.cancel" />
               </Button>
               <AsyncButton
                 type="submit"
@@ -97,7 +105,7 @@ export function AnnouncementsPageForm({ contestId, onCreate, onClose }: Props) {
                 isLoading={createAnnouncementState.isLoading}
                 data-testid="announcement-form-submit"
               >
-                Broadcast
+                <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPageForm.broadcast" />
               </AsyncButton>
             </div>
           </FieldSet>

@@ -126,7 +126,9 @@ export function AdminDashboardProvider({
     dispatch(AdminDashboardSlice.actions.mergeSubmission(submission));
 
     if (submission.status === SubmissionStatus.FAILED) {
-      toast.error("New failed submission");
+      toast.error(
+        "_lib.provider.dashboard.AdminDashboardProvider.newFailedSubmission",
+      );
     }
   }
 
@@ -135,7 +137,10 @@ export function AdminDashboardProvider({
     dispatch(AdminDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
-      toast.warning(`New announcement: ${announcement.text}`);
+      toast.warning(
+        "_lib.provider.dashboard.AdminDashboardProvider.newAnnouncement",
+        { text: announcement.text },
+      );
     }
   }
 
@@ -144,7 +149,9 @@ export function AdminDashboardProvider({
   ) {
     console.debug("Received clarification created:", clarification);
     dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`New clarification created`);
+    toast.info(
+      "_lib.provider.dashboard.AdminDashboardProvider.newClarification",
+    );
   }
 
   function receiveClarificationAnswered(
@@ -159,7 +166,9 @@ export function AdminDashboardProvider({
   ) {
     console.debug("Received clarification published:", clarification);
     dispatch(AdminDashboardSlice.actions.mergeClarification(clarification));
-    toast.info("A clarification has been published");
+    toast.info(
+      "_lib.provider.dashboard.AdminDashboardProvider.clarificationPublished",
+    );
   }
 
   function receiveContestUpdated(
@@ -176,7 +185,7 @@ export function AdminDashboardProvider({
     console.debug("Received contest frozen:", contest);
     dispatch(AdminDashboardSlice.actions.freeze(contest));
     dispatch(ContestSlice.actions.set(contest));
-    toast.info("The contest has been frozen");
+    toast.info("_lib.provider.dashboard.AdminDashboardProvider.contestFrozen");
   }
 
   function receiveContestUnfrozen(data: {
@@ -187,7 +196,9 @@ export function AdminDashboardProvider({
     console.debug("Received contest unfrozen");
     dispatch(AdminDashboardSlice.actions.unfreeze(data));
     dispatch(ContestSlice.actions.set(data.contest));
-    toast.info("The contest has been unfrozen");
+    toast.info(
+      "_lib.provider.dashboard.AdminDashboardProvider.contestUnfrozen",
+    );
   }
 
   function receivePrintRequest(printRequest: PrintRequestResponseDTO) {

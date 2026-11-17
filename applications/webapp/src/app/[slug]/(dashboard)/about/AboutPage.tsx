@@ -1,10 +1,12 @@
+import type { ParseKeys } from "i18next";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/FormattedDateTime";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_lib/store/Store";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { CheckIcon, XIcon } from "lucide-react";
 
 /**
@@ -15,7 +17,7 @@ export default function DashboardAboutPage() {
 
   function getSettingItem(
     isEnabled: boolean,
-    label: string,
+    label: ParseKeys,
     dataTestId: string,
   ) {
     return (
@@ -33,13 +35,18 @@ export default function DashboardAboutPage() {
             />
           )}
         </span>
-        <span>{label}</span>
+        <span>
+          <FormattedMessage id={label} />
+        </span>
       </li>
     );
   }
 
   return (
-    <Page title="Forseti - About" description="About the contest">
+    <Page
+      title="[slug].(dashboard).about.pageTitle"
+      description="[slug].(dashboard).about.pageDescription"
+    >
       <div className="mx-auto my-5 w-full max-w-4xl">
         <Card>
           <CardContent>
@@ -68,7 +75,9 @@ export default function DashboardAboutPage() {
 
               <div className="mt-6 text-center">
                 <section>
-                  <p className="mb-2 font-medium">Languages</p>
+                  <p className="mb-2 font-medium">
+                    <FormattedMessage id="[slug].(dashboard).about.labelLanguages" />
+                  </p>
                   <div className="flex flex-wrap justify-center gap-2">
                     <div className="flex flex-wrap gap-2">
                       {contest.languages.map((lang) => (
@@ -77,7 +86,9 @@ export default function DashboardAboutPage() {
                           className="bg-muted text-muted-foreground rounded-full px-3 py-1 text-sm"
                           data-testid={`language-${lang}`}
                         >
-                          {EnumeratedTextUtil.getSubmissionLanguage(lang)}
+                          <FormattedMessage
+                            id={I18nUtil.getSubmissionLanguage(lang)}
+                          />
                         </Badge>
                       ))}
                     </div>
@@ -89,22 +100,22 @@ export default function DashboardAboutPage() {
                   <ul className="space-y-2 text-sm">
                     {getSettingItem(
                       contest.settings.isAutoJudgeEnabled,
-                      "Auto Judge Enabled",
+                      "[slug].(dashboard).about.labelIsAutoJudgeEnabled",
                       "auto-judge",
                     )}
                     {getSettingItem(
                       contest.settings.isClarificationEnabled,
-                      "Clarification Enabled",
+                      "[slug].(dashboard).about.labelIsClarificationEnabled",
                       "clarification",
                     )}
                     {getSettingItem(
                       contest.settings.isPrintRequestEnabled,
-                      "Print Request Enabled",
+                      "[slug].(dashboard).about.labelIsPrintRequestEnabled",
                       "submission-print-ticket",
                     )}
                     {getSettingItem(
                       contest.settings.isSpectatorEnabled,
-                      "Spectator Enabled",
+                      "[slug].(dashboard).about.labelIsSpectatorEnabled",
                       "spectator",
                     )}
                   </ul>

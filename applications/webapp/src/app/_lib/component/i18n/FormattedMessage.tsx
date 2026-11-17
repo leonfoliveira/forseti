@@ -1,8 +1,9 @@
+import type { ParseKeys, TOptions } from "i18next";
 import { useTranslation } from "react-i18next";
 
 type Props = {
-  id: string;
-  values?: Record<string, unknown>;
+  id: ParseKeys;
+  values?: TOptions;
 };
 
 export function FormattedMessage({ id, values }: Props) {

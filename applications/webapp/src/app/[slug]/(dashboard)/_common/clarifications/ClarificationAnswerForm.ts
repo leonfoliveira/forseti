@@ -1,4 +1,5 @@
 import Joi from "joi";
+import type { ParseKeys } from "i18next";
 
 import { AnswerClarificationRequestDTO } from "@/port/dto/request/clarification/AnswerClarificationRequestDTO";
 
@@ -8,11 +9,17 @@ export type ClarificationAnswerFormType = {
 
 export class ClarificationAnswerForm {
   static schema = Joi.object({
-    text: Joi.string().required().max(255).messages({
-      "any.required": "Text is required",
-      "string.empty": "Text is required",
-      "string.max": "Text cannot exceed 255 characters",
-    }),
+    text: Joi.string()
+      .required()
+      .max(255)
+      .messages({
+        "any.required":
+          "[slug].(dashboard)._common.clarifications.ClarificationAnswerForm.textRequired",
+        "string.empty":
+          "[slug].(dashboard)._common.clarifications.ClarificationAnswerForm.textRequired",
+        "string.max":
+          "[slug].(dashboard)._common.clarifications.ClarificationAnswerForm.textTooLong",
+      } as Record<string, ParseKeys>),
   });
 
   static toInputDTO(

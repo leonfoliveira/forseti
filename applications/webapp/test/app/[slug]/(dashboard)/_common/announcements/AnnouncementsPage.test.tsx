@@ -45,7 +45,7 @@ describe("AnnouncementsPage", () => {
     const onCreate = jest.fn();
 
     await renderWithProviders(
-      <AnnouncementsPage announcements={[]} canCreate onCreate={onCreate} />,
+      <AnnouncementsPage announcements={[]} onCreate={onCreate} />,
     );
 
     expect(screen.getByTestId("open-create-form-button")).toBeInTheDocument();

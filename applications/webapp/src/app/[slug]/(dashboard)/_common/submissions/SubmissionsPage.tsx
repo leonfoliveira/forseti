@@ -28,9 +28,10 @@ import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   submissions:
@@ -82,8 +83,8 @@ export function SubmissionsPage({
 
   return (
     <Page
-      title="Forseti - Submissions"
-      description="View and manage contest submissions."
+      title="[slug].(dashboard)._common.submissions.SubmissionsPage.pageTitle"
+      description="[slug].(dashboard)._common.submissions.SubmissionsPage.pageDescription"
     >
       <div className="flex flex-col items-center py-5">
         {/* Create Form */}
@@ -101,7 +102,7 @@ export function SubmissionsPage({
             data-testid="open-create-form-button"
           >
             <PlusIcon size={16} />
-            New Submission
+            <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.buttonNewSubmission" />
           </Button>
         )}
         {shouldSeeCreationComponents && (
@@ -119,7 +120,7 @@ export function SubmissionsPage({
                   data-testid="only-mine-toggle"
                 >
                   <FunnelIcon className={clsx(isOnlyMine && "fill-black")} />
-                  Only Mine
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.toggleOnlyMine" />
                 </Toggle>
               </div>
             )}
@@ -127,14 +128,24 @@ export function SubmissionsPage({
               <TableHeader className="bg-muted">
                 <TableRow>
                   <TableHead>
-                    Timestamp
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerTimestamp" />
                     <ArrowUp10Icon size={16} className="ml-1 inline" />
                   </TableHead>
-                  <TableHead>Contestant</TableHead>
-                  <TableHead>Problem</TableHead>
-                  <TableHead>Language</TableHead>
-                  <TableHead className="text-right">Status</TableHead>
-                  <TableHead className="text-right">Answer</TableHead>
+                  <TableHead>
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerContestant" />
+                  </TableHead>
+                  <TableHead>
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerProblem" />
+                  </TableHead>
+                  <TableHead>
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerLanguage" />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerStatus" />
+                  </TableHead>
+                  <TableHead className="text-right">
+                    <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.headerAnswer" />
+                  </TableHead>
                   {hasAnyAction && <TableHead></TableHead>}
                 </TableRow>
               </TableHeader>
@@ -165,9 +176,9 @@ export function SubmissionsPage({
                       <ProblemLetterBadge problem={submission.problem} />
                     </TableCell>
                     <TableCell data-testid="submission-language">
-                      {EnumeratedTextUtil.getSubmissionLanguage(
-                        submission.language,
-                      )}
+                      <FormattedMessage
+                        id={I18nUtil.getSubmissionLanguage(submission.language)}
+                      />
                     </TableCell>
                     <TableCell
                       className="text-right"
@@ -209,9 +220,7 @@ export function SubmissionsPage({
 
             <Alert className="bg-muted mt-7 py-2">
               <AlertDescription className="text-xs">
-                {
-                  "View all contest submissions here. Submissions are judged automatically and results appear in real-time. You can see the status (judging/judged/failed) and answer (accepted/wrong answer/compilation error/runtime error/time limit exceeded/memory limit exceeded) for each submission."
-                }
+                <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPage.help" />
               </AlertDescription>
             </Alert>
           </CardContent>

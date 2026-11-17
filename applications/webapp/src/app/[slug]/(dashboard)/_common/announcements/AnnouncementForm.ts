@@ -1,3 +1,4 @@
+import type { ParseKeys } from "i18next";
 import Joi from "joi";
 
 import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
@@ -8,11 +9,17 @@ export type AnnouncementFormType = {
 
 export class AnnouncementForm {
   static schema = Joi.object({
-    text: Joi.string().required().max(500).messages({
-      "any.required": "Text is Required",
-      "string.empty": "Text is Required",
-      "string.max": "Cannot exceed 500 characters",
-    }),
+    text: Joi.string()
+      .required()
+      .max(500)
+      .messages({
+        "any.required":
+          "[slug].(dashboard)._common.announcements.AnnouncementForm.textRequired",
+        "string.empty":
+          "[slug].(dashboard)._common.announcements.AnnouncementForm.textRequired",
+        "string.max":
+          "[slug].(dashboard)._common.announcements.AnnouncementForm.textTooLong",
+      } as Record<string, ParseKeys>),
   });
 
   static toInputDTO(data: AnnouncementFormType): CreateAnnouncementRequestDTO {

@@ -29,6 +29,7 @@ import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { useDialog } from "@/app/_lib/hook/useDialog";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;
@@ -67,14 +68,19 @@ export function ClarificationsPageCard({
         ClarificationAnswerForm.toInputDTO(data),
       );
 
-      toast.success("Clarification answered successfully");
+      toast.success(
+        "[slug].(dashboard)._common.clarifications.ClarificationsPageCard.answerSuccess",
+      );
       onAnswer?.(newClarification);
       answerState.finish();
       form.reset();
       console.debug("Clarification answered successfully:", newClarification);
     } catch (error) {
       await answerState.fail(error, {
-        default: () => toast.error("Failed to answer clarification"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.clarifications.ClarificationsPageCard.answerFailed",
+          ),
       });
     }
   }
@@ -90,7 +96,9 @@ export function ClarificationsPageCard({
           clarification.id,
         );
 
-      toast.success("Clarification published successfully");
+      toast.success(
+        "[slug].(dashboard)._common.clarifications.ClarificationsPageCard.publishSuccess",
+      );
       onPublish?.(publishedClarification);
       publishState.finish();
       publishDialog.close();
@@ -100,7 +108,10 @@ export function ClarificationsPageCard({
       );
     } catch (error) {
       await publishState.fail(error, {
-        default: () => toast.error("Failed to publish clarification"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.clarifications.ClarificationsPageCard.publishFailed",
+          ),
       });
     }
   }
@@ -125,7 +136,10 @@ export function ClarificationsPageCard({
                     variant="default"
                     data-testid="clarification-problem-title"
                   >
-                    {`Problem ${clarification.problem!.letter}`}
+                    <FormattedMessage
+                      id="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.problem"
+                      values={{ letter: clarification.problem!.letter }}
+                    />
                   </Badge>
                 )}
               </p>
@@ -141,7 +155,11 @@ export function ClarificationsPageCard({
             variant={clarification.isPublic ? "default" : "outline"}
             data-testid="clarification-is-public-badge"
           >
-            {clarification.isPublic ? "Public" : "Private"}
+            {clarification.isPublic ? (
+              <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.public" />
+            ) : (
+              <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.private" />
+            )}
           </Badge>
         </div>
         <p className="mt-3" data-testid="clarification-text">
@@ -185,7 +203,7 @@ export function ClarificationsPageCard({
                     onClick={publishDialog.open}
                     data-testid="clarification-publish-button"
                   >
-                    Publish
+                    <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.publish" />
                   </AsyncButton>
                 </div>
               )}
@@ -199,7 +217,7 @@ export function ClarificationsPageCard({
                     <ControlledField
                       form={form}
                       name="text"
-                      label="Answer"
+                      label="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.answer"
                       field={
                         <Textarea data-testid="clarification-answer-textarea" />
                       }
@@ -210,7 +228,7 @@ export function ClarificationsPageCard({
                       isLoading={answerState.isLoading}
                       data-testid="clarification-answer-submit-button"
                     >
-                      Answer
+                      <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.answer" />
                     </AsyncButton>
                   </div>
                 </FieldSet>
@@ -222,8 +240,8 @@ export function ClarificationsPageCard({
 
       <ConfirmationDialog
         isOpen={publishDialog.isOpen}
-        title="Publish Clarification"
-        description="Are you sure you want to publish this clarification? It will become visible to all participants."
+        title="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.publishClarification"
+        description="[slug].(dashboard)._common.clarifications.ClarificationsPageCard.dialogDescription"
         onCancel={() => publishDialog.close()}
         onConfirm={() => publishClarification()}
         isLoading={publishState.isLoading}

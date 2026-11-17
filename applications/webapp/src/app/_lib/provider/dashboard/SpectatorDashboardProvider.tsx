@@ -117,10 +117,6 @@ export function SpectatorDashboardProvider({
   function receiveSubmission(submission: SubmissionResponseDTO) {
     console.debug("Received submission:", submission);
     dispatch(SpectatorDashboardSlice.actions.mergeSubmission(submission));
-
-    if (submission.status === SubmissionStatus.FAILED) {
-      toast.error("New failed submission");
-    }
   }
 
   function receiveAnnouncement(announcement: AnnouncementResponseDTO) {
@@ -128,7 +124,12 @@ export function SpectatorDashboardProvider({
     dispatch(SpectatorDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
-      toast.warning(`New announcement: ${announcement.text}`);
+      toast.warning(
+        "_lib.provider.dashboard.spectatorDashboardProvider.newAnnouncement",
+        {
+          text: announcement.text,
+        },
+      );
     }
   }
 
@@ -137,7 +138,9 @@ export function SpectatorDashboardProvider({
   ) {
     console.debug("Received clarification published:", clarification);
     dispatch(SpectatorDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`A clarification has been published`);
+    toast.info(
+      "_lib.provider.dashboard.spectatorDashboardProvider.clarificationPublished",
+    );
   }
 
   function receiveContestUpdated(contest: ContestResponseDTO) {
@@ -149,7 +152,9 @@ export function SpectatorDashboardProvider({
   function receiveContestFrozen(contest: ContestResponseDTO) {
     console.debug("Received contest frozen:", contest);
     dispatch(SpectatorDashboardSlice.actions.freeze(contest));
-    toast.info("The contest has been frozen");
+    toast.info(
+      "_lib.provider.dashboard.spectatorDashboardProvider.contestFrozen",
+    );
   }
 
   function receiveContestUnfrozen(data: {
@@ -159,7 +164,9 @@ export function SpectatorDashboardProvider({
   }) {
     console.debug("Received contest unfrozen");
     dispatch(SpectatorDashboardSlice.actions.unfreeze(data));
-    toast.info("The contest has been unfrozen");
+    toast.info(
+      "_lib.provider.dashboard.spectatorDashboardProvider.contestUnfrozen",
+    );
   }
 
   if (state.isLoading) {

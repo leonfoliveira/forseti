@@ -25,6 +25,7 @@ import {
   FieldLabel,
 } from "@/app/_lib/component/shadcn/field";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[];
@@ -74,8 +75,8 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
 
   return (
     <Page
-      title={"Forseti - Leaderboard"}
-      description={"Leaderboard of the contest."}
+      title="[slug].(dashboard)._common.leaderboard.LeaderboardPage.pageTitle"
+      description="[slug].(dashboard)._common.leaderboard.LeaderboardPage.pageDescription"
     >
       <Card className="my-5">
         <CardContent>
@@ -89,7 +90,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
               />
               <FieldContent>
                 <FieldLabel htmlFor="doesShowUnofficial">
-                  Show Unofficial
+                  <FormattedMessage id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.showUnnoficial" />
                 </FieldLabel>
               </FieldContent>
             </Field>
@@ -100,9 +101,15 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                 <TableHead>
                   <ArrowDown01Icon size={16} />
                 </TableHead>
-                <TableHead>Contestant</TableHead>
-                <TableHead>Score</TableHead>
-                <TableHead>Penalty</TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.headerContestant" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.headerScore" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.headerPenalty" />
+                </TableHead>
                 {problems.map((problem) => (
                   <TableHead key={problem.id} className="text-center">
                     <ProblemLetterBadge problem={problem} />
@@ -124,12 +131,16 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
                       getMedal(ranks[row.memberId])}
                   </TableCell>
                   <TableCell data-testid="member-name">
-                    {row.memberType === MemberType.UNOFFICIAL_CONTESTANT && (
+                    {row.memberType === MemberType.UNOFFICIAL_CONTESTANT ? (
                       <span className="text-muted-foreground">
-                        {"(Unofficial) "}
+                        <FormattedMessage
+                          id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.unnoficialName"
+                          values={{ name: row.memberName }}
+                        />
                       </span>
+                    ) : (
+                      row.memberName
                     )}
-                    {row.memberName}
                   </TableCell>
                   <TableCell data-testid="member-score">{row.score}</TableCell>
                   <TableCell data-testid="member-penalty">
@@ -154,9 +165,7 @@ export function LeaderboardPage({ problems, leaderboard }: Props) {
           </Table>
           <Alert className="bg-muted mt-7 py-2">
             <AlertDescription className="text-xs">
-              {
-                "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance."
-              }
+              <FormattedMessage id="[slug].(dashboard)._common.leaderboard.LeaderboardPage.help" />
             </AlertDescription>
           </Alert>
         </CardContent>

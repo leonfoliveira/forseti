@@ -1,3 +1,5 @@
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+
 /**
  * Displays a 404 Not Found error page.
  */
@@ -8,7 +10,7 @@ export default function NotFoundPage() {
         404
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
-        The page you are looking for could not be found.
+        <FormattedMessage id="error.NotFoundPage.text" />
       </h2>
     </div>
   );

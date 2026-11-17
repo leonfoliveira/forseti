@@ -1,7 +1,8 @@
 import React from "react";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = React.ComponentProps<typeof Badge> & {
   status: ContestStatus;
@@ -11,7 +12,7 @@ type Props = React.ComponentProps<typeof Badge> & {
  * Displays a badge component styled according to the contest status.
  */
 export function ContestStatusBadge({ status, ...props }: Props) {
-  const text = EnumeratedTextUtil.getContestStatus(status);
+  const text = <FormattedMessage id={I18nUtil.getContestStatus(status)} />;
 
   switch (status) {
     case ContestStatus.IN_PROGRESS:

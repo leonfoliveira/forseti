@@ -16,11 +16,15 @@ describe("ClarificationForm", () => {
     it("validates text", () => {
       expect(
         ClarificationForm.schema.validate({ text: "" }).error?.message,
-      ).toContain("Text is required");
+      ).toContain(
+        "[slug].(dashboard)._common.clarifications.ClarificationForm.textRequired",
+      );
       expect(
         ClarificationForm.schema.validate({ text: "a".repeat(501) }).error
           ?.message,
-      ).toContain("Cannot exceed 500 characters");
+      ).toContain(
+        "[slug].(dashboard)._common.clarifications.ClarificationForm.textTooLong",
+      );
     });
   });
 

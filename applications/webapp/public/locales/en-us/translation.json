@@ -1,3 +1,500 @@
 {
-  "brand": "Forseti"
+  "brand": "Forseti",
+  "_lib": {
+    "component": {
+      "feedback": {
+        "ConfirmationDialog": {
+          "cancel": "Cancel",
+          "confirm": "Confirm"
+        },
+        "DisconnectionBanner": {
+          "message": "Connection to server lost. Live updates are unavailable. Attempting to reconnect..."
+        },
+        "FreezeBanner": {
+          "message": "Contest frozen."
+        }
+      },
+      "layout": {
+        "Footer": {
+          "message": "Forseti {{version}}"
+        },
+        "Header": {
+          "brand": "Forseti",
+          "toggleTheme": "Toggle theme",
+          "signOut": "Sign out",
+          "signIn": "Sign in"
+        },
+        "Navbar": {
+          "leaderboard": "Leaderboard",
+          "problems": "Problems",
+          "submissions": "Submissions",
+          "announcements": "Announcements",
+          "clarifications": "Clarifications",
+          "printRequests": "Print Requests",
+          "settings": "Settings",
+          "about": "About"
+        }
+      },
+      "page": {
+        "ErrorPage": {
+          "message": "An unexpected error has occurred on the server.",
+          "tryAgain": "Try again."
+        }
+      }
+    },
+    "provider": {
+      "dashboard": {
+        "AdminDashboardProvider": {
+          "newFailedSubmission": "New failed submission",
+          "newAnnouncement": "New announcement: {{text}}",
+          "newClarification": "New clarification",
+          "clarificationPublished": "A clarification has been published",
+          "contestFrozen": "The contest has been frozen",
+          "contestUnfrozen": "The contest has been unfrozen"
+        },
+        "ContestDashboardProvider": {
+          "memberSubmissionUpdate": "Problem {{letter}}: {{answer}}",
+          "newAnnouncement": "New announcement: {{text}}",
+          "clarificationAnswered": "Clarification answered",
+          "clarificationPublished": "A clarification has been published",
+          "contestFrozen": "The contest has been frozen",
+          "contestUnfrozen": "The contest has been unfrozen"
+        },
+        "JudgeDashboardProvider": {
+          "newFailedSubmission": "New failed submission",
+          "newAnnouncement": "New announcement: {{text}}",
+          "newClarification": "New clarification",
+          "clarificationPublished": "A clarification has been published",
+          "contestFrozen": "The contest has been frozen",
+          "contestUnfrozen": "The contest has been unfrozen"
+        },
+        "spectatorDashboardProvider": {
+          "newAnnouncement": "New announcement: {{text}}",
+          "clarificationPublished": "A clarification has been published",
+          "contestFrozen": "The contest has been frozen",
+          "contestUnfrozen": "The contest has been unfrozen"
+        },
+        "staffDashboardProvider": {
+          "newAnnouncement": "New announcement: {{text}}",
+          "newClarification": "New clarification",
+          "clarificationPublished": "A clarification has been published",
+          "contestFrozen": "The contest has been frozen",
+          "contestUnfrozen": "The contest has been unfrozen"
+        }
+      }
+    },
+    "util": {
+      "i18nUtil": {
+        "contestStatus": {
+          "notStarted": "Not Started",
+          "inProgress": "In Progress",
+          "ended": "Ended"
+        },
+        "memberType": {
+          "root": "Root",
+          "admin": "Admin",
+          "judge": "Judge",
+          "staff": "Staff",
+          "contestant": "Contestant",
+          "unofficialContestant": "Unofficial Contestant"
+        },
+        "submissionStatus": {
+          "judged": "Judged",
+          "failed": "Failed",
+          "judging": "Judging"
+        },
+        "submissionAnswer": {
+          "accepted": "Accepted",
+          "wrongAnswer": "Wrong Answer",
+          "compilationError": "Compilation Error",
+          "runtimeError": "Runtime Error",
+          "timeLimitExceeded": "Time Limit Exceeded",
+          "memoryLimitExceeded": "Memory Limit Exceeded"
+        },
+        "submissionLanguage": {
+          "cpp17": "C++ 17",
+          "java21": "Java 21",
+          "python312": "Python 3.12",
+          "node22": "Node 22"
+        },
+        "printRequestStatus": {
+          "pending": "Pending",
+          "completed": "Completed",
+          "refused": "Refused"
+        }
+      }
+    }
+  },
+  "[slug]": {
+    "(dashboard)": {
+      "_common": {
+        "announcements": {
+          "AnnouncementForm": {
+            "textRequired": "Text is required",
+            "textTooLong": "Text cannot exceed 500 characters"
+          },
+          "AnnouncementsPage": {
+            "pageTitle": "Forseti - Announcements",
+            "pageDescription": "View and create contest announcements.",
+            "newAnnouncement": "New announcement",
+            "emptyTitle": "No announcements yet",
+            "emptyDescription": "Announcements will appear here once created.",
+            "help": "This page displays important contest announcements from judges and organizers. Announcements may include contest updates, clarifications that affect all contestants, schedule changes, or other important information."
+          },
+          "AnnouncementsPageForm": {
+            "createSuccessfull": "Announcement created successfully",
+            "createFailed": "Failed to create announcement",
+            "title": "Create Announcement",
+            "subtitle": "Write and broadcast a new announcement to all participants.",
+            "text": "Text",
+            "cancel": "Cancel",
+            "broadcast": "Broadcast"
+          }
+        },
+        "clarifications": {
+          "ClarificationForm": {
+            "textRequired": "Text is required",
+            "textTooLong": "Text cannot exceed 500 characters"
+          },
+          "ClarificationAnswerForm": {
+            "textRequired": "Text is required",
+            "textTooLong": "Text cannot exceed 255 characters"
+          },
+          "ClarificationPage": {
+            "pageTitle": "Forseti - Clarifications",
+            "pageDescription": "View and request clarifications for contest problems.",
+            "newClarification": "New clarification",
+            "emptyTitle": "No clarifications yet",
+            "emptyDescription": "Clarifications will appear here once requested.",
+            "help": "This page displays clarifications for contest problems. Contestants can request clarifications, and judges will provide official responses. All clarifications and answers are visible to all contestants to ensure fairness."
+          },
+          "ClarificationsPageCard": {
+            "answerSuccess": "Clarification answered successfully",
+            "answerFailed": "Failed to answer clarification",
+            "publishSuccess": "Clarification published successfully",
+            "publishFailed": "Failed to publish clarification",
+            "problem": "Problem {{letter}}",
+            "public": "Public",
+            "private": "Private",
+            "publish": "Publish",
+            "answer": "Answer",
+            "publishClarification": "Publish clarification",
+            "dialogDescription": "Are you sure you want to publish this clarification? It will become visible to all participants."
+          },
+          "ClarificationsPageForm": {
+            "createSuccessfull": "Clarification created successfully",
+            "createFailed": "Failed to create clarification",
+            "title": "Create Clarification",
+            "subtitle": "Request a new clarification for contest problems.",
+            "problem": "Problem",
+            "generalQuestion": "None (General question)",
+            "question": "Question",
+            "cancel": "Cancel",
+            "submit": "Submit"
+          }
+        },
+        "leaderboard": {
+          "LeaderboardPage": {
+            "pageTitle": "Forseti - Leaderboard",
+            "pageDescription": "View the contest leaderboard.",
+            "showUnnoficial": "Show unofficial",
+            "headerContestant": "Contestant",
+            "headerScore": "Score",
+            "headerPenalty": "Time",
+            "unnoficialName": "(Unofficial) {{name}}",
+            "help": "Rankings are determined by: 1) Total problems solved (more is better); 2) Total penalty time (less is better); 3) Time of accepted submissions (earlier is better); 4) Name (alphabetical). Penalty includes submission time plus 20 minutes for each wrong answer before acceptance."
+          }
+        },
+        "printRequests": {
+          "PrintRequestsPage": {
+            "title": "Forseti - Print Requests",
+            "subtitle": "View and manage print requests.",
+            "headerTimestamp": "Timestamp",
+            "headerContestant": "Contestant",
+            "headerProblem": "Problem",
+            "headerStatus": "Status"
+          },
+          "PrintRequestsPageActions": {
+            "printFailed": "Failed to print",
+            "updateFailed": "Failed to update print request status",
+            "print": "Print",
+            "complete": "Complete",
+            "reject": "Reject"
+          }
+        },
+        "problems": {
+          "ProblemsPage": {
+            "testCasesDownloadFailed": "Failed to download test cases",
+            "descriptionDownloadFailed": "Failed to download problem description",
+            "pageTitle": "Forseti - Problems",
+            "pageDescription": "View all problems for the contest.",
+            "headerProblem": "Problem",
+            "headerTimeLimit": "Time Limit",
+            "headerMemoryLimit": "Memory Limit",
+            "headerStatus": "Status",
+            "headerTestCases": "Test Cases",
+            "headerDescription": "Description",
+            "help": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
+          }
+        },
+        "settings": {
+          "SettingsForm": {
+            "slugRequired": "Slug is required",
+            "slugTooLong": "Slug must be at most 30 characters long",
+            "slugPatternInvalid": "Slug must only contain alphanumeric characters and hyphens",
+            "titleRequired": "Title is required",
+            "titleTooLong": "Title must be at most 200 characters long",
+            "languagesRequired": "At least one language is required",
+            "startAtRequired": "Start date is required",
+            "startAtInvalid": "Start date is invalid",
+            "startAtFuture": "Start date must be in the future",
+            "endAtRequired": "End date is required",
+            "endAtInvalid": "End date is invalid",
+            "endAtAfterStart": "End date must be after the start date",
+            "autoFreezeAtInvalid": "Auto freeze date is invalid",
+            "autoFreezeAtBeforeStart": "Auto freeze date must be after the start date",
+            "autoFreezeAtAfterEnd": "Auto freeze date must be before the end date",
+            "autoFreezeAtFuture": "Auto freeze date must be in the future",
+            "ipCIDRsInvalid": "IP CIDRs are invalid",
+            "problemColorRequired": "Problem color is required",
+            "problemColorInvalid": "Problem color is invalid",
+            "problemTitleRequired": "Problem title is required",
+            "problemTitleTooLong": "Problem title must be at most 200 characters long",
+            "problemDescriptionRequired": "Problem description is required",
+            "problemDescriptionTooLarge": "Problem description must be smaller than 10MB",
+            "problemDescriptionPDF": "Problem description must be in PDF format",
+            "problemTimeLimitRequired": "Problem time limit is required",
+            "problemTimeLimitPositive": "Problem time limit must be a positive number",
+            "problemMemoryLimitRequired": "Problem memory limit is required",
+            "problemMemoryLimitPositive": "Problem memory limit must be a positive number",
+            "problemTestCasesRequired": "Problem test cases are required",
+            "problemTestCasesTooLarge": "Problem test cases must be smaller than 10MB",
+            "problemTestCasesCSV": "Problem test cases must be in CSV format",
+            "memberTypeRequired": "Member type is required",
+            "memberNameRequired": "Member name is required",
+            "memberNameTooLong": "Member name must be at most 50 characters long",
+            "memberLoginRequired": "Member login is required",
+            "memberLoginTooLong": "Member login must be at most 30 characters long",
+            "memberPasswordRequired": "Member password is required",
+            "memberPasswordTooLong": "Member password must be at most 30 characters long",
+            "memberIpInvalid": "Member IP is invalid"
+          },
+          "SettingsPage": {
+            "saveSuccess": "Settings saved successfully",
+            "saveError": "Failed to save settings",
+            "pageTitle": "Settings",
+            "pageDescription": "Manage contest settings",
+            "contestTab": "Contest",
+            "problemsTab": "Problems",
+            "membersTab": "Members",
+            "contestInProgress": "Contest is currently in progress. Changes may affect the ongoing contest.",
+            "reset": "Reset",
+            "save": "Save",
+            "dialogTitle": "Confirm Changes",
+            "dialogDescription": "Are you sure you want to apply these changes?",
+            "dialogInProgressAlertTitle": "Contest In Progress",
+            "dialogInProgressAlertDescription": "This contest is currently in progress. Changing the settings may affect the contest experience for participants. Please review your changes carefully before confirming."
+          },
+          "SettingsPageContestTab": {
+            "unfrozenSuccess": "Contest has been unfrozen successfully",
+            "frozenSuccess": "Contest has been frozen successfully",
+            "unfrozenFailed": "Failed to unfreeze the contest",
+            "frozenFailed": "Failed to freeze the contest",
+            "forceStartSuccess": "Contest has been force started successfully",
+            "forceEndSuccess": "Contest has been force ended successfully",
+            "forceStartFailed": "Failed to force start the contest",
+            "forceEndFailed": "Failed to force end the contest",
+            "labelSlug": "Slug",
+            "labelTitle": "Title",
+            "labelStartAt": "Start At",
+            "labelEndAt": "End At",
+            "labelAutoFreezeAt": "Auto Freeze At (optional)",
+            "labelIpCIDRs": "IP CIDRs (optional)",
+            "labelLanguages": "Languages",
+            "descriptionLanguages": "Select the programming languages that participants can use in the contest",
+            "labelTimezone": "Timezone",
+            "labelStatus": "Status",
+            "labelIsAutoJudgeEnabled": "Auto Judge Enabled",
+            "labelIsClarificationEnabled": "Clarification Enabled",
+            "labelIsPrintRequestEnabled": "Print Request Enabled",
+            "labelIsSpectatorEnabled": "Spectator Enabled",
+            "buttonFreeze": "Freeze",
+            "buttonUnfreeze": "Unfreeze",
+            "buttonForceStart": "Force Start",
+            "buttonForceEnd": "Force End",
+            "freezeDialogTitle": "Freeze Confirmation",
+            "unfreezeDialogTitle": "Unfreeze Confirmation",
+            "freezeDialogDescription": "Are you sure you want to freeze the contest?",
+            "unfreezeDialogDescription": "Are you sure you want to unfreeze the contest?",
+            "forceStartDialogTitle": "Force Start Confirmation",
+            "forceEndDialogTitle": "Force End Confirmation",
+            "forceStartDialogDescription": "Are you sure you want to force start the contest?",
+            "forceEndDialogDescription": "Are you sure you want to force end the contest?"
+          },
+          "SettingsPageMembersTab": {
+            "loadMembersFailed": "Failed to load members from CSV.",
+            "buttonLoadCsv": "Load CSV",
+            "headerName": "Name",
+            "headerType": "Type",
+            "headerLogin": "Login",
+            "headerPassword": "Password",
+            "headerIp": "IP (optional)",
+            "tooltipRemove": "Remove",
+            "buttonNewMember": "New Member"
+          },
+          "SettingsPageProblemsTab": {
+            "downloadAttachmentFailed": "Failed to download attachment",
+            "labelTitle": "Title",
+            "descriptionTitle": "The title of the problem",
+            "labelTimeLimit": "Time Limit (ms)",
+            "descriptionTimeLimit": "The time limit for the problem in milliseconds",
+            "labelMemoryLimit": "Memory Limit (MB)",
+            "descriptionMemoryLimit": "The memory limit for the problem in megabytes",
+            "labelDescription": "Description (PDF)",
+            "descriptionDescription": "The description of the problem in PDF format",
+            "labelTestCases": "Test Cases (CSV)",
+            "descriptionTestCases": "The test cases for the problem in CSV format",
+            "tooltipMoveUp": "Move Up",
+            "tooltipMoveDown": "Move Down",
+            "tooltipRemove": "Remove",
+            "buttonNewProblem": "New Problem"
+          }
+        },
+        "submissions": {
+          "SubmissionForm": {
+            "problemRequired": "Problem is required",
+            "languageRequired": "Language is required",
+            "codeRequired": "Code is required",
+            "codeTooLarge": "Code file must be at most 10MB"
+          },
+          "SubmissionJudgeForm": {
+            "answerRequired": "Answer is required"
+          },
+          "SubmissionsPage": {
+            "pageTitle": "Forseti - Submissions",
+            "pageDescription": "View and manage contest submissions",
+            "buttonNewSubmission": "New Submission",
+            "toggleOnlyMine": "Only Mine",
+            "headerTimestamp": "Timestamp",
+            "headerContestant": "Contestant",
+            "headerProblem": "Problem",
+            "headerLanguage": "Language",
+            "headerStatus": "Status",
+            "headerAnswer": "Answer",
+            "help": "View all contest submissions here. Submissions are judged automatically and results appear in real-time. You can see the status (judging/judged/failed) and answer (accepted/wrong answer/compilation error/runtime error/time limit exceeded/memory limit exceeded) for each submission."
+          },
+          "SubmissionsPageActionCreatePrintRequest": {
+            "createSuccess": "Print request created successfully",
+            "createFailed": "Failed to create print request",
+            "menuItemRequestPrint": "Request Print",
+            "createDialogTitle": "Create Print Request",
+            "createDialogDescription": "Are you sure you want to create a print request for this submission?"
+          },
+          "SubmissionsPageActionDownload": {
+            "downloadFailed": "Failed to download submission",
+            "menuItemDownload": "Download"
+          },
+          "SubmissionsPageActionExecutions": {
+            "menuItemExecutions": "Executions",
+            "executionsDialogTitle": "Executions History",
+            "executionsDialogDescription": "View the history of executions for this submission",
+            "headerTimestamp": "Timestamp",
+            "headerStatus": "Status",
+            "headerTestCases": "Test Cases",
+            "headerMaxTime": "Max Time (CPU / Clock)",
+            "headerMaxPeakMemory": "Max Peak Memory",
+            "headerDetails": "Details"
+          },
+          "SubmissionsPageActionJudge": {
+            "judgeSuccess": "Submission judged successfully",
+            "judgeFailed": "Failed to judge submission",
+            "menuItemJudge": "Judge",
+            "judgeDialogTitle": "Judge Submission",
+            "judgeDialogDescription": "Are you sure you want to judge this submission?",
+            "labelAnswer": "Answer"
+          },
+          "SubmissionsPageActionResubmit": {
+            "resubmitSuccess": "Submission resubmitted successfully",
+            "resubmitFailed": "Failed to resubmit submission",
+            "menuItemResubmit": "Resubmit",
+            "resubmitDialogTitle": "Resubmit Submission",
+            "resubmitDialogDescription": "Are you sure you want to resubmit this submission?"
+          },
+          "SubmissionsPageActionsMenu": {
+            "labelActions": "Actions"
+          },
+          "SubmissionsPageForm": {
+            "createSuccess": "Submission created successfully",
+            "createFailed": "Failed to create submission",
+            "title": "Create Submission",
+            "subtitle": "Create a new submission by selecting a problem, programming language, and uploading your code file.",
+            "problemLabel": "Problem",
+            "languageLabel": "Language",
+            "codeLabel": "Code",
+            "cancel": "Cancel",
+            "submit": "Submit"
+          }
+        },
+        "WaitPage": {
+          "pageTitle": "Forseti - Wait Page",
+          "pageDescription": "Wait for the contest to start",
+          "text1": "The contest has not started yet. Please wait for the contest to start.",
+          "text2": "The page will automatically reload when the contest starts."
+        }
+      },
+      "about": {
+        "pageTitle": "Forseti - About",
+        "pageDescription": "About the contest",
+        "labelLanguages": "Languages",
+        "labelIsAutoJudgeEnabled": "Auto Judge Enabled",
+        "labelIsClarificationEnabled": "Clarification Enabled",
+        "labelIsPrintRequestEnabled": "Print Request Enabled",
+        "labelIsSpectatorEnabled": "Spectator Enabled"
+      }
+    },
+    "signIn": {
+      "SignInForm": {
+        "loginRequired": "Login is required",
+        "passwordRequired": "Password is required"
+      },
+      "SignInPage": {
+        "sessionExpired": "Your session has expired",
+        "signInFailed": "Sign in failed because of an unexpected error",
+        "wrongLoginOrPassword": "Wrong login or password",
+        "pageTitle": "Forseti - Sign In",
+        "pageDescription": "Sign in to access the contest",
+        "title": "Sign In",
+        "subtitle": "Sign in to access the contest",
+        "labelLogin": "Login",
+        "labelPassword": "Password",
+        "buttonSignIn": "Sign In",
+        "buttonEnterAsSpectator": "Enter as Spectator"
+      }
+    }
+  },
+  "error": {
+    "ForbiddenPage": {
+      "text": "You do not have permission to access this page."
+    },
+    "NotFoundPage": {
+      "text": "The page you are looking for does not exist."
+    },
+    "ServerErrorPage": {
+      "text": "An unexpected server error occurred.",
+      "buttonTryAgain": "Try Again"
+    },
+    "ServiceUnavailablePage": {
+      "text": "The service is currently unavailable. Please try again later.",
+      "buttonTryAgain": "Try Again"
+    }
+  },
+  "HomePage": {
+    "pageTitle": "Forseti",
+    "pageDescription": "Forseti application",
+    "welcome": "Welcome to Forseti Judge",
+    "instructions1": "To access a contest, please use the correct contest URL format:",
+    "path": "'/{contest-slug}'",
+    "instructions2": "Replace '{contest-slug}' with your specific contest identifier.",
+    "instructions3": "If you don't have a contest URL, please contact your contest administrator."
+  }
 }

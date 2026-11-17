@@ -17,11 +17,15 @@ describe("SubmissionJudgeForm", () => {
       expect(
         SubmissionJudgeForm.schema.validate({ ...validData, answer: undefined })
           .error?.message,
-      ).toContain("Answer is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionJudgeForm.answerRequired",
+      );
       expect(
         SubmissionJudgeForm.schema.validate({ ...validData, answer: "" }).error
           ?.message,
-      ).toContain("Answer is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionJudgeForm.answerRequired",
+      );
     });
   });
 

@@ -1,4 +1,4 @@
-import { SignInForm } from "@/app/[slug]/sign-in/SignInForm";
+import { SignInForm } from "@/app/[slug]/signIn/SignInForm";
 
 describe("SignInForm model", () => {
   describe("schema", () => {
@@ -11,14 +11,14 @@ describe("SignInForm model", () => {
     it("invalidates invalid login", () => {
       expect(
         SignInForm.schema.validate({ ...validData, login: "" }).error?.message,
-      ).toContain("Login is required");
+      ).toContain("[slug].signIn.SignInForm.loginRequired");
     });
 
     it("invalidates invalid password", () => {
       expect(
         SignInForm.schema.validate({ ...validData, password: "" }).error
           ?.message,
-      ).toContain("Password is required");
+      ).toContain("[slug].signIn.SignInForm.passwordRequired");
     });
   });
 
