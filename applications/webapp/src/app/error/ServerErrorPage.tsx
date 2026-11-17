@@ -2,6 +2,7 @@ import { RefreshCwIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 export default function ServerErrorPage() {
   const [searchParams] = useSearchParams();
@@ -18,12 +19,12 @@ export default function ServerErrorPage() {
         500
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
-        An unexpected error has occurred on the server.
+        <FormattedMessage id="error.ServerErrorPage.text" />
       </h2>
       {previousPath && (
         <Button className="mt-10" onClick={handleRetry} data-testid="reload">
           <RefreshCwIcon />
-          Try again
+          <FormattedMessage id="error.ServerErrorPage.buttonTryAgain" />
         </Button>
       )}
     </div>

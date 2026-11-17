@@ -1,3 +1,5 @@
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { useTranslation } from "react-i18next";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
 
@@ -7,14 +9,15 @@ import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
  */
 export default function HomePage() {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
-    <Page title="Forseti" description="Forseti application.">
+    <Page title="HomePage.pageTitle" description="HomePage.pageDescription">
       <div className="flex min-h-screen flex-col items-center justify-center p-8">
         <div className="text-center">
           <img
             src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
-            alt="Logo of forseti"
+            alt={t("HomePage.altLogo")}
             width={300}
             height={300}
             data-testid="logo-image"
@@ -26,7 +29,7 @@ export default function HomePage() {
               className="text-primary text-4xl font-bold"
               data-testid="welcome-title"
             >
-              Welcome to Forseti Judge
+              <FormattedMessage id="HomePage.welcome" />
             </h1>
 
             <div className="space-y-4 text-lg">
@@ -34,7 +37,7 @@ export default function HomePage() {
                 className="text-base-content"
                 data-testid="contest-access-info"
               >
-                To access a contest, please use the correct contest URL format:
+                <FormattedMessage id="HomePage.instructions1" />
               </p>
 
               <div className="bg-base-200 rounded-lg p-4">
@@ -42,7 +45,7 @@ export default function HomePage() {
                   className="text-primary font-mono text-xl"
                   data-testid="url-format"
                 >
-                  {`'/{contest-slug}'`}
+                  <FormattedMessage id="HomePage.path" />
                 </code>
               </div>
 
@@ -50,14 +53,14 @@ export default function HomePage() {
                 className="text-base-content/70 text-sm"
                 data-testid="url-format-description"
               >
-                {`Replace '{contest-slug}' with your specific contest identifier.`}
+                <FormattedMessage id="HomePage.instructions2" />
               </p>
 
               <p
                 className="text-base-content text-base"
                 data-testid="contact-admin"
               >
-                {`If you don't have a contest URL, please contact your contest administrator.`}
+                <FormattedMessage id="HomePage.instructions3" />
               </p>
             </div>
           </div>

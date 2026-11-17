@@ -6,11 +6,9 @@ import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import {
   MockMemberResponseDTO,
   MockSessionResponseDTO,
-  MockSubmissionResponseDTO,
   MockSubmissionWithCodeResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 jest.mock("@/app/_lib/hook/useContestStatusWatcher", () => ({
   useContestStatusWatcher: () => ContestStatus.IN_PROGRESS,
@@ -54,13 +52,11 @@ describe("SubmissionsPage", () => {
       submissions[0].problem.letter,
     );
     expect(screen.getByTestId("submission-language")).toHaveTextContent(
-      EnumeratedTextUtil.getSubmissionLanguage(submissions[0].language),
+      "C++ 17",
     );
-    expect(screen.getByTestId("submission-status")).toHaveTextContent(
-      EnumeratedTextUtil.getSubmissionStatus(submissions[0].status),
-    );
+    expect(screen.getByTestId("submission-status")).toHaveTextContent("Judged");
     expect(screen.getByTestId("submission-answer")).toHaveTextContent(
-      EnumeratedTextUtil.getSubmissionAnswer(submissions[0].answer!!),
+      "Accepted",
     );
   });
 

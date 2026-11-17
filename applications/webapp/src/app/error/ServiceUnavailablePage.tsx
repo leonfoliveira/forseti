@@ -2,6 +2,7 @@ import { RefreshCwIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 export default function ServiceUnavailablePage() {
   const [searchParams] = useSearchParams();
@@ -20,12 +21,12 @@ export default function ServiceUnavailablePage() {
         503
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
-        Service Unavailable. Please try again later.
+        <FormattedMessage id="error.ServiceUnavailablePage.text" />
       </h2>
       {previousPath && (
         <Button className="mt-10" onClick={handleRetry} data-testid="reload">
           <RefreshCwIcon />
-          Try again
+          <FormattedMessage id="error.ServiceUnavailablePage.buttonTryAgain" />
         </Button>
       )}
     </div>

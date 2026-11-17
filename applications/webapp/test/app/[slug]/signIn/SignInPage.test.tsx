@@ -1,7 +1,7 @@
 import { fireEvent, screen, act } from "@testing-library/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import SignInPage from "@/app/[slug]/sign-in/SignInPage";
+import SignInPage from "@/app/[slug]/signIn/SignInPage";
 import {
   MockContestResponseDTO,
   MockSessionResponseDTO,

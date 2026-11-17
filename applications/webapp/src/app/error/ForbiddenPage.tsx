@@ -1,3 +1,5 @@
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+
 /**
  * Displays a 403 Forbidden error page.
  */
@@ -8,7 +10,7 @@ export default function ForbiddenPage() {
         403
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
-        You do not have permission to access this page.
+        <FormattedMessage id="error.ForbiddenPage.text" />
       </h2>
     </div>
   );

@@ -29,6 +29,7 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;
@@ -61,7 +62,9 @@ export function ClarificationsPageForm({
         ClarificationForm.toInputDTO(data),
       );
 
-      toast.success("Clarification created successfully");
+      toast.success(
+        "[slug].(dashboard)._common.clarifications.ClarificationsPageForm.createSuccessfull",
+      );
       onCreate(newClarification);
       console.debug("Clarification created successfully:", newClarification);
       createClarificationState.finish();
@@ -70,7 +73,10 @@ export function ClarificationsPageForm({
       onClose();
     } catch (error) {
       await createClarificationState.fail(error, {
-        default: () => toast.error("Failed to create clarification"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.clarifications.ClarificationsPageForm.createFailed",
+          ),
       });
     }
   }
@@ -78,10 +84,11 @@ export function ClarificationsPageForm({
   return (
     <Card className="w-full max-w-4xl" data-testid="clarification-form">
       <CardHeader>
-        <CardTitle>Create Clarification</CardTitle>
+        <CardTitle>
+          <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.title" />
+        </CardTitle>
         <CardDescription>
-          Submit a new clarification request for a contest problem or a general
-          question.
+          <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.subtitle" />
         </CardDescription>
       </CardHeader>
       <Separator />
@@ -91,11 +98,11 @@ export function ClarificationsPageForm({
             <ControlledField
               form={form}
               name="problemId"
-              label="Problem"
+              label="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.problem"
               field={
                 <NativeSelect data-testid="clarification-form-problem">
                   <NativeSelectOption value="__none__">
-                    None (General question)
+                    <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.generalQuestion" />
                   </NativeSelectOption>
                   {problems.map((problem) => (
                     <NativeSelectOption key={problem.id} value={problem.id}>
@@ -108,7 +115,7 @@ export function ClarificationsPageForm({
             <ControlledField
               form={form}
               name="text"
-              label="Question"
+              label="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.question"
               field={<Textarea data-testid="clarification-form-text" />}
             />
             <div className="flex justify-end gap-3">
@@ -118,7 +125,7 @@ export function ClarificationsPageForm({
                 onClick={onClose}
                 data-testid="clarification-form-cancel"
               >
-                Cancel
+                <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.cancel" />
               </Button>
               <AsyncButton
                 type="submit"
@@ -126,7 +133,7 @@ export function ClarificationsPageForm({
                 isLoading={createClarificationState.isLoading}
                 data-testid="clarification-form-submit"
               >
-                Submit
+                <FormattedMessage id="[slug].(dashboard)._common.clarifications.ClarificationsPageForm.submit" />
               </AsyncButton>
             </div>
           </FieldSet>

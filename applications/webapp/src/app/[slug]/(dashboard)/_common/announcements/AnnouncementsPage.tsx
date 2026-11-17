@@ -16,35 +16,26 @@ import {
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   announcements: AnnouncementResponseDTO[];
-} & (
-  | {
-      canCreate: true;
-      onCreate: (announcement: AnnouncementResponseDTO) => void;
-    }
-  | {
-      canCreate?: false;
-      onCreate?: (announcement: AnnouncementResponseDTO) => void;
-    }
-);
+  onCreate?: (announcement: AnnouncementResponseDTO) => void;
+};
 
 /**
  * Displays the announcements page where users can view and create announcements.
  **/
-export function AnnouncementsPage({
-  announcements,
-  canCreate = false,
-  onCreate,
-}: Props) {
+export function AnnouncementsPage({ announcements, onCreate }: Props) {
   const contestId = useAppSelector((state) => state.contest.id);
   const [isCreateFormOpen, setIsCreateFormOpen] = React.useState(false);
 
+  const canCreate = !!onCreate;
+
   return (
     <Page
-      title="Forseti - Announcements"
-      description="View and create contest announcements."
+      title="[slug].(dashboard)._common.announcements.AnnouncementsPage.pageTitle"
+      description="[slug].(dashboard)._common.announcements.AnnouncementsPage.pageDescription"
     >
       <div className="flex flex-col items-center py-5">
         {/* Create Form */}
@@ -61,7 +52,7 @@ export function AnnouncementsPage({
             data-testid="open-create-form-button"
           >
             <PlusIcon size={16} />
-            New Announcement
+            <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPage.newAnnouncement" />
           </Button>
         )}
         {canCreate && <Separator className="my-5 w-full max-w-4xl" />}
@@ -73,10 +64,12 @@ export function AnnouncementsPage({
               <EmptyMedia variant="icon">
                 <MegaphoneIcon size={48} />
               </EmptyMedia>
-              <EmptyTitle>No announcements yet</EmptyTitle>
+              <EmptyTitle>
+                <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPage.emptyTitle" />
+              </EmptyTitle>
             </EmptyHeader>
             <EmptyDescription>
-              Announcements will appear here once created.
+              <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPage.emptyDescription" />
             </EmptyDescription>
           </Empty>
         )}
@@ -100,10 +93,7 @@ export function AnnouncementsPage({
 
         <Alert className="bg-card mt-5 w-full max-w-4xl py-2">
           <AlertDescription className="text-xs">
-            This page displays important contest announcements from judges and
-            organizers. Announcements may include contest updates,
-            clarifications that affect all contestants, schedule changes, or
-            other important information.
+            <FormattedMessage id="[slug].(dashboard)._common.announcements.AnnouncementsPage.help" />
           </AlertDescription>
         </Alert>
       </div>

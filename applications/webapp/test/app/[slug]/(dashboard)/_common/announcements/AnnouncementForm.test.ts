@@ -14,13 +14,17 @@ describe("AnnouncementForm", () => {
       expect(
         AnnouncementForm.schema.validate({ ...validData, text: "" }).error
           ?.message,
-      ).toContain("Text is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.announcements.AnnouncementForm.textRequired",
+      );
       expect(
         AnnouncementForm.schema.validate({
           ...validData,
           text: "a".repeat(501),
         }).error?.message,
-      ).toContain("Cannot exceed 500 characters");
+      ).toContain(
+        "[slug].(dashboard)._common.announcements.AnnouncementForm.textTooLong",
+      );
     });
   });
 

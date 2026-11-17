@@ -17,7 +17,9 @@ import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { PathUtil } from "@/app/_lib/util/PathUtil";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { useTranslation } from "react-i18next";
 
 /**
  * Header component displayed at the top of the web application.
@@ -30,6 +32,7 @@ export function Header() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
 
   async function handleSignOut() {
     await Composition.sessionWriter.deleteCurrent();
@@ -41,9 +44,11 @@ export function Header() {
     pathname,
     routes.CONTEST_SIGN_IN(contest.slug),
   );
-  const memberType = isAuthorized
-    ? EnumeratedTextUtil.getMemberType(session.member.type)
-    : "";
+  const memberType = isAuthorized ? (
+    <FormattedMessage id={I18nUtil.getMemberType(session.member.type)} />
+  ) : (
+    ""
+  );
 
   return (
     <div
@@ -56,14 +61,14 @@ export function Header() {
           <div className="mr-2 flex items-center justify-center">
             <img
               src={theme === Theme.DARK ? "/icon-dark.png" : "/icon-light.png"}
-              alt="Logo of forseti"
+              alt={t("_lib.component.layout.Header.altLogo")}
               width={30}
               height={30}
             />
           </div>
           <div className="-mt-1 flex flex-col items-start justify-center">
             <p className="truncate text-base font-semibold sm:text-lg">
-              Forseti
+              <FormattedMessage id="_lib.component.layout.Header.brand" />
             </p>
             <p className="truncate text-xs sm:text-sm" data-testid="title">
               {contest.title}
@@ -85,7 +90,9 @@ export function Header() {
                 <SunMoonIcon size={14} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Toggle theme</TooltipContent>
+            <TooltipContent>
+              <FormattedMessage id="_lib.component.layout.Header.toggleTheme" />
+            </TooltipContent>
           </Tooltip>
           {isAuthorized && !isSignInPage && (
             <Tooltip>
@@ -100,7 +107,9 @@ export function Header() {
                   <LogOutIcon size={14} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Sign out</TooltipContent>
+              <TooltipContent>
+                <FormattedMessage id="_lib.component.layout.Header.signOut" />
+              </TooltipContent>
             </Tooltip>
           )}
           {!isAuthorized && !isSignInPage && (
@@ -116,7 +125,9 @@ export function Header() {
                   <LogInIcon size={14} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Sign in</TooltipContent>
+              <TooltipContent>
+                <FormattedMessage id="_lib.component.layout.Header.signIn" />
+              </TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -155,7 +166,9 @@ export function Header() {
               <SunMoonIcon size={16} />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Toggle theme</TooltipContent>
+          <TooltipContent>
+            <FormattedMessage id="_lib.component.layout.Header.toggleTheme" />
+          </TooltipContent>
         </Tooltip>
         {isAuthorized && !isSignInPage && (
           <>
@@ -168,7 +181,7 @@ export function Header() {
                 className="text-muted-foreground text-end text-xs font-bold"
                 data-testid="member-type"
               >
-                {EnumeratedTextUtil.getMemberType(session.member.type)}
+                {memberType}
               </p>
             </div>
             <Tooltip>
@@ -182,7 +195,9 @@ export function Header() {
                   <LogOutIcon size={16} />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>Sign out</TooltipContent>
+              <TooltipContent>
+                <FormattedMessage id="_lib.component.layout.Header.signOut" />
+              </TooltipContent>
             </Tooltip>
           </>
         )}
@@ -198,7 +213,9 @@ export function Header() {
                 <LogInIcon size={16} />
               </Button>
             </TooltipTrigger>
-            <TooltipContent>Sign in</TooltipContent>
+            <TooltipContent>
+              <FormattedMessage id="_lib.component.layout.Header.signIn" />
+            </TooltipContent>
           </Tooltip>
         )}
       </div>

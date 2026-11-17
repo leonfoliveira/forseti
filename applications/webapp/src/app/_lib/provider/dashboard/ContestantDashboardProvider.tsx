@@ -23,6 +23,8 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { ContestUtil } from "@/util/ContestUtil";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -146,28 +148,66 @@ export function ContestantDashboardProvider({
       ContestantDashboardSlice.actions.mergeMemberSubmission(submission),
     );
 
-    const text = `Problem ${submission.problem.letter}: ${submission.answer}`;
-
     switch (submission.answer) {
       case SubmissionAnswer.ACCEPTED: {
-        toast.success(text);
+        toast.success(
+          "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
+          {
+            letter: submission.problem.letter,
+            answer: (
+              <FormattedMessage
+                id={I18nUtil.getSubmissionAnswer(submission.answer)}
+              />
+            ),
+          },
+        );
         dispatch(
           BalloonSlice.actions.addBalloon({ color: submission.problem.color }),
         );
         break;
       }
       case SubmissionAnswer.WRONG_ANSWER: {
-        toast.error(text);
+        toast.error(
+          "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
+          {
+            letter: submission.problem.letter,
+            answer: (
+              <FormattedMessage
+                id={I18nUtil.getSubmissionAnswer(submission.answer)}
+              />
+            ),
+          },
+        );
         break;
       }
       case SubmissionAnswer.TIME_LIMIT_EXCEEDED:
       case SubmissionAnswer.MEMORY_LIMIT_EXCEEDED: {
-        toast.info(text);
+        toast.info(
+          "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
+          {
+            letter: submission.problem.letter,
+            answer: (
+              <FormattedMessage
+                id={I18nUtil.getSubmissionAnswer(submission.answer)}
+              />
+            ),
+          },
+        );
         break;
       }
       case SubmissionAnswer.RUNTIME_ERROR:
       case SubmissionAnswer.COMPILATION_ERROR: {
-        toast.warning(text);
+        toast.warning(
+          "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
+          {
+            letter: submission.problem.letter,
+            answer: (
+              <FormattedMessage
+                id={I18nUtil.getSubmissionAnswer(submission.answer)}
+              />
+            ),
+          },
+        );
         break;
       }
     }
@@ -178,7 +218,12 @@ export function ContestantDashboardProvider({
     dispatch(ContestantDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
-      toast.warning(`New announcement: ${announcement.text}`);
+      toast.warning(
+        "_lib.provider.dashboard.ContestDashboardProvider.newAnnouncement",
+        {
+          text: announcement.text,
+        },
+      );
     }
   }
 
@@ -189,7 +234,9 @@ export function ContestantDashboardProvider({
     dispatch(
       ContestantDashboardSlice.actions.mergeClarification(clarification),
     );
-    toast.info(`Clarification answered`);
+    toast.info(
+      "_lib.provider.dashboard.ContestDashboardProvider.clarificationAnswered",
+    );
   }
 
   function receiveClarificationPublished(
@@ -199,7 +246,9 @@ export function ContestantDashboardProvider({
     dispatch(
       ContestantDashboardSlice.actions.mergeClarification(clarification),
     );
-    toast.info(`A clarification has been published`);
+    toast.info(
+      "_lib.provider.dashboard.ContestDashboardProvider.clarificationPublished",
+    );
   }
 
   function receiveContestUpdated(contest: ContestResponseDTO) {
@@ -211,7 +260,9 @@ export function ContestantDashboardProvider({
   function receiveContestFrozen(contest: ContestResponseDTO) {
     console.debug("Received contest frozen:", contest);
     dispatch(ContestantDashboardSlice.actions.freeze(contest));
-    toast.info("The contest has been frozen");
+    toast.info(
+      "_lib.provider.dashboard.ContestDashboardProvider.contestFrozen",
+    );
   }
 
   function receiveContestUnfrozen(data: {
@@ -221,7 +272,9 @@ export function ContestantDashboardProvider({
   }) {
     console.debug("Received contest unfrozen");
     dispatch(ContestantDashboardSlice.actions.unfreeze(data));
-    toast.info("The contest has been unfrozen");
+    toast.info(
+      "_lib.provider.dashboard.ContestDashboardProvider.contestUnfrozen",
+    );
   }
 
   function receivePrintRequest(printRequest: PrintRequestResponseDTO) {

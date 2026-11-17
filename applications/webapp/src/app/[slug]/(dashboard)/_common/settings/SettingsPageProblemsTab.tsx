@@ -33,6 +33,7 @@ import { AttachmentResponseDTO } from "@/port/dto/response/attachment/Attachment
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -63,7 +64,10 @@ export function SettingsPageProblemsTab({
       console.debug("Attachment downloaded successfully:", attachment.filename);
     } catch (error) {
       await errorHandler.handle(error as Error, {
-        default: () => toast.error("Failed to download attachment."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.settings.SettingsPageProblemsTab.downloadAttachmentFailed",
+          ),
       });
     }
   }
@@ -105,15 +109,15 @@ export function SettingsPageProblemsTab({
                   className="col-span-2"
                   form={form}
                   name={`problems.${index}.title`}
-                  label="Title"
+                  label="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.labelTitle"
                   field={<Input data-testid="problem-title" />}
-                  description="The title of the problem."
+                  description="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.descriptionTitle"
                 />
 
                 <ControlledField
                   form={form}
                   name={`problems.${index}.timeLimitMs`}
-                  label="Time Limit (ms)"
+                  label="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.labelTimeLimit"
                   field={
                     <Input
                       type="number"
@@ -121,13 +125,13 @@ export function SettingsPageProblemsTab({
                       data-testid="problem-time-limit"
                     />
                   }
-                  description="The time limit for the problem in milliseconds."
+                  description="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.descriptionTimeLimit"
                 />
 
                 <ControlledField
                   form={form}
                   name={`problems.${index}.memoryLimitMb`}
-                  label="Memory Limit (MB)"
+                  label="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.labelMemoryLimit"
                   field={
                     <Input
                       type="number"
@@ -135,14 +139,14 @@ export function SettingsPageProblemsTab({
                       data-testid="problem-memory-limit"
                     />
                   }
-                  description="The memory limit for the problem in megabytes."
+                  description="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.descriptionMemoryLimit"
                 />
 
                 <div>
                   <ControlledField
                     form={form}
                     name={`problems.${index}.newDescription`}
-                    label="Description (PDF)"
+                    label="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.labelDescription"
                     field={
                       <Input
                         type="file"
@@ -150,7 +154,7 @@ export function SettingsPageProblemsTab({
                         data-testid="problem-description"
                       />
                     }
-                    description="The PDF file containing the problem description."
+                    description="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.descriptionDescription"
                   />
 
                   {field.description && (
@@ -174,7 +178,7 @@ export function SettingsPageProblemsTab({
                   <ControlledField
                     form={form}
                     name={`problems.${index}.newTestCases`}
-                    label="Test Cases (CSV)"
+                    label="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.labelTestCases"
                     field={
                       <Input
                         type="file"
@@ -182,7 +186,7 @@ export function SettingsPageProblemsTab({
                         data-testid="problem-test-cases"
                       />
                     }
-                    description="The CSV file containing the test cases for the problem."
+                    description="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.descriptionTestCases"
                   />
 
                   {field.testCases && (
@@ -218,7 +222,9 @@ export function SettingsPageProblemsTab({
                       <ChevronUpIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Move Up</TooltipContent>
+                  <TooltipContent>
+                    <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.tooltipMoveUp" />
+                  </TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -233,7 +239,9 @@ export function SettingsPageProblemsTab({
                       <ChevronDownIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Move Down</TooltipContent>
+                  <TooltipContent>
+                    <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.tooltipMoveDown" />
+                  </TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -248,7 +256,9 @@ export function SettingsPageProblemsTab({
                       <TrashIcon />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Remove</TooltipContent>
+                  <TooltipContent>
+                    <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.tooltipRemove" />
+                  </TooltipContent>
                 </Tooltip>
               </div>
             </ItemActions>
@@ -267,7 +277,7 @@ export function SettingsPageProblemsTab({
           data-testid="add-problem-button"
         >
           <PlusIcon />
-          New Problem
+          <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageProblemsTab.buttonNewProblem" />
         </Button>
       </div>
     </FieldSet>

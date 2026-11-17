@@ -17,39 +17,53 @@ describe("SubmissionForm", () => {
       expect(
         SubmissionForm.schema.validate({ ...validData, problemId: undefined })
           .error?.message,
-      ).toContain("Problem is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.problemRequired",
+      );
       expect(
         SubmissionForm.schema.validate({ ...validData, problemId: "" }).error
           ?.message,
-      ).toContain("Problem is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.problemRequired",
+      );
     });
 
     it("validates language", () => {
       expect(
         SubmissionForm.schema.validate({ ...validData, language: undefined })
           .error?.message,
-      ).toContain("Language is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.languageRequired",
+      );
       expect(
         SubmissionForm.schema.validate({ ...validData, language: "" }).error
           ?.message,
-      ).toContain("Language is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.languageRequired",
+      );
     });
 
     it("validates code", () => {
       expect(
         SubmissionForm.schema.validate({ ...validData, code: undefined }).error
           ?.message,
-      ).toContain("Code is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.codeRequired",
+      );
       expect(
         SubmissionForm.schema.validate({ ...validData, code: [] }).error
           ?.message,
-      ).toContain("Code is Required");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.codeRequired",
+      );
       const mockedFile = jest.mocked(File);
       (mockedFile as any).size = 10 * 1024 * 1024 + 1;
       expect(
         SubmissionForm.schema.validate({ ...validData, code: [mockedFile] })
           .error?.message,
-      ).toContain("Code file must be at most 10MB");
+      ).toContain(
+        "[slug].(dashboard)._common.submissions.SubmissionForm.codeTooLarge",
+      );
     });
   });
 

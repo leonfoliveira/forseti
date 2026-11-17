@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type Props = {
   value: number;
   suffix?: string;
@@ -8,7 +10,9 @@ type Props = {
  * Formats a number into a localized string.
  */
 export function FormattedNumber({ value, suffix, options }: Props) {
-  const formatter = new Intl.NumberFormat("en-US", options);
+  const { i18n } = useTranslation();
+
+  const formatter = new Intl.NumberFormat(i18n.language, options);
 
   return (
     <>

@@ -21,14 +21,14 @@ describe("useToast hook", () => {
   it("exposes all notification methods", async () => {
     const { result } = await renderHookWithProviders(() => useToast());
 
-    result.current.info("info");
-    result.current.success("success");
-    result.current.warning("warning");
-    result.current.error("error");
+    result.current.info("brand");
+    result.current.success("brand");
+    result.current.warning("brand");
+    result.current.error("brand");
 
-    expect(toast.info).toHaveBeenCalledWith("info", expect.any(Object));
-    expect(toast.success).toHaveBeenCalledWith("success", expect.any(Object));
-    expect(toast.warning).toHaveBeenCalledWith("warning", expect.any(Object));
-    expect(toast.error).toHaveBeenCalledWith("error", expect.any(Object));
+    expect(toast.info).toHaveBeenCalledWith("Forseti", expect.any(Object));
+    expect(toast.success).toHaveBeenCalledWith("Forseti", expect.any(Object));
+    expect(toast.warning).toHaveBeenCalledWith("Forseti", expect.any(Object));
+    expect(toast.error).toHaveBeenCalledWith("Forseti", expect.any(Object));
   });
 });

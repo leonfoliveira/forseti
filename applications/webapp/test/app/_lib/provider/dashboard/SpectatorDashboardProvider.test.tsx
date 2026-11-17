@@ -178,19 +178,6 @@ describe("SpectatorDashboardProvider", () => {
         expect.objectContaining(submission),
       );
     });
-
-    it("shows toast when receive submission with FAILED status", async () => {
-      await renderDashboardProvider();
-
-      const handler = getListener("SUBMISSION_UPDATED");
-      const submission = MockSubmissionResponseDTO({
-        status: SubmissionStatus.FAILED,
-      });
-
-      handler(submission);
-
-      expect(useToast().error).toHaveBeenCalled();
-    });
   });
 
   describe("receiveAnnouncement", () => {

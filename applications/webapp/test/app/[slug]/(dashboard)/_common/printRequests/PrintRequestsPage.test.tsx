@@ -2,7 +2,6 @@ import { screen } from "@testing-library/react";
 import { renderWithProviders } from "@/test/render-with-providers";
 import { PrintRequestsPage } from "@/app/[slug]/(dashboard)/_common/printRequests/PrintRequestsPage";
 import { MockPrintRequestResponseDTO } from "@/test/mock/response/MockDTOs";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/printRequests/PrintRequestsPageActions",
@@ -39,7 +38,7 @@ describe("PrintRequestsPage", () => {
       printRequests[0].submission.problem.letter,
     );
     expect(rows[0].getByTestId("print-request-status")).toHaveTextContent(
-      EnumeratedTextUtil.getPrintRequestStatus(printRequests[0].status),
+      "Pending",
     );
     expect(
       rows[0].queryByTestId("print-request-actions"),
@@ -71,7 +70,7 @@ describe("PrintRequestsPage", () => {
       printRequests[0].submission.problem.letter,
     );
     expect(rows[0].getByTestId("print-request-status")).toHaveTextContent(
-      EnumeratedTextUtil.getPrintRequestStatus(printRequests[0].status),
+      "Pending",
     );
     expect(rows[0].queryByTestId("print-request-actions")).toBeInTheDocument();
   });

@@ -30,9 +30,10 @@ import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { MemberLoader } from "@/app/_lib/util/MemberLoader";
 import { MemberType } from "@/domain/enumerate/MemberType";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   form: UseFormReturn<SettingsFormType>;
@@ -64,7 +65,10 @@ export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
       console.debug("Members loaded successfully from CSV file:", members);
     } catch (error) {
       await loadCsvState.fail(error, {
-        default: () => toast.error("Failed to load members from CSV."),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.settings.SettingsPageMembersTab.loadMembersFailed",
+          ),
       });
     }
   }
@@ -91,18 +95,28 @@ export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
             onClick={() => memberFileInputRef.current?.click()}
             isLoading={loadCsvState.isLoading}
           >
-            Load CSV
+            <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.buttonLoadCsv" />
             <UploadIcon />
           </AsyncButton>
         </div>
         <Table>
           <TableHeader className="bg-muted">
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Login</TableHead>
-              <TableHead>Password</TableHead>
-              <TableHead>{"IP (optional)"}</TableHead>
+              <TableHead>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.headerName" />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.headerType" />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.headerLogin" />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.headerPassword" />
+              </TableHead>
+              <TableHead>
+                <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.headerIp" />
+              </TableHead>
               <TableHead />
             </TableRow>
           </TableHeader>
@@ -129,9 +143,9 @@ export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
                           .filter((type) => type !== MemberType.ROOT)
                           .map((type) => (
                             <NativeSelectOption key={type} value={type}>
-                              {EnumeratedTextUtil.getMemberType(
-                                type as MemberType,
-                              )}
+                              <FormattedMessage
+                                id={I18nUtil.getMemberType(type as MemberType)}
+                              />
                             </NativeSelectOption>
                           ))}
                       </NativeSelect>
@@ -181,7 +195,9 @@ export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
                         <TrashIcon />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Remove</TooltipContent>
+                    <TooltipContent>
+                      <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.tooltipRemove" />
+                    </TooltipContent>
                   </Tooltip>
                 </TableCell>
               </TableRow>
@@ -203,7 +219,7 @@ export function SettingsPageMembersTab({ form, isUpdateLoading }: Props) {
           data-testid="add-member-button"
         >
           <PlusIcon />
-          New Member
+          <FormattedMessage id="[slug].(dashboard)._common.settings.SettingsPageMembersTab.buttonNewMember" />
         </Button>
       </div>
     </FieldSet>

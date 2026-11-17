@@ -32,7 +32,8 @@ import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   onClose: () => void;
@@ -61,7 +62,9 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
         SubmissionForm.toInputDTO(data),
       );
 
-      toast.success("Submission created successfully");
+      toast.success(
+        "[slug].(dashboard)._common.submissions.SubmissionsPageForm.createSuccess",
+      );
       onCreate(newSubmission);
       form.reset();
       formRef.current?.reset();
@@ -71,7 +74,10 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
       onClose();
     } catch (error) {
       await createSubmissionState.fail(error, {
-        default: () => toast.error("Failed to create submission"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.submissions.SubmissionsPageForm.createFailed",
+          ),
       });
     }
   }
@@ -79,10 +85,11 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
   return (
     <Card className="w-full max-w-4xl" data-testid="submission-form">
       <CardHeader>
-        <CardTitle>Create Submission</CardTitle>
+        <CardTitle>
+          <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageForm.title" />
+        </CardTitle>
         <CardDescription>
-          Create a new submission by selecting a problem, programming language,
-          and uploading your code file.
+          <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageForm.subtitle" />
         </CardDescription>
       </CardHeader>
       <Separator />
@@ -92,7 +99,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
             <ControlledField
               form={form}
               name="problemId"
-              label="Problem"
+              label="[slug].(dashboard)._common.submissions.SubmissionsPageForm.problemLabel"
               field={
                 <NativeSelect data-testid="submission-form-problem">
                   <NativeSelectOption value="" disabled />
@@ -107,15 +114,17 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
             <ControlledField
               form={form}
               name="language"
-              label="Language"
+              label="[slug].(dashboard)._common.submissions.SubmissionsPageForm.languageLabel"
               field={
                 <NativeSelect data-testid="submission-form-language">
                   <NativeSelectOption value="" disabled />
                   {contest.languages.map((language) => (
                     <NativeSelectOption key={language} value={language}>
-                      {EnumeratedTextUtil.getSubmissionLanguage(
-                        language as SubmissionLanguage,
-                      )}
+                      <FormattedMessage
+                        id={I18nUtil.getSubmissionLanguage(
+                          language as SubmissionLanguage,
+                        )}
+                      />
                     </NativeSelectOption>
                   ))}
                 </NativeSelect>
@@ -124,7 +133,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
             <ControlledField
               form={form}
               name="code"
-              label="Code"
+              label="[slug].(dashboard)._common.submissions.SubmissionsPageForm.codeLabel"
               field={<Input type="file" data-testid="submission-form-code" />}
             />
             <div className="flex justify-end gap-3">
@@ -134,7 +143,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
                 onClick={onClose}
                 data-testid="submission-form-cancel"
               >
-                Cancel
+                <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageForm.cancel" />
               </Button>
               <AsyncButton
                 type="submit"
@@ -142,7 +151,7 @@ export function SubmissionsPageForm({ onClose, problems, onCreate }: Props) {
                 isLoading={createSubmissionState.isLoading}
                 data-testid="submission-form-submit"
               >
-                Submit
+                <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageForm.submit" />
               </AsyncButton>
             </div>
           </FieldSet>

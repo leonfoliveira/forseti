@@ -9,6 +9,7 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   submission: SubmissionWithCodeResponseDTO;
@@ -41,7 +42,9 @@ export function SubmissionsPageActionCreatePrintRequest({
         },
       );
 
-      toast.success("Print request created successfully");
+      toast.success(
+        "[slug].(dashboard)._common.submissions.SubmissionsPageActionCreatePrintRequest.createSuccess",
+      );
       onCreatePrintRequest(printRequest);
       dialog.close();
       createPrintRequestState.finish();
@@ -50,7 +53,10 @@ export function SubmissionsPageActionCreatePrintRequest({
       onClose();
     } catch (error) {
       await createPrintRequestState.fail(error, {
-        default: () => toast.error("Failed to create print request"),
+        default: () =>
+          toast.error(
+            "[slug].(dashboard)._common.submissions.SubmissionsPageActionCreatePrintRequest.createFailed",
+          ),
       });
     }
   }
@@ -65,13 +71,13 @@ export function SubmissionsPageActionCreatePrintRequest({
         data-testid="submissions-page-action-create-print-request"
       >
         <RefreshCwIcon />
-        Request Print
+        <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionCreatePrintRequest.menuItemRequestPrint" />
       </DropdownMenuItem>
 
       <ConfirmationDialog
         isOpen={dialog.isOpen}
-        title="Create Print Request"
-        description="Are you sure you want to create a print request for this submission?"
+        title="[slug].(dashboard)._common.submissions.SubmissionsPageActionCreatePrintRequest.createDialogTitle"
+        description="[slug].(dashboard)._common.submissions.SubmissionsPageActionCreatePrintRequest.createDialogDescription"
         onCancel={() => dialog.close()}
         onConfirm={() => createPrintRequest()}
         isLoading={createPrintRequestState.isLoading}

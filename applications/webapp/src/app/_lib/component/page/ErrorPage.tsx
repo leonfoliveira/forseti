@@ -1,6 +1,7 @@
 import { RefreshCwIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/app/_lib/component/shadcn/button";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * Displays a generic error message with a reload button centered on the page.
@@ -14,7 +15,7 @@ export function ErrorPage() {
         500
       </h1>
       <h2 className="text-md mt-5" data-testid="description">
-        An unexpected error has occurred on the server.
+        <FormattedMessage id="_lib.component.page.ErrorPage.message" />
       </h2>
       <Button
         className="mt-10"
@@ -22,7 +23,7 @@ export function ErrorPage() {
         data-testid="reload"
       >
         <RefreshCwIcon />
-        Try again
+        <FormattedMessage id="_lib.component.page.ErrorPage.tryAgain" />
       </Button>
     </div>
   );

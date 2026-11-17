@@ -1,5 +1,6 @@
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 
 type Props = React.ComponentProps<typeof Badge> & {
@@ -7,7 +8,7 @@ type Props = React.ComponentProps<typeof Badge> & {
 };
 
 export function PrintRequestStatusBadge({ status, ...props }: Props) {
-  const text = EnumeratedTextUtil.getPrintRequestStatus(status);
+  const text = <FormattedMessage id={I18nUtil.getPrintRequestStatus(status)} />;
 
   switch (status) {
     case PrintRequestStatus.PENDING:

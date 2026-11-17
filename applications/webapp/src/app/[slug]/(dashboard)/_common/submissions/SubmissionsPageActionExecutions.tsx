@@ -24,6 +24,7 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   executions: ExecutionResponseDTO[];
@@ -61,23 +62,35 @@ export function SubmissionsPageActionExecutions({
       >
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Executions History</DialogTitle>
+            <DialogTitle>
+              <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.executionsDialogTitle" />
+            </DialogTitle>
             <DialogDescription>
-              List of all executions for this submission.
+              <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.executionsDialogDescription" />
             </DialogDescription>
           </DialogHeader>
 
           <Table data-testid="submission-executions-table">
             <TableHeader>
               <TableRow>
-                <TableHead>Timestamp</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Test Cases</TableHead>
-                <TableHead className="text-right">
-                  Max Time (CPU / Clock)
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerTimestamp" />
                 </TableHead>
-                <TableHead className="text-right">Max Peak Memory</TableHead>
-                <TableHead className="text-right">Details</TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerStatus" />
+                </TableHead>
+                <TableHead>
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerTestCases" />
+                </TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerMaxTime" />
+                </TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerMaxPeakMemory" />
+                </TableHead>
+                <TableHead className="text-right">
+                  <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.headerDetails" />
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -123,7 +136,12 @@ export function SubmissionsPageActionExecutions({
                         }
                         data-testid="submission-execution-details"
                       >
-                        <DownloadIcon size={16} /> CSV
+                        <FormattedMessage
+                          id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload"
+                          values={{
+                            icon: <DownloadIcon size={16} />,
+                          }}
+                        />
                       </Button>
                     )}
                   </TableCell>

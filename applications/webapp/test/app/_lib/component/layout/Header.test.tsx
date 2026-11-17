@@ -8,7 +8,6 @@ import {
   MockContestResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
-import { EnumeratedTextUtil } from "@/app/_lib/util/EnumeratedTextUtil";
 import { Composition } from "@/config/composition";
 import { useLocation } from "react-router-dom";
 import { routes } from "@/config/routes";
@@ -43,7 +42,7 @@ describe("Header", () => {
     expect(screen.getAllByTestId("theme-toggle")[0]).toBeInTheDocument();
     expect(screen.getAllByTestId("member-name")[0]).toHaveTextContent("Ada");
     expect(screen.getAllByTestId("member-type")[0]).toHaveTextContent(
-      EnumeratedTextUtil.getMemberType(MemberType.CONTESTANT),
+      "Contestant",
     );
     expect(screen.queryByTestId("sign-in")).not.toBeInTheDocument();
 

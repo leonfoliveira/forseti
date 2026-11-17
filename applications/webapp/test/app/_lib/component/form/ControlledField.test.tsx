@@ -30,7 +30,7 @@ describe("ControlledField", () => {
       <ControlledField
         form={result.current}
         name="title"
-        label="Title"
+        label="brand"
         field={<Input data-testid="title-input" />}
       />,
     );
@@ -50,7 +50,7 @@ describe("ControlledField", () => {
       <ControlledField
         form={result.current}
         name="file"
-        label="File"
+        label="brand"
         field={<Input data-testid="file-input" type="file" />}
       />,
     );
@@ -71,7 +71,7 @@ describe("ControlledField", () => {
       <ControlledField
         form={result.current}
         name="agree"
-        label="Agree"
+        label="brand"
         field={<Checkbox data-testid="agree-checkbox" />}
       />,
     );
@@ -89,7 +89,7 @@ describe("ControlledField", () => {
       <ControlledField
         form={result.current}
         name="agree"
-        label="Agree"
+        label="brand"
         field={<Switch data-testid="agree-switch" />}
       />,
     );

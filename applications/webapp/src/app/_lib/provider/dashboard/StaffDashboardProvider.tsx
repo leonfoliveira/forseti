@@ -128,7 +128,12 @@ export function StaffDashboardProvider({
     dispatch(StaffDashboardSlice.actions.mergeAnnouncement(announcement));
 
     if (announcement.member.id !== session?.member.id) {
-      toast.warning(`New announcement: ${announcement.text}`);
+      toast.warning(
+        "_lib.provider.dashboard.staffDashboardProvider.newAnnouncement",
+        {
+          text: announcement.text,
+        },
+      );
     }
   }
 
@@ -137,7 +142,9 @@ export function StaffDashboardProvider({
   ) {
     console.debug("Received clarification published:", clarification);
     dispatch(StaffDashboardSlice.actions.mergeClarification(clarification));
-    toast.info(`A clarification has been published`);
+    toast.info(
+      "_lib.provider.dashboard.staffDashboardProvider.clarificationPublished",
+    );
   }
 
   function receiveContestUpdated(contest: ContestResponseDTO) {
@@ -149,7 +156,7 @@ export function StaffDashboardProvider({
   function receiveContestFrozen(contest: ContestResponseDTO) {
     console.debug("Received contest frozen:", contest);
     dispatch(StaffDashboardSlice.actions.freeze(contest));
-    toast.info("The contest has been frozen");
+    toast.info("_lib.provider.dashboard.staffDashboardProvider.contestFrozen");
   }
 
   function receiveContestUnfrozen(data: {
@@ -159,7 +166,9 @@ export function StaffDashboardProvider({
   }) {
     console.debug("Received contest unfrozen");
     dispatch(StaffDashboardSlice.actions.unfreeze(data));
-    toast.info("The contest has been unfrozen");
+    toast.info(
+      "_lib.provider.dashboard.staffDashboardProvider.contestUnfrozen",
+    );
   }
 
   function receivePrintRequest(printRequest: PrintRequestResponseDTO) {

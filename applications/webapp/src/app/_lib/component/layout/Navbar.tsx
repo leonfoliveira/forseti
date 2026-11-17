@@ -4,6 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/domain/enumerate/MemberType";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * Default layout for contest dashboard pages.
@@ -18,22 +19,24 @@ export function Navbar() {
 
   const tabs = [
     {
-      title: "Leaderboard",
+      title: <FormattedMessage id="_lib.component.layout.Navbar.leaderboard" />,
       path: routes.CONTEST_LEADERBOARD(slug),
       "data-testid": `tab-leaderboard`,
     },
     {
-      title: "Problems",
+      title: <FormattedMessage id="_lib.component.layout.Navbar.problems" />,
       path: routes.CONTEST_PROBLEMS(slug),
       "data-testid": `tab-problems`,
     },
     {
-      title: "Submissions",
+      title: <FormattedMessage id="_lib.component.layout.Navbar.submissions" />,
       path: routes.CONTEST_SUBMISSIONS(slug),
       "data-testid": `tab-submissions`,
     },
     {
-      title: "Announcements",
+      title: (
+        <FormattedMessage id="_lib.component.layout.Navbar.announcements" />
+      ),
       path: routes.CONTEST_ANNOUNCEMENTS(slug),
       "data-testid": `tab-announcements`,
     },
@@ -41,7 +44,9 @@ export function Navbar() {
 
   if (contest.settings.isClarificationEnabled) {
     tabs.push({
-      title: "Clarifications",
+      title: (
+        <FormattedMessage id="_lib.component.layout.Navbar.clarifications" />
+      ),
       path: routes.CONTEST_CLARIFICATIONS(slug),
       "data-testid": `tab-clarifications`,
     });
@@ -59,7 +64,9 @@ export function Navbar() {
     ].includes(session.member.type)
   ) {
     tabs.push({
-      title: "Print Requests",
+      title: (
+        <FormattedMessage id="_lib.component.layout.Navbar.printRequests" />
+      ),
       path: routes.CONTEST_PRINT_REQUESTS(slug),
       "data-testid": `tab-print-requests`,
     });
@@ -70,14 +77,14 @@ export function Navbar() {
     [MemberType.ROOT, MemberType.ADMIN].includes(session.member.type)
   ) {
     tabs.push({
-      title: "Settings",
+      title: <FormattedMessage id="_lib.component.layout.Navbar.settings" />,
       path: routes.CONTEST_SETTINGS(slug),
       "data-testid": `tab-settings`,
     });
   }
 
   tabs.push({
-    title: "About",
+    title: <FormattedMessage id="_lib.component.layout.Navbar.about" />,
     path: routes.CONTEST_ABOUT(slug),
     "data-testid": `tab-about`,
   });

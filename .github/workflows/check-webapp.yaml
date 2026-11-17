@@ -30,7 +30,7 @@ jobs:
         if: steps.changes.outputs.webapp == 'true'
         uses: actions/setup-node@v5
         with:
-          node-version: 22
+          node-version: 26
           cache: "npm"
           cache-dependency-path: applications/webapp/package-lock.json
 
@@ -43,6 +43,7 @@ jobs:
         run: |
           # Run lint, and tests
           npm run lint
+          npm run i18n:lint
           npm run test:coverage
 
       - name: Build
