@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 type Props = {
   timestamp: string;
   options?: Intl.DateTimeFormatOptions;
@@ -7,8 +9,10 @@ type Props = {
  * Formats a ISO timestamp into a localized date and time string.
  */
 export function FormattedDateTime({ timestamp, options }: Props) {
+  const { i18n } = useTranslation();
+
   const date = new Date(timestamp);
-  const formatter = new Intl.DateTimeFormat("en-US", {
+  const formatter = new Intl.DateTimeFormat(i18n.language, {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

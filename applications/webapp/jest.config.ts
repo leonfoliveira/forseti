@@ -18,13 +18,11 @@ const config: Config = {
     "!src/port/**/*",
   ],
   setupFilesAfterEnv: ["<rootDir>/test/jest.setup.tsx"],
-
   moduleNameMapper: {
     "^@/test/(.*)$": "<rootDir>/test/$1",
     "^@/(.*)$": "<rootDir>/src/$1",
     "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
-
   clearMocks: true,
   roots: ["<rootDir>/test"],
   silent: true,

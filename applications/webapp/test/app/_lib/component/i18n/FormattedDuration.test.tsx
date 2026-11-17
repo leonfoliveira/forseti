@@ -4,11 +4,22 @@ import { FormattedDuration } from "@/app/_lib/component/i18n/FormattedDuration";
 
 describe("FormattedDuration", () => {
   it("formats days and clamps negative durations to zero", () => {
-    render(<>
-      <span data-testid="days"><FormattedDuration ms={90_061_000} /></span>
-      <span data-testid="negative"><FormattedDuration ms={-1} /></span>
-    </>);
-    expect(screen.getByTestId("days")).toHaveTextContent("1d 01:01:01");
+    render(
+      <>
+        <span data-testid="days">
+          <FormattedDuration ms={90_061_000} />
+        </span>
+        <span data-testid="without-days">
+          <FormattedDuration ms={3_600_000} />
+        </span>
+        <span data-testid="negative">
+          <FormattedDuration ms={-1} />
+        </span>
+      </>,
+    );
+
+    expect(screen.getByTestId("days")).toHaveTextContent("1d, 01:01:01");
+    expect(screen.getByTestId("without-days")).toHaveTextContent("01:00:00");
     expect(screen.getByTestId("negative")).toHaveTextContent("00:00:00");
   });
 });
