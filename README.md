@@ -7,7 +7,8 @@
 
 A comprehensive, production-ready platform for running secure and scalable competitive programming contests in AWS.
 
-[demo.webm](https://github.com/user-attachments/assets/06540f8e-3426-4ebd-b963-ec6cbb068d4f)
+[demo.webm](https://github.com/user-attachments/assets/217b1710-d3e4-4576-a434-4224770d3f50)
+
 
 ## Documentation
 
