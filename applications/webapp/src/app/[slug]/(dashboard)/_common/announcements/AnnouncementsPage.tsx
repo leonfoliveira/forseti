@@ -1,8 +1,7 @@
 import { MegaphoneIcon, PlusIcon } from "lucide-react";
 import React from "react";
 
-import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageCard";
-import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageForm";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -15,8 +14,9 @@ import {
 } from "@/app/_lib/component/shadcn/empty";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { AnnouncementsPageCard } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageCard";
+import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageForm";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   announcements: AnnouncementResponseDTO[];

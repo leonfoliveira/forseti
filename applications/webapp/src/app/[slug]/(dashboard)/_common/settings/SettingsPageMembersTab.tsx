@@ -2,9 +2,9 @@ import { PlusIcon, TrashIcon, UploadIcon } from "lucide-react";
 import { useRef } from "react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
-import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
@@ -26,14 +26,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/app/_lib/component/shadcn/tooltip";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
-import { MemberLoader } from "@/app/_lib/util/MemberLoader";
-import { MemberType } from "@/domain/enumerate/MemberType";
-import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
-import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { MemberLoader } from "@/app/_lib/util/MemberLoader";
+import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 type Props = {
   form: UseFormReturn<SettingsFormType>;

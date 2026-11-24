@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   authorize:
@@ -15,11 +17,6 @@ jobs:
       contains(github.event.comment.body, '/regression')
 
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: read
 
     outputs:
       sha: ${{ steps.pr.outputs.sha }}

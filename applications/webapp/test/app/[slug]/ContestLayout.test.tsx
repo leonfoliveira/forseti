@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { ContestLayout } from "@/app/[slug]/ContestLayout";
 import { Composition } from "@/config/composition";
-import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
-import { NotFoundException } from "@/domain/exception/NotFoundException";
 import { routes } from "@/config/routes";
+import { NotFoundException } from "@/domain/exception/NotFoundException";
+import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
 
 jest.mock("@/app/_lib/component/layout/Footer", () => ({
   Footer: () => <footer data-testid="footer" />,

@@ -101,12 +101,19 @@ export class Actor {
     return new ActorOnSettingsPage(this.page, this.member);
   }
 
+  async navigateToAbout(contest: Contest) {
+    await this.navigate(contest, "about");
+    const { ActorOnAboutPage } =
+      require("@/test/actor/ActorOnAboutPage") as typeof import("@/test/actor/ActorOnAboutPage");
+    return new ActorOnAboutPage(this.page, this.member);
+  }
+
   private async navigate(contest: Contest, tab: string) {
     // Wait for any pending WebSocket operations to complete
     await this.page.waitForTimeout(500);
 
     const dashboardPage = this.page.getByTestId("dashboard-tabs");
-    const tabButton = dashboardPage.getByTestId(`tab-/${contest.slug}/${tab}`);
+    const tabButton = dashboardPage.getByTestId(`tab-${tab}`);
     await tabButton.scrollIntoViewIfNeeded();
 
     await tabButton.click();

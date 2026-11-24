@@ -1,8 +1,8 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
-import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageForm";
 import { useToast } from "@/app/_lib/hook/useToast";
+import { AnnouncementsPageForm } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPageForm";
 import { Composition } from "@/config/composition";
 import { MockAnnouncementResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";

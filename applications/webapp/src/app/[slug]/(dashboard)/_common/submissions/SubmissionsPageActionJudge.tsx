@@ -2,13 +2,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { GavelIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import {
-  SubmissionJudgeForm,
-  SubmissionJudgeFormType,
-} from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionJudgeForm";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import {
@@ -19,11 +16,14 @@ import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import {
+  SubmissionJudgeForm,
+  SubmissionJudgeFormType,
+} from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionJudgeForm";
 import { Composition } from "@/config/composition";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   submission: SubmissionWithCodeAndExecutionsResponseDTO;

@@ -7,9 +7,9 @@ import {
 } from "lucide-react";
 import { useFieldArray, UseFormReturn } from "react-hook-form";
 
-import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { ColorPicker } from "@/app/_lib/component/form/ColorPicker";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
@@ -25,15 +25,15 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/app/_lib/component/shadcn/tooltip";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { useErrorHandler } from "@/app/_lib/hook/useErrorHandler";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { ColorUtil } from "@/app/_lib/util/ColorUtil";
+import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { Composition } from "@/config/composition";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
-import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
-import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;

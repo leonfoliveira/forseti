@@ -1,7 +1,8 @@
 import React from "react";
+
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 
 type Props = React.ComponentProps<typeof Badge> & {

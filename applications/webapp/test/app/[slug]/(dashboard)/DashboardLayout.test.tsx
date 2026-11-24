@@ -1,5 +1,5 @@
-import React from "react";
 import { screen } from "@testing-library/react";
+import React from "react";
 
 import { DashboardLayout } from "@/app/[slug]/(dashboard)/DashboardLayout";
 import { renderWithProviders } from "@/test/render-with-providers";

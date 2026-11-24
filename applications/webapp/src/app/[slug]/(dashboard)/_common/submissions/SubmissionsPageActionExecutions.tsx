@@ -2,6 +2,7 @@ import { DownloadIcon, HistoryIcon } from "lucide-react";
 
 import { SubmissionAnswerBadge } from "@/app/_lib/component/display/badge/SubmissionAnswerBadge";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/FormattedDateTime";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Dialog,
@@ -24,7 +25,6 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   executions: ExecutionResponseDTO[];
@@ -136,12 +136,8 @@ export function SubmissionsPageActionExecutions({
                         }
                         data-testid="submission-execution-details"
                       >
-                        <FormattedMessage
-                          id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload"
-                          values={{
-                            icon: <DownloadIcon size={16} />,
-                          }}
-                        />
+                        <DownloadIcon size={16} className="mr-1" />
+                        <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload" />
                       </Button>
                     )}
                   </TableCell>

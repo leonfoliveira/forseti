@@ -1,9 +1,9 @@
-import { GetUploadSignedUrlRequest } from "@/port/dto/request/attachment/GetUploadSignedUrlRequest";
-import { AttachmentRepository } from "@/port/output/repository/AttachmentRepository";
-import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
-import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
-import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
 import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { GetUploadSignedUrlRequest } from "@/port/dto/request/attachment/GetUploadSignedUrlRequest";
+import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
+import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
+import { SignedUploadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedUploadAttachmentResponseDTO";
+import { AttachmentRepository } from "@/port/output/repository/AttachmentRepository";
 
 export class AxiosAttachmentRepository implements AttachmentRepository {
   private basePath = (contestId: string) =>

@@ -1,13 +1,13 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
 import { LeaderboardPage } from "@/app/[slug]/(dashboard)/_common/leaderboard/LeaderboardPage";
+import { MemberType } from "@/domain/enumerate/MemberType";
 import {
   MockLeaderboardResponseDTO,
   MockProblemResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { MemberType } from "@/domain/enumerate/MemberType";
 
 describe("LeaderboardPage", () => {
   it("displays contestants, ranks, scores, and problem cells", async () => {

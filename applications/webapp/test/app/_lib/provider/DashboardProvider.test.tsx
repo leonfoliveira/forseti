@@ -3,11 +3,11 @@ import { screen } from "@testing-library/react";
 import { DashboardProvider } from "@/app/_lib/provider/DashboardProvider";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
-import { renderWithProviders } from "@/test/render-with-providers";
 import {
   MockContestResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/hook/useContestStatusWatcher", () => ({
   useContestStatusWatcher: jest.fn(),

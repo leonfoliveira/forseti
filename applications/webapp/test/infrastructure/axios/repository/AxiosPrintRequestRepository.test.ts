@@ -1,9 +1,9 @@
+import { AxiosPrintRequestRepository } from "@/infrastructure/axios/repository/AxiosPrintRequestRepository";
 import {
-  MockPrintRequestResponseDTO,
   MockCreatePrintRequestRequestDTO,
+  MockPrintRequestResponseDTO,
   MockUpdateStatusPrintRequestRequestDTO,
 } from "@/test/mock/response/MockDTOs";
-import { AxiosPrintRequestRepository } from "@/infrastructure/axios/repository/AxiosPrintRequestRepository";
 
 describe("AxiosPrintRequestRepository", () => {
   it("creates a print request", async () => {

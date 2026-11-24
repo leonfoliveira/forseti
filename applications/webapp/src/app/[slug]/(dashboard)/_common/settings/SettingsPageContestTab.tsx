@@ -1,13 +1,11 @@
+import type { ParseKeys } from "i18next";
 import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import type { ParseKeys } from "i18next";
 
-import {
-  SettingsForm,
-  SettingsFormType,
-} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
   FieldDescription,
@@ -17,6 +15,7 @@ import {
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
@@ -24,6 +23,11 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { useAppDispatch } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import {
@@ -32,11 +36,7 @@ import {
 } from "@/domain/enumerate/SubmissionLanguage";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { Button } from "@/app/_lib/component/shadcn/button";
 import { ContestUtil } from "@/util/ContestUtil";
-import { Switch } from "@/app/_lib/component/shadcn/switch";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;
@@ -142,7 +142,7 @@ export function SettingsPageContestTab({
               name="contest.slug"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelSlug"
               field={<Input data-testid="contest-slug" />}
-              description="The slug is used in the URL and must be unique."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionSlug"
             />
 
             <ControlledField
@@ -150,7 +150,7 @@ export function SettingsPageContestTab({
               name="contest.title"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelTitle"
               field={<Input data-testid="contest-title" />}
-              description="The title of the contest."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionTitle"
             />
 
             <ControlledField
@@ -164,7 +164,7 @@ export function SettingsPageContestTab({
                   data-testid="contest-start-at"
                 />
               }
-              description="The date and time when the contest will start."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionStartAt"
             />
 
             <ControlledField
@@ -174,7 +174,7 @@ export function SettingsPageContestTab({
               field={
                 <Input type="datetime-local" data-testid="contest-end-at" />
               }
-              description="The date and time when the contest will end."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionEndAt"
             />
 
             <ControlledField
@@ -188,7 +188,7 @@ export function SettingsPageContestTab({
                   disabled={isContestFrozen}
                 />
               }
-              description="The date and time when the contest will automatically freeze."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionAutoFreezeAt"
             />
 
             <ControlledField
@@ -196,7 +196,7 @@ export function SettingsPageContestTab({
               name="contest.ipCIDRs"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIpCIDRs"
               field={<Input data-testid="contest-ip-cidrs" />}
-              description="The IP CIDRs allowed for the contest separated by commas."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIpCIDRs"
             />
           </div>
 
@@ -247,7 +247,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isAutoJudgeEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsAutoJudgeEnabled"
             field={<Switch data-testid="contest-auto-judge-enabled" />}
-            description="Enable or disable the automatic judging of submissions."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsAutoJudgeEnabled"
           />
 
           <ControlledField
@@ -255,7 +255,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isClarificationEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsClarificationEnabled"
             field={<Switch data-testid="contest-clarification-enabled" />}
-            description="Enable or disable the clarification feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsClarificationEnabled"
           />
 
           <ControlledField
@@ -263,7 +263,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isPrintRequestEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsPrintRequestEnabled"
             field={<Switch data-testid="contest-print-request-enabled" />}
-            description="Enable or disable the print request feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsPrintRequestEnabled"
           />
 
           <ControlledField
@@ -271,7 +271,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isSpectatorEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsSpectatorEnabled"
             field={<Switch data-testid="contest-spectator-enabled" />}
-            description="Enable or disable the spectator feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsSpectatorEnabled"
           />
         </div>
       </FieldSet>

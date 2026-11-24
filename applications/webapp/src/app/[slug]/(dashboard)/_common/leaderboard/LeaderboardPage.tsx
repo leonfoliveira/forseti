@@ -1,11 +1,19 @@
+import { clsx } from "clsx";
 import { ArrowDown01Icon, AwardIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
 import { ProblemStatusBadge } from "@/app/_lib/component/display/badge/ProblemStatusBadge";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+} from "@/app/_lib/component/shadcn/field";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 import {
   Table,
   TableBody,
@@ -18,14 +26,6 @@ import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
-import { clsx } from "clsx";
-import {
-  Field,
-  FieldContent,
-  FieldLabel,
-} from "@/app/_lib/component/shadcn/field";
-import { Switch } from "@/app/_lib/component/shadcn/switch";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[];

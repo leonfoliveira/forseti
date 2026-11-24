@@ -1,10 +1,10 @@
-import { DashboardRepository } from "@/port/output/repository/DashboardRepository";
+import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
-import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
+import { DashboardRepository } from "@/port/output/repository/DashboardRepository";
 
 export class AxiosDashboardRepository implements DashboardRepository {
   private basePath = (contestId: string) =>

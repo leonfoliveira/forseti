@@ -49,7 +49,7 @@ class Execution(
     /**
      * Number of test cases that were accepted in the execution.
      */
-    @Column("approved_test_cases")
+    @Column("accepted_test_cases")
     @Audited(withModifiedFlag = false)
     val acceptedTestCases: Int,
     /**

@@ -1,30 +1,31 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import { DisconnectionBanner } from "@/app/_lib/component/feedback/DisconnectionBanner";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { ErrorPage } from "@/app/_lib/component/page/ErrorPage";
 import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
+import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { ContestantDashboardSlice } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
-import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { BalloonSlice } from "@/app/_lib/store/slice/BalloonSlice";
-import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
-import { ContestUtil } from "@/util/ContestUtil";
+import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
-import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Provider component for fetching contestant dashboard data and setting up sse listeners.
@@ -41,6 +42,7 @@ export function ContestantDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const dashboardReseter = useDashboardReseter();
+  const { t } = useTranslation();
 
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
     ListenerStatus.DISCONNECTED,
@@ -154,11 +156,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         dispatch(
@@ -171,11 +169,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;
@@ -186,11 +180,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;
@@ -201,11 +191,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;

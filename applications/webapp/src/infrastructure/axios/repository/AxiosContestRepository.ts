@@ -1,8 +1,8 @@
-import { ContestRepository } from "@/port/output/repository/ContestRepository";
+import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
-import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { ContestRepository } from "@/port/output/repository/ContestRepository";
 
 export class AxiosContestRepository implements ContestRepository {
   private basePath = "/v1/contests";

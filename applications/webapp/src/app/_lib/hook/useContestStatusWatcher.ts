@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { useAppSelector } from "@/app/_lib/store/Store";
-import { ContestUtil } from "@/util/ContestUtil";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { ContestUtil } from "@/util/ContestUtil";
 
 /**
  * Custom hook to watch the current contest status.

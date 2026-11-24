@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
 
-import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/AdminSettingsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
-import { MemberType } from "@/domain/enumerate/MemberType";
+import { AdminSettingsPage } from "@/app/[slug]/(dashboard)/settings/AdminSettingsPage";
 import { routes } from "@/config/routes";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**
  * Page displaying the settings for the contest.

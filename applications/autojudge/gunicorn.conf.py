@@ -1,8 +1,10 @@
+
 import logging
 import threading
 
 from autojudge.config.env import env
 from autojudge.worker import Worker
+from autojudge.api import start_flask_app
 
 bind = f"0.0.0.0:{env.port}"
 workers = env.workers
@@ -13,25 +15,35 @@ logging.basicConfig(
     format="ts=%(asctime)s level=%(levelname)s logger=%(name)s msg=%(message)s",
 )
 
-_worker_instance = None
-_worker_thread = None
+_worker_instances = {}
+
+
+def when_ready(server):
+    logging.info("Starting health-check API...")
+    threading.Thread(
+        target=start_flask_app,
+        daemon=True,
+        name="health-api",
+    ).start()
+
 
 def post_fork(server, worker):
-    global _worker_instance, _worker_thread
-    logging.info(f"Gunicorn worker spawned (pid: {worker.pid}), starting judge worker...")
+    logging.info(
+        f"Gunicorn worker spawned (pid: {worker.pid}), starting judge worker..."
+    )
+    instance = Worker()
+    _worker_instances[worker.pid] = instance
+    threading.Thread(
+        target=instance.start,
+        daemon=True,
+        name=f"judge-worker-{worker.pid}",
+    ).start()
 
-    _worker_instance = Worker()
-    _worker_thread = threading.Thread(target=_worker_instance.start, daemon=True)
-    _worker_thread.start()
-    
 
 def worker_exit(server, worker):
-    global _worker_instance, _worker_thread
-    logging.info(f"Gunicorn worker exiting (pid: {worker.pid}), stopping judge worker...")
-
-    if _worker_instance:
-        _worker_instance.stop()
-
-    if _worker_thread and _worker_thread.is_alive():
-        _worker_thread.join(timeout=5)
-        
+    logging.info(
+        f"Gunicorn worker exiting (pid: {worker.pid}), stopping judge worker..."
+    )
+    instance = _worker_instances.pop(worker.pid, None)
+    if instance:
+        instance.stop()

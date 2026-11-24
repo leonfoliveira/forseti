@@ -1,9 +1,9 @@
 import { screen } from "@testing-library/react";
 
-import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
-import { renderWithProviders } from "@/test/render-with-providers";
-import { MockContestantDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
+import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
+import { MockContestantDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",

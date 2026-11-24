@@ -1,6 +1,6 @@
-import { PrintRequestWriter } from "@/port/input/usecase/printRequest/PrintRequestWriter";
 import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/CreatePrintRequestRequestDTO";
 import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
+import { PrintRequestWriter } from "@/port/input/usecase/printRequest/PrintRequestWriter";
 import { PrintRequestRepository } from "@/port/output/repository/PrintRequestRepository";
 
 export class PrintRequestService implements PrintRequestWriter {

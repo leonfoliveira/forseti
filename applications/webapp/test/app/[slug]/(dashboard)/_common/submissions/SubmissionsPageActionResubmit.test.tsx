@@ -1,13 +1,13 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionsPageActionResubmit } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionResubmit";
+import { Composition } from "@/config/composition";
 import {
   MockContestResponseDTO,
   MockSubmissionWithCodeAndExecutionsResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { Composition } from "@/config/composition";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SubmissionsPageActionResubmit", () => {
   it("resubmits successfully", async () => {

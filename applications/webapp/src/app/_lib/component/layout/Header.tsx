@@ -1,8 +1,10 @@
-import { LogOutIcon, LogInIcon, SunMoonIcon } from "lucide-react";
+import { LogInIcon, LogOutIcon, SunMoonIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { ContestStatusBadge } from "@/app/_lib/component/display/badge/ContestStatusBadge";
 import { CountdownClock } from "@/app/_lib/component/display/CountdownClock";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import {
@@ -13,13 +15,11 @@ import {
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { PathUtil } from "@/app/_lib/util/PathUtil";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { PathUtil } from "@/app/_lib/util/PathUtil";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
-import { useTranslation } from "react-i18next";
 
 /**
  * Header component displayed at the top of the web application.

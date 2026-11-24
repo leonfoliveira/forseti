@@ -1,8 +1,8 @@
-import { screen, fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "@/test/render-with-providers";
+import { fireEvent,screen } from "@testing-library/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import ServerErrorPage from "@/app/error/ServerErrorPage";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("ServerErrorPage", () => {
   it("shows the server error", async () => {

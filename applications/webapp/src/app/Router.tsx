@@ -1,8 +1,10 @@
 import React, { Suspense } from "react";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { ContestLayout } from "./[slug]/ContestLayout";
-import { DashboardLayout } from "@/app/[slug]/(dashboard)/DashboardLayout";
+import { BrowserRouter, Navigate,Route, Routes } from "react-router-dom";
+
 import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
+import { DashboardLayout } from "@/app/[slug]/(dashboard)/DashboardLayout";
+
+import { ContestLayout } from "./[slug]/ContestLayout";
 
 const HomePage = React.lazy(() => import("./HomePage"));
 const ForbiddenPage = React.lazy(() => import("./error/ForbiddenPage"));

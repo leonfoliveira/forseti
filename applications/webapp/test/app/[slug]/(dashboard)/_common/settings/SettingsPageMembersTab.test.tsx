@@ -1,14 +1,14 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { SettingsPageMembersTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageMembersTab";
+import { MemberType } from "@/domain/enumerate/MemberType";
 import {
   renderHookWithProviders,
   renderWithProviders,
 } from "@/test/render-with-providers";
-import { MemberType } from "@/domain/enumerate/MemberType";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SettingsPageMembersTab", () => {
   it("fills the form with members", async () => {

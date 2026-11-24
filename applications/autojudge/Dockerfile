@@ -7,6 +7,7 @@ RUN apk add --no-cache curl
 COPY ./autojudge autojudge
 COPY requirements.txt .
 COPY entrypoint.sh entrypoint.sh
+COPY gunicorn.conf.py gunicorn.conf.py
 
 RUN pip install --no-cache-dir -r requirements.txt
 

@@ -1,4 +1,6 @@
 import type { ParseKeys } from "i18next";
+import { CheckIcon, XIcon } from "lucide-react";
+
 import { FormattedDateTime } from "@/app/_lib/component/i18n/FormattedDateTime";
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
@@ -7,7 +9,6 @@ import { Card, CardContent } from "@/app/_lib/component/shadcn/card";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { I18nUtil } from "@/app/_lib/util/i18nUtil";
-import { CheckIcon, XIcon } from "lucide-react";
 
 /**
  * Page displaying information about the contest.
@@ -47,7 +48,7 @@ export default function DashboardAboutPage() {
       title="[slug].(dashboard).about.pageTitle"
       description="[slug].(dashboard).about.pageDescription"
     >
-      <div className="mx-auto my-5 w-full max-w-4xl">
+      <div className="mx-auto my-5 w-full max-w-4xl" data-testid="about">
         <Card>
           <CardContent>
             <h1

@@ -1,15 +1,15 @@
 import {
-  ContestantDashboardState,
   ContestantDashboardSlice,
+  ContestantDashboardState,
 } from "@/app/_lib/store/slice/dashboard/ContestantDashboardSlice";
 import { MockSubmissionResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
-  MockContestantDashboardResponseDTO,
-  MockContestResponseDTO,
-  MockLeaderboardResponseDTO,
-  MockLeaderboardCellResponseDTO,
   MockAnnouncementResponseDTO,
   MockClarificationResponseDTO,
+  MockContestantDashboardResponseDTO,
+  MockContestResponseDTO,
+  MockLeaderboardCellResponseDTO,
+  MockLeaderboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 
 describe("ContestantDashboardSlice", () => {

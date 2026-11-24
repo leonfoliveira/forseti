@@ -1,15 +1,15 @@
 import {
-  StaffDashboardState,
   StaffDashboardSlice,
+  StaffDashboardState,
 } from "@/app/_lib/store/slice/dashboard/StaffDashboardSlice";
 import { MockSubmissionWithCodeAndExecutionsResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
-  MockStaffDashboardResponseDTO,
-  MockContestResponseDTO,
-  MockLeaderboardResponseDTO,
-  MockLeaderboardCellResponseDTO,
   MockAnnouncementResponseDTO,
   MockClarificationResponseDTO,
+  MockContestResponseDTO,
+  MockLeaderboardCellResponseDTO,
+  MockLeaderboardResponseDTO,
+  MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 
 describe("StaffDashboardSlice", () => {

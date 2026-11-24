@@ -1,5 +1,5 @@
-import Joi from "joi";
 import type { ParseKeys } from "i18next";
+import Joi from "joi";
 
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 

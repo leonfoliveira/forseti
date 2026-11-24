@@ -1,6 +1,7 @@
+import { toast } from "sonner";
+
 import { useToast } from "@/app/_lib/hook/useToast";
 import { renderHookWithProviders } from "@/test/render-with-providers";
-import { toast } from "sonner";
 
 jest.unmock("@/app/_lib/hook/useToast");
 

@@ -2,9 +2,9 @@ import { ClockAlertIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { useAppSelector } from "@/app/_lib/store/Store";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * A page displayed when the contest has not started yet.

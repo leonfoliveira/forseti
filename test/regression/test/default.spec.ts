@@ -178,8 +178,10 @@ test("Default contest behaviour", async ({ page }) => {
   // Step 4: Sign in as admin, create and announcement, add a problem, and start the contest
   await adminActor.signIn(contest);
   await adminActor.checkHeader(contest);
+  const adminActorOnAbout = await adminActor.navigateToAbout(contest);
+  await adminActorOnAbout.checkAbout(contest);
   const adminActorOnAnnouncements =
-    await adminActor.navigateToAnnouncements(contest);
+    await adminActorOnAbout.navigateToAnnouncements(contest);
   await adminActorOnAnnouncements.createAnnouncement(announcement);
   const adminActorOnSettings =
     await adminActorOnAnnouncements.navigateToSettings(contest);

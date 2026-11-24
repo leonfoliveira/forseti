@@ -1,14 +1,14 @@
 import { act } from "@testing-library/react";
 
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
-import { renderHookWithProviders } from "@/test/render-with-providers";
 import {
   MockAdminDashboardResponseDTO,
   MockContestantDashboardResponseDTO,
-  MockSpectatorDashboardResponseDTO,
   MockJudgeDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
   MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
+import { renderHookWithProviders } from "@/test/render-with-providers";
 
 describe("useDashboardReseter hook", () => {
   it("resets all role dashboard slices", async () => {

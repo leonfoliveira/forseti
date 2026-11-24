@@ -1,5 +1,6 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 import { Composition } from "@/config/composition";
 import {
@@ -8,7 +9,6 @@ import {
   MockProblemWithTestCasesResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("ProblemsPage", () => {
   it("renders problems", async () => {

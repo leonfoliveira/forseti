@@ -1,9 +1,9 @@
 import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
-import {
-  MockLeaderboardResponseDTO,
-  MockLeaderboardCellResponseDTO,
-} from "@/test/mock/response/MockDTOs";
 import { MockDate } from "@/test/mock/MockDate";
+import {
+  MockLeaderboardCellResponseDTO,
+  MockLeaderboardResponseDTO,
+} from "@/test/mock/response/MockDTOs";
 
 describe("LeaderboardMerger", () => {
   it("should ignore update for row not found in the leaderboard", () => {

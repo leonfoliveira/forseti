@@ -1,17 +1,17 @@
 import { act, fireEvent, screen } from "@testing-library/react";
+import { useLocation } from "react-router-dom";
 
 import { Header } from "@/app/_lib/component/layout/Header";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
+import { Composition } from "@/config/composition";
+import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
-import { renderWithProviders } from "@/test/render-with-providers";
 import {
   MockContestResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
-import { Composition } from "@/config/composition";
-import { useLocation } from "react-router-dom";
-import { routes } from "@/config/routes";
-import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/hook/useContestStatusWatcher", () => ({
   useContestStatusWatcher: jest.fn(() => ContestStatus.IN_PROGRESS),

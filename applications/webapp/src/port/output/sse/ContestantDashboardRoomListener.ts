@@ -1,9 +1,9 @@
-import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 
 export interface ContestantDashboardRoomListener {
   /**

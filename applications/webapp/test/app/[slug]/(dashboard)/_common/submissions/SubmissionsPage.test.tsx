@@ -1,5 +1,5 @@
-import React from "react";
 import { fireEvent, screen } from "@testing-library/react";
+import React from "react";
 
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";

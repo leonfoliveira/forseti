@@ -1,12 +1,12 @@
 import { mock } from "jest-mock-extended";
 import { v4 as uuidv4 } from "uuid";
 
-import { PrintRequestService } from "@/service/PrintRequestService";
 import { PrintRequestRepository } from "@/port/output/repository/PrintRequestRepository";
+import { PrintRequestService } from "@/service/PrintRequestService";
 import {
   MockCreatePrintRequestRequestDTO,
-  MockUpdateStatusPrintRequestRequestDTO,
   MockPrintRequestResponseDTO,
+  MockUpdateStatusPrintRequestRequestDTO,
 } from "@/test/mock/response/MockDTOs";
 
 describe("PrintRequestService", () => {

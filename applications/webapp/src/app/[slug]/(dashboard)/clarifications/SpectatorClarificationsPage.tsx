@@ -1,7 +1,7 @@
 import React from "react";
 
-import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { ClarificationsPage } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPage";
 
 export function SpectatorClarificationsPage() {
   const problems = useAppSelector((state) => state.spectatorDashboard.problems);

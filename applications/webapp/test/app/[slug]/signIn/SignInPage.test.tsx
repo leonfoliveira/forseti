@@ -1,17 +1,17 @@
-import { fireEvent, screen, act } from "@testing-library/react";
+import { act,fireEvent, screen } from "@testing-library/react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import SignInPage from "@/app/[slug]/signIn/SignInPage";
+import { Composition } from "@/config/composition";
+import { routes } from "@/config/routes";
+import { ServerException } from "@/domain/exception/ServerException";
+import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
 import {
   MockContestResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { useToast } from "@/app/_lib/hook/useToast";
-import { Composition } from "@/config/composition";
-import { routes } from "@/config/routes";
-import { UnauthorizedException } from "@/domain/exception/UnauthorizedException";
-import { ServerException } from "@/domain/exception/ServerException";
 
 describe("SignInPage", () => {
   function fillForm() {

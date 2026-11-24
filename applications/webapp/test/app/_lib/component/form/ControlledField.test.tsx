@@ -1,15 +1,15 @@
+import { fireEvent,screen } from "@testing-library/react";
 import React from "react";
-import { screen, fireEvent } from "@testing-library/react";
-import { Switch } from "@/app/_lib/component/shadcn/switch";
-import {
-  renderWithProviders,
-  renderHookWithProviders,
-} from "@/test/render-with-providers";
 import { useForm } from "react-hook-form";
-import { Input } from "@/app/_lib/component/shadcn/input";
-import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
+import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
+import { Input } from "@/app/_lib/component/shadcn/input";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
+import {
+  renderHookWithProviders,
+  renderWithProviders,
+} from "@/test/render-with-providers";
 
 jest.mock("@/app/_lib/component/shadcn/input", () => ({
   Input: (props: any) => <input {...props} />,

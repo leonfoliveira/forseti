@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Tabs, TabsList, TabsTrigger } from "@/app/_lib/component/shadcn/tabs";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { routes } from "@/config/routes";
 import { MemberType } from "@/domain/enumerate/MemberType";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 /**
  * Default layout for contest dashboard pages.

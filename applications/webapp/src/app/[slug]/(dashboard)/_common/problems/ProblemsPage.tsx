@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { FormattedNumber } from "@/app/_lib/component/i18n/FormattedNumber";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
@@ -27,7 +28,6 @@ import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[] | ProblemWithTestCasesResponseDTO[];
@@ -214,10 +214,8 @@ export function ProblemsPage({
                           }
                           data-testid="problem-download-test-cases"
                         >
-                          <FormattedMessage
-                            id="[slug].(dashboard)._common.problems.ProblemsPage.downloadCSV"
-                            values={{ icon: <DownloadIcon size={16} /> }}
-                          />
+                          <DownloadIcon size={16} className="mr-1" />
+                          <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.downloadCSV" />
                         </Button>
                       </TableCell>
                     )}
@@ -231,10 +229,8 @@ export function ProblemsPage({
                         onClick={() => downloadDescription(problem)}
                         data-testid="problem-download"
                       >
-                        <FormattedMessage
-                          id="[slug].(dashboard)._common.problems.ProblemsPage.downloadPDF"
-                          values={{ icon: <DownloadIcon size={16} /> }}
-                        />
+                        <DownloadIcon size={16} className="mr-1" />
+                        <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.downloadPDF" />
                       </Button>
                     </TableCell>
                   </TableRow>

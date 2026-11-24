@@ -2,8 +2,8 @@ import { act } from "@testing-library/react";
 
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { renderHookWithProviders } from "@/test/render-with-providers";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderHookWithProviders } from "@/test/render-with-providers";
 
 describe("useContestStatusWatcher hook", () => {
   it("derives status and recalculates when contest details change", async () => {

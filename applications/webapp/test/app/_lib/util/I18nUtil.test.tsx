@@ -1,13 +1,14 @@
-import { ContestStatus } from "@/domain/enumerate/ContestStatus";
-import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
-import { renderWithProviders } from "@/test/render-with-providers";
 import { screen } from "@testing-library/react";
-import { MemberType } from "@/domain/enumerate/MemberType";
-import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import { ContestStatus } from "@/domain/enumerate/ContestStatus";
+import { MemberType } from "@/domain/enumerate/MemberType";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
+import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
+import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("I18nUtil", () => {
   it.each([

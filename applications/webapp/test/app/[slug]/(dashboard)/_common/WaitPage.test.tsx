@@ -1,10 +1,10 @@
 import { act, screen } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
 import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
+import { MockDate } from "@/test/mock/MockDate";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { MockDate } from "@/test/mock/MockDate";
-import { useNavigate } from "react-router-dom";
 
 describe("WaitPage", () => {
   it("explains that the contest is not yet available", async () => {

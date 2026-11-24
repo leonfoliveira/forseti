@@ -2,8 +2,8 @@ import { DashboardService } from "@/service/DashboardService";
 import {
   MockAdminDashboardResponseDTO,
   MockContestantDashboardResponseDTO,
-  MockSpectatorDashboardResponseDTO,
   MockJudgeDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
   MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 

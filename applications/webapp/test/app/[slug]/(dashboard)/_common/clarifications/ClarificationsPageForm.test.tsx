@@ -1,8 +1,8 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
-import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageForm";
 import { useToast } from "@/app/_lib/hook/useToast";
+import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageForm";
 import { Composition } from "@/config/composition";
 import {
   MockClarificationResponseDTO,

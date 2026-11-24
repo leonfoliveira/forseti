@@ -1,15 +1,15 @@
 import {
-  SpectatorDashboardState,
   SpectatorDashboardSlice,
+  SpectatorDashboardState,
 } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { MockSubmissionResponseDTO } from "@/test/mock/response/MockDTOs";
 import {
-  MockSpectatorDashboardResponseDTO,
-  MockContestResponseDTO,
-  MockLeaderboardResponseDTO,
-  MockLeaderboardCellResponseDTO,
   MockAnnouncementResponseDTO,
   MockClarificationResponseDTO,
+  MockContestResponseDTO,
+  MockLeaderboardCellResponseDTO,
+  MockLeaderboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 
 describe("SpectatorDashboardSlice", () => {

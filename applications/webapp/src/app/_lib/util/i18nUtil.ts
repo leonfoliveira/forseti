@@ -2,10 +2,10 @@ import type { ParseKeys } from "i18next";
 
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
-import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
-import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
 
 export class I18nUtil {
   static getContestStatus(status: ContestStatus): ParseKeys {
