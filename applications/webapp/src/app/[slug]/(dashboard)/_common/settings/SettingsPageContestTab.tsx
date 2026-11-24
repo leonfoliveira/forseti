@@ -142,7 +142,7 @@ export function SettingsPageContestTab({
               name="contest.slug"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelSlug"
               field={<Input data-testid="contest-slug" />}
-              description="The slug is used in the URL and must be unique."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionSlug"
             />
 
             <ControlledField
@@ -150,7 +150,7 @@ export function SettingsPageContestTab({
               name="contest.title"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelTitle"
               field={<Input data-testid="contest-title" />}
-              description="The title of the contest."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionTitle"
             />
 
             <ControlledField
@@ -164,7 +164,7 @@ export function SettingsPageContestTab({
                   data-testid="contest-start-at"
                 />
               }
-              description="The date and time when the contest will start."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionStartAt"
             />
 
             <ControlledField
@@ -174,7 +174,7 @@ export function SettingsPageContestTab({
               field={
                 <Input type="datetime-local" data-testid="contest-end-at" />
               }
-              description="The date and time when the contest will end."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionEndAt"
             />
 
             <ControlledField
@@ -188,7 +188,7 @@ export function SettingsPageContestTab({
                   disabled={isContestFrozen}
                 />
               }
-              description="The date and time when the contest will automatically freeze."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionAutoFreezeAt"
             />
 
             <ControlledField
@@ -196,7 +196,7 @@ export function SettingsPageContestTab({
               name="contest.ipCIDRs"
               label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIpCIDRs"
               field={<Input data-testid="contest-ip-cidrs" />}
-              description="The IP CIDRs allowed for the contest separated by commas."
+              description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIpCIDRs"
             />
           </div>
 
@@ -247,7 +247,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isAutoJudgeEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsAutoJudgeEnabled"
             field={<Switch data-testid="contest-auto-judge-enabled" />}
-            description="Enable or disable the automatic judging of submissions."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsAutoJudgeEnabled"
           />
 
           <ControlledField
@@ -255,7 +255,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isClarificationEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsClarificationEnabled"
             field={<Switch data-testid="contest-clarification-enabled" />}
-            description="Enable or disable the clarification feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsClarificationEnabled"
           />
 
           <ControlledField
@@ -263,7 +263,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isPrintRequestEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsPrintRequestEnabled"
             field={<Switch data-testid="contest-print-request-enabled" />}
-            description="Enable or disable the print request feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsPrintRequestEnabled"
           />
 
           <ControlledField
@@ -271,7 +271,7 @@ export function SettingsPageContestTab({
             name="contest.settings.isSpectatorEnabled"
             label="[slug].(dashboard)._common.settings.SettingsPageContestTab.labelIsSpectatorEnabled"
             field={<Switch data-testid="contest-spectator-enabled" />}
-            description="Enable or disable the spectator feature for the contest."
+            description="[slug].(dashboard)._common.settings.SettingsPageContestTab.descriptionIsSpectatorEnabled"
           />
         </div>
       </FieldSet>

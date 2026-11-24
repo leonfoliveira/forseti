@@ -26,7 +26,8 @@ type Props<TFieldValues extends FieldValues> = {
   label?: ParseKeys;
   labelValues?: TOptions;
   field: React.ReactElement & { props: object };
-  description?: string;
+  description?: ParseKeys;
+  descriptionValues?: TOptions;
 } & React.ComponentProps<typeof Field>;
 
 export function ControlledField<TFieldValues extends FieldValues>({
@@ -36,6 +37,7 @@ export function ControlledField<TFieldValues extends FieldValues>({
   labelValues,
   field,
   description,
+  descriptionValues,
   ...props
 }: Props<TFieldValues>) {
   return (
@@ -88,7 +90,12 @@ export function ControlledField<TFieldValues extends FieldValues>({
                   </FieldLabel>
                 )}
                 {description && (
-                  <FieldDescription>{description}</FieldDescription>
+                  <FieldDescription>
+                    <FormattedMessage
+                      id={description}
+                      values={descriptionValues}
+                    />
+                  </FieldDescription>
                 )}
                 {error && (
                   <FieldError>
@@ -110,7 +117,12 @@ export function ControlledField<TFieldValues extends FieldValues>({
             {newField}
             <FieldContent>
               {description && (
-                <FieldDescription>{description}</FieldDescription>
+                <FieldDescription>
+                  <FormattedMessage
+                    id={description}
+                    values={descriptionValues}
+                  />
+                </FieldDescription>
               )}
               {error && (
                 <FieldError>
