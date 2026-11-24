@@ -214,10 +214,8 @@ export function ProblemsPage({
                           }
                           data-testid="problem-download-test-cases"
                         >
-                          <FormattedMessage
-                            id="[slug].(dashboard)._common.problems.ProblemsPage.downloadCSV"
-                            values={{ icon: <DownloadIcon size={16} /> }}
-                          />
+                          <DownloadIcon size={16} className="mr-1" />
+                          <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.downloadCSV" />
                         </Button>
                       </TableCell>
                     )}
@@ -231,10 +229,8 @@ export function ProblemsPage({
                         onClick={() => downloadDescription(problem)}
                         data-testid="problem-download"
                       >
-                        <FormattedMessage
-                          id="[slug].(dashboard)._common.problems.ProblemsPage.downloadPDF"
-                          values={{ icon: <DownloadIcon size={16} /> }}
-                        />
+                        <DownloadIcon size={16} className="mr-1" />
+                        <FormattedMessage id="[slug].(dashboard)._common.problems.ProblemsPage.downloadPDF" />
                       </Button>
                     </TableCell>
                   </TableRow>

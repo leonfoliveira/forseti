@@ -136,12 +136,8 @@ export function SubmissionsPageActionExecutions({
                         }
                         data-testid="submission-execution-details"
                       >
-                        <FormattedMessage
-                          id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload"
-                          values={{
-                            icon: <DownloadIcon size={16} />,
-                          }}
-                        />
+                        <DownloadIcon size={16} className="mr-1" />
+                        <FormattedMessage id="[slug].(dashboard)._common.submissions.SubmissionsPageActionExecutions.buttonDownload" />
                       </Button>
                     )}
                   </TableCell>

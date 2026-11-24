@@ -47,7 +47,7 @@ export default function DashboardAboutPage() {
       title="[slug].(dashboard).about.pageTitle"
       description="[slug].(dashboard).about.pageDescription"
     >
-      <div className="mx-auto my-5 w-full max-w-4xl">
+      <div className="mx-auto my-5 w-full max-w-4xl" data-testid="about">
         <Card>
           <CardContent>
             <h1

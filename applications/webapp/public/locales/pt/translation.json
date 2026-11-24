@@ -243,8 +243,8 @@
             "headerStatus": "Status",
             "headerTestCases": "Casos de Teste",
             "headerDescription": "Descrição",
-            "downloadCSV": "{{icon}} CSV",
-            "downloadPDF": "{{icon}} PDF",
+            "downloadCSV": "CSV",
+            "downloadPDF": "PDF",
             "help": "Aqui você pode visualizar todos os problemas da competição. Clique no botão PDF para baixar os enunciados dos problemas. Os limites de tempo e memória são exibidos para cada problema."
           }
         },

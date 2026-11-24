@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import { DisconnectionBanner } from "@/app/_lib/component/feedback/DisconnectionBanner";
 import { ErrorPage } from "@/app/_lib/component/page/ErrorPage";
@@ -41,6 +42,7 @@ export function ContestantDashboardProvider({
   const dispatch = useAppDispatch();
   const toast = useToast();
   const dashboardReseter = useDashboardReseter();
+  const { t } = useTranslation();
 
   const [listenerStatus, setListenerStatus] = React.useState<ListenerStatus>(
     ListenerStatus.DISCONNECTED,
@@ -154,11 +156,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         dispatch(
@@ -171,11 +169,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;
@@ -186,11 +180,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;
@@ -201,11 +191,7 @@ export function ContestantDashboardProvider({
           "_lib.provider.dashboard.ContestDashboardProvider.memberSubmissionUpdate",
           {
             letter: submission.problem.letter,
-            answer: (
-              <FormattedMessage
-                id={I18nUtil.getSubmissionAnswer(submission.answer)}
-              />
-            ),
+            answer: t(I18nUtil.getSubmissionAnswer(submission.answer)),
           },
         );
         break;

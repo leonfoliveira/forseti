@@ -243,8 +243,8 @@
             "headerStatus": "Status",
             "headerTestCases": "Test Cases",
             "headerDescription": "Description",
-            "downloadCSV": "{{icon}} CSV",
-            "downloadPDF": "{{icon}} PDF",
+            "downloadCSV": "CSV",
+            "downloadPDF": "PDF",
             "help": "Here you can view all contest problems. Click the PDF button to download problem statements. Time and memory limits are displayed for each problem."
           }
         },
