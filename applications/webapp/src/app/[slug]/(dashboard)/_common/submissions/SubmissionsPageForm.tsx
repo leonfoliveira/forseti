@@ -3,13 +3,10 @@ import { SendIcon } from "lucide-react";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 
-import {
-  SubmissionForm,
-  SubmissionFormType,
-} from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionForm";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Card,
@@ -28,12 +25,15 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import {
+  SubmissionForm,
+  SubmissionFormType,
+} from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionForm";
 import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   onClose: () => void;

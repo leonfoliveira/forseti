@@ -1,6 +1,6 @@
-import { toast } from "sonner";
 import type { ParseKeys, TOptions } from "i18next";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 /**
  * Custom hook to show toast notifications.

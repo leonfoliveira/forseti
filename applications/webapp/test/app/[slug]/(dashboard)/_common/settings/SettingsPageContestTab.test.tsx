@@ -1,12 +1,14 @@
+import { act,fireEvent, screen } from "@testing-library/react";
 import React from "react";
-import { screen, fireEvent, act } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
-import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageContestTab";
+import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
+import { useToast } from "@/app/_lib/hook/useToast";
 import { SettingsFormType } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageContestTab";
+import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
-
 import {
   MockContestWithMembersAndProblemsDTO,
   MockLeaderboardResponseDTO,
@@ -15,9 +17,6 @@ import {
   renderHookWithProviders,
   renderWithProviders,
 } from "@/test/render-with-providers";
-import { Composition } from "@/config/composition";
-import { useToast } from "@/app/_lib/hook/useToast";
-import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 
 jest.mock("@/app/_lib/hook/useContestStatusWatcher", () => ({
   useContestStatusWatcher: jest.fn(() => ContestStatus.NOT_STARTED),

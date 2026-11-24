@@ -1,5 +1,5 @@
-import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
+import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
 
 export type PrintRequestResponseDTO = {
   id: string;

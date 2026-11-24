@@ -1,5 +1,5 @@
-import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import type { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 
 export interface AnnouncementWriter {
   /**

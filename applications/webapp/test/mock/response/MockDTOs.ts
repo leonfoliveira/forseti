@@ -1,15 +1,18 @@
 import { randomUUID } from "crypto";
+
 import { AttachmentContext } from "@/domain/enumerate/AttachmentContext";
 import { MemberType } from "@/domain/enumerate/MemberType";
+import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
 import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { PrintRequestStatus } from "@/domain/enumerate/PrintRequestStatus";
-import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
 import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
-import { CreateSubmissionRequestDTO } from "@/port/dto/request/submission/CreateSubmissionRequestDTO";
 import { GetUploadSignedUrlRequest } from "@/port/dto/request/attachment/GetUploadSignedUrlRequest";
+import { AuthenticateRequestDTO } from "@/port/dto/request/authentication/AuthenticateRequestDTO";
 import { UpdateContestRequestDTO } from "@/port/dto/request/contest/UpdateContestRequestDTO";
+import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/CreatePrintRequestRequestDTO";
+import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
+import { CreateSubmissionRequestDTO } from "@/port/dto/request/submission/CreateSubmissionRequestDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { AttachmentResponseDTO } from "@/port/dto/response/attachment/AttachmentResponseDTO";
 import { SignedDownloadAttachmentResponseDTO } from "@/port/dto/response/attachment/SignedDownloadAttachmentResponseDTO";
@@ -19,23 +22,21 @@ import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseD
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { AdminDashboardResponseDTO } from "@/port/dto/response/dashboard/AdminDashboardResponseDTO";
 import { ContestantDashboardResponseDTO } from "@/port/dto/response/dashboard/ContestantDashboardResponseDTO";
-import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
+import { SpectatorDashboardResponseDTO } from "@/port/dto/response/dashboard/SpectatorDashboardResponseDTO";
 import { StaffDashboardResponseDTO } from "@/port/dto/response/dashboard/StaffDashboardResponseDTO";
 import { ExecutionResponseDTO } from "@/port/dto/response/execution/ExecutionResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
 import { MemberWithLoginResponseDTO } from "@/port/dto/response/member/MemberWithLoginResponseDTO";
+import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
 import { SessionResponseDTO } from "@/port/dto/response/session/SessionResponseDTO";
 import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { PrintRequestResponseDTO } from "@/port/dto/response/printRequest/PrintRequestResponseDTO";
-import { CreatePrintRequestRequestDTO } from "@/port/dto/request/printRequest/CreatePrintRequestRequestDTO";
-import { UpdateStatusPrintRequestRequestDTO } from "@/port/dto/request/printRequest/UpdateStatusPrintRequestRequestDTO";
 
 const createdAt = "2026-01-01T00:00:00.000Z";
 

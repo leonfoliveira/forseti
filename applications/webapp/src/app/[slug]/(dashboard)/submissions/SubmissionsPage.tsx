@@ -1,8 +1,8 @@
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/AdminSubmissionsPage";
 import { ContestantSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/ContestantSubmissionsPage";
-import { SpectatorSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/SpectatorSubmissionsPage";
 import { JudgeSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/JudgeSubmissionsPage";
-import { useAppSelector } from "@/app/_lib/store/Store";
+import { SpectatorSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/SpectatorSubmissionsPage";
 import { StaffSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/StaffSubmissionsPage";
 import { MemberType } from "@/domain/enumerate/MemberType";
 

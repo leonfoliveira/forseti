@@ -1,5 +1,6 @@
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { useTranslation } from "react-i18next";
+
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Theme, useTheme } from "@/app/_lib/provider/ThemeProvider";
 

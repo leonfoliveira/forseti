@@ -1,3 +1,5 @@
+import clsx from "clsx";
+import type { ParseKeys, TOptions } from "i18next";
 import React from "react";
 import {
   Controller,
@@ -5,8 +7,8 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import clsx from "clsx";
 
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
   Field,
@@ -17,8 +19,6 @@ import {
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import { Switch } from "@/app/_lib/component/shadcn/switch";
-import type { ParseKeys, TOptions } from "i18next";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props<TFieldValues extends FieldValues> = {
   form: UseFormReturn<TFieldValues>;

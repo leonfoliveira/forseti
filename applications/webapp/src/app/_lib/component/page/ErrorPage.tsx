@@ -1,7 +1,8 @@
 import { RefreshCwIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/app/_lib/component/shadcn/button";
+
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { Button } from "@/app/_lib/component/shadcn/button";
 
 /**
  * Displays a generic error message with a reload button centered on the page.

@@ -1,5 +1,5 @@
-import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPage";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPage";
 
 /**
  * Displays the admin settings page for a contest.

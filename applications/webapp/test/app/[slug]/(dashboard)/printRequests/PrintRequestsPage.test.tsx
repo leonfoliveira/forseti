@@ -1,11 +1,12 @@
 import { screen } from "@testing-library/react";
-import { renderWithProviders } from "@/test/render-with-providers";
-import { MemberType } from "@/domain/enumerate/MemberType";
+
 import PrintRequestsPage from "@/app/[slug]/(dashboard)/printRequests/PrintRequestsPage";
+import { MemberType } from "@/domain/enumerate/MemberType";
 import {
-  MockSessionResponseDTO,
   MockContestResponseDTO,
+  MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/printRequests/AdminPrintRequestsPage",

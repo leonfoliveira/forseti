@@ -1,21 +1,21 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 import { useForm } from "react-hook-form";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import {
   SettingsForm,
   SettingsFormType,
 } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageProblemsTab";
+import { Composition } from "@/config/composition";
 import {
   MockContestWithMembersAndProblemsDTO,
   MockProblemWithTestCasesResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import {
-  renderWithProviders,
   renderHookWithProviders,
+  renderWithProviders,
 } from "@/test/render-with-providers";
-import { Composition } from "@/config/composition";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SettingsPageProblemsTab", () => {
   it("fills the form with problems", async () => {

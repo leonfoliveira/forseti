@@ -1,9 +1,9 @@
 import { screen } from "@testing-library/react";
 
-import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/AdminSubmissionsPage";
-import { renderWithProviders } from "@/test/render-with-providers";
-import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 import { SubmissionsPage } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage";
+import { AdminSubmissionsPage } from "@/app/[slug]/(dashboard)/submissions/AdminSubmissionsPage";
+import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPage",

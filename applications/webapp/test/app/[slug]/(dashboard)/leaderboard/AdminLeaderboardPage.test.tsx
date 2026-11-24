@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 
 import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/AdminLeaderboardPage";
-import { renderWithProviders } from "@/test/render-with-providers";
 import { MockAdminDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/leaderboard/LeaderboardPage",

@@ -2,13 +2,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { SendIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import {
-  AnnouncementForm,
-  AnnouncementFormType,
-} from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementForm";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Card,
@@ -22,9 +19,12 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
+import {
+  AnnouncementForm,
+  AnnouncementFormType,
+} from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementForm";
 import { Composition } from "@/config/composition";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;

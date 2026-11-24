@@ -1,8 +1,7 @@
 import { MessageCircleQuestionIcon, PlusIcon } from "lucide-react";
 import React from "react";
 
-import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageCard";
-import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageForm";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
 import { Button } from "@/app/_lib/component/shadcn/button";
@@ -16,10 +15,11 @@ import {
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageCard";
+import { ClarificationsPageForm } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageForm";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[];

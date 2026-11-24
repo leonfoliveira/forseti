@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
-import { renderWithProviders } from "@/test/render-with-providers";
 
 import { CountdownClock } from "@/app/_lib/component/display/CountdownClock";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("CountdownClock", () => {
   it("renders remaining duration and clears the interval when unmounted", async () => {

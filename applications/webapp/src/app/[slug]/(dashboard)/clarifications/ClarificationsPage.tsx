@@ -1,11 +1,11 @@
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/AdminClarificationsPage";
 import { ContestantClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/ContestantClarificationsPage";
-import { SpectatorClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/SpectatorClarificationsPage";
 import { JudgeClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/JudgeClarificationsPage";
+import { SpectatorClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/SpectatorClarificationsPage";
 import { StaffClarificationsPage } from "@/app/[slug]/(dashboard)/clarifications/StaffClarificationsPage";
-import { useAppSelector } from "@/app/_lib/store/Store";
-import { MemberType } from "@/domain/enumerate/MemberType";
 import NotFoundPage from "@/app/error/NotFoundPage";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**
  * Page displaying clarifications for the contest.

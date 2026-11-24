@@ -1,8 +1,8 @@
 import React from "react";
 
-import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPage";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
+import { AnnouncementsPage } from "@/app/[slug]/(dashboard)/_common/announcements/AnnouncementsPage";
 
 export function AdminAnnouncementsPage() {
   const announcements = useAppSelector(

@@ -1,7 +1,8 @@
-import { MockPrintRequestResponseDTO } from "@/test/mock/response/MockDTOs";
-import { screen, fireEvent } from "@testing-library/react";
-import { renderWithProviders } from "@/test/render-with-providers";
+import { fireEvent,screen } from "@testing-library/react";
+
 import { StaffPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/StaffPrintRequestsPage";
+import { MockPrintRequestResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/printRequests/PrintRequestsPage",

@@ -1,5 +1,5 @@
-import { MockClarificationResponseDTO } from "@/test/mock/response/MockDTOs";
 import { AxiosClarificationRepository } from "@/infrastructure/axios/repository/AxiosClarificationRepository";
+import { MockClarificationResponseDTO } from "@/test/mock/response/MockDTOs";
 
 describe("AxiosClarificationRepository", () => {
   it("should create a clarification", async () => {

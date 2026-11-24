@@ -1,8 +1,8 @@
 import { RefreshCwIcon } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { Button } from "@/app/_lib/component/shadcn/button";
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { Button } from "@/app/_lib/component/shadcn/button";
 
 export default function ServerErrorPage() {
   const [searchParams] = useSearchParams();

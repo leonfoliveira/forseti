@@ -1,8 +1,8 @@
 import { screen } from "@testing-library/react";
 
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/ContestantLeaderboardPage";
-import { renderWithProviders } from "@/test/render-with-providers";
 import { MockContestantDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/leaderboard/LeaderboardPage",

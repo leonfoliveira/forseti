@@ -1,11 +1,11 @@
-import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { AdminDashboardProvider } from "@/app/_lib/provider/dashboard/AdminDashboardProvider";
 import { ContestantDashboardProvider } from "@/app/_lib/provider/dashboard/ContestantDashboardProvider";
-import { SpectatorDashboardProvider } from "@/app/_lib/provider/dashboard/SpectatorDashboardProvider";
 import { JudgeDashboardProvider } from "@/app/_lib/provider/dashboard/JudgeDashboardProvider";
+import { SpectatorDashboardProvider } from "@/app/_lib/provider/dashboard/SpectatorDashboardProvider";
 import { StaffDashboardProvider } from "@/app/_lib/provider/dashboard/StaffDashboardProvider";
 import { useAppSelector } from "@/app/_lib/store/Store";
+import { WaitPage } from "@/app/[slug]/(dashboard)/_common/WaitPage";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { MemberType } from "@/domain/enumerate/MemberType";
 

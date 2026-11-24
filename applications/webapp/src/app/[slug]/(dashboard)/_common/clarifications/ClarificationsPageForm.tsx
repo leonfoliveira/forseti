@@ -2,13 +2,10 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { SendIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import {
-  ClarificationForm,
-  ClarificationFormType,
-} from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationForm";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Button } from "@/app/_lib/component/shadcn/button";
 import {
   Card,
@@ -26,10 +23,13 @@ import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
+import {
+  ClarificationForm,
+  ClarificationFormType,
+} from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationForm";
 import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;

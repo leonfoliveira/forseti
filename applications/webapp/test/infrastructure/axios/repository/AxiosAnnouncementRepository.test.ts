@@ -1,8 +1,8 @@
+import { AxiosAnnouncementRepository } from "@/infrastructure/axios/repository/AxiosAnnouncementRepository";
 import {
   MockAnnouncementResponseDTO,
   MockCreateAnnouncementRequestDTO,
 } from "@/test/mock/response/MockDTOs";
-import { AxiosAnnouncementRepository } from "@/infrastructure/axios/repository/AxiosAnnouncementRepository";
 
 describe("AxiosAnnouncementRepository", () => {
   it("creates an announcement", async () => {

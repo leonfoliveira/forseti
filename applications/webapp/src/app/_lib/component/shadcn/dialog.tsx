@@ -1,10 +1,10 @@
-import * as React from "react";
 import { cn } from "cn";
 import { XIcon } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
+import * as React from "react";
 
-import { Button } from "@/app/_lib/component/shadcn/button";
 import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { Button } from "@/app/_lib/component/shadcn/button";
 
 function Dialog({
   ...props

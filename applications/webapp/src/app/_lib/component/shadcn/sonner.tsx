@@ -1,4 +1,3 @@
-import { useTheme } from "@/app/_lib/provider/ThemeProvider";
 import {
   CircleCheckIcon,
   InfoIcon,
@@ -7,6 +6,8 @@ import {
   TriangleAlertIcon,
 } from "lucide-react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
+
+import { useTheme } from "@/app/_lib/provider/ThemeProvider";
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme } = useTheme();

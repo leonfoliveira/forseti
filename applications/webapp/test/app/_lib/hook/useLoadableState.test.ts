@@ -4,8 +4,8 @@ import {
   useLoadableState,
   useLoadableStateRoot,
 } from "@/app/_lib/hook/useLoadableState";
-import { renderHookWithProviders } from "@/test/render-with-providers";
 import { MockContestResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderHookWithProviders } from "@/test/render-with-providers";
 
 describe("useLoadableState hook", () => {
   it("starts and finishes with values or a functional update", async () => {

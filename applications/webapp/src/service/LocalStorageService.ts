@@ -1,6 +1,6 @@
-import { LocalStorageRepository } from "@/port/output/repository/LocalStorageRepository";
 import { LocalStorageReader } from "@/port/input/usecase/localstorage/LocalStorageReader";
 import { LocalStorageWriter } from "@/port/input/usecase/localstorage/LocalStorageWriter";
+import { LocalStorageRepository } from "@/port/output/repository/LocalStorageRepository";
 
 export class LocalStorageService
   implements LocalStorageReader, LocalStorageWriter

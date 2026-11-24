@@ -1,9 +1,9 @@
 import { fireEvent, screen } from "@testing-library/dom";
 import { act } from "@testing-library/react";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { ClarificationAnswerForm } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationAnswerForm";
 import { ClarificationsPageCard } from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationsPageCard";
-import { useToast } from "@/app/_lib/hook/useToast";
 import { Composition } from "@/config/composition";
 import { MockClarificationResponseDTO } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";

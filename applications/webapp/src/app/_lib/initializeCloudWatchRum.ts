@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import { AwsRum, type AwsRumConfig } from "aws-rum-web";
+
 import { env } from "@/config/env";
 
 let rum: AwsRum | undefined;

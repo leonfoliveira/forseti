@@ -2,8 +2,8 @@ import { AxiosDashboardRepository } from "@/infrastructure/axios/repository/Axio
 import {
   MockAdminDashboardResponseDTO,
   MockContestantDashboardResponseDTO,
-  MockSpectatorDashboardResponseDTO,
   MockJudgeDashboardResponseDTO,
+  MockSpectatorDashboardResponseDTO,
   MockStaffDashboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 

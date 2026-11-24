@@ -6,14 +6,12 @@ import {
 } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import {
-  ClarificationAnswerForm,
-  ClarificationAnswerFormType,
-} from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationAnswerForm";
+import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
 import { Form } from "@/app/_lib/component/form/Form";
 import { FormattedDateTime } from "@/app/_lib/component/i18n/FormattedDateTime";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Badge } from "@/app/_lib/component/shadcn/badge";
 import {
   Card,
@@ -23,13 +21,15 @@ import {
 import { FieldSet } from "@/app/_lib/component/shadcn/field";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
 import { Textarea } from "@/app/_lib/component/shadcn/textarea";
+import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
+import {
+  ClarificationAnswerForm,
+  ClarificationAnswerFormType,
+} from "@/app/[slug]/(dashboard)/_common/clarifications/ClarificationAnswerForm";
 import { Composition } from "@/config/composition";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
-import { useDialog } from "@/app/_lib/hook/useDialog";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contestId: string;

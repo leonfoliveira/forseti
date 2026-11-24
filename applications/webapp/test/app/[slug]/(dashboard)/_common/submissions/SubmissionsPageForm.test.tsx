@@ -1,7 +1,9 @@
-import React from "react";
 import { act, fireEvent, screen } from "@testing-library/react";
+import React from "react";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionsPageForm } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageForm";
+import { Composition } from "@/config/composition";
 import { SubmissionLanguage } from "@/domain/enumerate/SubmissionLanguage";
 import {
   MockContestResponseDTO,
@@ -9,8 +11,6 @@ import {
   MockSubmissionWithCodeResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { Composition } from "@/config/composition";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SubmissionsPageForm", () => {
   it("creates submission successfully", async () => {

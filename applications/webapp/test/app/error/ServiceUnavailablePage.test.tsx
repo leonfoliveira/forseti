@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { fireEvent,render, screen } from "@testing-library/react";
+import { useNavigate,useSearchParams } from "react-router-dom";
 
 import ServiceUnavailablePage from "@/app/error/ServiceUnavailablePage";
 import { renderWithProviders } from "@/test/render-with-providers";

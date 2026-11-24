@@ -1,12 +1,12 @@
 import { DownloadIcon } from "lucide-react";
 
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { DropdownMenuItem } from "@/app/_lib/component/shadcn/dropdown-menu";
 import { useErrorHandler } from "@/app/_lib/hook/useErrorHandler";
 import { useToast } from "@/app/_lib/hook/useToast";
 import { useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { SubmissionWithCodeResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   submission: SubmissionWithCodeResponseDTO;

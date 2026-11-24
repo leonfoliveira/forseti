@@ -1,10 +1,10 @@
+import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
 import {
   MockContestantDashboardResponseDTO,
   MockSessionResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
   ProblemsPage: jest.fn(),

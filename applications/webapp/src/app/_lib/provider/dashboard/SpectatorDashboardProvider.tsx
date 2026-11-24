@@ -1,25 +1,25 @@
 import React, { useEffect } from "react";
 
 import { DisconnectionBanner } from "@/app/_lib/component/feedback/DisconnectionBanner";
+import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ErrorPage } from "@/app/_lib/component/page/ErrorPage";
 import { LoadingPage } from "@/app/_lib/component/page/LoadingPage";
 import { useDashboardReseter } from "@/app/_lib/hook/useDashboardReseter";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
 import { useToast } from "@/app/_lib/hook/useToast";
+import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { SpectatorDashboardSlice } from "@/app/_lib/store/slice/dashboard/SpectatorDashboardSlice";
 import { useAppDispatch, useAppSelector } from "@/app/_lib/store/Store";
 import { Composition } from "@/config/composition";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
 import { SubmissionStatus } from "@/domain/enumerate/SubmissionStatus";
-import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
-import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
 import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { FreezeBanner } from "@/app/_lib/component/feedback/FreezeBanner";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
+import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
+import { SubmissionResponseDTO } from "@/port/dto/response/submission/SubmissionResponseDTO";
 import { ContestUtil } from "@/util/ContestUtil";
-import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 
 /**
  * Provider component for fetching spectator dashboard data and setting up sse listeners.

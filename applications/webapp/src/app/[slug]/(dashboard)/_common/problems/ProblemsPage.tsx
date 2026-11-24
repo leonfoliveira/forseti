@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 
 import { ProblemLetterBadge } from "@/app/_lib/component/display/badge/ProblemLetterBadge";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { FormattedNumber } from "@/app/_lib/component/i18n/FormattedNumber";
 import { Page } from "@/app/_lib/component/page/Page";
 import { Alert, AlertDescription } from "@/app/_lib/component/shadcn/alert";
@@ -27,7 +28,6 @@ import { Composition } from "@/config/composition";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { ProblemResponseDTO } from "@/port/dto/response/problem/ProblemResponseDTO";
 import { ProblemWithTestCasesResponseDTO } from "@/port/dto/response/problem/ProblemWithTestCasesResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   problems: ProblemResponseDTO[] | ProblemWithTestCasesResponseDTO[];

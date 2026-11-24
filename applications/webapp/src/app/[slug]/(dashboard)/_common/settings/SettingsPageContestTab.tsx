@@ -1,13 +1,11 @@
+import type { ParseKeys } from "i18next";
 import { TriangleAlertIcon } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import type { ParseKeys } from "i18next";
 
-import {
-  SettingsForm,
-  SettingsFormType,
-} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { ControlledField } from "@/app/_lib/component/form/ControlledField";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
+import { Button } from "@/app/_lib/component/shadcn/button";
 import { Checkbox } from "@/app/_lib/component/shadcn/checkbox";
 import {
   FieldDescription,
@@ -17,6 +15,7 @@ import {
 } from "@/app/_lib/component/shadcn/field";
 import { Input } from "@/app/_lib/component/shadcn/input";
 import { Separator } from "@/app/_lib/component/shadcn/separator";
+import { Switch } from "@/app/_lib/component/shadcn/switch";
 import { useContestStatusWatcher } from "@/app/_lib/hook/useContestStatusWatcher";
 import { useDialog } from "@/app/_lib/hook/useDialog";
 import { useLoadableState } from "@/app/_lib/hook/useLoadableState";
@@ -24,6 +23,11 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { useAppDispatch } from "@/app/_lib/store/Store";
+import { I18nUtil } from "@/app/_lib/util/i18nUtil";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { Composition } from "@/config/composition";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import {
@@ -32,11 +36,7 @@ import {
 } from "@/domain/enumerate/SubmissionLanguage";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { Button } from "@/app/_lib/component/shadcn/button";
 import { ContestUtil } from "@/util/ContestUtil";
-import { Switch } from "@/app/_lib/component/shadcn/switch";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
-import { I18nUtil } from "@/app/_lib/util/i18nUtil";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;

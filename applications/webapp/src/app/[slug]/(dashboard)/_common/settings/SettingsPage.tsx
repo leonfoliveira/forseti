@@ -1,19 +1,13 @@
-import clsx from "clsx";
 import { joiResolver } from "@hookform/resolvers/joi";
+import clsx from "clsx";
 import { AlertCircleIcon, SaveIcon } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-import {
-  SettingsForm,
-  SettingsFormType,
-} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
-import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageContestTab";
-import { SettingsPageMembersTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageMembersTab";
-import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageProblemsTab";
 import { ConfirmationDialog } from "@/app/_lib/component/feedback/ConfirmationDialog";
 import { Form } from "@/app/_lib/component/form/Form";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import { Page } from "@/app/_lib/component/page/Page";
 import {
   Alert,
@@ -34,12 +28,18 @@ import { useToast } from "@/app/_lib/hook/useToast";
 import { ContestSlice } from "@/app/_lib/store/slice/ContestSlice";
 import { AdminDashboardSlice } from "@/app/_lib/store/slice/dashboard/AdminDashboardSlice";
 import { useAppDispatch } from "@/app/_lib/store/Store";
+import {
+  SettingsForm,
+  SettingsFormType,
+} from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
+import { SettingsPageContestTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageContestTab";
+import { SettingsPageMembersTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageMembersTab";
+import { SettingsPageProblemsTab } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPageProblemsTab";
 import { Composition } from "@/config/composition";
 import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import { ContestWithMembersAndProblemsResponseDTO } from "@/port/dto/response/contest/ContestWithMembersAndProblemsResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   contest: ContestWithMembersAndProblemsResponseDTO;

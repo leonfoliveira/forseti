@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 import { EntityUtil } from "@/app/_lib/store/util/EntityUtil";
 import { LeaderboardMerger } from "@/app/_lib/store/util/LeaderboardMerger";
 import { ListenerStatus } from "@/domain/enumerate/ListenerStatus";
+import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
+import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
+import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 import { JudgeDashboardResponseDTO } from "@/port/dto/response/dashboard/JudgeDashboardResponseDTO";
 import { LeaderboardCellResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardCellResponseDTO";
 import { LeaderboardResponseDTO } from "@/port/dto/response/leaderboard/LeaderboardResponseDTO";
 import { SubmissionWithCodeAndExecutionsResponseDTO } from "@/port/dto/response/submission/SubmissionWithCodeAndExecutionsResponseDTO";
-import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
-import { ClarificationResponseDTO } from "@/port/dto/response/clarification/ClarificationResponseDTO";
-import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
 
 export type JudgeDashboardState = JudgeDashboardResponseDTO;
 

@@ -1,8 +1,9 @@
-import { renderWithProviders } from "@/test/render-with-providers";
-import { screen, fireEvent } from "@testing-library/react";
+import { fireEvent,screen } from "@testing-library/react";
+
 import { SubmissionsPageActionExecutions } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionExecutions";
-import { MockExecutionResponseDTO } from "@/test/mock/response/MockDTOs";
 import { Composition } from "@/config/composition";
+import { MockExecutionResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 describe("SubmissionsPageActionExecutions", () => {
   it("renders the executions dialog", async () => {

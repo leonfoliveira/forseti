@@ -1,7 +1,8 @@
-import React from "react";
 import type { ParseKeys } from "i18next";
+import React from "react";
 
 import { AsyncButton } from "@/app/_lib/component/form/AsyncButton";
+import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -12,7 +13,6 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from "@/app/_lib/component/shadcn/alert-dialog";
-import { FormattedMessage } from "@/app/_lib/component/i18n/FormattedMessage";
 
 type Props = {
   isOpen: boolean;

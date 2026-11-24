@@ -1,9 +1,9 @@
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminProblemsPage } from "@/app/[slug]/(dashboard)/problems/AdminProblemsPage";
 import { ContestantProblemsPage } from "@/app/[slug]/(dashboard)/problems/ContestantProblemsPage";
-import { SpectatorProblemsPage } from "@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage";
 import { JudgeProblemsPage } from "@/app/[slug]/(dashboard)/problems/JudgeProblemsPage";
+import { SpectatorProblemsPage } from "@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage";
 import { StaffProblemsPage } from "@/app/[slug]/(dashboard)/problems/StaffProblemsPage";
-import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**

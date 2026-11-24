@@ -1,5 +1,5 @@
-import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
 import { ContestResponseDTO } from "@/port/dto/response/contest/ContestResponseDTO";
+import { MemberResponseDTO } from "@/port/dto/response/member/MemberResponseDTO";
 
 export type AnnouncementResponseDTO = {
   id: string;

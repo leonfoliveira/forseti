@@ -1,9 +1,9 @@
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/AdminLeaderboardPage";
 import { ContestantLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/ContestantLeaderboardPage";
-import { SpectatorLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/SpectatorLeaderboardPage";
 import { JudgeLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/JudgeLeaderboardPage";
+import { SpectatorLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/SpectatorLeaderboardPage";
 import { StaffLeaderboardPage } from "@/app/[slug]/(dashboard)/leaderboard/StaffLeaderboardPage";
-import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**

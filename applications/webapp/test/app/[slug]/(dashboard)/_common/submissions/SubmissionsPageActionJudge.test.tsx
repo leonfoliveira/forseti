@@ -1,14 +1,14 @@
 import { act, fireEvent, screen } from "@testing-library/react";
 
+import { useToast } from "@/app/_lib/hook/useToast";
 import { SubmissionsPageActionJudge } from "@/app/[slug]/(dashboard)/_common/submissions/SubmissionsPageActionJudge";
+import { Composition } from "@/config/composition";
+import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
 import {
   MockContestResponseDTO,
   MockSubmissionWithCodeAndExecutionsResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { SubmissionAnswer } from "@/domain/enumerate/SubmissionAnswer";
-import { Composition } from "@/config/composition";
-import { useToast } from "@/app/_lib/hook/useToast";
 
 describe("SubmissionsPageActionJudge", () => {
   it("updates the submission answer successfully", async () => {

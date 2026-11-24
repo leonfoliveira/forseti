@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
 
+import { Navbar } from "@/app/_lib/component/layout/Navbar";
 import { BalloonProvider } from "@/app/_lib/provider/BalloonProvider";
 import { DashboardProvider } from "@/app/_lib/provider/DashboardProvider";
-import { Navbar } from "@/app/_lib/component/layout/Navbar";
 
 /**
  * Default layout for contest dashboard pages.

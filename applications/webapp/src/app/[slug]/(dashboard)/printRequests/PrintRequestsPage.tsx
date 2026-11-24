@@ -1,11 +1,12 @@
-import { useAppSelector } from "@/app/_lib/store/Store";
-import { MemberType } from "@/domain/enumerate/MemberType";
 import { Navigate } from "react-router-dom";
+
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/AdminPrintRequestsPage";
-import { StaffPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/StaffPrintRequestsPage";
 import { ContestantPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/ContestantPrintRequestsPage";
-import { routes } from "@/config/routes";
+import { StaffPrintRequestsPage } from "@/app/[slug]/(dashboard)/printRequests/StaffPrintRequestsPage";
 import NotFoundPage from "@/app/error/NotFoundPage";
+import { routes } from "@/config/routes";
+import { MemberType } from "@/domain/enumerate/MemberType";
 
 export default function PrintRequestsPage() {
   const session = useAppSelector((state) => state.session);

@@ -1,9 +1,9 @@
 import { screen } from "@testing-library/react";
 
-import { SpectatorProblemsPage } from "@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage";
-import { renderWithProviders } from "@/test/render-with-providers";
-import { MockSpectatorDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
 import { ProblemsPage } from "@/app/[slug]/(dashboard)/_common/problems/ProblemsPage";
+import { SpectatorProblemsPage } from "@/app/[slug]/(dashboard)/problems/SpectatorProblemsPage";
+import { MockSpectatorDashboardResponseDTO } from "@/test/mock/response/MockDTOs";
+import { renderWithProviders } from "@/test/render-with-providers";
 
 jest.mock("@/app/[slug]/(dashboard)/_common/problems/ProblemsPage", () => ({
   ProblemsPage: jest.fn(),

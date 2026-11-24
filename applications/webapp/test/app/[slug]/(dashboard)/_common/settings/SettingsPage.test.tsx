@@ -1,7 +1,12 @@
+import { act,fireEvent, screen } from "@testing-library/react";
 import React from "react";
-import { fireEvent, screen, act } from "@testing-library/react";
+import { useNavigate } from "react-router-dom";
 
+import { useToast } from "@/app/_lib/hook/useToast";
+import { SettingsForm } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
 import { SettingsPage } from "@/app/[slug]/(dashboard)/_common/settings/SettingsPage";
+import { Composition } from "@/config/composition";
+import { routes } from "@/config/routes";
 import { ContestStatus } from "@/domain/enumerate/ContestStatus";
 import {
   MockAdminDashboardResponseDTO,
@@ -10,11 +15,6 @@ import {
   MockLeaderboardResponseDTO,
 } from "@/test/mock/response/MockDTOs";
 import { renderWithProviders } from "@/test/render-with-providers";
-import { Composition } from "@/config/composition";
-import { SettingsForm } from "@/app/[slug]/(dashboard)/_common/settings/SettingsForm";
-import { useToast } from "@/app/_lib/hook/useToast";
-import { useNavigate } from "react-router-dom";
-import { routes } from "@/config/routes";
 
 jest.mock(
   "@/app/[slug]/(dashboard)/_common/settings/SettingsPageContestTab",

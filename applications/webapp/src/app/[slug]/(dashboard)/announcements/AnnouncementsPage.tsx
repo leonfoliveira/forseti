@@ -1,9 +1,9 @@
+import { useAppSelector } from "@/app/_lib/store/Store";
 import { AdminAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/AdminAnnouncementsPage";
 import { ContestantAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/ContestantAnnouncementsPage";
-import { SpectatorAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/SpectatorAnnouncementsPage";
 import { JudgeAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/JudgeAnnouncementsPage";
+import { SpectatorAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/SpectatorAnnouncementsPage";
 import { StaffAnnouncementsPage } from "@/app/[slug]/(dashboard)/announcements/StaffAnnouncementsPage";
-import { useAppSelector } from "@/app/_lib/store/Store";
 import { MemberType } from "@/domain/enumerate/MemberType";
 
 /**

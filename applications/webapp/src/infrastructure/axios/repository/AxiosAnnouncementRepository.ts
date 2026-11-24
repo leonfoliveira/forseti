@@ -1,7 +1,7 @@
-import { AnnouncementRepository } from "@/port/output/repository/AnnouncementRepository";
+import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
 import { CreateAnnouncementRequestDTO } from "@/port/dto/request/announcement/CreateAnnouncementRequestDTO";
 import { AnnouncementResponseDTO } from "@/port/dto/response/announcement/AnnouncementResponseDTO";
-import { AxiosClient } from "@/infrastructure/axios/AxiosClient";
+import { AnnouncementRepository } from "@/port/output/repository/AnnouncementRepository";
 
 export class AxiosAnnouncementRepository implements AnnouncementRepository {
   private basePath = (contestId: string) =>
