@@ -18,7 +18,8 @@ export default function DashboardAboutPage() {
 
   function getSettingItem(
     isEnabled: boolean,
-    label: ParseKeys,
+    enabledLabel: ParseKeys,
+    disabledLabel: ParseKeys,
     dataTestId: string,
   ) {
     return (
@@ -37,7 +38,7 @@ export default function DashboardAboutPage() {
           )}
         </span>
         <span>
-          <FormattedMessage id={label} />
+          <FormattedMessage id={isEnabled ? enabledLabel : disabledLabel} />
         </span>
       </li>
     );
@@ -106,21 +107,25 @@ export default function DashboardAboutPage() {
                     {getSettingItem(
                       contest.settings.isAutoJudgeEnabled,
                       "[slug].(dashboard).about.labelIsAutoJudgeEnabled",
+                      "[slug].(dashboard).about.labelIsAutoJudgeDisabled",
                       "auto-judge",
                     )}
                     {getSettingItem(
                       contest.settings.isClarificationEnabled,
                       "[slug].(dashboard).about.labelIsClarificationEnabled",
+                      "[slug].(dashboard).about.labelIsClarificationDisabled",
                       "clarification",
                     )}
                     {getSettingItem(
                       contest.settings.isPrintRequestEnabled,
                       "[slug].(dashboard).about.labelIsPrintRequestEnabled",
+                      "[slug].(dashboard).about.labelIsPrintRequestDisabled",
                       "submission-print-ticket",
                     )}
                     {getSettingItem(
                       contest.settings.isSpectatorEnabled,
                       "[slug].(dashboard).about.labelIsSpectatorEnabled",
+                      "[slug].(dashboard).about.labelIsSpectatorDisabled",
                       "spectator",
                     )}
                   </ul>

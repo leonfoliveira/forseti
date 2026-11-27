@@ -469,9 +469,13 @@
         "labelEndAt": "End At",
         "labelLanguages": "Languages",
         "labelIsAutoJudgeEnabled": "Auto Judge Enabled",
-        "labelIsClarificationEnabled": "Clarification Enabled",
-        "labelIsPrintRequestEnabled": "Print Request Enabled",
-        "labelIsSpectatorEnabled": "Spectator Enabled"
+        "labelIsAutoJudgeDisabled": "Auto Judge Disabled",
+        "labelIsClarificationEnabled": "Clarifications Enabled",
+        "labelIsClarificationDisabled": "Clarifications Disabled",
+        "labelIsPrintRequestEnabled": "Print Requests Enabled",
+        "labelIsPrintRequestDisabled": "Print Requests Disabled",
+        "labelIsSpectatorEnabled": "Spectators Enabled",
+        "labelIsSpectatorDisabled": "Spectators Disabled"
       }
     },
     "signIn": {

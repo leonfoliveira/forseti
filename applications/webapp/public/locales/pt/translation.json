@@ -469,9 +469,13 @@
         "labelEndAt": "Término em",
         "labelLanguages": "Linguagens",
         "labelIsAutoJudgeEnabled": "Julgamento Automático Habilitado",
+        "labelIsAutoJudgeDisabled": "Julgamento Automático Desabilitado",
         "labelIsClarificationEnabled": "Esclarecimentos Habilitados",
+        "labelIsClarificationDisabled": "Esclarecimentos Desabilitados",
         "labelIsPrintRequestEnabled": "Pedidos de Impressão Habilitados",
-        "labelIsSpectatorEnabled": "Espectadores Habilitados"
+        "labelIsPrintRequestDisabled": "Pedidos de Impressão Desabilitados",
+        "labelIsSpectatorEnabled": "Espectadores Habilitados",
+        "labelIsSpectatorDisabled": "Espectadores Desabilitados"
       }
     },
     "signIn": {
